@@ -19,7 +19,7 @@ public class VersionArchive implements Annotated {
 	 * @see org.mozkito.persistence.Annotated#getHandle()
 	 */
 	@Override
-	public String getHandle() {
+	public String getClassName() {
 		// TODO Auto-generated method stub
 		return null;
 	}

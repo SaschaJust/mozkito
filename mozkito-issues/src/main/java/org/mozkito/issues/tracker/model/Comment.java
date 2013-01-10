@@ -37,7 +37,6 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.Positive;
 
 import org.joda.time.DateTime;
-
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persistence.model.Person;
 import org.mozkito.persistence.model.PersonContainer;
@@ -139,6 +138,15 @@ public class Comment implements Annotated, TextElement, Comparable<Comment> {
 		return this.bugReport;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.persistence.Annotated#getHandle()
+	 */
+	@Override
+	public final String getClassName() {
+		return JavaUtils.getHandle(Comment.class);
+	}
+	
 	/**
 	 * Gets the generated id.
 	 * 
@@ -148,14 +156,6 @@ public class Comment implements Annotated, TextElement, Comparable<Comment> {
 	@GeneratedValue (strategy = GenerationType.SEQUENCE)
 	public long getGeneratedId() {
 		return this.generatedId;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.persistence.Annotated#getHandle()
-	 */
-	public final String getHandle() {
-		return JavaUtils.getHandle(Comment.class);
 	}
 	
 	/**

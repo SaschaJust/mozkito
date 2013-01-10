@@ -28,7 +28,6 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kanuni.conditions.StringCondition;
 
 import org.jdom2.Element;
-
 import org.mozkito.persistence.Annotated;
 
 /**
@@ -218,7 +217,8 @@ public class JavaMethodDefinition extends JavaElement implements Annotated, Seri
 	 * (non-Javadoc)
 	 * @see org.mozkito.persistence.Annotated#getHandle()
 	 */
-	public final String getHandle() {
+	@Override
+	public final String getClassName() {
 		return JavaUtils.getHandle(JavaMethodDefinition.class);
 	}
 	

@@ -100,8 +100,9 @@ public class PersonTuple implements PersistentTuple<Person> {
 	 * (non-Javadoc)
 	 * @see org.mozkito.persistence.Annotated#getHandle()
 	 */
+	@Override
 	@Transient
-	public final String getHandle() {
+	public final String getClassName() {
 		return JavaUtils.getHandle(PersonTuple.class);
 	}
 	
@@ -110,6 +111,7 @@ public class PersonTuple implements PersistentTuple<Person> {
 	 * 
 	 * @return the new value
 	 */
+	@Override
 	public Person getNewValue() {
 		return this.container != null
 		                             ? this.container.get("new") : null; //$NON-NLS-1$
@@ -120,6 +122,7 @@ public class PersonTuple implements PersistentTuple<Person> {
 	 * 
 	 * @return the old value
 	 */
+	@Override
 	public Person getOldValue() {
 		return this.container != null
 		                             ? this.container.get("old") : null; //$NON-NLS-1$
@@ -145,6 +148,7 @@ public class PersonTuple implements PersistentTuple<Person> {
 	 * @param newValue
 	 *            the newValue to set
 	 */
+	@Override
 	public void setNewValue(final Person newValue) {
 		if (this.container == null) {
 			this.container = new PersonContainer();
@@ -158,6 +162,7 @@ public class PersonTuple implements PersistentTuple<Person> {
 	 * @param oldValue
 	 *            the oldValue to set
 	 */
+	@Override
 	public void setOldValue(final Person oldValue) {
 		if (this.container == null) {
 			this.container = new PersonContainer();

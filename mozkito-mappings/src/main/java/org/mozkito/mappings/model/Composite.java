@@ -84,8 +84,8 @@ public class Composite implements Annotated {
 	@Transient
 	public Composite addStrategy(@NotNull final Strategy strategy,
 	                             final Boolean valid) {
-		assert !getStrategies().containsKey(strategy.getHandle());
-		getStrategies().put(strategy.getHandle(), valid);
+		assert !getStrategies().containsKey(strategy.getClassName());
+		getStrategies().put(strategy.getClassName(), valid);
 		return this;
 	}
 	
@@ -155,27 +155,14 @@ public class Composite implements Annotated {
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.mapping.model.IComposite#getFrom()
-	 */
-	/**
-	 * Gets the from.
-	 * 
-	 * @return the from
-	 */
-	@Transient
-	public MappableEntity getFrom() {
-		return getRelation().getFrom();
-	}
-	
 	/**
 	 * Gets the handle.
 	 * 
 	 * @return the handle
 	 */
+	@Override
 	@Transient
-	public final String getHandle() {
+	public final String getClassName() {
 		// PRECONDITIONS
 		
 		final StringBuilder builder = new StringBuilder();
@@ -203,6 +190,20 @@ public class Composite implements Annotated {
 			Condition.notNull(builder,
 			                  "Local variable '%s' in '%s:%s'.", "builder", getClass().getSimpleName(), "getHandle"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.mapping.model.IComposite#getFrom()
+	 */
+	/**
+	 * Gets the from.
+	 * 
+	 * @return the from
+	 */
+	@Transient
+	public MappableEntity getFrom() {
+		return getRelation().getFrom();
 	}
 	
 	/*
@@ -289,7 +290,7 @@ public class Composite implements Annotated {
 	@Override
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
-		builder.append(getHandle());
+		builder.append(getClassName());
 		builder.append(" [relation="); //$NON-NLS-1$
 		builder.append(getRelation());
 		builder.append(", strategies="); //$NON-NLS-1$

@@ -29,7 +29,7 @@ public enum RepositoryType {
 	 * 
 	 * @return the handle
 	 */
-	public static String getHandle() {
+	public static String getClassName() {
 		return RepositoryType.class.getSimpleName();
 	}
 }

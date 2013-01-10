@@ -323,7 +323,7 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 	 * 
 	 * @return the handle
 	 */
-	public final String getHandle() {
+	public final String getClassName() {
 		return getClass().getSimpleName();
 	}
 	

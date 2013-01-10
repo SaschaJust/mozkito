@@ -86,7 +86,7 @@ public class Revision implements Annotated {
 		Condition.check(success, "Revision could not be registered at transaction.");
 		
 		if (Logger.logTrace()) {
-			Logger.trace("Creating " + getHandle() + ": " + this);
+			Logger.trace("Creating " + getClassName() + ": " + this);
 		}
 		
 		Condition.notNull(getChangeSet(), "Transaction may never be null after creation.");
@@ -169,7 +169,7 @@ public class Revision implements Annotated {
 	 * @see org.mozkito.persistence.Annotated#getHandle()
 	 */
 	@Override
-	public final String getHandle() {
+	public final String getClassName() {
 		return JavaUtils.getHandle(Revision.class);
 	}
 	

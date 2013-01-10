@@ -91,7 +91,7 @@ public class Candidate implements Annotated {
 	 */
 	@Transient
 	public boolean addSelector(final Selector selector) {
-		return getSelectors().add(selector.getHandle());
+		return getSelectors().add(selector.getClassName());
 	}
 	
 	/**
@@ -187,28 +187,14 @@ public class Candidate implements Annotated {
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.mappings.model.ICandidate#getFrom()
-	 */
-	/**
-	 * Gets the from.
-	 * 
-	 * @return the from
-	 */
-	@Id
-	@ManyToOne (fetch = FetchType.EAGER, cascade = {})
-	public MappableEntity getFrom() {
-		return this.from;
-	}
-	
 	/**
 	 * Gets the simple name of the class.
 	 * 
 	 * @return the simple name of the class.
 	 */
+	@Override
 	@Transient
-	public final String getHandle() {
+	public final String getClassName() {
 		// PRECONDITIONS
 		
 		final StringBuilder builder = new StringBuilder();
@@ -236,6 +222,21 @@ public class Candidate implements Annotated {
 			Condition.notNull(builder,
 			                  "Local variable '%s' in '%s:%s'.", "builder", getClass().getSimpleName(), "getHandle()"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.mappings.model.ICandidate#getFrom()
+	 */
+	/**
+	 * Gets the from.
+	 * 
+	 * @return the from
+	 */
+	@Id
+	@ManyToOne (fetch = FetchType.EAGER, cascade = {})
+	public MappableEntity getFrom() {
+		return this.from;
 	}
 	
 	/**
@@ -321,7 +322,7 @@ public class Candidate implements Annotated {
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
 		
-		builder.append(getHandle());
+		builder.append(getClassName());
 		builder.append(" [from="); //$NON-NLS-1$
 		builder.append(getFrom());
 		builder.append(", to="); //$NON-NLS-1$

@@ -59,7 +59,7 @@ public class TrackerFactory {
 				// TrackerType
 				if (e.getCause() instanceof IllegalArgumentException) {
 					Logger.error(e.getCause(), "You probably missed to add an enum constant to '%s'.",
-					             TrackerType.getHandle());
+					             TrackerType.getClassName());
 				}
 			}
 			throw new UnrecoverableError(e);
@@ -130,7 +130,7 @@ public class TrackerFactory {
 	 * 
 	 * @return the simple class name
 	 */
-	public String getHandle() {
+	public String getClassName() {
 		return this.getClass().getSimpleName();
 	}
 }

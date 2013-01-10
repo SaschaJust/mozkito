@@ -33,7 +33,6 @@ import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.apache.commons.collections.CollectionUtils;
-
 import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.persistence.Annotated;
 
@@ -178,24 +177,13 @@ public abstract class MappableEntity implements Annotated {
 	public abstract Class<?> getBaseType();
 	
 	/**
-	 * Gets the generated id.
-	 * 
-	 * @return the generated id
-	 */
-	@Id
-	@GeneratedValue
-	@Access (AccessType.PROPERTY)
-	public long getGeneratedId() {
-		return this.generatedId;
-	}
-	
-	/**
 	 * Gets the handle.
 	 * 
 	 * @return the handle
 	 */
+	@Override
 	@Transient
-	public final String getHandle() {
+	public final String getClassName() {
 		// PRECONDITIONS
 		
 		final StringBuilder builder = new StringBuilder();
@@ -223,6 +211,18 @@ public abstract class MappableEntity implements Annotated {
 			Condition.notNull(builder,
 			                  "Local variable '%s' in '%s:%s'.", "builder", getClass().getSimpleName(), "getHandle"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
+	}
+	
+	/**
+	 * Gets the generated id.
+	 * 
+	 * @return the generated id
+	 */
+	@Id
+	@GeneratedValue
+	@Access (AccessType.PROPERTY)
+	public long getGeneratedId() {
+		return this.generatedId;
 	}
 	
 	/**

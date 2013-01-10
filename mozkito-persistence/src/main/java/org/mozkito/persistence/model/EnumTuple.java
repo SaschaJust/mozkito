@@ -144,6 +144,16 @@ public class EnumTuple implements PersistentTuple<Enum<?>> {
 		return true;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.persistence.Annotated#getHandle()
+	 */
+	@Override
+	@Transient
+	public final String getClassName() {
+		return JavaUtils.getHandle(EnumTuple.class);
+	}
+	
 	/**
 	 * Gets the enum class.
 	 * 
@@ -164,15 +174,6 @@ public class EnumTuple implements PersistentTuple<Enum<?>> {
 		return this.enumClassName;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.persistence.Annotated#getHandle()
-	 */
-	@Transient
-	public final String getHandle() {
-		return JavaUtils.getHandle(EnumTuple.class);
-	}
-	
 	/**
 	 * Gets the new string value.
 	 * 
@@ -188,6 +189,7 @@ public class EnumTuple implements PersistentTuple<Enum<?>> {
 	 * 
 	 * @return the newValue
 	 */
+	@Override
 	@Transient
 	public Enum<?> getNewValue() {
 		return this.newValue;
@@ -208,6 +210,7 @@ public class EnumTuple implements PersistentTuple<Enum<?>> {
 	 * 
 	 * @return the oldValue
 	 */
+	@Override
 	@Transient
 	public Enum<?> getOldValue() {
 		return this.oldValue;
@@ -308,6 +311,7 @@ public class EnumTuple implements PersistentTuple<Enum<?>> {
 	 * @param newValue
 	 *            the newValue to set
 	 */
+	@Override
 	public void setNewValue(final Enum<?> newValue) {
 		this.newValue = newValue;
 	}
@@ -334,6 +338,7 @@ public class EnumTuple implements PersistentTuple<Enum<?>> {
 	 * @param oldValue
 	 *            the oldValue to set
 	 */
+	@Override
 	public void setOldValue(final Enum<?> oldValue) {
 		this.oldValue = oldValue;
 	}

@@ -80,7 +80,7 @@ public abstract class Tracker {
 	 * 
 	 * @return the simple class name of the current tracker instance
 	 */
-	public String getHandle() {
+	public String getClassName() {
 		return this.getClass().getSimpleName();
 		
 	}

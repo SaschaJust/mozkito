@@ -18,7 +18,6 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.joda.time.DateTime;
-
 import org.mozkito.persistence.model.Person;
 
 /**
@@ -99,21 +98,21 @@ public class LogEntry implements Comparable<LogEntry> {
 	}
 	
 	/**
+	 * Gets the handle.
+	 * 
+	 * @return the simple class name of this class.
+	 */
+	public String getClassName() {
+		return this.getClass().getSimpleName();
+	}
+	
+	/**
 	 * Gets the date time.
 	 * 
 	 * @return the date time
 	 */
 	public DateTime getDateTime() {
 		return this.commitDate;
-	}
-	
-	/**
-	 * Gets the handle.
-	 * 
-	 * @return the simple class name of this class.
-	 */
-	public String getHandle() {
-		return this.getClass().getSimpleName();
 	}
 	
 	/**

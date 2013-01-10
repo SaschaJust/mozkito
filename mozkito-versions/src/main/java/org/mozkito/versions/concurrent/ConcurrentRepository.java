@@ -33,7 +33,6 @@ import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
-import difflib.Delta;
 
 import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.Repository;
@@ -42,6 +41,8 @@ import org.mozkito.versions.elements.AnnotationEntry;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.LogEntry;
 import org.mozkito.versions.exceptions.RepositoryOperationException;
+
+import difflib.Delta;
 
 /**
  * The Class ConcurrentRepository.
@@ -236,6 +237,52 @@ public class ConcurrentRepository extends Repository {
 	/**
 	 * {@inheritDoc}
 	 * 
+	 * @throws RepositoryOperationException
+	 * 
+	 * @see org.mozkito.versions.Repository#getChangeSetId(long)
+	 */
+	@Override
+	public String getChangeSetId(final long index) throws RepositoryOperationException {
+		// PRECONDITIONS
+		
+		try {
+			return getRepository().getChangeSetId(index);
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @throws RepositoryOperationException
+	 * 
+	 * @see org.mozkito.versions.Repository#getChangeSetIndex(java.lang.String)
+	 */
+	@Override
+	public long getChangeSetIndex(final String changeSetId) throws RepositoryOperationException {
+		// PRECONDITIONS
+		
+		try {
+			return getRepository().getChangeSetIndex(changeSetId);
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.versions.Repository#getHandle()
+	 */
+	@Override
+	public final String getClassName() {
+		return JavaUtils.getHandle(ConcurrentRepository.class);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see org.mozkito.versions.Repository#getFirstRevisionId()
 	 */
 	@Override
@@ -264,16 +311,6 @@ public class ConcurrentRepository extends Repository {
 		} finally {
 			// POSTCONDITIONS
 		}
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * @see org.mozkito.versions.Repository#getHandle()
-	 */
-	@Override
-	public final String getHandle() {
-		return JavaUtils.getHandle(ConcurrentRepository.class);
 	}
 	
 	/**
@@ -359,42 +396,6 @@ public class ConcurrentRepository extends Repository {
 		
 		try {
 			return getRepository().getTransactionCount();
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * @throws RepositoryOperationException
-	 * 
-	 * @see org.mozkito.versions.Repository#getChangeSetId(long)
-	 */
-	@Override
-	public String getChangeSetId(final long index) throws RepositoryOperationException {
-		// PRECONDITIONS
-		
-		try {
-			return getRepository().getChangeSetId(index);
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * @throws RepositoryOperationException
-	 * 
-	 * @see org.mozkito.versions.Repository#getChangeSetIndex(java.lang.String)
-	 */
-	@Override
-	public long getChangeSetIndex(final String changeSetId) throws RepositoryOperationException {
-		// PRECONDITIONS
-		
-		try {
-			return getRepository().getChangeSetIndex(changeSetId);
 		} finally {
 			// POSTCONDITIONS
 		}

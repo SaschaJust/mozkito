@@ -51,7 +51,7 @@ public class FilterProcessor extends Filter<Mapping> {
 				final Mapping mapping = getInputData();
 				
 				if (Logger.logDebug()) {
-					Logger.debug(Messages.getString("StrategyProcessor.processing", filter.getHandle(), //$NON-NLS-1$
+					Logger.debug(Messages.getString("StrategyProcessor.processing", filter.getClassName(), //$NON-NLS-1$
 					                                mapping.getFrom(), mapping.getTo()));
 				}
 				provideOutputData(finder.filter(filter, mapping));

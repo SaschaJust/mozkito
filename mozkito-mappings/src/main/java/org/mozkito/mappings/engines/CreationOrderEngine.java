@@ -25,7 +25,6 @@ import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.joda.time.DateTime;
-
 import org.mozkito.issues.tracker.model.Report;
 import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.mappings.mappable.model.MappableEntity;
@@ -160,7 +159,7 @@ public class CreationOrderEngine extends Engine {
 			return this.confidence;
 		} finally {
 			// POSTCONDITIONS
-			Condition.notNull(this.confidence, "Field '%s' in '%s'.", "confidence", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+			Condition.notNull(this.confidence, "Field '%s' in '%s'.", "confidence", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	

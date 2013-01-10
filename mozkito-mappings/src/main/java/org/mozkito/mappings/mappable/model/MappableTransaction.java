@@ -28,11 +28,10 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.collections.CollectionUtils;
-
 import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.mappings.messages.Messages;
-import org.mozkito.versions.model.Handle;
 import org.mozkito.versions.model.ChangeSet;
+import org.mozkito.versions.model.Handle;
 
 /**
  * Class that wraps {@link ChangeSet} to be mapped.
@@ -49,7 +48,7 @@ public class MappableTransaction extends MappableEntity {
 	private static final long serialVersionUID = 3493346151115096823L;
 	
 	/** The transaction. */
-	private ChangeSet    changeset;
+	private ChangeSet         changeset;
 	
 	/**
 	 * Instantiates a new mappable transaction.
@@ -112,7 +111,8 @@ public class MappableTransaction extends MappableEntity {
 				break;
 		}
 		
-		throw new UnrecoverableError(Messages.getString("MappableEntity.unsupportedFieldKey", getHandle(), key.name())); //$NON-NLS-1$
+		throw new UnrecoverableError(
+		                             Messages.getString("MappableEntity.unsupportedFieldKey", getClassName(), key.name())); //$NON-NLS-1$
 	}
 	
 	/*
@@ -130,7 +130,7 @@ public class MappableTransaction extends MappableEntity {
 				return getFile(index);
 			default:
 				if (Logger.logWarn()) {
-					Logger.warn(Messages.getString("MappableEntity.notIndexable", key.name(), getHandle())); //$NON-NLS-1$
+					Logger.warn(Messages.getString("MappableEntity.notIndexable", key.name(), getClassName())); //$NON-NLS-1$
 				}
 				return get(key);
 		}
@@ -236,7 +236,7 @@ public class MappableTransaction extends MappableEntity {
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
 		
-		builder.append(getHandle());
+		builder.append(getClassName());
 		builder.append(" [transaction="); //$NON-NLS-1$
 		builder.append(getTransaction());
 		builder.append("]"); //$NON-NLS-1$

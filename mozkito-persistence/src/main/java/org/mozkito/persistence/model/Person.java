@@ -37,7 +37,6 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.openjpa.persistence.jdbc.Index;
-
 import org.mozkito.persistence.Annotated;
 
 /**
@@ -272,6 +271,15 @@ public class Person implements Annotated {
 		return true;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.persistence.Annotated#getHandle()
+	 */
+	@Override
+	public final String getClassName() {
+		return JavaUtils.getHandle(Person.class);
+	}
+	
 	/**
 	 * Gets the email addresses.
 	 * 
@@ -303,14 +311,6 @@ public class Person implements Annotated {
 	@GeneratedValue (strategy = GenerationType.AUTO)
 	public long getGeneratedId() {
 		return this.generatedId;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.persistence.Annotated#getHandle()
-	 */
-	public final String getHandle() {
-		return JavaUtils.getHandle(Person.class);
 	}
 	
 	/**
@@ -412,7 +412,7 @@ public class Person implements Annotated {
 	@Override
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
-		builder.append(getHandle());
+		builder.append(getClassName());
 		builder.append(" [generatedId="); //$NON-NLS-1$
 		builder.append(getGeneratedId());
 		builder.append(", usernames="); //$NON-NLS-1$

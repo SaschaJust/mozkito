@@ -30,20 +30,20 @@ public abstract class Node {
 	private final Map<Class<? extends Storage>, Storage> storages = new HashMap<Class<? extends Storage>, Storage>();
 	
 	/**
+	 * Gets the simple name of the class.
+	 * 
+	 * @return the simple name of the class.
+	 */
+	public final String getClassName() {
+		return JavaUtils.getHandle(this);
+	}
+	
+	/**
 	 * Gets the description.
 	 * 
 	 * @return the description
 	 */
 	public abstract String getDescription();
-	
-	/**
-	 * Gets the simple name of the class.
-	 * 
-	 * @return the simple name of the class.
-	 */
-	public final String getHandle() {
-		return JavaUtils.getHandle(this);
-	}
 	
 	/**
 	 * Gets the storage.

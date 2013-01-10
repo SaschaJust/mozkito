@@ -130,7 +130,7 @@ public class TextMetadata {
 	 * 
 	 * @return the simple name of the class.
 	 */
-	public static final String getHandle() {
+	public static final String getClassName() {
 		return JavaUtils.getHandle(TextMetadata.class);
 	}
 	

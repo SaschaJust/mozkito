@@ -29,7 +29,6 @@ import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.Logger;
 
 import org.jsoup.Jsoup;
-
 import org.mozkito.issues.tracker.model.Comment;
 import org.mozkito.issues.tracker.model.HistoryElement;
 import org.mozkito.issues.tracker.model.Report;
@@ -122,7 +121,8 @@ public class MappableReport extends MappableEntity implements Annotated {
 				break;
 		}
 		
-		throw new UnrecoverableError(Messages.getString("MappableEntity.unsupportedFieldKey", getHandle(), key.name())); //$NON-NLS-1$
+		throw new UnrecoverableError(
+		                             Messages.getString("MappableEntity.unsupportedFieldKey", getClassName(), key.name())); //$NON-NLS-1$
 	}
 	
 	/*
@@ -167,7 +167,7 @@ public class MappableReport extends MappableEntity implements Annotated {
 				return person;
 			default:
 				if (Logger.logWarn()) {
-					Logger.warn(Messages.getString("MappableEntity.notIndexable", key.name(), getHandle())); //$NON-NLS-1$
+					Logger.warn(Messages.getString("MappableEntity.notIndexable", key.name(), getClassName())); //$NON-NLS-1$
 				}
 				return get(key);
 		}
@@ -274,7 +274,7 @@ public class MappableReport extends MappableEntity implements Annotated {
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
 		
-		builder.append(getHandle());
+		builder.append(getClassName());
 		builder.append(" [report="); //$NON-NLS-1$
 		builder.append(getReport());
 		builder.append("]"); //$NON-NLS-1$

@@ -71,7 +71,7 @@ public class RepositoryOperationException extends Exception {
 	 * 
 	 * @return the simple name of the class.
 	 */
-	public final String getHandle() {
+	public final String getClassName() {
 		return JavaUtils.getHandle(RepositoryOperationException.class);
 	}
 }

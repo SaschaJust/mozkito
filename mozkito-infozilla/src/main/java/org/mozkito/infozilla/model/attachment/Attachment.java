@@ -45,14 +45,13 @@ import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.Parser;
 import org.apache.tika.sax.BodyContentHandler;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
-
 import org.mozkito.infozilla.exceptions.EncodingDeterminationException;
 import org.mozkito.infozilla.exceptions.MIMETypeDeterminationException;
 import org.mozkito.infozilla.model.Attachable;
 import org.mozkito.issues.tracker.model.AttachmentEntry;
 import org.mozkito.persistence.Annotated;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
 
 /**
  * The Class Attachment.
@@ -333,6 +332,15 @@ public class Attachment implements Annotated {
 		return this.attachable;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.persistence.Annotated#getHandle()
+	 */
+	@Override
+	public final String getClassName() {
+		return JavaUtils.getHandle(Attachment.class);
+	}
+	
 	/**
 	 * Gets the data.
 	 * 
@@ -379,14 +387,6 @@ public class Attachment implements Annotated {
 	@GeneratedValue (strategy = GenerationType.SEQUENCE)
 	public long getGeneratedId() {
 		return this.generatedId;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.persistence.Annotated#getHandle()
-	 */
-	public final String getHandle() {
-		return JavaUtils.getHandle(Attachment.class);
 	}
 	
 	/**

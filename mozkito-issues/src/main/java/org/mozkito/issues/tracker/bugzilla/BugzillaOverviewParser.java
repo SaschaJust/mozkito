@@ -30,7 +30,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-
 import org.mozkito.issues.tracker.OverviewParser;
 import org.mozkito.issues.tracker.ReportLink;
 
@@ -68,7 +67,7 @@ public class BugzillaOverviewParser implements OverviewParser {
 	 * 
 	 * @return the handle
 	 */
-	private Object getHandle() {
+	private Object getClassName() {
 		// PRECONDITIONS
 		
 		try {
@@ -128,7 +127,7 @@ public class BugzillaOverviewParser implements OverviewParser {
 			
 			RawContent content;
 			if (this.overviewURI == null) {
-				Condition.notNull(this.overviewURI, "Field '%s' in '%s'.", "overviewURI", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+				Condition.notNull(this.overviewURI, "Field '%s' in '%s'.", "overviewURI", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
 				return false;
 			}
 			try {

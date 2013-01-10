@@ -46,8 +46,17 @@ public class ItemizationEntry {
 			this.end = end;
 		} finally {
 			// POSTCONDITIONS
-			CompareCondition.positive(this.end, "Field '%s' in '%s'.", "end", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+			CompareCondition.positive(this.end, "Field '%s' in '%s'.", "end", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
+	}
+	
+	/**
+	 * Gets the simple name of the class.
+	 * 
+	 * @return the simple name of the class.
+	 */
+	public final String getClassName() {
+		return JavaUtils.getHandle(ItemizationEntry.class);
 	}
 	
 	/**
@@ -64,15 +73,6 @@ public class ItemizationEntry {
 			// POSTCONDITIONS
 			Condition.notNull(this.end, "Field '%s' in '%s'.", "end", getClass().getSimpleName());
 		}
-	}
-	
-	/**
-	 * Gets the simple name of the class.
-	 * 
-	 * @return the simple name of the class.
-	 */
-	public final String getHandle() {
-		return JavaUtils.getHandle(ItemizationEntry.class);
 	}
 	
 	/**

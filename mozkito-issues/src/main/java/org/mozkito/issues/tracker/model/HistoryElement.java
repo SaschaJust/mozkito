@@ -41,7 +41,6 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
 
 import org.joda.time.DateTime;
-
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persistence.model.DateTimeTuple;
 import org.mozkito.persistence.model.EnumTuple;
@@ -445,6 +444,15 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 		return this.changedStringValues;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.persistence.Annotated#getHandle()
+	 */
+	@Override
+	public final String getClassName() {
+		return JavaUtils.getHandle(HistoryElement.class);
+	}
+	
 	/**
 	 * Gets the fields.
 	 * 
@@ -485,14 +493,6 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 		element.setBugId(getBugId());
 		element.setAuthor(getAuthor());
 		return element;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.persistence.Annotated#getHandle()
-	 */
-	public final String getHandle() {
-		return JavaUtils.getHandle(HistoryElement.class);
 	}
 	
 	/**

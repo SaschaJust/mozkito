@@ -30,7 +30,6 @@ import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 
 import org.joda.time.DateTime;
-
 import org.mozkito.issues.tracker.elements.Priority;
 import org.mozkito.issues.tracker.elements.Resolution;
 import org.mozkito.issues.tracker.elements.Severity;
@@ -232,6 +231,15 @@ public class EnhancedReport implements Annotated, Comparable<EnhancedReport> {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.persistence.Annotated#getHandle()
+	 */
+	@Override
+	public final String getClassName() {
+		return JavaUtils.getHandle(EnhancedReport.class);
+	}
+	
 	/**
 	 * Gets the comments.
 	 * 
@@ -282,15 +290,6 @@ public class EnhancedReport implements Annotated, Comparable<EnhancedReport> {
 	@Transient
 	public Object getField(final String lowerFieldName) {
 		return getReport().getField(lowerFieldName);
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.persistence.Annotated#getHandle()
-	 */
-	@Override
-	public final String getHandle() {
-		return JavaUtils.getHandle(EnhancedReport.class);
 	}
 	
 	/**

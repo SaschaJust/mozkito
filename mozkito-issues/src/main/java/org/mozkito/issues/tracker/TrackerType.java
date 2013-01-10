@@ -35,7 +35,7 @@ public enum TrackerType {
 	 * 
 	 * @return the handle
 	 */
-	public static String getHandle() {
+	public static String getClassName() {
 		return TrackerType.class.getSimpleName();
 	}
 }

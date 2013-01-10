@@ -52,7 +52,7 @@ public class EngineProcessor extends Filter<Relation> {
 				final Relation relation = getInputData();
 				
 				if (Logger.logDebug()) {
-					Logger.debug(Messages.getString("EngineProcessor.processing", engine.getHandle(), //$NON-NLS-1$
+					Logger.debug(Messages.getString("EngineProcessor.processing", engine.getClassName(), //$NON-NLS-1$
 					                                relation.getFrom(), relation.getTo()));
 				}
 				

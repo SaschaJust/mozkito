@@ -38,7 +38,7 @@ public class JavaStacktraceEntry extends StacktraceEntry {
 	 * @see org.mozkito.infozilla.model.stacktrace.StacktraceEntry#getClassName()
 	 */
 	@Override
-	public String getClassName() {
+	public String getEntryClassName() {
 		// PRECONDITIONS
 		
 		try {

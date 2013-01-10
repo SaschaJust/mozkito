@@ -86,7 +86,7 @@ public class Finder {
 	 */
 	public void addEngine(final Engine engine) {
 		if (Logger.logInfo()) {
-			Logger.info(Messages.getString("Finder.addingEngine", engine.getHandle())); //$NON-NLS-1$
+			Logger.info(Messages.getString("Finder.addingEngine", engine.getClassName())); //$NON-NLS-1$
 		}
 		
 		this.engines.put(engine.getClass(), engine);
@@ -102,7 +102,7 @@ public class Finder {
 	 */
 	public void addFilter(final Filter filter) {
 		if (Logger.logInfo()) {
-			Logger.info(Messages.getString("Finder.addingFilter", filter.getHandle())); //$NON-NLS-1$
+			Logger.info(Messages.getString("Finder.addingFilter", filter.getClassName())); //$NON-NLS-1$
 		}
 		
 		this.filters.put(filter.getClass(), filter);
@@ -118,7 +118,7 @@ public class Finder {
 	 */
 	public void addSelector(final Selector selector) {
 		if (Logger.logInfo()) {
-			Logger.info(Messages.getString("Finder.addingSelector", selector.getHandle())); //$NON-NLS-1$
+			Logger.info(Messages.getString("Finder.addingSelector", selector.getClassName())); //$NON-NLS-1$
 		}
 		
 		this.selectors.put(selector.getClass(), selector);
@@ -133,7 +133,7 @@ public class Finder {
 	 */
 	public void addSplitter(final Splitter splitter) {
 		if (Logger.logInfo()) {
-			Logger.info(Messages.getString("Finder.addingSplitter", splitter.getHandle())); //$NON-NLS-1$
+			Logger.info(Messages.getString("Finder.addingSplitter", splitter.getClassName())); //$NON-NLS-1$
 		}
 		
 		this.splitters.put(splitter.getClass(), splitter);
@@ -148,7 +148,7 @@ public class Finder {
 	 */
 	public void addStorage(final Storage storage) {
 		if (Logger.logInfo()) {
-			Logger.info(Messages.getString("Finder.addingStorage", storage.getHandle())); //$NON-NLS-1$
+			Logger.info(Messages.getString("Finder.addingStorage", storage.getClassName())); //$NON-NLS-1$
 		}
 		
 		this.storages.put(storage.getClass(), storage);
@@ -163,7 +163,7 @@ public class Finder {
 	 */
 	public void addStrategy(final Strategy strategy) {
 		if (Logger.logInfo()) {
-			Logger.info(Messages.getString("Finder.addingStrategy", strategy.getHandle())); //$NON-NLS-1$
+			Logger.info(Messages.getString("Finder.addingStrategy", strategy.getClassName())); //$NON-NLS-1$
 		}
 		
 		this.strategies.put(strategy.getClass(), strategy);
@@ -178,7 +178,7 @@ public class Finder {
 	 */
 	public void addTrainer(final Trainer trainer) {
 		if (Logger.logInfo()) {
-			Logger.info(Messages.getString("Finder.addingTrainer", trainer.getHandle())); //$NON-NLS-1$
+			Logger.info(Messages.getString("Finder.addingTrainer", trainer.getClassName())); //$NON-NLS-1$
 		}
 		
 		this.trainers.put(trainer.getClass(), trainer);
@@ -300,8 +300,8 @@ public class Finder {
 			
 			for (final Selector selector : activeSelectors) {
 				if (Logger.logDebug()) {
-					Logger.debug(Messages.getString("Finder.selectorUse", selector.getHandle(), //$NON-NLS-1$
-					                                source.getHandle(), targetClass));
+					Logger.debug(Messages.getString("Finder.selectorUse", selector.getClassName(), //$NON-NLS-1$
+					                                source.getClassName(), targetClass));
 				}
 				
 				final List<T> parsingResults = selector.parse(source, targetClass, util);
@@ -481,7 +481,7 @@ public class Finder {
 	public Composite rate(final Strategy strategy,
 	                      final Composite composite) {
 		if (Logger.logDebug()) {
-			Logger.debug(Messages.getString("Finder.strategyUse", strategy.getHandle(), composite)); //$NON-NLS-1$
+			Logger.debug(Messages.getString("Finder.strategyUse", strategy.getClassName(), composite)); //$NON-NLS-1$
 		}
 		
 		strategy.map(composite);
@@ -503,13 +503,13 @@ public class Finder {
 	                      final Relation relation) {
 		
 		if (Logger.logDebug()) {
-			Logger.debug(Messages.getString("Finder.engineUse", engine.getHandle(), relation)); //$NON-NLS-1$
+			Logger.debug(Messages.getString("Finder.engineUse", engine.getClassName(), relation)); //$NON-NLS-1$
 		}
 		
 		final Expression expression = engine.supported();
 		
 		if (expression == null) {
-			throw new UnrecoverableError(Messages.getString("Finder.noSupportedFields", engine.getHandle())); //$NON-NLS-1$
+			throw new UnrecoverableError(Messages.getString("Finder.noSupportedFields", engine.getClassName())); //$NON-NLS-1$
 		}
 		
 		final MappableEntity element1 = relation.getFrom();
@@ -522,7 +522,7 @@ public class Finder {
 		} else if (check < 0) {
 			engine.score(element2, element1, relation);
 		} else if (Logger.logInfo()) {
-			Logger.info(Messages.getString("Finder.skippingEngine", engine.getHandle(), expression)); //$NON-NLS-1$ 
+			Logger.info(Messages.getString("Finder.skippingEngine", engine.getClassName(), expression)); //$NON-NLS-1$ 
 		}
 		
 		return relation;

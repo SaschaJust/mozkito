@@ -23,11 +23,20 @@ import net.ownhero.dev.ioda.JavaUtils;
 public abstract class StacktraceEntry {
 	
 	/**
+	 * Gets the simple name of the class.
+	 * 
+	 * @return the simple name of the class.
+	 */
+	public final String getClassName() {
+		return JavaUtils.getHandle(StacktraceEntry.class);
+	}
+	
+	/**
 	 * Gets the class name.
 	 * 
 	 * @return the class name
 	 */
-	public abstract String getClassName();
+	public abstract String getEntryClassName();
 	
 	/**
 	 * Gets the file name.
@@ -35,15 +44,6 @@ public abstract class StacktraceEntry {
 	 * @return the file name
 	 */
 	public abstract String getFileName();
-	
-	/**
-	 * Gets the simple name of the class.
-	 * 
-	 * @return the simple name of the class.
-	 */
-	public final String getHandle() {
-		return JavaUtils.getHandle(StacktraceEntry.class);
-	}
 	
 	/**
 	 * Gets the line number.

@@ -30,12 +30,11 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.jdom2.Attribute;
 import org.jdom2.Element;
-
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persistence.ModelStorage;
 import org.mozkito.versions.elements.ChangeType;
-import org.mozkito.versions.model.Revision;
 import org.mozkito.versions.model.ChangeSet;
+import org.mozkito.versions.model.Revision;
 
 /**
  * The Class JavaChangeOperation.
@@ -125,7 +124,7 @@ public class JavaChangeOperation implements Annotated {
 	private JavaElementLocation changedElementLocation;
 	
 	/** The revision. */
-	private Revision         revision;
+	private Revision            revision;
 	
 	/** The essential. */
 	private boolean             essential = true;
@@ -227,9 +226,10 @@ public class JavaChangeOperation implements Annotated {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.persistence.Annotated#getHandle()
+	 * @see org.mozkito.persistence.Annotated#getClassName()
 	 */
-	public final String getHandle() {
+	@Override
+	public final String getClassName() {
 		return JavaUtils.getHandle(JavaChangeOperation.class);
 	}
 	

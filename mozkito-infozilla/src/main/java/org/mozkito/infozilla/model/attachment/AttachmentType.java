@@ -44,7 +44,8 @@ public enum AttachmentType implements Annotated {
 	 * (non-Javadoc)
 	 * @see org.mozkito.persistence.Annotated#getHandle()
 	 */
-	public final String getHandle() {
+	@Override
+	public final String getClassName() {
 		return JavaUtils.getHandle(AttachmentType.class);
 	}
 }

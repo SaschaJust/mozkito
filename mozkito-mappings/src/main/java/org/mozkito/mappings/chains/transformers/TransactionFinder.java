@@ -72,7 +72,7 @@ public class TransactionFinder extends Transformer<Report, Candidate> {
 					                                                                                           util);
 					
 					if (Logger.logInfo()) {
-						Logger.info(Messages.getString("TransactionFinder.processing", mapReport.getHandle(), //$NON-NLS-1$
+						Logger.info(Messages.getString("TransactionFinder.processing", mapReport.getClassName(), //$NON-NLS-1$
 						                               mapReport.toString(), transactionCandidates.size()));
 					}
 					

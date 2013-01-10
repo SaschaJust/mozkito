@@ -97,7 +97,7 @@ public class DatabaseEnvironment {
 		 * 
 		 * @return the simple name of the class.
 		 */
-		public final String getHandle() {
+		public final String getClassName() {
 			return JavaUtils.getHandle(ConfigurationException.class);
 		}
 	}
@@ -191,6 +191,15 @@ public class DatabaseEnvironment {
 		} finally {
 			// POSTCONDITIONS
 		}
+	}
+	
+	/**
+	 * Gets the simple name of the class.
+	 * 
+	 * @return the simple name of the class.
+	 */
+	public final String getClassName() {
+		return JavaUtils.getHandle(DatabaseEnvironment.class);
 	}
 	
 	/**
@@ -316,15 +325,6 @@ public class DatabaseEnvironment {
 		} finally {
 			// POSTCONDITIONS
 		}
-	}
-	
-	/**
-	 * Gets the simple name of the class.
-	 * 
-	 * @return the simple name of the class.
-	 */
-	public final String getHandle() {
-		return JavaUtils.getHandle(DatabaseEnvironment.class);
 	}
 	
 	/**

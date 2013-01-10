@@ -206,6 +206,43 @@ public class Relation implements Annotated {
 	}
 	
 	/**
+	 * Gets the simple name of the class.
+	 * 
+	 * @return the simple name of the class.
+	 */
+	@Override
+	@Transient
+	public final String getClassName() {
+		// PRECONDITIONS
+		
+		final StringBuilder builder = new StringBuilder();
+		
+		try {
+			final LinkedList<Class<?>> list = new LinkedList<Class<?>>();
+			Class<?> clazz = getClass();
+			list.add(clazz);
+			
+			while ((clazz = clazz.getEnclosingClass()) != null) {
+				list.addFirst(clazz);
+			}
+			
+			for (final Class<?> c : list) {
+				if (builder.length() > 0) {
+					builder.append('.');
+				}
+				
+				builder.append(c.getSimpleName());
+			}
+			
+			return builder.toString();
+		} finally {
+			// POSTCONDITIONS
+			Condition.notNull(builder,
+			                  "Local variable '%s' in '%s:%s'.", "builder", getClass().getSimpleName(), "getHandle()"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
+	}
+	
+	/**
 	 * Gets the scoring engines.
 	 * 
 	 * @return a set of {@link Engine} classes that were used for this scoring
@@ -243,42 +280,6 @@ public class Relation implements Annotated {
 	@Transient
 	public MappableEntity getFrom() {
 		return getCandidate().getFrom();
-	}
-	
-	/**
-	 * Gets the simple name of the class.
-	 * 
-	 * @return the simple name of the class.
-	 */
-	@Transient
-	public final String getHandle() {
-		// PRECONDITIONS
-		
-		final StringBuilder builder = new StringBuilder();
-		
-		try {
-			final LinkedList<Class<?>> list = new LinkedList<Class<?>>();
-			Class<?> clazz = getClass();
-			list.add(clazz);
-			
-			while ((clazz = clazz.getEnclosingClass()) != null) {
-				list.addFirst(clazz);
-			}
-			
-			for (final Class<?> c : list) {
-				if (builder.length() > 0) {
-					builder.append('.');
-				}
-				
-				builder.append(c.getSimpleName());
-			}
-			
-			return builder.toString();
-		} finally {
-			// POSTCONDITIONS
-			Condition.notNull(builder,
-			                  "Local variable '%s' in '%s:%s'.", "builder", getClass().getSimpleName(), "getHandle()"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		}
 	}
 	
 	/*
@@ -367,7 +368,7 @@ public class Relation implements Annotated {
 	@Override
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
-		builder.append(getHandle());
+		builder.append(getClassName());
 		builder.append(" [totalConfidence="); //$NON-NLS-1$
 		builder.append(getTotalConfidence());
 		builder.append(", element1="); //$NON-NLS-1$

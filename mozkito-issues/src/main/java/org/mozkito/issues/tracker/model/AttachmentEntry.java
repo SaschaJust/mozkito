@@ -138,7 +138,7 @@ public class AttachmentEntry implements Annotated {
 	 * (non-Javadoc)
 	 * @see org.mozkito.persistence.Annotated#getHandle()
 	 */
-	public final String getHandle() {
+	public final String getClassName() {
 		return JavaUtils.getHandle(AttachmentEntry.class);
 	}
 	

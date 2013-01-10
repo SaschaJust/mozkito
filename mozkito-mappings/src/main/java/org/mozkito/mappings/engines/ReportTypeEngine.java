@@ -198,7 +198,7 @@ public class ReportTypeEngine extends Engine {
 			return this.confidence;
 		} finally {
 			// POSTCONDITIONS
-			Condition.notNull(this.confidence, "Field '%s' in '%s'.", "confidence", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+			Condition.notNull(this.confidence, "Field '%s' in '%s'.", "confidence", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	

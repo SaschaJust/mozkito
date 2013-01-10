@@ -52,7 +52,7 @@ public class StrategyProcessor extends Filter<Composite> {
 				final Composite composite = getInputData();
 				
 				if (Logger.logDebug()) {
-					Logger.debug(Messages.getString("StrategyProcessor.processing", strategy.getHandle(), //$NON-NLS-1$
+					Logger.debug(Messages.getString("StrategyProcessor.processing", strategy.getClassName(), //$NON-NLS-1$
 					                                composite.getFrom(), composite.getTo()));
 				}
 				

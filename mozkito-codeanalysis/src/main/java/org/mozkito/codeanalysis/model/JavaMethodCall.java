@@ -277,7 +277,7 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	 * @see org.mozkito.persistence.Annotated#getHandle()
 	 */
 	@Override
-	public final String getHandle() {
+	public final String getClassName() {
 		return JavaUtils.getHandle(JavaMethodCall.class);
 	}
 	

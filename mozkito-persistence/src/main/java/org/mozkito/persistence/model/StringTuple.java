@@ -95,8 +95,9 @@ public class StringTuple implements PersistentTuple<String> {
 	 * (non-Javadoc)
 	 * @see org.mozkito.persistence.Annotated#getHandle()
 	 */
+	@Override
 	@Transient
-	public final String getHandle() {
+	public final String getClassName() {
 		return JavaUtils.getHandle(StringTuple.class);
 	}
 	
@@ -105,6 +106,7 @@ public class StringTuple implements PersistentTuple<String> {
 	 * 
 	 * @return the newValue
 	 */
+	@Override
 	@Basic
 	@Lob
 	public String getNewValue() {
@@ -116,6 +118,7 @@ public class StringTuple implements PersistentTuple<String> {
 	 * 
 	 * @return the oldValue
 	 */
+	@Override
 	@Basic
 	@Lob
 	public String getOldValue() {
@@ -145,6 +148,7 @@ public class StringTuple implements PersistentTuple<String> {
 	 * @param newValue
 	 *            the newValue to set
 	 */
+	@Override
 	public void setNewValue(final String newValue) {
 		this.newValue = newValue;
 	}
@@ -155,6 +159,7 @@ public class StringTuple implements PersistentTuple<String> {
 	 * @param oldValue
 	 *            the oldValue to set
 	 */
+	@Override
 	public void setOldValue(final String oldValue) {
 		this.oldValue = oldValue;
 	}

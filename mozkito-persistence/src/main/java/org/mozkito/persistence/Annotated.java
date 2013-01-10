@@ -30,5 +30,5 @@ public interface Annotated extends Serializable {
 	 * 
 	 * @return the simple classname
 	 */
-	String getHandle();
+	String getClassName();
 }

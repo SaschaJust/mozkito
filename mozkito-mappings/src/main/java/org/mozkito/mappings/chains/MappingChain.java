@@ -96,7 +96,7 @@ public class MappingChain extends Chain<Settings> {
 			throw new Shutdown(e.getMessage(), e);
 		}
 		
-		Condition.notNull(this.threadPool, "Field '%s' in '%s'.", "threadPool", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		Condition.notNull(this.threadPool, "Field '%s' in '%s'.", "threadPool", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/**
@@ -104,7 +104,7 @@ public class MappingChain extends Chain<Settings> {
 	 * 
 	 * @return the simple name of the class.
 	 */
-	public String getHandle() {
+	public String getClassName() {
 		return JavaUtils.getHandle(this);
 	}
 	
@@ -115,8 +115,8 @@ public class MappingChain extends Chain<Settings> {
 	@Override
 	public void setup() {
 		// PRECONDITIONS
-		Condition.notNull(this.databaseArguments, "Field '%s' in '%s'.", "databaseArguments", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
-		Condition.notNull(this.mappingArguments, "Field '%s' in '%s'.", "mappingArguments", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		Condition.notNull(this.databaseArguments, "Field '%s' in '%s'.", "databaseArguments", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
+		Condition.notNull(this.mappingArguments, "Field '%s' in '%s'.", "mappingArguments", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
 		Logger.updateClassLevels();
 		try {
 			final Finder finder = this.mappingArguments.getValue();
@@ -146,7 +146,7 @@ public class MappingChain extends Chain<Settings> {
 			}
 			
 			Condition.notNull(persistenceUtil,
-			                  "Local variable '%s' in '%s:'.", "persistenceUtil", getHandle(), "setup()"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			                  "Local variable '%s' in '%s:'.", "persistenceUtil", getClassName(), "setup()"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			
 			finder.loadData(persistenceUtil);
 			final Group group = this.threadPool.getThreadGroup();

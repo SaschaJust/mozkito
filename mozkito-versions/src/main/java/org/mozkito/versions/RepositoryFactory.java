@@ -179,7 +179,7 @@ public final class RepositoryFactory {
 	 * 
 	 * @return the simple class name
 	 */
-	public String getHandle() {
+	public String getClassName() {
 		return this.getClass().getSimpleName();
 	}
 }

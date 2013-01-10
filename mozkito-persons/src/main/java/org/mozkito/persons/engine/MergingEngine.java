@@ -205,19 +205,19 @@ public abstract class MergingEngine implements SettingsProvider {
 	                                            PersonManager manager);
 	
 	/**
+	 * Gets the simple name of the class.
+	 * 
+	 * @return the simple name of the class.
+	 */
+	public final String getClassName() {
+		return JavaUtils.getHandle(GravatarEngine.class);
+	}
+	
+	/**
 	 * Gets the description.
 	 * 
 	 * @return the description
 	 */
 	public abstract String getDescription();
-	
-	/**
-	 * Gets the simple name of the class.
-	 * 
-	 * @return the simple name of the class.
-	 */
-	public final String getHandle() {
-		return JavaUtils.getHandle(GravatarEngine.class);
-	}
 	
 }

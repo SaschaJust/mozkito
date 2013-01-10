@@ -128,7 +128,7 @@ public class ChangeSet implements Annotated {
 		setAuthor(author);
 		setOriginalId(originalId);
 		if (Logger.logTrace()) {
-			Logger.trace("Creating " + getHandle() + ": " + this);
+			Logger.trace("Creating " + getClassName() + ": " + this);
 		}
 	}
 	
@@ -306,7 +306,7 @@ public class ChangeSet implements Annotated {
 	 * @see org.mozkito.persistence.Annotated#getHandle()
 	 */
 	@Override
-	public final String getHandle() {
+	public final String getClassName() {
 		return JavaUtils.getHandle(ChangeSet.class);
 	}
 	
@@ -614,7 +614,7 @@ public class ChangeSet implements Annotated {
 	public String toString() {
 		
 		final StringBuilder string = new StringBuilder();
-		string.append(getHandle());
+		string.append(getClassName());
 		string.append(" [id="); //$NON-NLS-1$
 		string.append(getId());
 		string.append(", message="); //$NON-NLS-1$

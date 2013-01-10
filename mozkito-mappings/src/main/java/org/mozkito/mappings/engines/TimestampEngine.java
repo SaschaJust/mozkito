@@ -34,7 +34,6 @@ import net.ownhero.dev.regex.Regex;
 
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
-
 import org.mozkito.issues.tracker.elements.Resolution;
 import org.mozkito.issues.tracker.model.History;
 import org.mozkito.issues.tracker.model.HistoryElement;
@@ -279,7 +278,7 @@ public class TimestampEngine extends Engine {
 			
 			ClassCondition.instance(element2, MappableReport.class, "Required due to 'supported()' expression."); //$NON-NLS-1$
 			final Report report = ((MappableReport) element2).getReport();
-			Condition.notNull(report, "Local variable '%s' in '%s:%s'.", "report", getHandle(), "score"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			Condition.notNull(report, "Local variable '%s' in '%s:%s'.", "report", getClassName(), "score"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			
 			final Interval localInterval = new Interval(element1Timestamp.plus(getInterval().getStartMillis()),
 			                                            element1Timestamp.plus(getInterval().getEndMillis()));

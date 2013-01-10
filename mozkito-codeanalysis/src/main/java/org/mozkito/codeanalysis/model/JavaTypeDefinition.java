@@ -29,7 +29,6 @@ import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.jdom2.Element;
-
 import org.mozkito.codeanalysis.visitors.PPATypeVisitor;
 import org.mozkito.persistence.Annotated;
 
@@ -223,7 +222,8 @@ public class JavaTypeDefinition extends JavaElement implements Annotated {
 	 * (non-Javadoc)
 	 * @see org.mozkito.persistence.Annotated#getHandle()
 	 */
-	public final String getHandle() {
+	@Override
+	public final String getClassName() {
 		return JavaUtils.getHandle(JavaTypeDefinition.class);
 	}
 	

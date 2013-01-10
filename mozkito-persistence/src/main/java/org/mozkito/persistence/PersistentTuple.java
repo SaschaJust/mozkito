@@ -27,7 +27,8 @@ public interface PersistentTuple<T> extends Annotated {
 	 * 
 	 * @return the handle
 	 */
-	String getHandle();
+	@Override
+	String getClassName();
 	
 	/**
 	 * Gets the new value.

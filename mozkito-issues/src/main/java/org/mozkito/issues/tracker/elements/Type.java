@@ -53,7 +53,7 @@ public enum Type {
 	 * 
 	 * @return the handle
 	 */
-	public String getHandle() {
+	public String getClassName() {
 		return this.getClass().getSimpleName();
 	}
 }

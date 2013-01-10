@@ -23,7 +23,6 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.junit.After;
 import org.junit.Before;
-
 import org.mozkito.exceptions.TestSetupException;
 import org.mozkito.persistence.DatabaseEnvironment;
 import org.mozkito.persistence.PersistenceUtil;
@@ -109,6 +108,15 @@ public class DatabaseTest {
 	}
 	
 	/**
+	 * Gets the simple name of the class.
+	 * 
+	 * @return the simple name of the class.
+	 */
+	public final String getClassName() {
+		return JavaUtils.getHandle(DatabaseTest.class);
+	}
+	
+	/**
 	 * Gets the database name.
 	 * 
 	 * @return the database name
@@ -123,15 +131,6 @@ public class DatabaseTest {
 		} finally {
 			// POSTCONDITIONS
 		}
-	}
-	
-	/**
-	 * Gets the simple name of the class.
-	 * 
-	 * @return the simple name of the class.
-	 */
-	public final String getHandle() {
-		return JavaUtils.getHandle(DatabaseTest.class);
 	}
 	
 	/**

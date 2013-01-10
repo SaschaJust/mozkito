@@ -55,8 +55,8 @@ public class Itemization implements Collection<ItemizationEntry> {
 			this.text = text;
 		} finally {
 			// POSTCONDITIONS
-			Condition.notNull(this.identifier, "Field '%s' in '%s'.", "identifier", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
-			Condition.notNull(this.text, "Field '%s' in '%s'.", "text", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+			Condition.notNull(this.identifier, "Field '%s' in '%s'.", "identifier", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
+			Condition.notNull(this.text, "Field '%s' in '%s'.", "text", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
@@ -67,7 +67,7 @@ public class Itemization implements Collection<ItemizationEntry> {
 	@Override
 	public boolean add(@NotNegative final ItemizationEntry e) {
 		// PRECONDITIONS
-		Condition.notNull(this.itemizationEntries, "Field '%s' in '%s'.", "itemizationEntries", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		Condition.notNull(this.itemizationEntries, "Field '%s' in '%s'.", "itemizationEntries", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		try {
 			return this.itemizationEntries.add(e);
@@ -83,7 +83,7 @@ public class Itemization implements Collection<ItemizationEntry> {
 	@Override
 	public boolean addAll(@NotNegative final Collection<? extends ItemizationEntry> c) {
 		// PRECONDITIONS
-		Condition.notNull(this.itemizationEntries, "Field '%s' in '%s'.", "itemizationEntries", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		Condition.notNull(this.itemizationEntries, "Field '%s' in '%s'.", "itemizationEntries", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		try {
 			return this.itemizationEntries.addAll(c);
@@ -99,7 +99,7 @@ public class Itemization implements Collection<ItemizationEntry> {
 	@Override
 	public void clear() {
 		// PRECONDITIONS
-		Condition.notNull(this.itemizationEntries, "Field '%s' in '%s'.", "itemizationEntries", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		Condition.notNull(this.itemizationEntries, "Field '%s' in '%s'.", "itemizationEntries", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		try {
 			this.itemizationEntries.clear();
@@ -115,7 +115,7 @@ public class Itemization implements Collection<ItemizationEntry> {
 	@Override
 	public boolean contains(final Object o) {
 		// PRECONDITIONS
-		Condition.notNull(this.itemizationEntries, "Field '%s' in '%s'.", "itemizationEntries", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		Condition.notNull(this.itemizationEntries, "Field '%s' in '%s'.", "itemizationEntries", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		try {
 			return this.itemizationEntries.contains(o);
@@ -131,7 +131,7 @@ public class Itemization implements Collection<ItemizationEntry> {
 	@Override
 	public boolean containsAll(final Collection<?> c) {
 		// PRECONDITIONS
-		Condition.notNull(this.itemizationEntries, "Field '%s' in '%s'.", "itemizationEntries", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		Condition.notNull(this.itemizationEntries, "Field '%s' in '%s'.", "itemizationEntries", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		try {
 			return this.itemizationEntries.containsAll(c);
@@ -145,7 +145,7 @@ public class Itemization implements Collection<ItemizationEntry> {
 	 * 
 	 * @return the simple name of the class.
 	 */
-	public final String getHandle() {
+	public final String getClassName() {
 		return JavaUtils.getHandle(Itemization.class);
 	}
 	
@@ -205,7 +205,7 @@ public class Itemization implements Collection<ItemizationEntry> {
 	@Override
 	public boolean isEmpty() {
 		// PRECONDITIONS
-		Condition.notNull(this.itemizationEntries, "Field '%s' in '%s'.", "itemizationEntries", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		Condition.notNull(this.itemizationEntries, "Field '%s' in '%s'.", "itemizationEntries", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		try {
 			return this.itemizationEntries.isEmpty();
@@ -221,7 +221,7 @@ public class Itemization implements Collection<ItemizationEntry> {
 	@Override
 	public Iterator<ItemizationEntry> iterator() {
 		// PRECONDITIONS
-		Condition.notNull(this.itemizationEntries, "Field '%s' in '%s'.", "itemizationEntries", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		Condition.notNull(this.itemizationEntries, "Field '%s' in '%s'.", "itemizationEntries", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		try {
 			return this.itemizationEntries.iterator();
@@ -237,7 +237,7 @@ public class Itemization implements Collection<ItemizationEntry> {
 	@Override
 	public boolean remove(final Object o) {
 		// PRECONDITIONS
-		Condition.notNull(this.itemizationEntries, "Field '%s' in '%s'.", "itemizationEntries", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		Condition.notNull(this.itemizationEntries, "Field '%s' in '%s'.", "itemizationEntries", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		try {
 			return this.itemizationEntries.remove(o);
@@ -253,7 +253,7 @@ public class Itemization implements Collection<ItemizationEntry> {
 	@Override
 	public boolean removeAll(final Collection<?> c) {
 		// PRECONDITIONS
-		Condition.notNull(this.itemizationEntries, "Field '%s' in '%s'.", "itemizationEntries", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		Condition.notNull(this.itemizationEntries, "Field '%s' in '%s'.", "itemizationEntries", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		try {
 			return this.itemizationEntries.removeAll(c);
@@ -269,7 +269,7 @@ public class Itemization implements Collection<ItemizationEntry> {
 	@Override
 	public boolean retainAll(final Collection<?> c) {
 		// PRECONDITIONS
-		Condition.notNull(this.itemizationEntries, "Field '%s' in '%s'.", "itemizationEntries", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		Condition.notNull(this.itemizationEntries, "Field '%s' in '%s'.", "itemizationEntries", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		try {
 			return this.itemizationEntries.retainAll(c);
@@ -285,7 +285,7 @@ public class Itemization implements Collection<ItemizationEntry> {
 	@Override
 	public int size() {
 		// PRECONDITIONS
-		Condition.notNull(this.itemizationEntries, "Field '%s' in '%s'.", "itemizationEntries", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		Condition.notNull(this.itemizationEntries, "Field '%s' in '%s'.", "itemizationEntries", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		try {
 			return this.itemizationEntries.size();
@@ -301,7 +301,7 @@ public class Itemization implements Collection<ItemizationEntry> {
 	@Override
 	public Object[] toArray() {
 		// PRECONDITIONS
-		Condition.notNull(this.itemizationEntries, "Field '%s' in '%s'.", "itemizationEntries", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		Condition.notNull(this.itemizationEntries, "Field '%s' in '%s'.", "itemizationEntries", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		try {
 			return this.itemizationEntries.toArray();
@@ -317,7 +317,7 @@ public class Itemization implements Collection<ItemizationEntry> {
 	@Override
 	public <T> T[] toArray(final T[] a) {
 		// PRECONDITIONS
-		Condition.notNull(this.itemizationEntries, "Field '%s' in '%s'.", "itemizationEntries", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		Condition.notNull(this.itemizationEntries, "Field '%s' in '%s'.", "itemizationEntries", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		try {
 			return this.itemizationEntries.toArray(a);

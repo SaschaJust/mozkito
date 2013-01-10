@@ -25,7 +25,6 @@ import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 
 import org.joda.time.DateTime;
-
 import org.mozkito.persistence.PersistentTuple;
 
 /**
@@ -116,7 +115,7 @@ public class DateTimeTuple implements PersistentTuple<DateTime> {
 	 * @see org.mozkito.persistence.Annotated#getHandle()
 	 */
 	@Override
-	public String getHandle() {
+	public String getClassName() {
 		return JavaUtils.getHandle(DateTimeTuple.class);
 	}
 	
@@ -153,6 +152,7 @@ public class DateTimeTuple implements PersistentTuple<DateTime> {
 	 * 
 	 * @return the newValue
 	 */
+	@Override
 	@Transient
 	public DateTime getNewValue() {
 		return this.newValue;
@@ -163,6 +163,7 @@ public class DateTimeTuple implements PersistentTuple<DateTime> {
 	 * 
 	 * @return the oldValue
 	 */
+	@Override
 	@Transient
 	public DateTime getOldValue() {
 		return this.oldValue;
@@ -215,6 +216,7 @@ public class DateTimeTuple implements PersistentTuple<DateTime> {
 	 * @param newValue
 	 *            the newValue to set
 	 */
+	@Override
 	public void setNewValue(final DateTime newValue) {
 		this.newValue = newValue;
 	}
@@ -225,6 +227,7 @@ public class DateTimeTuple implements PersistentTuple<DateTime> {
 	 * @param oldValue
 	 *            the oldValue to set
 	 */
+	@Override
 	public void setOldValue(final DateTime oldValue) {
 		this.oldValue = oldValue;
 	}

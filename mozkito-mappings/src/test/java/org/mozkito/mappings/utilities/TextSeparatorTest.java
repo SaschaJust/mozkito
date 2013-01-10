@@ -22,7 +22,6 @@ import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.JavaUtils;
 
 import org.junit.Test;
-
 import org.mozkito.mappings.utils.TextSeparator;
 
 /**
@@ -36,7 +35,7 @@ public class TextSeparatorTest {
 	 * 
 	 * @return the simple name of the class.
 	 */
-	public final String getHandle() {
+	public final String getClassName() {
 		return JavaUtils.getHandle(TextSeparatorTest.class);
 	}
 	

@@ -167,6 +167,15 @@ public class File2Bugs implements Annotated {
 		return true;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.persistence.Annotated#getHandle()
+	 */
+	@Override
+	public final String getClassName() {
+		return JavaUtils.getHandle(File2Bugs.class);
+	}
+	
 	/**
 	 * Gets the file.
 	 * 
@@ -175,15 +184,6 @@ public class File2Bugs implements Annotated {
 	@OneToOne (cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
 	public Handle getFile() {
 		return this.handle;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.persistence.Annotated#getHandle()
-	 */
-	@Override
-	public final String getHandle() {
-		return JavaUtils.getHandle(File2Bugs.class);
 	}
 	
 	/**

@@ -165,6 +165,15 @@ public abstract class Repository {
 	public abstract long getChangeSetIndex(String changeSetId) throws RepositoryOperationException;
 	
 	/**
+	 * Determines the simple class name of the object.
+	 * 
+	 * @return this.getClass().getSimpleName();
+	 */
+	public String getClassName() {
+		return JavaUtils.getHandle(Repository.class);
+	}
+	
+	/**
 	 * Get the last revision to be considered.
 	 * 
 	 * @return the endRevision
@@ -195,15 +204,6 @@ public abstract class Repository {
 	 */
 	public abstract String getFormerPathName(String revision,
 	                                         String pathName) throws RepositoryOperationException;
-	
-	/**
-	 * Determines the simple class name of the object.
-	 * 
-	 * @return this.getClass().getSimpleName();
-	 */
-	public String getHandle() {
-		return JavaUtils.getHandle(Repository.class);
-	}
 	
 	/**
 	 * Gets the hEAD.

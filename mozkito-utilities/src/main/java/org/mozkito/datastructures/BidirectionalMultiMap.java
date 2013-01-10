@@ -204,6 +204,15 @@ public class BidirectionalMultiMap<K, V> {
 	}
 	
 	/**
+	 * Gets the simple name of the class.
+	 * 
+	 * @return the simple name of the class.
+	 */
+	public final String getClassName() {
+		return JavaUtils.getHandle(BidirectionalMultiMap.class);
+	}
+	
+	/**
 	 * Gets the froms.
 	 * 
 	 * @param value
@@ -216,15 +225,6 @@ public class BidirectionalMultiMap<K, V> {
 		} finally {
 			// POSTCONDITIONS
 		}
-	}
-	
-	/**
-	 * Gets the simple name of the class.
-	 * 
-	 * @return the simple name of the class.
-	 */
-	public final String getHandle() {
-		return JavaUtils.getHandle(BidirectionalMultiMap.class);
 	}
 	
 	/**

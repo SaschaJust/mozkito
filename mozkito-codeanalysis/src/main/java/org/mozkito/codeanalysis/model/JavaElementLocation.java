@@ -36,7 +36,6 @@ import org.apache.openjpa.persistence.Type;
 import org.apache.openjpa.persistence.jdbc.Index;
 import org.jdom2.Attribute;
 import org.jdom2.Element;
-
 import org.mozkito.persistence.Annotated;
 
 /**
@@ -490,6 +489,15 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 		return this.bodyStartLine;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.persistence.Annotated#getHandle()
+	 */
+	@Override
+	public final String getClassName() {
+		return JavaUtils.getHandle(JavaElementLocation.class);
+	}
+	
 	/**
 	 * Gets the comment lines.
 	 * 
@@ -527,14 +535,6 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 	 */
 	public String getFilePath() {
 		return this.filePath;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.persistence.Annotated#getHandle()
-	 */
-	public final String getHandle() {
-		return JavaUtils.getHandle(JavaElementLocation.class);
 	}
 	
 	/**

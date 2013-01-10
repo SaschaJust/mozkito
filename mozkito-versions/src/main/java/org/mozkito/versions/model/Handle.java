@@ -147,6 +147,17 @@ public class Handle implements Annotated, Serializable {
 	}
 	
 	/**
+	 * Gets the handle.
+	 * 
+	 * @return the simple class name
+	 */
+	@Override
+	@Transient
+	public String getClassName() {
+		return Handle.class.getSimpleName();
+	}
+	
+	/**
 	 * Gets the generated id.
 	 * 
 	 * @return the generatedId
@@ -156,17 +167,6 @@ public class Handle implements Annotated, Serializable {
 	@GeneratedValue (strategy = GenerationType.SEQUENCE)
 	public long getGeneratedId() {
 		return this.generatedId;
-	}
-	
-	/**
-	 * Gets the handle.
-	 * 
-	 * @return the simple class name
-	 */
-	@Override
-	@Transient
-	public String getHandle() {
-		return Handle.class.getSimpleName();
 	}
 	
 	/**

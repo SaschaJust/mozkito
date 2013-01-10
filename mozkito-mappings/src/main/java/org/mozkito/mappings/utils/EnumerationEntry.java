@@ -76,9 +76,9 @@ public class EnumerationEntry {
 			this.end = end;
 		} finally {
 			// POSTCONDITIONS
-			Condition.notNull(this.identifier, "Field '%s' in '%s'.", "this.identifier", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
-			Condition.notNull(this.parent, "Field '%s' in '%s'.", "this.parent", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
-			CompareCondition.positive(this.end, "Field '%s' in '%s'.", "this.end", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+			Condition.notNull(this.identifier, "Field '%s' in '%s'.", "this.identifier", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
+			Condition.notNull(this.parent, "Field '%s' in '%s'.", "this.parent", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
+			CompareCondition.positive(this.end, "Field '%s' in '%s'.", "this.end", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
@@ -91,7 +91,7 @@ public class EnumerationEntry {
 	 */
 	public boolean add(@NotNull final Enumeration enumeration) {
 		// PRECONDITIONS
-		Condition.notNull(this.childEnumerations, "Field '%s' in '%s'.", "childEnumerations", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		Condition.notNull(this.childEnumerations, "Field '%s' in '%s'.", "childEnumerations", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		try {
 			return this.childEnumerations.add(enumeration);
@@ -111,7 +111,7 @@ public class EnumerationEntry {
 	 */
 	public boolean add(@NotNull final Itemization itemization) {
 		// PRECONDITIONS
-		Condition.notNull(this.childItemizations, "Field '%s' in '%s'.", "childEnumerations", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		Condition.notNull(this.childItemizations, "Field '%s' in '%s'.", "childEnumerations", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		try {
 			return this.childItemizations.add(itemization);
@@ -157,6 +157,15 @@ public class EnumerationEntry {
 	}
 	
 	/**
+	 * Gets the simple name of the class.
+	 * 
+	 * @return the simple name of the class.
+	 */
+	public final String getClassName() {
+		return JavaUtils.getHandle(EnumerationEntry.class);
+	}
+	
+	/**
 	 * Gets the end.
 	 * 
 	 * @return the end
@@ -170,15 +179,6 @@ public class EnumerationEntry {
 			// POSTCONDITIONS
 			Condition.notNull(this.end, "Field '%s' in '%s'.", "end", getClass().getSimpleName());
 		}
-	}
-	
-	/**
-	 * Gets the simple name of the class.
-	 * 
-	 * @return the simple name of the class.
-	 */
-	public final String getHandle() {
-		return JavaUtils.getHandle(EnumerationEntry.class);
 	}
 	
 	/**

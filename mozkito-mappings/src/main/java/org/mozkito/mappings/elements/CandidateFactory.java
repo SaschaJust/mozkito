@@ -45,7 +45,7 @@ public class CandidateFactory<FROM, TO> {
 	 * 
 	 * @return the simple name of the class.
 	 */
-	public static final String getHandle() {
+	public static final String getClassName() {
 		// PRECONDITIONS
 		
 		final StringBuilder builder = new StringBuilder();

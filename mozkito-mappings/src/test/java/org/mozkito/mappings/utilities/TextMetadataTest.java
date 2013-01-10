@@ -31,7 +31,7 @@ public class TextMetadataTest {
 	 * 
 	 * @return the simple name of the class.
 	 */
-	public final String getHandle() {
+	public final String getClassName() {
 		return JavaUtils.getHandle(TextMetadataTest.class);
 	}
 	

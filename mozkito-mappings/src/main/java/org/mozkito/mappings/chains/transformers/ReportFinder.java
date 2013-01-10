@@ -72,7 +72,7 @@ public class ReportFinder extends Transformer<ChangeSet, Candidate> {
 					                                                                                 util);
 					
 					if (Logger.logInfo()) {
-						Logger.info(Messages.getString("ReportFinder.processing", mappableTransaction.getHandle(), //$NON-NLS-1$
+						Logger.info(Messages.getString("ReportFinder.processing", mappableTransaction.getClassName(), //$NON-NLS-1$
 						                               mappableTransaction.toString(), reportCandidates.size()));
 					}
 					

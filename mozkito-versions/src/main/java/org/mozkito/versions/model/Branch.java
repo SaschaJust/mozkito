@@ -51,7 +51,7 @@ public class Branch implements Annotated {
 	private String            name;
 	
 	/** The head. */
-	private ChangeSet    head               = null;
+	private ChangeSet         head               = null;
 	
 	/** The merged in. */
 	private Set<String>       mergedIn           = new HashSet<String>();
@@ -170,7 +170,7 @@ public class Branch implements Annotated {
 	 */
 	@Override
 	@Transient
-	public String getHandle() {
+	public String getClassName() {
 		return Branch.class.getSimpleName();
 	}
 	

@@ -767,8 +767,8 @@ public class Enumeration implements Iterable<EnumerationEntry>, Collection<Enume
 			this.text = text;
 		} finally {
 			// POSTCONDITIONS
-			Condition.notNull(this.type, "Field '%s' in '%s'.", "type", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
-			Condition.notNull(this.text, "Field '%s' in '%s'.", "text", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+			Condition.notNull(this.type, "Field '%s' in '%s'.", "type", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
+			Condition.notNull(this.text, "Field '%s' in '%s'.", "text", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
@@ -779,7 +779,7 @@ public class Enumeration implements Iterable<EnumerationEntry>, Collection<Enume
 	@Override
 	public boolean add(final EnumerationEntry e) {
 		// PRECONDITIONS
-		Condition.notNull(this.enumerationEntries, "Field '%s' in '%s'.", "enumerationEntries", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		Condition.notNull(this.enumerationEntries, "Field '%s' in '%s'.", "enumerationEntries", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		try {
 			return this.enumerationEntries.add(e);
@@ -795,7 +795,7 @@ public class Enumeration implements Iterable<EnumerationEntry>, Collection<Enume
 	@Override
 	public boolean addAll(final Collection<? extends EnumerationEntry> c) {
 		// PRECONDITIONS
-		Condition.notNull(this.enumerationEntries, "Field '%s' in '%s'.", "enumerationEntries", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		Condition.notNull(this.enumerationEntries, "Field '%s' in '%s'.", "enumerationEntries", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		try {
 			return this.enumerationEntries.addAll(c);
@@ -811,7 +811,7 @@ public class Enumeration implements Iterable<EnumerationEntry>, Collection<Enume
 	@Override
 	public void clear() {
 		// PRECONDITIONS
-		Condition.notNull(this.enumerationEntries, "Field '%s' in '%s'.", "enumerationEntries", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		Condition.notNull(this.enumerationEntries, "Field '%s' in '%s'.", "enumerationEntries", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		try {
 			this.enumerationEntries.clear();
@@ -827,7 +827,7 @@ public class Enumeration implements Iterable<EnumerationEntry>, Collection<Enume
 	@Override
 	public boolean contains(final Object o) {
 		// PRECONDITIONS
-		Condition.notNull(this.enumerationEntries, "Field '%s' in '%s'.", "enumerationEntries", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		Condition.notNull(this.enumerationEntries, "Field '%s' in '%s'.", "enumerationEntries", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		try {
 			if (o instanceof EnumerationEntry) {
@@ -847,13 +847,22 @@ public class Enumeration implements Iterable<EnumerationEntry>, Collection<Enume
 	@Override
 	public boolean containsAll(final Collection<?> c) {
 		// PRECONDITIONS
-		Condition.notNull(this.enumerationEntries, "Field '%s' in '%s'.", "enumerationEntries", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		Condition.notNull(this.enumerationEntries, "Field '%s' in '%s'.", "enumerationEntries", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		try {
 			return c.containsAll(c);
 		} finally {
 			// POSTCONDITIONS
 		}
+	}
+	
+	/**
+	 * Gets the simple name of the class.
+	 * 
+	 * @return the simple name of the class.
+	 */
+	public final String getClassName() {
+		return JavaUtils.getHandle(Enumeration.class);
 	}
 	
 	/**
@@ -874,22 +883,13 @@ public class Enumeration implements Iterable<EnumerationEntry>, Collection<Enume
 	}
 	
 	/**
-	 * Gets the simple name of the class.
-	 * 
-	 * @return the simple name of the class.
-	 */
-	public final String getHandle() {
-		return JavaUtils.getHandle(Enumeration.class);
-	}
-	
-	/**
 	 * Gets the text.
 	 * 
 	 * @return the text
 	 */
 	public String getText() {
 		// PRECONDITIONS
-		Condition.notNull(this.text, "Field '%s' in '%s'.", "text", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		Condition.notNull(this.text, "Field '%s' in '%s'.", "text", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		try {
 			return this.text;
@@ -906,7 +906,7 @@ public class Enumeration implements Iterable<EnumerationEntry>, Collection<Enume
 	 */
 	public Type getType() {
 		// PRECONDITIONS
-		Condition.notNull(this.enumerationEntries, "Field '%s' in '%s'.", "enumerationEntries", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		Condition.notNull(this.enumerationEntries, "Field '%s' in '%s'.", "enumerationEntries", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		try {
 			return this.type;
@@ -923,7 +923,7 @@ public class Enumeration implements Iterable<EnumerationEntry>, Collection<Enume
 	@Override
 	public boolean isEmpty() {
 		// PRECONDITIONS
-		Condition.notNull(this.enumerationEntries, "Field '%s' in '%s'.", "enumerationEntries", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		Condition.notNull(this.enumerationEntries, "Field '%s' in '%s'.", "enumerationEntries", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		try {
 			return this.enumerationEntries.isEmpty();
@@ -944,7 +944,7 @@ public class Enumeration implements Iterable<EnumerationEntry>, Collection<Enume
 	@Override
 	public Iterator<EnumerationEntry> iterator() {
 		// PRECONDITIONS
-		Condition.notNull(this.enumerationEntries, "Field '%s' in '%s'.", "enumerationEntries", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		Condition.notNull(this.enumerationEntries, "Field '%s' in '%s'.", "enumerationEntries", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		try {
 			return this.enumerationEntries.iterator();
@@ -978,7 +978,7 @@ public class Enumeration implements Iterable<EnumerationEntry>, Collection<Enume
 	@Override
 	public boolean remove(final Object o) {
 		// PRECONDITIONS
-		Condition.notNull(this.enumerationEntries, "Field '%s' in '%s'.", "enumerationEntries", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		Condition.notNull(this.enumerationEntries, "Field '%s' in '%s'.", "enumerationEntries", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		try {
 			return this.enumerationEntries.remove(o);
@@ -994,7 +994,7 @@ public class Enumeration implements Iterable<EnumerationEntry>, Collection<Enume
 	@Override
 	public boolean removeAll(final Collection<?> c) {
 		// PRECONDITIONS
-		Condition.notNull(this.enumerationEntries, "Field '%s' in '%s'.", "enumerationEntries", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		Condition.notNull(this.enumerationEntries, "Field '%s' in '%s'.", "enumerationEntries", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		try {
 			return this.enumerationEntries.removeAll(c);
@@ -1010,7 +1010,7 @@ public class Enumeration implements Iterable<EnumerationEntry>, Collection<Enume
 	@Override
 	public boolean retainAll(final Collection<?> c) {
 		// PRECONDITIONS
-		Condition.notNull(this.enumerationEntries, "Field '%s' in '%s'.", "enumerationEntries", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		Condition.notNull(this.enumerationEntries, "Field '%s' in '%s'.", "enumerationEntries", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		try {
 			return this.enumerationEntries.retainAll(c);
@@ -1026,7 +1026,7 @@ public class Enumeration implements Iterable<EnumerationEntry>, Collection<Enume
 	@Override
 	public int size() {
 		// PRECONDITIONS
-		Condition.notNull(this.enumerationEntries, "Field '%s' in '%s'.", "enumerationEntries", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		Condition.notNull(this.enumerationEntries, "Field '%s' in '%s'.", "enumerationEntries", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		try {
 			return this.enumerationEntries.size();
@@ -1042,7 +1042,7 @@ public class Enumeration implements Iterable<EnumerationEntry>, Collection<Enume
 	@Override
 	public Object[] toArray() {
 		// PRECONDITIONS
-		Condition.notNull(this.enumerationEntries, "Field '%s' in '%s'.", "enumerationEntries", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		Condition.notNull(this.enumerationEntries, "Field '%s' in '%s'.", "enumerationEntries", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		try {
 			return this.enumerationEntries.toArray();
@@ -1058,7 +1058,7 @@ public class Enumeration implements Iterable<EnumerationEntry>, Collection<Enume
 	@Override
 	public <T> T[] toArray(final T[] a) {
 		// PRECONDITIONS
-		Condition.notNull(this.enumerationEntries, "Field '%s' in '%s'.", "enumerationEntries", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		Condition.notNull(this.enumerationEntries, "Field '%s' in '%s'.", "enumerationEntries", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		try {
 			return this.enumerationEntries.toArray(a);
