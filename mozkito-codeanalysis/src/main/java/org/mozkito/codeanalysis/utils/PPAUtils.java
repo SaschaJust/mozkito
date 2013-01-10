@@ -363,55 +363,54 @@ public class PPAUtils {
 	                                            final Collection<ChangeOperationVisitor> visitors,
 	                                            final JavaElementFactory elementFactory,
 	                                            final String[] packageFilter) {
-		
-		final Map<RCSRevision, String> addRevs = new HashMap<RCSRevision, String>();
-		final Map<RCSRevision, String> deleteRevs = new HashMap<RCSRevision, String>();
-		final Map<RCSRevision, String> modifyRevs = new HashMap<RCSRevision, String>();
-		
-		final String requestName = Thread.currentThread().getName();
-		final IJavaProject javaProject = getProject(requestName);
-		
-		final RCSTransaction parentTransaction = rCSTransaction.getBranchParent();
-		
-		for (final RCSRevision rev : rCSTransaction.getRevisions()) {
+		try {
+			final Map<RCSRevision, String> addRevs = new HashMap<RCSRevision, String>();
+			final Map<RCSRevision, String> deleteRevs = new HashMap<RCSRevision, String>();
+			final Map<RCSRevision, String> modifyRevs = new HashMap<RCSRevision, String>();
 			
-			if (Logger.logDebug()) {
-				Logger.debug("PPA parsing revision: " + rev.toString());
-			}
+			final String requestName = Thread.currentThread().getName();
+			final IJavaProject javaProject = getProject(requestName);
 			
-			String changedPath = rev.getChangedFile().getPath(rCSTransaction);
-			if (changedPath == null) {
-				continue;
-			}
-			changedPath = new String(changedPath);
-			if (!changedPath.endsWith(".java")) {
+			final RCSTransaction parentTransaction = rCSTransaction.getBranchParent();
+			
+			for (final RCSRevision rev : rCSTransaction.getRevisions()) {
+				
 				if (Logger.logDebug()) {
-					Logger.debug("Ignoring non-Java file: " + changedPath);
+					Logger.debug("PPA parsing revision: " + rev.toString());
 				}
-				continue;
-			}
-			if (changedPath.startsWith("/")) {
-				changedPath = changedPath.substring(1);
+				
+				String changedPath = rev.getChangedFile().getPath(rCSTransaction);
+				if (changedPath == null) {
+					continue;
+				}
+				changedPath = new String(changedPath);
+				if (!changedPath.endsWith(".java")) {
+					if (Logger.logDebug()) {
+						Logger.debug("Ignoring non-Java file: " + changedPath);
+					}
+					continue;
+				}
+				if (changedPath.startsWith("/")) {
+					changedPath = changedPath.substring(1);
+				}
+				
+				switch (rev.getChangeType()) {
+					case Added:
+						addRevs.put(rev, changedPath);
+						break;
+					case Modified:
+						modifyRevs.put(rev, changedPath);
+						break;
+					case Deleted:
+						deleteRevs.put(rev, changedPath);
+						break;
+					default:
+						break;
+				}
 			}
 			
-			switch (rev.getChangeType()) {
-				case Added:
-					addRevs.put(rev, changedPath);
-					break;
-				case Modified:
-					modifyRevs.put(rev, changedPath);
-					break;
-				case Deleted:
-					deleteRevs.put(rev, changedPath);
-					break;
-				default:
-					break;
-			}
-		}
-		
-		// handle the removed files first
-		if (parentTransaction != null) {
-			try {
+			// handle the removed files first
+			if (parentTransaction != null) {
 				final File oldCheckoutFile = repository.checkoutPath("/", parentTransaction.getId());
 				if (!oldCheckoutFile.exists()) {
 					throw new UnrecoverableError("Could not access checkout directory: "
@@ -448,14 +447,11 @@ public class PPAUtils {
 					                                       entry.getValue().getSecond(), visitors, elementFactory,
 					                                       packageFilter);
 				}
-			} catch (final FilePermissionException e) {
-				throw new UnrecoverableError(e);
 			}
-		}
-		
-		// handle added files
-		try {
-			final File newCheckoutFile = repository.checkoutPath("/", rCSTransaction.getId());
+			
+			// handle added files
+			
+			File newCheckoutFile = repository.checkoutPath("/", rCSTransaction.getId());
 			if (!newCheckoutFile.exists()) {
 				throw new UnrecoverableError("Could not access checkout directory: "
 				        + newCheckoutFile.getAbsolutePath() + ". Ignoring!");
@@ -491,16 +487,12 @@ public class PPAUtils {
 				                                                                                          .getSecond(),
 				                                     visitors, elementFactory, packageFilter);
 			}
-		} catch (final FilePermissionException e) {
-			throw new UnrecoverableError(e);
-		}
-		
-		// handle modified files
-		for (final Entry<RCSRevision, String> entry : modifyRevs.entrySet()) {
 			
-			Condition.notNull(parentTransaction, "If files got modified there must exist an parent transaction");
-			
-			try {
+			// handle modified files
+			for (final Entry<RCSRevision, String> entry : modifyRevs.entrySet()) {
+				
+				Condition.notNull(parentTransaction, "If files got modified there must exist an parent transaction");
+				
 				@SuppressWarnings ("null")
 				final File oldCheckoutFile = repository.checkoutPath("/", parentTransaction.getId());
 				if (!oldCheckoutFile.exists()) {
@@ -514,7 +506,7 @@ public class PPAUtils {
 				                                                                           packageFilter,
 				                                                                           elementFactory);
 				
-				final File newCheckoutFile = repository.checkoutPath("/", rCSTransaction.getId());
+				newCheckoutFile = repository.checkoutPath("/", rCSTransaction.getId());
 				if (!newCheckoutFile.exists()) {
 					throw new UnrecoverableError("Could not access checkout directory: "
 					        + newCheckoutFile.getAbsolutePath() + ". Ignoring!");
@@ -527,10 +519,11 @@ public class PPAUtils {
 				                                                                           elementFactory);
 				generateChangeOperationsForModifiedFile(repository, rCSTransaction, entry.getKey(), oldElems, newElems,
 				                                        entry.getValue(), visitors);
-			} catch (final FilePermissionException e) {
-				throw new UnrecoverableError(e);
 			}
+		} catch (final FilePermissionException e) {
+			throw new UnrecoverableError(e);
 		}
+		
 	}
 	
 	/**
@@ -657,8 +650,7 @@ public class PPAUtils {
 	 * @param visitors
 	 *            the visitors
 	 */
-	@SuppressWarnings ({ "unchecked" })
-	@NoneNull
+	@SuppressWarnings ("unchecked")
 	protected static void generateChangeOperationsForModifiedFile(final Repository repository,
 	                                                              final RCSTransaction rCSTransaction,
 	                                                              final RCSRevision rCSRevision,
@@ -667,192 +659,195 @@ public class PPAUtils {
 	                                                              final String changedPath,
 	                                                              final Collection<ChangeOperationVisitor> visitors) {
 		
-		final RCSTransaction parentTransaction = rCSTransaction.getBranchParent();
-		if (parentTransaction == null) {
-			return;
-		}
-		
-		// generate diff
-		Collection<Delta> diff;
 		try {
+			final RCSTransaction parentTransaction = rCSTransaction.getBranchParent();
+			if (parentTransaction == null) {
+				return;
+			}
+			
+			// generate diff
+			Collection<Delta> diff;
+			
 			diff = repository.diff(changedPath, parentTransaction.getId(), rCSTransaction.getId());
+			final ChangeOperations operations = new ChangeOperations();
+			for (final Delta delta : diff) {
+				
+				if (delta instanceof DeleteDelta) {
+					// corresponding elements to be removed
+					final HashSet<Integer> lines = DiffUtils.getLineNumbers(delta.getOriginal());
+					for (final JavaElementLocation javaElem : oldElems.getElements(changedPath)) {
+						final LineCover cover = javaElem.coversAnyLine(lines);
+						switch (cover) {
+							case DEFINITION:
+							case DEF_AND_BODY:
+								operations.add(new JavaChangeOperation(ChangeType.Deleted, javaElem, rCSRevision));
+								break;
+							case BODY:
+								operations.add(new JavaChangeOperation(ChangeType.Modified, javaElem, rCSRevision));
+								break;
+							default:
+								break;
+						}
+					}
+				} else if (delta instanceof InsertDelta) {
+					// corresponding elements to be added
+					final HashSet<Integer> lines = DiffUtils.getLineNumbers(delta.getRevised());
+					for (final JavaElementLocation javaElem : newElems.getElements(changedPath)) {
+						final LineCover cover = javaElem.coversAnyLine(lines);
+						switch (cover) {
+							case DEFINITION:
+							case DEF_AND_BODY:
+								operations.add(new JavaChangeOperation(ChangeType.Added, javaElem, rCSRevision));
+								break;
+							case BODY:
+								operations.add(new JavaChangeOperation(ChangeType.Modified, javaElem, rCSRevision));
+								break;
+							default:
+								break;
+						}
+					}
+				} else {
+					// make a collection diff
+					final HashSet<Integer> oldLines = DiffUtils.getLineNumbers(delta.getOriginal());
+					final HashSet<Integer> newLines = DiffUtils.getLineNumbers(delta.getRevised());
+					
+					final Collection<JavaElementLocation> modifiedDefCandidates = new HashSet<JavaElementLocation>();
+					
+					final Collection<JavaElementLocation> addDefCandidates = new HashSet<JavaElementLocation>();
+					for (final JavaElementLocation def : newElems.getElements(changedPath)) {
+						final LineCover cover = def.coversAnyLine(newLines);
+						switch (cover) {
+							case BODY:
+								modifiedDefCandidates.add(def);
+								break;
+							case DEF_AND_BODY:
+							case DEFINITION:
+								addDefCandidates.add(def);
+								break;
+							default:
+								break;
+						}
+					}
+					final Collection<JavaElementLocation> removeDefCandidates = new HashSet<JavaElementLocation>();
+					for (final JavaElementLocation def : oldElems.getElements(changedPath)) {
+						final LineCover cover = def.coversAnyLine(oldLines);
+						switch (cover) {
+							case BODY:
+								modifiedDefCandidates.add(def);
+								break;
+							case DEF_AND_BODY:
+							case DEFINITION:
+								removeDefCandidates.add(def);
+								break;
+							default:
+								break;
+						}
+					}
+					
+					final Collection<JavaElementLocation> defsToRemove = new HashSet<JavaElementLocation>();
+					final Collection<JavaElementLocation> defsToAdd = new HashSet<JavaElementLocation>();
+					
+					defsToRemove.addAll(CollectionUtils.subtract(removeDefCandidates, addDefCandidates));
+					defsToAdd.addAll(CollectionUtils.subtract(addDefCandidates, removeDefCandidates));
+					
+					final Map<String, TreeSet<JavaElementLocation>> removeCallCandidates = new HashMap<String, TreeSet<JavaElementLocation>>();
+					if (oldElems.getMethodCalls(changedPath) != null) {
+						for (final JavaElementLocation call : oldElems.getMethodCalls(changedPath)) {
+							final LineCover cover = call.coversAnyLine(oldLines);
+							if (!cover.equals(LineCover.FALSE)) {
+								if (!removeCallCandidates.containsKey(call.getElement().getFullQualifiedName())) {
+									removeCallCandidates.put(call.getElement().getFullQualifiedName(),
+									                         new TreeSet<JavaElementLocation>());
+								}
+								removeCallCandidates.get(call.getElement().getFullQualifiedName()).add(call);
+							}
+						}
+					}
+					final Map<String, TreeSet<JavaElementLocation>> addCallCandidates = new HashMap<String, TreeSet<JavaElementLocation>>();
+					if (newElems.getMethodCalls(changedPath) != null) {
+						for (final JavaElementLocation call : newElems.getMethodCalls(changedPath)) {
+							final LineCover cover = call.coversAnyLine(newLines);
+							if (!cover.equals(LineCover.FALSE)) {
+								if (!addCallCandidates.containsKey(call.getElement().getFullQualifiedName())) {
+									addCallCandidates.put(call.getElement().getFullQualifiedName(),
+									                      new TreeSet<JavaElementLocation>());
+								}
+								addCallCandidates.get(call.getElement().getFullQualifiedName()).add(call);
+							}
+						}
+					}
+					
+					// if a line was changed: detect added and removed calls that
+					// are most likely corresponding
+					for (final String addedCallId : addCallCandidates.keySet()) {
+						if (removeCallCandidates.containsKey(addedCallId)) {
+							final TreeSet<JavaElementLocation> delSet = removeCallCandidates.get(addedCallId);
+							final TreeSet<JavaElementLocation> addSet = addCallCandidates.get(addedCallId);
+							for (final JavaElementLocation addedCall : new TreeSet<JavaElementLocation>(
+							                                                                            addCallCandidates.get(addedCallId))) {
+								final JavaElementLocation ceiling = delSet.ceiling(addedCall);
+								final JavaElementLocation floor = delSet.floor(addedCall);
+								if ((ceiling != null) || (floor != null)) {
+									JavaElementLocation correspondent = null;
+									if (ceiling == null) {
+										correspondent = floor;
+									} else if (floor == null) {
+										correspondent = ceiling;
+									} else {
+										final int floorDist = Math.abs(addedCall.getPosition() - floor.getPosition());
+										final int ceilingDist = Math.abs(addedCall.getPosition()
+										        - ceiling.getPosition());
+										if (floorDist < ceilingDist) {
+											correspondent = floor;
+										} else {
+											correspondent = ceiling;
+										}
+									}
+									Condition.check(correspondent != null, "Must have found correspondent");
+									if (correspondent == null) {
+										if (Logger.logError()) {
+											Logger.error("Must have found correspondent!");
+										}
+									}
+									delSet.remove(correspondent);
+									addSet.remove(addedCall);
+								}
+							}
+						}
+					}
+					
+					// method calls that are still present in their collections make
+					// up the operations
+					for (final TreeSet<JavaElementLocation> methodCallsToDelete : removeCallCandidates.values()) {
+						for (final JavaElementLocation methodCall : methodCallsToDelete) {
+							operations.add(new JavaChangeOperation(ChangeType.Deleted, methodCall, rCSRevision));
+						}
+					}
+					for (final TreeSet<JavaElementLocation> methodCallsToAdd : addCallCandidates.values()) {
+						for (final JavaElementLocation methodCall : methodCallsToAdd) {
+							operations.add(new JavaChangeOperation(ChangeType.Added, methodCall, rCSRevision));
+						}
+					}
+					for (final JavaElementLocation methodDefToDelete : defsToRemove) {
+						operations.add(new JavaChangeOperation(ChangeType.Deleted, methodDefToDelete, rCSRevision));
+					}
+					for (final JavaElementLocation methodDefToAdd : defsToAdd) {
+						operations.add(new JavaChangeOperation(ChangeType.Added, methodDefToAdd, rCSRevision));
+					}
+					for (final JavaElementLocation methodDefModified : modifiedDefCandidates) {
+						operations.add(new JavaChangeOperation(ChangeType.Modified, methodDefModified, rCSRevision));
+					}
+				}
+			}
+			for (final JavaChangeOperation op : operations.getOperations()) {
+				for (final ChangeOperationVisitor visitor : visitors) {
+					visitor.visit(op);
+				}
+			}
 		} catch (FilePermissionException | IOException e) {
 			throw new UnrecoverableError(e);
 		}
-		final ChangeOperations operations = new ChangeOperations();
-		for (final Delta delta : diff) {
-			
-			if (delta instanceof DeleteDelta) {
-				// corresponding elements to be removed
-				final HashSet<Integer> lines = DiffUtils.getLineNumbers(delta.getOriginal());
-				for (final JavaElementLocation javaElem : oldElems.getElements(changedPath)) {
-					final LineCover cover = javaElem.coversAnyLine(lines);
-					switch (cover) {
-						case DEFINITION:
-						case DEF_AND_BODY:
-							operations.add(new JavaChangeOperation(ChangeType.Deleted, javaElem, rCSRevision));
-							break;
-						case BODY:
-							operations.add(new JavaChangeOperation(ChangeType.Modified, javaElem, rCSRevision));
-							break;
-						default:
-							break;
-					}
-				}
-			} else if (delta instanceof InsertDelta) {
-				// corresponding elements to be added
-				final HashSet<Integer> lines = DiffUtils.getLineNumbers(delta.getRevised());
-				for (final JavaElementLocation javaElem : newElems.getElements(changedPath)) {
-					final LineCover cover = javaElem.coversAnyLine(lines);
-					switch (cover) {
-						case DEFINITION:
-						case DEF_AND_BODY:
-							operations.add(new JavaChangeOperation(ChangeType.Added, javaElem, rCSRevision));
-							break;
-						case BODY:
-							operations.add(new JavaChangeOperation(ChangeType.Modified, javaElem, rCSRevision));
-							break;
-						default:
-							break;
-					}
-				}
-			} else {
-				// make a collection diff
-				final HashSet<Integer> oldLines = DiffUtils.getLineNumbers(delta.getOriginal());
-				final HashSet<Integer> newLines = DiffUtils.getLineNumbers(delta.getRevised());
-				
-				final Collection<JavaElementLocation> modifiedDefCandidates = new HashSet<JavaElementLocation>();
-				
-				final Collection<JavaElementLocation> addDefCandidates = new HashSet<JavaElementLocation>();
-				for (final JavaElementLocation def : newElems.getElements(changedPath)) {
-					final LineCover cover = def.coversAnyLine(newLines);
-					switch (cover) {
-						case BODY:
-							modifiedDefCandidates.add(def);
-							break;
-						case DEF_AND_BODY:
-						case DEFINITION:
-							addDefCandidates.add(def);
-							break;
-						default:
-							break;
-					}
-				}
-				final Collection<JavaElementLocation> removeDefCandidates = new HashSet<JavaElementLocation>();
-				for (final JavaElementLocation def : oldElems.getElements(changedPath)) {
-					final LineCover cover = def.coversAnyLine(oldLines);
-					switch (cover) {
-						case BODY:
-							modifiedDefCandidates.add(def);
-							break;
-						case DEF_AND_BODY:
-						case DEFINITION:
-							removeDefCandidates.add(def);
-							break;
-						default:
-							break;
-					}
-				}
-				
-				final Collection<JavaElementLocation> defsToRemove = new HashSet<JavaElementLocation>();
-				final Collection<JavaElementLocation> defsToAdd = new HashSet<JavaElementLocation>();
-				
-				defsToRemove.addAll(CollectionUtils.subtract(removeDefCandidates, addDefCandidates));
-				defsToAdd.addAll(CollectionUtils.subtract(addDefCandidates, removeDefCandidates));
-				
-				final Map<String, TreeSet<JavaElementLocation>> removeCallCandidates = new HashMap<String, TreeSet<JavaElementLocation>>();
-				if (oldElems.getMethodCalls(changedPath) != null) {
-					for (final JavaElementLocation call : oldElems.getMethodCalls(changedPath)) {
-						final LineCover cover = call.coversAnyLine(oldLines);
-						if (!cover.equals(LineCover.FALSE)) {
-							if (!removeCallCandidates.containsKey(call.getElement().getFullQualifiedName())) {
-								removeCallCandidates.put(call.getElement().getFullQualifiedName(),
-								                         new TreeSet<JavaElementLocation>());
-							}
-							removeCallCandidates.get(call.getElement().getFullQualifiedName()).add(call);
-						}
-					}
-				}
-				final Map<String, TreeSet<JavaElementLocation>> addCallCandidates = new HashMap<String, TreeSet<JavaElementLocation>>();
-				if (newElems.getMethodCalls(changedPath) != null) {
-					for (final JavaElementLocation call : newElems.getMethodCalls(changedPath)) {
-						final LineCover cover = call.coversAnyLine(newLines);
-						if (!cover.equals(LineCover.FALSE)) {
-							if (!addCallCandidates.containsKey(call.getElement().getFullQualifiedName())) {
-								addCallCandidates.put(call.getElement().getFullQualifiedName(),
-								                      new TreeSet<JavaElementLocation>());
-							}
-							addCallCandidates.get(call.getElement().getFullQualifiedName()).add(call);
-						}
-					}
-				}
-				
-				// if a line was changed: detect added and removed calls that
-				// are most likely corresponding
-				for (final String addedCallId : addCallCandidates.keySet()) {
-					if (removeCallCandidates.containsKey(addedCallId)) {
-						final TreeSet<JavaElementLocation> delSet = removeCallCandidates.get(addedCallId);
-						final TreeSet<JavaElementLocation> addSet = addCallCandidates.get(addedCallId);
-						for (final JavaElementLocation addedCall : new TreeSet<JavaElementLocation>(
-						                                                                            addCallCandidates.get(addedCallId))) {
-							final JavaElementLocation ceiling = delSet.ceiling(addedCall);
-							final JavaElementLocation floor = delSet.floor(addedCall);
-							if ((ceiling != null) || (floor != null)) {
-								JavaElementLocation correspondent = null;
-								if (ceiling == null) {
-									correspondent = floor;
-								} else if (floor == null) {
-									correspondent = ceiling;
-								} else {
-									final int floorDist = Math.abs(addedCall.getPosition() - floor.getPosition());
-									final int ceilingDist = Math.abs(addedCall.getPosition() - ceiling.getPosition());
-									if (floorDist < ceilingDist) {
-										correspondent = floor;
-									} else {
-										correspondent = ceiling;
-									}
-								}
-								Condition.check(correspondent != null, "Must have found correspondent");
-								if (correspondent == null) {
-									if (Logger.logError()) {
-										Logger.error("Must have found correspondent!");
-									}
-								}
-								delSet.remove(correspondent);
-								addSet.remove(addedCall);
-							}
-						}
-					}
-				}
-				
-				// method calls that are still present in their collections make
-				// up the operations
-				for (final TreeSet<JavaElementLocation> methodCallsToDelete : removeCallCandidates.values()) {
-					for (final JavaElementLocation methodCall : methodCallsToDelete) {
-						operations.add(new JavaChangeOperation(ChangeType.Deleted, methodCall, rCSRevision));
-					}
-				}
-				for (final TreeSet<JavaElementLocation> methodCallsToAdd : addCallCandidates.values()) {
-					for (final JavaElementLocation methodCall : methodCallsToAdd) {
-						operations.add(new JavaChangeOperation(ChangeType.Added, methodCall, rCSRevision));
-					}
-				}
-				for (final JavaElementLocation methodDefToDelete : defsToRemove) {
-					operations.add(new JavaChangeOperation(ChangeType.Deleted, methodDefToDelete, rCSRevision));
-				}
-				for (final JavaElementLocation methodDefToAdd : defsToAdd) {
-					operations.add(new JavaChangeOperation(ChangeType.Added, methodDefToAdd, rCSRevision));
-				}
-				for (final JavaElementLocation methodDefModified : modifiedDefCandidates) {
-					operations.add(new JavaChangeOperation(ChangeType.Modified, methodDefModified, rCSRevision));
-				}
-			}
-		}
-		for (final JavaChangeOperation op : operations.getOperations()) {
-			for (final ChangeOperationVisitor visitor : visitors) {
-				visitor.visit(op);
-			}
-		}
+		
 	}
 	
 	/**
@@ -875,94 +870,89 @@ public class PPAUtils {
 	                                                 final JavaElementFactory elementFactory,
 	                                                 final String[] packageFilter) {
 		
-		final Map<RCSRevision, String> addRevs = new HashMap<RCSRevision, String>();
-		final Map<RCSRevision, String> deleteRevs = new HashMap<RCSRevision, String>();
-		final Map<RCSRevision, String> modifyRevs = new HashMap<RCSRevision, String>();
-		
-		final RCSTransaction parentTransaction = rCSTransaction.getBranchParent();
-		if (parentTransaction == null) {
-			return;
-		}
-		
-		for (final RCSRevision rev : rCSTransaction.getRevisions()) {
-			
-			String changedPath = rev.getChangedFile().getPath(rCSTransaction);
-			if (changedPath == null) {
-				continue;
-			}
-			changedPath = new String(changedPath);
-			if (!changedPath.endsWith(".java")) {
-				if (Logger.logDebug()) {
-					Logger.debug("Ignoring non-Java file: " + changedPath);
-				}
-				continue;
-			}
-			if (changedPath.startsWith("/")) {
-				changedPath = changedPath.substring(1);
-			}
-			
-			switch (rev.getChangeType()) {
-				case Added:
-					addRevs.put(rev, changedPath);
-					break;
-				case Modified:
-					modifyRevs.put(rev, changedPath);
-					break;
-				case Deleted:
-					deleteRevs.put(rev, changedPath);
-					break;
-				default:
-					break;
-			}
-		}
-		
-		// handle the removed files first
-		
-		File oldCheckoutFile = null;
 		try {
+			final Map<RCSRevision, String> addRevs = new HashMap<RCSRevision, String>();
+			final Map<RCSRevision, String> deleteRevs = new HashMap<RCSRevision, String>();
+			final Map<RCSRevision, String> modifyRevs = new HashMap<RCSRevision, String>();
+			
+			final RCSTransaction parentTransaction = rCSTransaction.getBranchParent();
+			if (parentTransaction == null) {
+				return;
+			}
+			
+			for (final RCSRevision rev : rCSTransaction.getRevisions()) {
+				
+				String changedPath = rev.getChangedFile().getPath(rCSTransaction);
+				if (changedPath == null) {
+					continue;
+				}
+				changedPath = new String(changedPath);
+				if (!changedPath.endsWith(".java")) {
+					if (Logger.logDebug()) {
+						Logger.debug("Ignoring non-Java file: " + changedPath);
+					}
+					continue;
+				}
+				if (changedPath.startsWith("/")) {
+					changedPath = changedPath.substring(1);
+				}
+				
+				switch (rev.getChangeType()) {
+					case Added:
+						addRevs.put(rev, changedPath);
+						break;
+					case Modified:
+						modifyRevs.put(rev, changedPath);
+						break;
+					case Deleted:
+						deleteRevs.put(rev, changedPath);
+						break;
+					default:
+						break;
+				}
+			}
+			
+			// handle the removed files first
+			
+			File oldCheckoutFile = null;
+			
 			oldCheckoutFile = repository.checkoutPath("/", parentTransaction.getId());
 			Condition.notNull(oldCheckoutFile, "The oldCheckoutFile must not be null.");
 			if (!oldCheckoutFile.exists()) {
 				throw new UnrecoverableError("Could not access checkout directory: "
 				        + oldCheckoutFile.getAbsolutePath() + ". Ignoring!");
 			}
-		} catch (final FilePermissionException e) {
-			throw new UnrecoverableError(e);
-		}
-		
-		for (final Entry<RCSRevision, String> entry : deleteRevs.entrySet()) {
-			final File file = new File(oldCheckoutFile.getAbsolutePath() + FileUtils.fileSeparator + entry.getValue());
-			final CompilationUnit cu = getCUNoPPA(file);
-			generateChangeOperationsForDeletedFile(repository, rCSTransaction, entry.getKey(), cu, entry.getValue(),
-			                                       visitors, elementFactory, packageFilter);
-		}
-		
-		// handle added files
-		File newCheckoutFile = null;
-		try {
+			
+			for (final Entry<RCSRevision, String> entry : deleteRevs.entrySet()) {
+				final File file = new File(oldCheckoutFile.getAbsolutePath() + FileUtils.fileSeparator
+				        + entry.getValue());
+				final CompilationUnit cu = getCUNoPPA(file);
+				generateChangeOperationsForDeletedFile(repository, rCSTransaction, entry.getKey(), cu,
+				                                       entry.getValue(), visitors, elementFactory, packageFilter);
+			}
+			
+			// handle added files
+			File newCheckoutFile = null;
 			newCheckoutFile = repository.checkoutPath("/", rCSTransaction.getId());
 			Condition.notNull(oldCheckoutFile, "The newCheckoutFile must not be null.");
 			if (!newCheckoutFile.exists()) {
 				throw new UnrecoverableError("Could not access checkout directory: "
 				        + newCheckoutFile.getAbsolutePath() + ". Ignoring!");
 			}
-		} catch (final FilePermissionException e) {
-			throw new UnrecoverableError(e);
-		}
-		
-		for (final Entry<RCSRevision, String> entry : addRevs.entrySet()) {
-			final File file = new File(newCheckoutFile.getAbsolutePath() + FileUtils.fileSeparator + entry.getValue());
-			final CompilationUnit cu = getCUNoPPA(file);
-			generateChangeOperationsForAddedFile(repository, rCSTransaction, entry.getKey(), cu, entry.getValue(),
-			                                     visitors, elementFactory, packageFilter);
-		}
-		
-		// handle modified files
-		for (final Entry<RCSRevision, String> entry : modifyRevs.entrySet()) {
 			
-			Condition.notNull(parentTransaction, "If files got modified there must exist an parent transaction");
+			for (final Entry<RCSRevision, String> entry : addRevs.entrySet()) {
+				final File file = new File(newCheckoutFile.getAbsolutePath() + FileUtils.fileSeparator
+				        + entry.getValue());
+				final CompilationUnit cu = getCUNoPPA(file);
+				generateChangeOperationsForAddedFile(repository, rCSTransaction, entry.getKey(), cu, entry.getValue(),
+				                                     visitors, elementFactory, packageFilter);
+			}
 			
-			try {
+			// handle modified files
+			for (final Entry<RCSRevision, String> entry : modifyRevs.entrySet()) {
+				
+				Condition.notNull(parentTransaction, "If files got modified there must exist an parent transaction");
+				
 				final File oldModifiedCheckoutFile = repository.checkoutPath("/", parentTransaction.getId());
 				if (!oldModifiedCheckoutFile.exists()) {
 					throw new UnrecoverableError("Could not access checkout directory: "
@@ -988,11 +978,10 @@ public class PPAUtils {
 				                                                                           elementFactory);
 				generateChangeOperationsForModifiedFile(repository, rCSTransaction, entry.getKey(), oldElems, newElems,
 				                                        entry.getValue(), visitors);
-			} catch (final FilePermissionException e) {
-				throw new UnrecoverableError(e);
 			}
+		} catch (final FilePermissionException e) {
+			throw new UnrecoverableError(e);
 		}
-		
 	}
 	
 	/**
@@ -1268,12 +1257,12 @@ public class PPAUtils {
 	protected static Map<RCSRevision, CompilationUnit> getCUsForTransaction(final Repository repository,
 	                                                                        final RCSTransaction rCSTransaction,
 	                                                                        final ChangeType changeType) {
-		
-		final Map<RCSRevision, IFile> ifiles = new HashMap<RCSRevision, IFile>();
-		final Map<RCSRevision, CompilationUnit> result = new HashMap<RCSRevision, CompilationUnit>();
-		
-		File oldCheckoutFile = null;
 		try {
+			final Map<RCSRevision, IFile> ifiles = new HashMap<RCSRevision, IFile>();
+			final Map<RCSRevision, CompilationUnit> result = new HashMap<RCSRevision, CompilationUnit>();
+			
+			File oldCheckoutFile = null;
+			
 			oldCheckoutFile = repository.checkoutPath("/", rCSTransaction.getId());
 			Condition.notNull(oldCheckoutFile, "Cannot get CUs for transaction.");
 			if (!oldCheckoutFile.exists()) {
@@ -1283,69 +1272,70 @@ public class PPAUtils {
 				}
 				return result;
 			}
+			
+			final String requestName = Thread.currentThread().getName();
+			
+			final Map<File, RCSRevision> filesToAnalyze = new HashMap<File, RCSRevision>();
+			for (final RCSRevision rCSRevision : rCSTransaction.getRevisions()) {
+				
+				if (changeType.equals(ChangeType.Added)) {
+					if (rCSRevision.getChangeType().equals(ChangeType.Deleted)) {
+						continue;
+					}
+				} else if (changeType.equals(ChangeType.Deleted)) {
+					if (rCSRevision.getChangeType().equals(ChangeType.Added)) {
+						continue;
+					}
+				}
+				
+				String changedPath = rCSRevision.getChangedFile().getPath(rCSTransaction);
+				if (changedPath == null) {
+					continue;
+				}
+				changedPath = new String(changedPath);
+				if (!changedPath.endsWith(".java")) {
+					if (Logger.logDebug()) {
+						Logger.debug("Ignoring non-Java file: " + changedPath);
+					}
+					continue;
+				}
+				if (changedPath.startsWith("/")) {
+					changedPath = changedPath.substring(1);
+				}
+				
+				final File file = new File(oldCheckoutFile.getAbsolutePath() + FileUtils.fileSeparator + changedPath);
+				if (!file.exists()) {
+					if (Logger.logDebug()) {
+						Logger.debug("Could not find checked out file " + file.getAbsolutePath()
+						        + " (might be added in next revision?)");
+					}
+					continue;
+				}
+				filesToAnalyze.put(file, rCSRevision);
+				
+				final String fileName = file.getName();
+				try {
+					final String packageName = getPackageFromFile(file);
+					final IJavaProject javaProject = getProject(requestName);
+					final IFile newFile = PPAResourceUtil.copyJavaSourceFile(javaProject.getProject(), file,
+					                                                         packageName, fileName);
+					ifiles.put(rCSRevision, newFile);
+				} catch (final Exception e) {
+					if (Logger.logError()) {
+						Logger.error(e, "Error while getting IFile from PPA for revision '%s'.", rCSRevision.toString());
+					}
+				}
+			}
+			
+			for (final Entry<RCSRevision, IFile> entry : ifiles.entrySet()) {
+				final CompilationUnit cu = getCU(entry.getValue(), new PPAOptions());
+				result.put(entry.getKey(), cu);
+			}
+			return result;
 		} catch (final FilePermissionException e) {
 			throw new UnrecoverableError(e);
 		}
 		
-		final String requestName = Thread.currentThread().getName();
-		
-		final Map<File, RCSRevision> filesToAnalyze = new HashMap<File, RCSRevision>();
-		for (final RCSRevision rCSRevision : rCSTransaction.getRevisions()) {
-			
-			if (changeType.equals(ChangeType.Added)) {
-				if (rCSRevision.getChangeType().equals(ChangeType.Deleted)) {
-					continue;
-				}
-			} else if (changeType.equals(ChangeType.Deleted)) {
-				if (rCSRevision.getChangeType().equals(ChangeType.Added)) {
-					continue;
-				}
-			}
-			
-			String changedPath = rCSRevision.getChangedFile().getPath(rCSTransaction);
-			if (changedPath == null) {
-				continue;
-			}
-			changedPath = new String(changedPath);
-			if (!changedPath.endsWith(".java")) {
-				if (Logger.logDebug()) {
-					Logger.debug("Ignoring non-Java file: " + changedPath);
-				}
-				continue;
-			}
-			if (changedPath.startsWith("/")) {
-				changedPath = changedPath.substring(1);
-			}
-			
-			final File file = new File(oldCheckoutFile.getAbsolutePath() + FileUtils.fileSeparator + changedPath);
-			if (!file.exists()) {
-				if (Logger.logDebug()) {
-					Logger.debug("Could not find checked out file " + file.getAbsolutePath()
-					        + " (might be added in next revision?)");
-				}
-				continue;
-			}
-			filesToAnalyze.put(file, rCSRevision);
-			
-			final String fileName = file.getName();
-			try {
-				final String packageName = getPackageFromFile(file);
-				final IJavaProject javaProject = getProject(requestName);
-				final IFile newFile = PPAResourceUtil.copyJavaSourceFile(javaProject.getProject(), file, packageName,
-				                                                         fileName);
-				ifiles.put(rCSRevision, newFile);
-			} catch (final Exception e) {
-				if (Logger.logError()) {
-					Logger.error(e, "Error while getting IFile from PPA for revision '%s'.", rCSRevision.toString());
-				}
-			}
-		}
-		
-		for (final Entry<RCSRevision, IFile> entry : ifiles.entrySet()) {
-			final CompilationUnit cu = getCU(entry.getValue(), new PPAOptions());
-			result.put(entry.getKey(), cu);
-		}
-		return result;
 	}
 	
 	/**
