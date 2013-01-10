@@ -124,7 +124,7 @@ public class Main {
 			analysisInstance.performAnalysis(databaseArguments.getValue());
 			analysisInstance.tearDown();
 			
-		} catch (SettingsParseError | ClassNotFoundException | WrongClassSearchMethodException | IOException
+		} catch (final SettingsParseError | ClassNotFoundException | WrongClassSearchMethodException | IOException
 		        | ArgumentRegistrationException | ArgumentSetRegistrationException | InstantiationException
 		        | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
 		        | SecurityException e) {
