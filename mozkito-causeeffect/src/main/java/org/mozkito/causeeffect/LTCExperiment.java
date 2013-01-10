@@ -242,8 +242,8 @@ public class LTCExperiment {
 			@Override
 			public Collection<Label> getLabels(final ChangeSet t) {
 				final Collection<Label> labels = new HashSet<Label>();
-				for (final Handle rCSFile : t.getChangedFiles()) {
-					labels.add(Label.getLabel(rCSFile));
+				for (final Handle handle : t.getChangedFiles()) {
+					labels.add(Label.getLabel(handle));
 				}
 				return labels;
 			}

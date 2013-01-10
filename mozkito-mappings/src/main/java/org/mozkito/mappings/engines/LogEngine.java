@@ -237,7 +237,7 @@ public class LogEngine extends Engine {
 						map.put(file, visitor.getStrings());
 					}
 				} catch (final NoSuchHandleException e1) {
-					// TODO @just please consider the case that rcsFile.getPath does not find the file
+					// TODO @just please consider the case that handle.getPath does not find the file
 				}
 			}
 			

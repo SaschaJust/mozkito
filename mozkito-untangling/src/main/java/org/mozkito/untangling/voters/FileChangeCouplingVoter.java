@@ -189,16 +189,16 @@ public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor
 			
 			for (final FileChangeCoupling c : this.couplings) {
 				boolean found = false;
-				for (final Handle rCSFile : c.getPremise()) {
+				for (final Handle handle : c.getPremise()) {
 					try {
-						final String fPath = rCSFile.getPath(this.changeset);
+						final String fPath = handle.getPath(this.changeset);
 						if (fPath.equals(path1) || fPath.equals(path2)) {
 							found = true;
 							break;
 						}
 					} catch (final NoSuchHandleException e) {
 						if (Logger.logError()) {
-							Logger.error("Could not determine file name of %s as of %s.", rCSFile.toString(),
+							Logger.error("Could not determine file name of %s as of %s.", handle.toString(),
 							             this.changeset);
 						}
 					}

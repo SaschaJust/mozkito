@@ -92,27 +92,27 @@ public class ChangeOperationsTest {
 			                                                                 methodDefinitionLocation.getElement(), 34,
 			                                                                 56, 7854);
 			
-			final Handle rcsFile = new Handle(versionArchive);
-			rcsFile.assignRevision(new Revision(changeSet, rcsFile, ChangeType.Added),
+			final Handle handle = new Handle(versionArchive);
+			handle.assignRevision(new Revision(changeSet, handle, ChangeType.Added),
 			                       "org/mozkito/codeanalysis/model/TestClass.java");
 			
 			final JavaChangeOperation addAnonClassDefOp = new JavaChangeOperation(ChangeType.Added,
 			                                                                      anonymousClassLocation,
-			                                                                      new Revision(changeSet, rcsFile,
+			                                                                      new Revision(changeSet, handle,
 			                                                                                   ChangeType.Added));
 			final JavaChangeOperation delClassDefOp = new JavaChangeOperation(ChangeType.Deleted, classLocation,
-			                                                                  new Revision(changeSet, rcsFile,
+			                                                                  new Revision(changeSet, handle,
 			                                                                               ChangeType.Deleted));
 			final JavaChangeOperation addClassDefOp = new JavaChangeOperation(ChangeType.Added, classLocation,
-			                                                                  new Revision(changeSet, rcsFile,
+			                                                                  new Revision(changeSet, handle,
 			                                                                               ChangeType.Added));
 			
 			final JavaChangeOperation delCallOp = new JavaChangeOperation(ChangeType.Deleted, methodCallLocation,
-			                                                              new Revision(changeSet, rcsFile,
+			                                                              new Revision(changeSet, handle,
 			                                                                           ChangeType.Deleted));
 			
 			final JavaChangeOperation addCallOp = new JavaChangeOperation(ChangeType.Added, methodCallLocation,
-			                                                              new Revision(changeSet, rcsFile,
+			                                                              new Revision(changeSet, handle,
 			                                                                           ChangeType.Added));
 			
 			final ChangeOperations ops = new ChangeOperations();

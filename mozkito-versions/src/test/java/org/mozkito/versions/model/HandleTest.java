@@ -29,19 +29,19 @@ import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.exceptions.NoSuchHandleException;
 
 /**
- * The Class RCSFileTest.
+ * The Class HandleTest.
  * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
 public class HandleTest {
 	
 	private Person             person;
-	private ChangeSet     t_0;
-	private ChangeSet     t_1;
-	private ChangeSet     t_2;
-	private ChangeSet     t_3;
-	private ChangeSet     t_4;
-	private ChangeSet     t_5;
+	private ChangeSet          t_0;
+	private ChangeSet          t_1;
+	private ChangeSet          t_2;
+	private ChangeSet          t_3;
+	private ChangeSet          t_4;
+	private ChangeSet          t_5;
 	private VersionArchive     versionArchive;
 	private RevDependencyGraph revDepGraph;
 	
@@ -242,17 +242,17 @@ public class HandleTest {
 	
 	//@formatter:on
 		
-		final Handle rCSFile = new Handle(this.versionArchive);
-		rCSFile.assignRevision(new Revision(this.t_0, rCSFile, ChangeType.Added), "public.java");
+		final Handle handle = new Handle(this.versionArchive);
+		handle.assignRevision(new Revision(this.t_0, handle, ChangeType.Added), "public.java");
 		
-		new Revision(this.t_1, rCSFile, ChangeType.Modified);
+		new Revision(this.t_1, handle, ChangeType.Modified);
 		
 		final Handle hiddenFile = new Handle(this.versionArchive);
 		hiddenFile.assignRevision(new Revision(this.t_2, hiddenFile, ChangeType.Added), "hidden.java");
 		hiddenFile.assignRevision(new Revision(this.t_3, hiddenFile, ChangeType.Renamed), "moreHidden.java");
 		
 		new Revision(this.t_4, hiddenFile, ChangeType.Modified);
-		new Revision(this.t_5, rCSFile, ChangeType.Modified);
+		new Revision(this.t_5, handle, ChangeType.Modified);
 		
 		try {
 			assertEquals("moreHidden.java", hiddenFile.getPath(this.t_5));

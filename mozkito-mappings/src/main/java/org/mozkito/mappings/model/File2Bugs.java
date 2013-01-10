@@ -86,7 +86,7 @@ public class File2Bugs implements Annotated {
 		Criteria<Handle> fileCriteria;
 		Criteria<Report> reportCriteria;
 		long fileid = -1, tmp = -1, bugid = -1;
-		Handle rCSFile = null;
+		Handle handle = null;
 		final Set<Report> reports = new HashSet<Report>();
 		
 		for (final Object[] entries : result) {
@@ -95,13 +95,13 @@ public class File2Bugs implements Annotated {
 			
 			if (tmp != fileid) {
 				if (!reports.isEmpty()) {
-					ret.add(new File2Bugs(rCSFile, reports));
+					ret.add(new File2Bugs(handle, reports));
 					reports.clear();
 				}
 				
 				fileid = tmp;
 				fileCriteria = util.createCriteria(Handle.class).eq("generatedId", fileid); //$NON-NLS-1$
-				rCSFile = util.load(fileCriteria).iterator().next();
+				handle = util.load(fileCriteria).iterator().next();
 			}
 			
 			reportCriteria = util.createCriteria(Report.class).eq("id", bugid); //$NON-NLS-1$
@@ -109,7 +109,7 @@ public class File2Bugs implements Annotated {
 		}
 		
 		if (!reports.isEmpty()) {
-			ret.add(new File2Bugs(rCSFile, reports));
+			ret.add(new File2Bugs(handle, reports));
 			reports.clear();
 		}
 		
@@ -117,7 +117,7 @@ public class File2Bugs implements Annotated {
 	}
 	
 	/** The file. */
-	Handle      rCSFile;
+	Handle      handle;
 	
 	/** The reports. */
 	Set<Report> reports;
@@ -131,13 +131,13 @@ public class File2Bugs implements Annotated {
 	/**
 	 * Instantiates a new file2 issues.
 	 * 
-	 * @param rCSFile
+	 * @param handle
 	 *            the file
 	 * @param reports
 	 *            the reports
 	 */
-	public File2Bugs(final Handle rCSFile, final Set<Report> reports) {
-		setFile(rCSFile);
+	public File2Bugs(final Handle handle, final Set<Report> reports) {
+		setFile(handle);
 		setReports(reports);
 	}
 	
@@ -174,7 +174,7 @@ public class File2Bugs implements Annotated {
 	 */
 	@OneToOne (cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
 	public Handle getFile() {
-		return this.rCSFile;
+		return this.handle;
 	}
 	
 	/*
@@ -213,11 +213,11 @@ public class File2Bugs implements Annotated {
 	/**
 	 * Sets the file.
 	 * 
-	 * @param rCSFile
+	 * @param handle
 	 *            the file to set
 	 */
-	public void setFile(final Handle rCSFile) {
-		this.rCSFile = rCSFile;
+	public void setFile(final Handle handle) {
+		this.handle = handle;
 	}
 	
 	/**
@@ -240,7 +240,7 @@ public class File2Bugs implements Annotated {
 		try {
 			builder.append(getFile().getLatestPath()).append(","); //$NON-NLS-1$
 		} catch (final NoSuchHandleException e1) {
-			// TODO @just please consider the case that rcsFile.getPath does not find the file
+			// TODO @just please consider the case that handle.getPath does not find the file
 		}
 		builder.append(getReports().size()).append(","); //$NON-NLS-1$
 		final StringBuilder b = new StringBuilder();
@@ -261,7 +261,7 @@ public class File2Bugs implements Annotated {
 	@Override
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
-		builder.append("RCSFile2Bugs [file="); //$NON-NLS-1$
+		builder.append("Handle2Bugs [file="); //$NON-NLS-1$
 		builder.append(getFile().getGeneratedId());
 		builder.append(", reports="); //$NON-NLS-1$
 		final StringBuilder b = new StringBuilder();

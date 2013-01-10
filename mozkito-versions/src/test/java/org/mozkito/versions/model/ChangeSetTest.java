@@ -63,12 +63,12 @@ public class ChangeSetTest {
 			revDepGraph.addBranch("master", "0");
 			versionArchive.setRevDependencyGraph(revDepGraph);
 			
-			final Handle rCSFile = new Handle(versionArchive);
-			rCSFile.assignRevision(new Revision(t_0, rCSFile, ChangeType.Added), "public.java");
+			final Handle handle = new Handle(versionArchive);
+			handle.assignRevision(new Revision(t_0, handle, ChangeType.Added), "public.java");
 			
 			final Collection<Handle> changedFiles = t_0.getChangedFiles();
 			assertEquals(1, changedFiles.size());
-			assertTrue(changedFiles.contains(rCSFile));
+			assertTrue(changedFiles.contains(handle));
 		} catch (final IOException e1) {
 			fail();
 		}
@@ -153,10 +153,10 @@ public class ChangeSetTest {
 			revDepGraph.addEdge("0", "1", EdgeType.BRANCH_EDGE);
 			versionArchive.setRevDependencyGraph(revDepGraph);
 			
-			final Handle rCSFile = new Handle(versionArchive);
-			rCSFile.assignRevision(new Revision(t_0, rCSFile, ChangeType.Added), "public.java");
+			final Handle handle = new Handle(versionArchive);
+			handle.assignRevision(new Revision(t_0, handle, ChangeType.Added), "public.java");
 			
-			new Revision(t_1, rCSFile, ChangeType.Modified);
+			new Revision(t_1, handle, ChangeType.Modified);
 			
 			final Handle hiddenFile = new Handle(versionArchive);
 			hiddenFile.assignRevision(new Revision(t_2, hiddenFile, ChangeType.Added), "hidden.java");
@@ -166,7 +166,7 @@ public class ChangeSetTest {
 			
 			final Revision revision2 = new Revision(t_4, hiddenFile, ChangeType.Modified);
 			
-			new Revision(t_5, rCSFile, ChangeType.Modified);
+			new Revision(t_5, handle, ChangeType.Modified);
 			
 			assertEquals(null, t_4.getRevisionForPath("hubba"));
 			assertEquals(revision2, t_4.getRevisionForPath("moreHidden.java"));

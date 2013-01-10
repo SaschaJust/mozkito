@@ -27,8 +27,8 @@ import org.mozkito.versions.model.Handle;
 public class File2Bugs_ {
 	
 	/** The file. */
-	public static volatile SingularAttribute<File2Bugs, Handle> rCSFile;
+	public static volatile SingularAttribute<File2Bugs, Handle> handle;
 	
 	/** The reports. */
-	public static volatile SetAttribute<File2Bugs, Report>       reports;
+	public static volatile SetAttribute<File2Bugs, Report>      reports;
 }

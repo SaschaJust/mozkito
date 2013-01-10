@@ -49,8 +49,8 @@ public class SerialFileChangeCoupling implements Serializable {
 	 *            the coupling
 	 */
 	public SerialFileChangeCoupling(final FileChangeCoupling coupling) {
-		for (final Handle rCSFile : coupling.getPremise()) {
-			this.premise.add(rCSFile.getGeneratedId());
+		for (final Handle handle : coupling.getPremise()) {
+			this.premise.add(handle.getGeneratedId());
 		}
 		this.implication = coupling.getImplication().getGeneratedId();
 		this.support = coupling.getSupport();

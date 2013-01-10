@@ -82,10 +82,10 @@ public class OpenJPA_PPA_MozkitoTest extends DatabaseTest {
 			
 			masterBranch.setHead(changeSet);
 			
-			final Handle rCSFile = new Handle(versionArchive);
-			rCSFile.assignRevision(new Revision(changeSet, rCSFile, ChangeType.Added), "a.java");
+			final Handle handle = new Handle(versionArchive);
+			handle.assignRevision(new Revision(changeSet, handle, ChangeType.Added), "a.java");
 			
-			final Revision rev = new Revision(changeSet, rCSFile, ChangeType.Added);
+			final Revision rev = new Revision(changeSet, handle, ChangeType.Added);
 			final JavaChangeOperation op = new JavaChangeOperation(ChangeType.Added, classDefinition, rev);
 			getPersistenceUtil().save(changeSet);
 			getPersistenceUtil().save(op);

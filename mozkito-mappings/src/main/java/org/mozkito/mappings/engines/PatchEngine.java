@@ -191,7 +191,7 @@ public class PatchEngine extends Engine {
 						localConfidence = Math.max(localConfidence, similarity(patch, diff));
 					}
 				} catch (final NoSuchHandleException e1) {
-					// TODO @just please consider the case that rcsFile.getPath does not find the file
+					// TODO @just please consider the case that handle.getPath does not find the file
 				}
 			}
 			

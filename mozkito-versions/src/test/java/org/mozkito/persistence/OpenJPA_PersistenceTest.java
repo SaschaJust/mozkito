@@ -162,7 +162,7 @@ public class OpenJPA_PersistenceTest extends DatabaseTest {
 	 * Test save rcs file.
 	 */
 	@Test
-	public void testSaveRCSFile() {
+	public void testSaveHandle() {
 		
 		final VersionArchive versionArchive = new VersionArchive();
 		

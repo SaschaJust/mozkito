@@ -45,7 +45,7 @@ public class JavaChangeOperationTest {
 	private JavaElementLocationSet set;
 	
 	/** The rcs file. */
-	private Handle                 rcsFile;
+	private Handle                 handle;
 	
 	/** The op. */
 	private JavaChangeOperation    op;
@@ -91,11 +91,11 @@ public class JavaChangeOperationTest {
 			revDepGraph.addBranch("master", this.changeSet.getId());
 			versionArchive.setRevDependencyGraph(revDepGraph);
 			
-			this.rcsFile = new Handle(versionArchive);
-			this.rcsFile.assignRevision(new Revision(this.changeSet, this.rcsFile, ChangeType.Modified),
+			this.handle = new Handle(versionArchive);
+			this.handle.assignRevision(new Revision(this.changeSet, this.handle, ChangeType.Modified),
 			                            "org/mozkito/codeanalysis/model/TestClass.java");
 			this.op = new JavaChangeOperation(ChangeType.Added, this.anonymousClassLocation,
-			                                  new Revision(this.changeSet, this.rcsFile, ChangeType.Added));
+			                                  new Revision(this.changeSet, this.handle, ChangeType.Added));
 		} catch (final IOException e) {
 			fail();
 		}

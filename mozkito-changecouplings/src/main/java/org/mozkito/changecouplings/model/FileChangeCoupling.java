@@ -70,24 +70,24 @@ public class FileChangeCoupling implements Comparable<FileChangeCoupling> {
 		}
 		for (final Long fileId : premise) {
 			
-			final Handle rcsFile = persistenceUtil.loadById((long) fileId, Handle.class);
-			if (rcsFile == null) {
+			final Handle handle = persistenceUtil.loadById((long) fileId, Handle.class);
+			if (handle == null) {
 				throw new UnrecoverableError("Could not retrieve File with id " + fileId);
 			}
-			this.premise.add(rcsFile);
+			this.premise.add(handle);
 		}
 		
-		Handle rcsFile = persistenceUtil.loadById((long) implication, Handle.class);
+		Handle handle = persistenceUtil.loadById((long) implication, Handle.class);
 		
 		final Criteria<Handle> criteria = persistenceUtil.createCriteria(Handle.class).eq("generatedId",
 		                                                                                  (long) implication);
 		final List<Handle> load = persistenceUtil.load(criteria);
-		rcsFile = load.get(0);
+		handle = load.get(0);
 		
-		if (rcsFile == null) {
+		if (handle == null) {
 			throw new UnrecoverableError("Could not retrieve File with id " + implication);
 		}
-		this.implication = rcsFile;
+		this.implication = handle;
 		this.support = support;
 		this.confidence = confidence;
 		if (commit) {

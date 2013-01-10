@@ -71,15 +71,15 @@ public class Revision implements Annotated {
 	 * 
 	 * @param changeSet
 	 *            the rcs transaction
-	 * @param rcsFile
+	 * @param handle
 	 *            the rcs file
 	 * @param changeType
 	 *            the change type
 	 */
 	@NoneNull
-	public Revision(final ChangeSet changeSet, final Handle rcsFile, final ChangeType changeType) {
+	public Revision(final ChangeSet changeSet, final Handle handle, final ChangeType changeType) {
 		setTransaction(changeSet);
-		setChangedFile(rcsFile);
+		setChangedFile(handle);
 		setChangeType(changeType);
 		
 		final boolean success = getTransaction().addRevision(this);

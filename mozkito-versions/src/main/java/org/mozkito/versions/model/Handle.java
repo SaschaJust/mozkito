@@ -45,13 +45,13 @@ import org.mozkito.versions.exceptions.NoSuchHandleException;
 @Table (name = "handle")
 public class Handle implements Annotated, Serializable {
 	
-	private VersionArchive           archive          = null;
+	private VersionArchive        archive          = null;
 	
 	/** The Constant serialVersionUID. */
-	private static final long        serialVersionUID = 7232712367403624199L;
+	private static final long     serialVersionUID = 7232712367403624199L;
 	
 	/** The generated id. */
-	private long                     generatedId;
+	private long                  generatedId;
 	
 	/** The changed names. */
 	private Map<Revision, String> changedNames     = new HashMap<Revision, String>();
@@ -190,29 +190,11 @@ public class Handle implements Annotated, Serializable {
 	}
 	
 	/**
-	 * Returns the new file name of the handle if the provided revision changed the file name of the handle.
-	 * 
-	 * @param revision
-	 *            the revision
-	 * @return the path
-	 * @throws NoSuchHandleException
-	 *             if the file name of the handle was not changed by the revision
-	 */
-	@Transient
-	public String getPath(final Revision revision) throws NoSuchHandleException {
-		if (getChangedNames().containsKey(revision)) {
-			return getChangedNames().get(revision);
-		}
-		throw NoSuchHandleException.format("Could not determine path for File (id=%s) for revision %s. Returning latestPath.",
-		                                   String.valueOf(getGeneratedId()), revision.toString());
-	}
-	
-	/**
 	 * Gets the path the file has in transactions.
 	 * 
 	 * @param transaction
 	 *            the transaction to retrieve the file's path for
-	 * @return the path of the RCSFile as set in transaction
+	 * @return the path of the Handle as set in transaction
 	 * @throws NoSuchHandleException
 	 *             if the handle could not be found in one of the branches the given transaction is part of
 	 */
@@ -240,6 +222,24 @@ public class Handle implements Annotated, Serializable {
 		                                   String.valueOf(getGeneratedId()), transaction.getId());
 	}
 	
+	/**
+	 * Returns the new file name of the handle if the provided revision changed the file name of the handle.
+	 * 
+	 * @param revision
+	 *            the revision
+	 * @return the path
+	 * @throws NoSuchHandleException
+	 *             if the file name of the handle was not changed by the revision
+	 */
+	@Transient
+	public String getPath(final Revision revision) throws NoSuchHandleException {
+		if (getChangedNames().containsKey(revision)) {
+			return getChangedNames().get(revision);
+		}
+		throw NoSuchHandleException.format("Could not determine path for File (id=%s) for revision %s. Returning latestPath.",
+		                                   String.valueOf(getGeneratedId()), revision.toString());
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
@@ -253,7 +253,7 @@ public class Handle implements Annotated, Serializable {
 	}
 	
 	/**
-	 * Check if the RCSFile got saved in the DB.
+	 * Check if the Handle got saved in the DB.
 	 * 
 	 * @return true, if successful saved in DB, false otherwise
 	 */

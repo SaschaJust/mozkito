@@ -174,10 +174,10 @@ public class CodeFragmentsEngine extends Engine {
 			final Repository repository = repositoryStorage.getRepository();
 			final Collection<Handle> changedFiles = transaction.getTransaction().getChangedFiles();
 			
-			for (final Handle rcsFile : changedFiles) {
+			for (final Handle handle : changedFiles) {
 				try {
 					String path;
-					path = rcsFile.getPath(transaction.getTransaction());
+					path = handle.getPath(transaction.getTransaction());
 					Collection<Delta> diff;
 					try {
 						diff = repository.diff(path, transaction.getTransaction().getBranchParent().getId(),
@@ -191,7 +191,7 @@ public class CodeFragmentsEngine extends Engine {
 						patchOriginalLines.addAll(lines);
 					}
 				} catch (final NoSuchHandleException e1) {
-					// TODO @just please consider the case that rcsFile.getPath does not find the file
+					// TODO @just please consider the case that handle.getPath does not find the file
 				}
 			}
 			

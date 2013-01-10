@@ -90,9 +90,9 @@ public class LTCFormulaFactory {
 		for (final CTLFormulaGenerator<Handle> generator : this.generators) {
 			
 			final Collection<Handle> implications = changeSet.getChangedFiles();
-			for (final Handle rCSFile : implications) {
+			for (final Handle handle : implications) {
 				final ArrayList<Handle> premise = new ArrayList<Handle>(1);
-				premise.add(rCSFile);
+				premise.add(handle);
 				formulas.addAll(generator.generate(premise, CollectionUtils.removeAll(implications, premise)));
 			}
 		}
