@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import cc.mallet.util.Strings;
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.IOptions;
@@ -36,7 +35,6 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.StringLiteral;
-
 import org.mozkito.codeanalysis.utils.PPAUtils;
 import org.mozkito.infozilla.model.EnhancedReport;
 import org.mozkito.infozilla.model.log.Log;
@@ -53,9 +51,12 @@ import org.mozkito.mappings.requirements.Index;
 import org.mozkito.mappings.storages.RepositoryStorage;
 import org.mozkito.mappings.storages.Storage;
 import org.mozkito.versions.Repository;
+import org.mozkito.versions.exceptions.NoSuchHandleException;
 import org.mozkito.versions.exceptions.RepositoryOperationException;
-import org.mozkito.versions.model.Handle;
 import org.mozkito.versions.model.ChangeSet;
+import org.mozkito.versions.model.Handle;
+
+import cc.mallet.util.Strings;
 
 /**
  * The Class LogEngine.
@@ -227,12 +228,16 @@ public class LogEngine extends Engine {
 			final Map<Handle, List<String>> map = new HashMap<>();
 			
 			for (final Handle file : changedFiles) {
-				final File file3 = new File(fil2e.getAbsolutePath() + FileUtils.fileSeparator
-				        + file.getPath(transaction));
-				final CompilationUnit cu = PPAUtils.getCUNoPPA(file3);
-				cu.accept(visitor);
-				if (!visitor.getStrings().isEmpty()) {
-					map.put(file, visitor.getStrings());
+				try {
+					final File file3 = new File(fil2e.getAbsolutePath() + FileUtils.fileSeparator
+					        + file.getPath(transaction));
+					final CompilationUnit cu = PPAUtils.getCUNoPPA(file3);
+					cu.accept(visitor);
+					if (!visitor.getStrings().isEmpty()) {
+						map.put(file, visitor.getStrings());
+					}
+				} catch (final NoSuchHandleException e1) {
+					// TODO @just please consider the case that rcsFile.getPath does not find the file
 				}
 			}
 			

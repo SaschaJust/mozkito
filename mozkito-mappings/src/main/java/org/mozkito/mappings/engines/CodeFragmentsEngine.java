@@ -30,7 +30,6 @@ import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.JavaUtils;
-import difflib.Delta;
 
 import org.mozkito.infozilla.model.EnhancedReport;
 import org.mozkito.mappings.mappable.model.MappableEntity;
@@ -45,9 +44,12 @@ import org.mozkito.mappings.requirements.Index;
 import org.mozkito.mappings.storages.RepositoryStorage;
 import org.mozkito.mappings.storages.Storage;
 import org.mozkito.versions.Repository;
+import org.mozkito.versions.exceptions.NoSuchHandleException;
 import org.mozkito.versions.exceptions.RepositoryOperationException;
-import org.mozkito.versions.model.Handle;
 import org.mozkito.versions.model.ChangeSet;
+import org.mozkito.versions.model.Handle;
+
+import difflib.Delta;
 
 /**
  * The Class CodeFragmentsEngine.
@@ -173,18 +175,23 @@ public class CodeFragmentsEngine extends Engine {
 			final Collection<Handle> changedFiles = transaction.getTransaction().getChangedFiles();
 			
 			for (final Handle rcsFile : changedFiles) {
-				final String path = rcsFile.getPath(transaction.getTransaction());
-				Collection<Delta> diff;
 				try {
-					diff = repository.diff(path, transaction.getTransaction().getBranchParent().getId(),
-					                       transaction.getId());
-				} catch (final RepositoryOperationException e) {
-					throw new UnrecoverableError(e);
-				}
-				for (final Delta delta : diff) {
-					@SuppressWarnings ("unchecked")
-					final List<String> lines = (List<String>) delta.getOriginal().getLines();
-					patchOriginalLines.addAll(lines);
+					String path;
+					path = rcsFile.getPath(transaction.getTransaction());
+					Collection<Delta> diff;
+					try {
+						diff = repository.diff(path, transaction.getTransaction().getBranchParent().getId(),
+						                       transaction.getId());
+					} catch (final RepositoryOperationException e) {
+						throw new UnrecoverableError(e);
+					}
+					for (final Delta delta : diff) {
+						@SuppressWarnings ("unchecked")
+						final List<String> lines = (List<String>) delta.getOriginal().getLines();
+						patchOriginalLines.addAll(lines);
+					}
+				} catch (final NoSuchHandleException e1) {
+					// TODO @just please consider the case that rcsFile.getPath does not find the file
 				}
 			}
 			

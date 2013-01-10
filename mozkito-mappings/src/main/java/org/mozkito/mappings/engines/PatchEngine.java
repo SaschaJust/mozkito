@@ -27,7 +27,6 @@ import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.JavaUtils;
-import difflib.Delta;
 
 import org.mozkito.infozilla.model.EnhancedReport;
 import org.mozkito.infozilla.model.patch.Patch;
@@ -43,9 +42,12 @@ import org.mozkito.mappings.requirements.Index;
 import org.mozkito.mappings.storages.RepositoryStorage;
 import org.mozkito.mappings.storages.Storage;
 import org.mozkito.versions.Repository;
+import org.mozkito.versions.exceptions.NoSuchHandleException;
 import org.mozkito.versions.exceptions.RepositoryOperationException;
-import org.mozkito.versions.model.Handle;
 import org.mozkito.versions.model.ChangeSet;
+import org.mozkito.versions.model.Handle;
+
+import difflib.Delta;
 
 /**
  * The Class PatchEngine.
@@ -168,24 +170,28 @@ public class PatchEngine extends Engine {
 			double localConfidence = 0.0d;
 			
 			for (final Handle changedFile : changedFiles) {
-				final String path = changedFile.getPath(previousTransaction);
-				final String[] split = path.split("/"); //$NON-NLS-1$
-				if (split.length > 0) {
-					final String fileName = split[split.length - 1];
-					// TODO determine if filename/path correlates with one in the patchesFiles
-					fileName.equals(fileName);
-					
-					// if so, TODO get the corresponding patch
-					final Patch patch = new Patch();
-					Collection<Delta> diff;
-					try {
-						diff = repository.diff(path, previousTransaction.getId(), transaction.getId());
-					} catch (final RepositoryOperationException e) {
-						throw new UnrecoverableError(e);
+				try {
+					final String path = changedFile.getPath(previousTransaction);
+					final String[] split = path.split("/"); //$NON-NLS-1$
+					if (split.length > 0) {
+						final String fileName = split[split.length - 1];
+						// TODO determine if filename/path correlates with one in the patchesFiles
+						fileName.equals(fileName);
+						
+						// if so, TODO get the corresponding patch
+						final Patch patch = new Patch();
+						Collection<Delta> diff;
+						try {
+							diff = repository.diff(path, previousTransaction.getId(), transaction.getId());
+						} catch (final RepositoryOperationException e) {
+							throw new UnrecoverableError(e);
+						}
+						
+						// TODO calculate the similarity measure between Patch and Collection<Delta>
+						localConfidence = Math.max(localConfidence, similarity(patch, diff));
 					}
-					
-					// TODO calculate the similarity measure between Patch and Collection<Delta>
-					localConfidence = Math.max(localConfidence, similarity(patch, diff));
+				} catch (final NoSuchHandleException e1) {
+					// TODO @just please consider the case that rcsFile.getPath does not find the file
 				}
 			}
 			

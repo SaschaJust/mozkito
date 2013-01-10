@@ -32,6 +32,7 @@ import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.DatabaseType;
 import org.mozkito.persistence.PersistenceManager;
 import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.versions.exceptions.NoSuchHandleException;
 import org.mozkito.versions.model.Handle;
 
 /**
@@ -116,7 +117,7 @@ public class File2Bugs implements Annotated {
 	}
 	
 	/** The file. */
-	Handle     rCSFile;
+	Handle      rCSFile;
 	
 	/** The reports. */
 	Set<Report> reports;
@@ -180,6 +181,7 @@ public class File2Bugs implements Annotated {
 	 * (non-Javadoc)
 	 * @see org.mozkito.persistence.Annotated#getHandle()
 	 */
+	@Override
 	public final String getHandle() {
 		return JavaUtils.getHandle(File2Bugs.class);
 	}
@@ -235,7 +237,11 @@ public class File2Bugs implements Annotated {
 	 */
 	public String toCSV() {
 		final StringBuilder builder = new StringBuilder();
-		builder.append(getFile().getLatestPath()).append(","); //$NON-NLS-1$
+		try {
+			builder.append(getFile().getLatestPath()).append(","); //$NON-NLS-1$
+		} catch (final NoSuchHandleException e1) {
+			// TODO @just please consider the case that rcsFile.getPath does not find the file
+		}
 		builder.append(getReports().size()).append(","); //$NON-NLS-1$
 		final StringBuilder b = new StringBuilder();
 		for (final Report report : getReports()) {

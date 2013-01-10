@@ -25,6 +25,12 @@ import java.util.Locale;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.ioda.FileUtils;
+import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
+import net.ownhero.dev.ioda.IOUtils;
+import net.ownhero.dev.ioda.JavaUtils;
+import net.ownhero.dev.kisa.Logger;
 import cc.mallet.pipe.CharSequence2TokenSequence;
 import cc.mallet.pipe.CharSequenceLowercase;
 import cc.mallet.pipe.Pipe;
@@ -39,12 +45,6 @@ import cc.mallet.types.IDSorter;
 import cc.mallet.types.Instance;
 import cc.mallet.types.InstanceList;
 import cc.mallet.types.LabelSequence;
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
-import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
-import net.ownhero.dev.ioda.IOUtils;
-import net.ownhero.dev.ioda.JavaUtils;
-import net.ownhero.dev.kisa.Logger;
 
 /**
  * The Class TextMetadata.
@@ -192,8 +192,11 @@ public class TextMetadata {
 	 * 
 	 * @param text
 	 *            the text
+	 * @param numTopics
+	 *            the num topics
 	 * @return the list
 	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	public static final ParallelTopicModel topics(final Iterator<String> text,
 	                                              final int numTopics) throws IOException {

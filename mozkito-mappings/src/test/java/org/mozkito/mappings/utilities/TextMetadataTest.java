@@ -40,6 +40,7 @@ public class TextMetadataTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
+		// ignore
 	}
 	
 	/**
@@ -47,6 +48,7 @@ public class TextMetadataTest {
 	 */
 	@After
 	public void tearDown() throws Exception {
+		// ignore
 	}
 	
 	/**

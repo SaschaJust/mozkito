@@ -33,7 +33,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import org.mozkito.mappings.utils.Enumeration;
 import org.mozkito.mappings.utils.EnumerationEntry;
 
@@ -45,6 +44,9 @@ public class EnumerationTest {
 	
 	private static String enumText;
 	
+	/**
+	 * Before class.
+	 */
 	@BeforeClass
 	public static void beforeClass() {
 		final InputStream inputStream = EnumerationTest.class.getResourceAsStream("/enum_test.txt"); //$NON-NLS-1$
@@ -76,6 +78,7 @@ public class EnumerationTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
+		// ignore
 	}
 	
 	/**
@@ -83,6 +86,7 @@ public class EnumerationTest {
 	 */
 	@After
 	public void tearDown() throws Exception {
+		// ignore
 	}
 	
 	/**
