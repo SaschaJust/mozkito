@@ -344,8 +344,8 @@ public class SubversionRepository extends Repository {
 			logs = this.repository.log(new String[] { "" }, null, revisionNumber, revisionNumber, true, true);
 			
 			for (final SVNLogEntry entry : logs) {
-				final Map<Object, SVNLogEntryPath> changedPaths = entry.getChangedPaths();
-				for (final Object o : changedPaths.keySet()) {
+				final Map<String, SVNLogEntryPath> changedPaths = entry.getChangedPaths();
+				for (final String o : changedPaths.keySet()) {
 					switch (changedPaths.get(o).getType()) {
 						case SVNLogEntryPath.TYPE_MODIFIED:
 							map.put(changedPaths.get(o).getPath(), ChangeType.Modified);
@@ -422,9 +422,9 @@ public class SubversionRepository extends Repository {
 			                                                         revisionNumber, true, true);
 			
 			for (final SVNLogEntry entry : logs) {
-				@SuppressWarnings ("unchecked")
-				final Map<Object, SVNLogEntryPath> changedPaths = entry.getChangedPaths();
-				for (final Object o : changedPaths.keySet()) {
+				
+				final Map<String, SVNLogEntryPath> changedPaths = entry.getChangedPaths();
+				for (final String o : changedPaths.keySet()) {
 					final SVNLogEntryPath logEntryPath = changedPaths.get(o);
 					switch (logEntryPath.getType()) {
 						case SVNLogEntryPath.TYPE_REPLACED:

@@ -12,7 +12,6 @@
  **********************************************************************************************************************/
 package org.mozkito.mappings.engines;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -31,9 +30,9 @@ import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.JavaUtils;
-import net.ownhero.dev.ioda.exceptions.FilePermissionException;
 import difflib.Delta;
 
+import org.mozkito.exceptions.RepositoryOperationException;
 import org.mozkito.infozilla.model.EnhancedReport;
 import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.mappable.model.MappableStructuredReport;
@@ -179,7 +178,7 @@ public class CodeFragmentsEngine extends Engine {
 				try {
 					diff = repository.diff(path, transaction.getTransaction().getBranchParent().getId(),
 					                       transaction.getId());
-				} catch (FilePermissionException | IOException e) {
+				} catch (final RepositoryOperationException e) {
 					throw new UnrecoverableError(e);
 				}
 				for (final Delta delta : diff) {

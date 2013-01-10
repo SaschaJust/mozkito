@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import ca.mcgill.cs.swevo.ppa.PPAOptions;
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.hiari.settings.ArgumentFactory;
 import net.ownhero.dev.hiari.settings.ArgumentSet;
@@ -36,21 +37,20 @@ import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.ioda.exceptions.FilePermissionException;
 import net.ownhero.dev.kisa.Logger;
 
 import org.eclipse.jdt.core.dom.CompilationUnit;
+
 import org.mozkito.callgraph.model.CallGraph;
 import org.mozkito.callgraph.visitor.CallGraphPPAVisitor;
 import org.mozkito.codeanalysis.model.JavaElementFactory;
 import org.mozkito.codeanalysis.model.JavaElementLocationSet;
 import org.mozkito.codeanalysis.utils.PPAUtils;
 import org.mozkito.codeanalysis.visitors.PPATypeVisitor;
+import org.mozkito.exceptions.RepositoryOperationException;
 import org.mozkito.settings.DatabaseOptions;
 import org.mozkito.settings.RepositoryOptions;
 import org.mozkito.versions.Repository;
-
-import ca.mcgill.cs.swevo.ppa.PPAOptions;
 
 /**
  * The Class CallGraphToolChain.
@@ -163,7 +163,7 @@ public class CallGraphToolChain {
 				this.repository = this.repositoryArguments.getValue();
 				try {
 					this.sourceDir = this.repository.checkoutPath("/", this.transactionId);
-				} catch (final FilePermissionException e) {
+				} catch (final RepositoryOperationException e) {
 					throw new UnrecoverableError(
 					                             String.format("Could not checkout transaction %s from repository %s. See errors above.",
 					                                           this.transactionId, this.repository.getUri().toString()));

@@ -31,7 +31,6 @@ import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.JavaUtils;
-import net.ownhero.dev.ioda.exceptions.FilePermissionException;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.eclipse.jdt.core.dom.ASTVisitor;
@@ -39,6 +38,7 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.StringLiteral;
 
 import org.mozkito.codeanalysis.utils.PPAUtils;
+import org.mozkito.exceptions.RepositoryOperationException;
 import org.mozkito.infozilla.model.EnhancedReport;
 import org.mozkito.infozilla.model.log.Log;
 import org.mozkito.infozilla.model.log.LogEntry;
@@ -219,7 +219,7 @@ public class LogEngine extends Engine {
 			
 			try {
 				fil2e = repository.checkoutPath("/", transaction.getId()); //$NON-NLS-1$
-			} catch (final FilePermissionException e) {
+			} catch (final RepositoryOperationException e) {
 				throw new UnrecoverableError(e);
 			}
 			

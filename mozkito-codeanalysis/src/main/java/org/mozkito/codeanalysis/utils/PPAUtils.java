@@ -29,10 +29,10 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import ca.mcgill.cs.swevo.ppa.PPAOptions;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.Tuple;
-import net.ownhero.dev.ioda.exceptions.FilePermissionException;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
@@ -56,6 +56,11 @@ import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.PPAASTParser;
 import org.eclipse.jdt.core.dom.PackageDeclaration;
+
+import difflib.DeleteDelta;
+import difflib.Delta;
+import difflib.InsertDelta;
+
 import org.mozkito.codeanalysis.internal.visitors.ChangeOperationVisitor;
 import org.mozkito.codeanalysis.model.ChangeOperations;
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
@@ -70,6 +75,7 @@ import org.mozkito.codeanalysis.model.JavaMethodCall;
 import org.mozkito.codeanalysis.model.JavaMethodDefinition;
 import org.mozkito.codeanalysis.visitors.PPAMethodCallVisitor;
 import org.mozkito.codeanalysis.visitors.PPATypeVisitor;
+import org.mozkito.exceptions.RepositoryOperationException;
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.utils.DiffUtils;
@@ -77,11 +83,6 @@ import org.mozkito.versions.Repository;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.model.RCSRevision;
 import org.mozkito.versions.model.RCSTransaction;
-
-import ca.mcgill.cs.swevo.ppa.PPAOptions;
-import difflib.DeleteDelta;
-import difflib.Delta;
-import difflib.InsertDelta;
 
 /**
  * The Class PPAUtils.
@@ -520,7 +521,7 @@ public class PPAUtils {
 				generateChangeOperationsForModifiedFile(repository, rCSTransaction, entry.getKey(), oldElems, newElems,
 				                                        entry.getValue(), visitors);
 			}
-		} catch (final FilePermissionException e) {
+		} catch (final RepositoryOperationException e) {
 			throw new UnrecoverableError(e);
 		}
 		
@@ -844,7 +845,7 @@ public class PPAUtils {
 					visitor.visit(op);
 				}
 			}
-		} catch (FilePermissionException | IOException e) {
+		} catch (final RepositoryOperationException e) {
 			throw new UnrecoverableError(e);
 		}
 		
@@ -979,7 +980,7 @@ public class PPAUtils {
 				generateChangeOperationsForModifiedFile(repository, rCSTransaction, entry.getKey(), oldElems, newElems,
 				                                        entry.getValue(), visitors);
 			}
-		} catch (final FilePermissionException e) {
+		} catch (final RepositoryOperationException e) {
 			throw new UnrecoverableError(e);
 		}
 	}
@@ -1332,7 +1333,7 @@ public class PPAUtils {
 				result.put(entry.getKey(), cu);
 			}
 			return result;
-		} catch (final FilePermissionException e) {
+		} catch (final RepositoryOperationException e) {
 			throw new UnrecoverableError(e);
 		}
 		

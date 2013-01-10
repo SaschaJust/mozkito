@@ -39,7 +39,6 @@ import net.ownhero.dev.ioda.CommandExecutor;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import net.ownhero.dev.ioda.Tuple;
-import net.ownhero.dev.ioda.exceptions.FilePermissionException;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
@@ -48,6 +47,7 @@ import org.mozkito.clustering.MultilevelClustering;
 import org.mozkito.clustering.MultilevelClusteringScoreVisitor;
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.codeanalysis.model.JavaElementLocation.LineCover;
+import org.mozkito.exceptions.RepositoryOperationException;
 import org.mozkito.settings.RepositoryOptions;
 import org.mozkito.versions.Repository;
 import org.mozkito.versions.model.RCSTransaction;
@@ -250,14 +250,14 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 			if (this.checkoutDir == null) {
 				try {
 					this.checkoutDir = repository.checkoutPath("/", rCSTransaction.getId());
-				} catch (final FilePermissionException e) {
+				} catch (final RepositoryOperationException e) {
 					throw new UnrecoverableError(e);
 				}
 			}
 		}
 		try {
 			this.checkoutDir = repository.checkoutPath("/", rCSTransaction.getId());
-		} catch (final FilePermissionException e) {
+		} catch (final RepositoryOperationException e) {
 			throw new UnrecoverableError(e);
 		}
 	}
