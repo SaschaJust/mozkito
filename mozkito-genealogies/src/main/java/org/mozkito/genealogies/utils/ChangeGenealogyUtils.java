@@ -45,8 +45,8 @@ import org.mozkito.versions.Repository;
 import org.mozkito.versions.RepositoryFactory;
 import org.mozkito.versions.RepositoryType;
 import org.mozkito.versions.exceptions.UnregisteredRepositoryTypeException;
-import org.mozkito.versions.model.Revision;
 import org.mozkito.versions.model.ChangeSet;
+import org.mozkito.versions.model.Revision;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 
@@ -101,17 +101,21 @@ public class ChangeGenealogyUtils {
 	
 	/**
 	 * Gets the genealogy test environment.
-	 *
-	 * @param tmpGraphDBFile the tmp graph db file
-	 * @param branchFactory the branch factory
+	 * 
+	 * @param tmpGraphDBFile
+	 *            the tmp graph db file
+	 * @param branchFactory
+	 *            the branch factory
 	 * @return the genealogy test environment
-	 * @throws FileNotFoundException the file not found exception
-	 * @throws FilePermissionException the file permission exception
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws FileNotFoundException
+	 *             the file not found exception
+	 * @throws FilePermissionException
+	 *             the file permission exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	public static GenealogyTestEnvironment getGenealogyTestEnvironment(final File tmpGraphDBFile,
-	                                                                   final BranchFactory branchFactory) throws FileNotFoundException,
-	                                                                                                     FilePermissionException,
+	                                                                   final BranchFactory branchFactory) throws FilePermissionException,
 	                                                                                                     IOException {
 		
 		// UNZIP git repo
@@ -211,7 +215,7 @@ public class ChangeGenealogyUtils {
 		
 		// read all transactions and JavaChangeOperations
 		final Criteria<ChangeSet> transactionCriteria = branchFactory.getPersistenceUtil()
-		                                                                  .createCriteria(ChangeSet.class);
+		                                                             .createCriteria(ChangeSet.class);
 		final List<ChangeSet> transactionList = branchFactory.getPersistenceUtil().load(transactionCriteria);
 		CollectionCondition.size(transactionList, 10, "Transaction list from database has fixed precomputed size.");
 		if (Logger.logDebug()) {
