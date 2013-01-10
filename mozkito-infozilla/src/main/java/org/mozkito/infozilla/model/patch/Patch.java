@@ -32,9 +32,7 @@ import org.mozkito.infozilla.model.attachment.Attachment;
  */
 public class Patch implements Attachable, Inlineable {
 	
-	/**
-     * 
-     */
+	/** The Constant INDEX_OFFSET. */
 	private static final int      INDEX_OFFSET = 7;
 	
 	/** The index. */

@@ -118,8 +118,10 @@ public class SubversionRepository extends Repository {
 	/** The tmp dir. */
 	private File               tmpDir;
 	
+	/** The rev dep graph. */
 	private RevDependencyGraph revDepGraph;
 	
+	/** The Constant BRANCH_PATTERN. */
 	private static final Regex BRANCH_PATTERN = new Regex("\\/?branches/({branch_name}[^\\/]+)");
 	
 	/**
@@ -160,12 +162,11 @@ public class SubversionRepository extends Repository {
 	
 	/**
 	 * Converts a given string to the corresponding SVNRevision. This requires
-	 * 
-	 * @param revision
-	 *            the string representing an SVN revision. This is either a numeric of type long or a case insensitive
-	 *            version of the alias string versions. This may not be null.
+	 *
+	 * @param revision the string representing an SVN revision. This is either a numeric of type long or a case insensitive
+	 * version of the alias string versions. This may not be null.
 	 * @return the corresponding SVNRevision {@link Repository#setup(URI, String, String)} to be executed.
-	 * @throws SVNException
+	 * @throws SVNException the sVN exception
 	 */
 	private SVNRevision buildRevision(@NotNull @NotEmpty final String revision) throws SVNException {
 		Condition.check(this.initialized, "Repository has to be initialized before calling this method.");
@@ -319,7 +320,7 @@ public class SubversionRepository extends Repository {
 		final StringBuilder builder = new StringBuilder();
 		final CodeSource codeSource = SVNRepository.class.getProtectionDomain().getCodeSource();
 		
-		builder.append(getHandle()).append(" is using SVNKit from: ").append(codeSource.getLocation().getPath());
+		builder.append(getClassName()).append(" is using SVNKit from: ").append(codeSource.getLocation().getPath());
 		builder.append(FileUtils.lineSeparator);
 		
 		return builder.toString();
@@ -376,6 +377,41 @@ public class SubversionRepository extends Repository {
 		} catch (final SVNException e) {
 			throw new UnrecoverableError(e);
 		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.versions.Repository#getChangeSetId(long)
+	 */
+	@Override
+	public String getChangeSetId(final long index) {
+		if (index < getTransactionCount()) {
+			return String.valueOf(1 + index);
+		}
+		return null;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.versions.Repository#getChangeSetIndex(java.lang.String)
+	 */
+	@Override
+	public long getChangeSetIndex(final String changeSetId) {
+		String searchRev = changeSetId;
+		
+		if ("HEAD".equals(changeSetId.toUpperCase()) || ("TIP".equals(changeSetId.toUpperCase()))) {
+			searchRev = getHEADRevisionId();
+		}
+		
+		final long index = Long.valueOf(searchRev).longValue() - 1;
+		
+		if (index < 0) {
+			return -1;
+		}
+		
+		return index;
 	}
 	
 	/**
@@ -537,41 +573,6 @@ public class SubversionRepository extends Repository {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.versions.Repository#getChangeSetId(long)
-	 */
-	@Override
-	public String getChangeSetId(final long index) {
-		if (index < getTransactionCount()) {
-			return String.valueOf(1 + index);
-		}
-		return null;
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * @see org.mozkito.versions.Repository#getChangeSetIndex(java.lang.String)
-	 */
-	@Override
-	public long getChangeSetIndex(final String changeSetId) {
-		String searchRev = changeSetId;
-		
-		if ("HEAD".equals(changeSetId.toUpperCase()) || ("TIP".equals(changeSetId.toUpperCase()))) {
-			searchRev = getHEADRevisionId();
-		}
-		
-		final long index = Long.valueOf(searchRev).longValue() - 1;
-		
-		if (index < 0) {
-			return -1;
-		}
-		
-		return index;
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 * 
 	 * @see org.mozkito.versions.Repository#getWorkingCopyLocation()
 	 */
 	@Override
@@ -720,7 +721,7 @@ public class SubversionRepository extends Repository {
 						break;
 					default:
 						throw new UnsupportedProtocolType("Failed to setup in '" + this.type.name()
-						        + "' mode. Unsupported at this time. " + getHandle() + " does not support protocol "
+						        + "' mode. Unsupported at this time. " + getClassName() + " does not support protocol "
 						        + this.type.name());
 				}
 				try {

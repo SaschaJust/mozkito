@@ -52,6 +52,8 @@ public class ReportTypeEngine extends Engine {
 		
 		/** The confidence option. */
 		private DoubleArgument.Options                                    confidenceOption;
+		
+		/** The type option. */
 		private net.ownhero.dev.hiari.settings.EnumArgument.Options<Type> typeOption;
 		
 		/**
@@ -172,8 +174,10 @@ public class ReportTypeEngine extends Engine {
 	private Type   type;
 	
 	/**
-	 * @param confidence
-	 * @param type
+	 * Instantiates a new report type engine.
+	 *
+	 * @param confidence the confidence
+	 * @param type the type
 	 */
 	public ReportTypeEngine(final Double confidence, final Type type) {
 		// PRECONDITIONS

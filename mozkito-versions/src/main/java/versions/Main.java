@@ -35,6 +35,7 @@ public class Main {
 		KanuniAgent.initialize();
 	}
 	
+	/** The Constant moduleName. */
 	private static final String moduleName = getModuleName();
 	
 	/**

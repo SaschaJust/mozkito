@@ -49,11 +49,10 @@ public abstract class Archive implements Attachable {
 	
 	/**
 	 * Extract.
-	 * 
+	 *
 	 * @return the file
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
-	 * @throws FilePermissionException
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws FilePermissionException the file permission exception
 	 */
 	public abstract File extract() throws IOException, FilePermissionException;
 	

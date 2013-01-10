@@ -39,6 +39,7 @@ import org.mozkito.settings.DatabaseOptions;
  */
 public class Bugs extends Chain<Settings> {
 	
+	/** The Constant DEFAULT_CACHE_SIZE. */
 	private static final long                             DEFAULT_CACHE_SIZE = 3000l;
 	
 	/** The thread pool. */

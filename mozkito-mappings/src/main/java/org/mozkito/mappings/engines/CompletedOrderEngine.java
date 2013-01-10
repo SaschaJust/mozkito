@@ -137,7 +137,9 @@ public class CompletedOrderEngine extends Engine {
 	private Double confidence;
 	
 	/**
-	 * @param value
+	 * Instantiates a new completed order engine.
+	 *
+	 * @param confidence the confidence
 	 */
 	CompletedOrderEngine(final Double confidence) {
 		// PRECONDITIONS

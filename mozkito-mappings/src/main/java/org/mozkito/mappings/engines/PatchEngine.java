@@ -204,9 +204,11 @@ public class PatchEngine extends Engine {
 	}
 	
 	/**
-	 * @param patch
-	 * @param diff
-	 * @return
+	 * Similarity.
+	 *
+	 * @param patch the patch
+	 * @param diff the diff
+	 * @return the double
 	 */
 	private double similarity(final Patch patch,
 	                          final Collection<Delta> diff) {

@@ -45,6 +45,7 @@ import org.mozkito.versions.exceptions.NoSuchHandleException;
 @Table (name = "handle")
 public class Handle implements Annotated, Serializable {
 	
+	/** The archive. */
 	private VersionArchive        archive          = null;
 	
 	/** The Constant serialVersionUID. */
@@ -88,10 +89,9 @@ public class Handle implements Annotated, Serializable {
 	}
 	
 	/**
-	 * Checks if the given transaction changed the underlyign handle
-	 * 
-	 * @param transaction
-	 *            the transaction
+	 * Checks if the given transaction changed the underlyign handle.
+	 *
+	 * @param transaction the transaction
 	 * @return true, if successful
 	 */
 	@Transient

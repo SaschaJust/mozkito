@@ -55,8 +55,8 @@ public class TestEnvironment {
 	
 	/**
 	 * Setup.
-	 * 
-	 * @throws IOException
+	 *
+	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
 	public static void setup() throws IOException {
 		

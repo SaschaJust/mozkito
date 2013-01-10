@@ -34,14 +34,11 @@ public class LogIterator implements Iterator<LogEntry> {
 	
 	/**
 	 * Instantiates a new LogIterator.
-	 * 
-	 * @param repository
-	 *            the repository
-	 * @param startRevision
-	 *            the start revision
-	 * @param endRevision
-	 *            the end revision
-	 * @throws RepositoryOperationException
+	 *
+	 * @param repository the repository
+	 * @param startRevision the start revision
+	 * @param endRevision the end revision
+	 * @throws RepositoryOperationException the repository operation exception
 	 */
 	public LogIterator(@NotNull final Repository repository, final String startRevision, final String endRevision)
 	        throws RepositoryOperationException {

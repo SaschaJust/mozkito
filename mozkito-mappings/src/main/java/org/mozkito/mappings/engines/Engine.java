@@ -80,6 +80,7 @@ public abstract class Engine extends Node {
 		/** The engines option. */
 		private SetArgument.Options                                                         enabledEnginesOption;
 		
+		/** The engine options. */
 		private final Map<Class<? extends Engine>, ArgumentSetOptions<? extends Engine, ?>> engineOptions = new HashMap<>();
 		
 		/**
@@ -244,6 +245,7 @@ public abstract class Engine extends Node {
 	/** The Constant tag. */
 	private static final String TAG              = "engines";                                  //$NON-NLS-1$
 	                                                                                            
+	/** The Constant DESCRIPTION. */
 	private static final String DESCRIPTION      = Messages.getString("Engine.description");   //$NON-NLS-1$
 	                                                                                            
 	/** The Constant defaultNegative. */
@@ -306,6 +308,7 @@ public abstract class Engine extends Node {
 		return Engine.UNUSED;
 	}
 	
+	/** The settings. */
 	private ISettings settings;
 	
 	/**

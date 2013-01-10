@@ -52,11 +52,10 @@ public class RevDependencyGraphTest extends VersionsTest {
 	
 	/**
 	 * Gets the strange tag.
-	 * 
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
-	 * @throws RepositoryOperationException
-	 *             the repository operation exception
+	 *
+	 * @return the strange tag
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws RepositoryOperationException the repository operation exception
 	 */
 	@Test
 	public void getStrangeTag() throws IOException, RepositoryOperationException {

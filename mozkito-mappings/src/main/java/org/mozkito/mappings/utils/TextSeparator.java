@@ -40,6 +40,7 @@ public final class TextSeparator {
 	/** The Constant SENTENCE_MODEL. */
 	static final SentenceModel    SENTENCE_MODEL    = new MedlineSentenceModel();
 	
+	/** The Constant TOKENIZER_FACTORY. */
 	static final TokenizerFactory TOKENIZER_FACTORY = IndoEuropeanTokenizerFactory.INSTANCE;
 	
 	/**

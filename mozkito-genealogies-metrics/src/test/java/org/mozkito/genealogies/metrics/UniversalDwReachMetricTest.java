@@ -32,8 +32,8 @@ public class UniversalDwReachMetricTest extends TestEnvironment {
 	
 	/**
 	 * Test.
-	 * 
-	 * @throws IOException
+	 *
+	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
 	@Test
 	public void test() throws IOException {

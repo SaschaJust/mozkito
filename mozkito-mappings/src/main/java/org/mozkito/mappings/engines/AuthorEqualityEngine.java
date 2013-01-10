@@ -109,6 +109,7 @@ public class AuthorEqualityEngine extends Engine {
 	/** The constant defaultConfidence. */
 	private static final Double DEFAULT_CONFIDENCE = 0.2d;
 	
+	/** The Constant TAG. */
 	private static final String TAG                = "author";                                              //$NON-NLS-1$
 	                                                                                                         
 	/** The constant description. */

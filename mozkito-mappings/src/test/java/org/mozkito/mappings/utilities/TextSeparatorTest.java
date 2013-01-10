@@ -25,8 +25,9 @@ import org.junit.Test;
 import org.mozkito.mappings.utils.TextSeparator;
 
 /**
+ * The Class TextSeparatorTest.
+ *
  * @author Sascha Just <sascha.just@mozkito.org>
- * 
  */
 public class TextSeparatorTest {
 	

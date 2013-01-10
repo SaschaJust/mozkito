@@ -48,8 +48,8 @@ public class BidirectionalMultiMap<K, V> {
 	private Class<? extends Set> vClass;
 	
 	/**
-     * 
-     */
+	 * Instantiates a new bidirectional multi map.
+	 */
 	public BidirectionalMultiMap() {
 		this(HashSet.class);
 	}

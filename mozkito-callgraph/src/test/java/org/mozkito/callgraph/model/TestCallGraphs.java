@@ -247,8 +247,8 @@ public class TestCallGraphs {
 	
 	/**
 	 * Test serialize.
-	 * 
-	 * @throws IOException
+	 *
+	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
 	@Test
 	public void testSerialize() throws IOException {

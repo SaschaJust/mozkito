@@ -85,6 +85,7 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 	/** The classes own textRemover. */
 	private FilterTextRemover              textRemover;
 	
+	/** The option length. */
 	private final int                      OPTION_LENGTH = 3;
 	
 	/**

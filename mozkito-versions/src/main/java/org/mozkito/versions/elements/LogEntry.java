@@ -75,7 +75,7 @@ public class LogEntry implements Comparable<LogEntry> {
 		this.originalId = originalId;
 		
 		if (Logger.logTrace()) {
-			Logger.trace("Creating " + getHandle() + ": " + this);
+			Logger.trace("Creating " + getClassName() + ": " + this);
 		}
 	}
 	

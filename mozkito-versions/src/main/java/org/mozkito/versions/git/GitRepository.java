@@ -341,7 +341,7 @@ public class GitRepository extends DistributedCommandLineRepository {
 		final Tuple<Integer, List<String>> execute = CommandExecutor.execute("git", new String[] { "--version" },
 		                                                                     FileUtils.tmpDir, null, null);
 		if (execute.getFirst() != 0) {
-			builder.append(getHandle()).append(" could not determine `git` version. (Error code: ")
+			builder.append(getClassName()).append(" could not determine `git` version. (Error code: ")
 			       .append(execute.getFirst()).append(").");
 			builder.append(FileUtils.lineSeparator);
 			try {
@@ -767,18 +767,13 @@ public class GitRepository extends DistributedCommandLineRepository {
 	
 	/**
 	 * main setup method.
-	 * 
-	 * @param address
-	 *            the address
-	 * @param inputStream
-	 *            the input stream
-	 * @param branchFactory
-	 *            the branch factory
-	 * @param tmpDir
-	 *            the tmp dir
-	 * @param mainBranchName
-	 *            the main branch name
-	 * @throws IOException
+	 *
+	 * @param address the address
+	 * @param inputStream the input stream
+	 * @param branchFactory the branch factory
+	 * @param tmpDir the tmp dir
+	 * @param mainBranchName the main branch name
+	 * @throws RepositoryOperationException the repository operation exception
 	 */
 	private void setup(@NotNull final URI address,
 	                   final InputStream inputStream,

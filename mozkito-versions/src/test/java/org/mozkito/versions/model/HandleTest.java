@@ -35,14 +35,31 @@ import org.mozkito.versions.exceptions.NoSuchHandleException;
  */
 public class HandleTest {
 	
+	/** The person. */
 	private Person             person;
+	
+	/** The t_0. */
 	private ChangeSet          t_0;
+	
+	/** The t_1. */
 	private ChangeSet          t_1;
+	
+	/** The t_2. */
 	private ChangeSet          t_2;
+	
+	/** The t_3. */
 	private ChangeSet          t_3;
+	
+	/** The t_4. */
 	private ChangeSet          t_4;
+	
+	/** The t_5. */
 	private ChangeSet          t_5;
+	
+	/** The version archive. */
 	private VersionArchive     versionArchive;
+	
+	/** The rev dep graph. */
 	private RevDependencyGraph revDepGraph;
 	
 	/**
@@ -54,7 +71,7 @@ public class HandleTest {
 	}
 	
 	/**
-	 * 
+	 * Setup.
 	 */
 	@Before
 	public void setup() {

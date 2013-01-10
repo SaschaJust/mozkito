@@ -62,9 +62,9 @@ public class CoreChangeGenealogy_MozkitoTest extends DatabaseTest {
 	
 	/**
 	 * Test change genealogy.
-	 * 
-	 * @throws IOException
-	 * @throws FilePermissionException
+	 *
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws FilePermissionException the file permission exception
 	 */
 	@Test
 	public void testChangeGenealogy() throws IOException, FilePermissionException {

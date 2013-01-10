@@ -101,15 +101,13 @@ public class ChangeGenealogyUtils {
 	
 	/**
 	 * Gets the genealogy test environment.
-	 * 
-	 * @param tmpGraphDBFile
-	 *            the tmp graph db file
-	 * @param branchFactory
-	 *            the branch factory
+	 *
+	 * @param tmpGraphDBFile the tmp graph db file
+	 * @param branchFactory the branch factory
 	 * @return the genealogy test environment
-	 * @throws IOException
-	 * @throws FilePermissionException
-	 * @throws FileNotFoundException
+	 * @throws FileNotFoundException the file not found exception
+	 * @throws FilePermissionException the file permission exception
+	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
 	public static GenealogyTestEnvironment getGenealogyTestEnvironment(final File tmpGraphDBFile,
 	                                                                   final BranchFactory branchFactory) throws FileNotFoundException,

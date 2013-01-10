@@ -43,6 +43,7 @@ import org.mozkito.versions.exceptions.UnregisteredRepositoryTypeException;
  */
 public final class RepositoryFactory {
 	
+	/** The Constant OMITTED_REPOSITORIES. */
 	private static final Set<Class<? extends Repository>>                 OMITTED_REPOSITORIES = new HashSet<Class<? extends Repository>>() {
 		                                                                                           
 		                                                                                           /**
@@ -99,7 +100,7 @@ public final class RepositoryFactory {
 					// RepositoryType
 					if (e.getCause() instanceof IllegalArgumentException) {
 						Logger.error(e.getCause(), "You probably missed to add an enum constant to '%s'.",
-						             RepositoryType.getHandle());
+						             RepositoryType.getClassName());
 					}
 				}
 				throw new UnrecoverableError(e);

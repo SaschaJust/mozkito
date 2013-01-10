@@ -29,11 +29,13 @@ import org.mozkito.persons.messages.Messages;
 import org.mozkito.persons.processing.PersonManager;
 
 /**
+ * The Class UniqueUsernameEngine.
+ *
  * @author Sascha Just <sascha.just@mozkito.org>
- * 
  */
 public class UniqueUsernameEngine extends MergingEngine {
 	
+	/** The Constant DESCRIPTION. */
 	private static final String DESCRIPTION = Messages.getString("UniqueUsernameEngine.description"); //$NON-NLS-1$
 	                                                                                                  
 	/*

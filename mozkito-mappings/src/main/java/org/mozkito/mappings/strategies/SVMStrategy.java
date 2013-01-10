@@ -109,12 +109,17 @@ public class SVMStrategy extends Strategy {
 	/** The model. */
 	svm_model                   model;
 	
+	/** The Constant TAG. */
 	private static final String TAG         = "svm";                                        //$NON-NLS-1$
+	
+	/** The Constant DESCRIPTION. */
 	private static final String DESCRIPTION = Messages.getString("SVMStrategy.description"); //$NON-NLS-1$
 	                                                                                         
 	/**
-	 * @param value
-	 * @param value2
+	 * Instantiates a new sVM strategy.
+	 *
+	 * @param value the value
+	 * @param value2 the value2
 	 */
 	public SVMStrategy(final File value, final File value2) {
 		// PRECONDITIONS

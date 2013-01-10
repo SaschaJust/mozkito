@@ -45,7 +45,10 @@ import org.mozkito.versions.model.VersionArchive;
  */
 public class RepositoryParser extends Transformer<LogEntry, ChangeSet> {
 	
+	/** The Constant TRANSACTION_IDS. */
 	private static final Set<String>         TRANSACTION_IDS = new HashSet<String>();
+	
+	/** The Constant CURRENT_FILES. */
 	private static final Map<String, Handle> CURRENT_FILES   = new HashMap<String, Handle>();
 	
 	/**

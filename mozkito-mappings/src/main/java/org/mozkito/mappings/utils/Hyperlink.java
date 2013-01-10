@@ -16,8 +16,9 @@ package org.mozkito.mappings.utils;
 import net.ownhero.dev.ioda.JavaUtils;
 
 /**
+ * The Class Hyperlink.
+ *
  * @author Sascha Just <sascha.just@mozkito.org>
- * 
  */
 public class Hyperlink {
 	

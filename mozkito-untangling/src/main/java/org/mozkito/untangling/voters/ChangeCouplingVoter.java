@@ -353,8 +353,8 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 		final JavaElement element1 = t1.getChangedElementLocation().getElement();
 		final JavaElement element2 = t2.getChangedElementLocation().getElement();
 		
-		Condition.notNull(element1, "Local variable '%s' in '%s:%s'.", "element1", getHandle(), "getScore"); //$NON-NLS-1$ //$NON-NLS-2$
-		Condition.notNull(element2, "Local variable '%s' in '%s:%s'.", "element2", getHandle(), "getScore"); //$NON-NLS-1$ //$NON-NLS-2$
+		Condition.notNull(element1, "Local variable '%s' in '%s:%s'.", "element1", getClassName(), "getScore"); //$NON-NLS-1$ //$NON-NLS-2$
+		Condition.notNull(element2, "Local variable '%s' in '%s:%s'.", "element2", getClassName(), "getScore"); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		if (!element1.getElementType().equals(element2.getElementType())) {
 			return MultilevelClustering.IGNORE_SCORE;

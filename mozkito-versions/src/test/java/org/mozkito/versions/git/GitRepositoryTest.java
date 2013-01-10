@@ -197,8 +197,8 @@ public class GitRepositoryTest extends VersionsTest {
 	
 	/**
 	 * Test get log.
-	 * 
-	 * @throws RepositoryOperationException
+	 *
+	 * @throws RepositoryOperationException the repository operation exception
 	 */
 	@Test
 	public void testGetLog() throws RepositoryOperationException {

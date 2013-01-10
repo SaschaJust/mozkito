@@ -34,9 +34,6 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.junit.Test;
-
-import difflib.Delta;
-
 import org.mozkito.testing.VersionsTest;
 import org.mozkito.testing.annotation.RepositorySetting;
 import org.mozkito.testing.annotation.RepositorySettings;
@@ -44,6 +41,8 @@ import org.mozkito.versions.elements.AnnotationEntry;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.LogEntry;
 import org.mozkito.versions.exceptions.RepositoryOperationException;
+
+import difflib.Delta;
 
 /**
  * The Class RepositoryTest.
@@ -295,8 +294,8 @@ public class RepositoryTest extends VersionsTest {
 			try {
 				assertEquals("dir_a/file_2_dir_a", formerPathName);
 			} catch (final AssertionError e) {
-				fail(String.format("Failed for repository '%s'. Expected '%s' but got '%s'.", repository.getHandle(),
-				                   "dir_a/file_2_dir_a", formerPathName));
+				fail(String.format("Failed for repository '%s'. Expected '%s' but got '%s'.",
+				                   repository.getClassName(), "dir_a/file_2_dir_a", formerPathName));
 			}
 		}
 	}

@@ -34,14 +34,16 @@ import org.mozkito.mappings.requirements.Index;
 import org.mozkito.mappings.storages.LuceneStorage;
 
 /**
+ * The Class DescriptionSearchEngine.
+ *
  * @author Sascha Just <sascha.just@mozkito.org>
- * 
  */
 public class DescriptionSearchEngine extends SearchEngine {
 	
 	/** The Constant description. */
 	private static final String DESCRIPTION = Messages.getString("SummarySearchEngine.description"); //$NON-NLS-1$
 	                                                                                                 
+	/** The Constant TAG. */
 	private static final String TAG         = "report";                                             //$NON-NLS-1$
 	                                                                                                 
 	/** The parser. */

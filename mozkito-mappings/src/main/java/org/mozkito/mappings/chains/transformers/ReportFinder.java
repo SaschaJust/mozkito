@@ -40,6 +40,7 @@ import org.mozkito.versions.model.ChangeSet;
  */
 public class ReportFinder extends Transformer<ChangeSet, Candidate> {
 	
+	/** The candidate factory. */
 	private final CandidateFactory<MappableReport, MappableTransaction> candidateFactory = CandidateFactory.getInstance(MappableReport.class,
 	                                                                                                                    MappableTransaction.class);
 	

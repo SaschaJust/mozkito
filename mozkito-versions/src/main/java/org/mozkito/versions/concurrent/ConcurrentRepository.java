@@ -80,7 +80,7 @@ public class ConcurrentRepository extends Repository {
 			this.cleanupThreshold = DEFAULT_CLEANUP_COUNT;
 		} finally {
 			// POSTCONDITIONS
-			Condition.notNull(this.repository, "Field '%s' in '%s'.", "repository", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+			Condition.notNull(this.repository, "Field '%s' in '%s'.", "repository", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
@@ -100,7 +100,7 @@ public class ConcurrentRepository extends Repository {
 			this.cleanupThreshold = cleanupThreshold;
 		} finally {
 			// POSTCONDITIONS
-			Condition.notNull(this.repository, "Field '%s' in '%s'.", "repository", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+			Condition.notNull(this.repository, "Field '%s' in '%s'.", "repository", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
@@ -142,8 +142,8 @@ public class ConcurrentRepository extends Repository {
 	
 	/**
 	 * Cleanup.
-	 * 
-	 * @throws RepositoryOperationException
+	 *
+	 * @throws RepositoryOperationException the repository operation exception
 	 */
 	private synchronized void cleanup() throws RepositoryOperationException {
 		++this.cleanupCount;
@@ -273,7 +273,7 @@ public class ConcurrentRepository extends Repository {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.versions.Repository#getHandle()
+	 * @see org.mozkito.versions.Repository#getClassName()
 	 */
 	@Override
 	public final String getClassName() {
@@ -342,7 +342,7 @@ public class ConcurrentRepository extends Repository {
 		try {
 			if (!this.threadToRevisionMap.containsKey(thread)) {
 				cleanup();
-				final File dir = FileUtils.createRandomDir("mozkito_concurrent_" + this.repository.getHandle().toLowerCase() + "_" + thread.getId(), null, FileShutdownAction.DELETE); //$NON-NLS-1$ //$NON-NLS-2$
+				final File dir = FileUtils.createRandomDir("mozkito_concurrent_" + this.repository.getClassName().toLowerCase() + "_" + thread.getId(), null, FileShutdownAction.DELETE); //$NON-NLS-1$ //$NON-NLS-2$
 				try {
 					final Repository repoClone = this.repository.getClass().newInstance();
 					repoClone.setup(this.repository.getUri(), null, dir, this.repository.getMainBranchName());
@@ -357,7 +357,7 @@ public class ConcurrentRepository extends Repository {
 			
 			final Repository threadRepository = this.threadToRevisionMap.get(thread.getId());
 			
-			Condition.notNull(threadRepository, "Local variable '%s' in '%s'.", "threadRepository", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+			Condition.notNull(threadRepository, "Local variable '%s' in '%s'.", "threadRepository", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			return threadRepository;
 		} catch (final RepositoryOperationException e1) {

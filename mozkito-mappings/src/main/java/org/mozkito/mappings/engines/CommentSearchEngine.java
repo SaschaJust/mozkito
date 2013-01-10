@@ -43,8 +43,9 @@ import org.mozkito.mappings.requirements.Index;
 import org.mozkito.mappings.storages.LuceneStorage;
 
 /**
+ * The Class CommentSearchEngine.
+ *
  * @author Sascha Just <sascha.just@mozkito.org>
- * 
  */
 public class CommentSearchEngine extends SearchEngine {
 	
@@ -55,8 +56,10 @@ public class CommentSearchEngine extends SearchEngine {
 	        ArgumentSetOptions<CommentSearchEngine, ArgumentSet<CommentSearchEngine, Options>> {
 		
 		/**
-		 * @param argumentSet
-		 * @param requirements
+		 * Instantiates a new options.
+		 *
+		 * @param argumentSet the argument set
+		 * @param requirements the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
 			super(argumentSet, CommentSearchEngine.TAG, CommentSearchEngine.DESCRIPTION, requirements);
@@ -98,10 +101,14 @@ public class CommentSearchEngine extends SearchEngine {
 	
 	/** The Constant description. */
 	private static final String DESCRIPTION = Messages.getString("SummarySearchEngine.description"); //$NON-NLS-1$
+	
+	/** The Constant TAG. */
 	private static final String TAG         = "comment";                                            //$NON-NLS-1$
 	                                                                                                 
 	/** The parser. */
 	private QueryParser         parser      = null;
+	
+	/** The Constant TOP_X. */
 	private static final int    TOP_X       = 1000;
 	
 	/**

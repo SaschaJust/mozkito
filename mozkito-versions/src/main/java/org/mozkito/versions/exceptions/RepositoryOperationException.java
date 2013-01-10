@@ -16,43 +16,48 @@ package org.mozkito.versions.exceptions;
 import net.ownhero.dev.ioda.JavaUtils;
 
 /**
+ * The Class RepositoryOperationException.
+ *
  * @author Sascha Just <sascha.just@mozkito.org>
- * 
  */
 public class RepositoryOperationException extends Exception {
 	
-	/**
-     * 
-     */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 2758683900402585036L;
 	
 	/**
-	 * 
+	 * Instantiates a new repository operation exception.
 	 */
 	public RepositoryOperationException() {
 		
 	}
 	
 	/**
-	 * @param message
+	 * Instantiates a new repository operation exception.
+	 *
+	 * @param message the message
 	 */
 	public RepositoryOperationException(final String message) {
 		super(message);
 	}
 	
 	/**
-	 * @param message
-	 * @param cause
+	 * Instantiates a new repository operation exception.
+	 *
+	 * @param message the message
+	 * @param cause the cause
 	 */
 	public RepositoryOperationException(final String message, final Throwable cause) {
 		super(message, cause);
 	}
 	
 	/**
-	 * @param message
-	 * @param cause
-	 * @param enableSuppression
-	 * @param writableStackTrace
+	 * Instantiates a new repository operation exception.
+	 *
+	 * @param message the message
+	 * @param cause the cause
+	 * @param enableSuppression the enable suppression
+	 * @param writableStackTrace the writable stack trace
 	 */
 	public RepositoryOperationException(final String message, final Throwable cause, final boolean enableSuppression,
 	        final boolean writableStackTrace) {
@@ -60,7 +65,9 @@ public class RepositoryOperationException extends Exception {
 	}
 	
 	/**
-	 * @param cause
+	 * Instantiates a new repository operation exception.
+	 *
+	 * @param cause the cause
 	 */
 	public RepositoryOperationException(final Throwable cause) {
 		super(cause);

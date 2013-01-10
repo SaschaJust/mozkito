@@ -101,9 +101,13 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	/** The Constant REGEX. */
 	protected static final Regex             REGEX                        = new Regex(MercurialRepository.PATTERN);
 	
+	/** The Constant FIELD_SPLITTER. */
 	private static final String              FIELD_SPLITTER               = "%%%";
+	
+	/** The Constant UNNAMED_BRANCH_NAME_TEMPLATE. */
 	protected static final String            UNNAMED_BRANCH_NAME_TEMPLATE = "branch_%s";
 	
+	/** The Constant REVISION_NODE_REGEX. */
 	private static final Regex               REVISION_NODE_REGEX          = new Regex(
 	                                                                                  "-?({revision}\\d+):({hash}[a-zA-Z0-9]{40})");
 	
@@ -140,6 +144,7 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	/** The transaction i ds. */
 	private final List<String> changeSetIds = new LinkedList<String>();
 	
+	/** The rev dep graph. */
 	private RevDependencyGraph revDepGraph;
 	
 	/*
@@ -263,13 +268,11 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	
 	/**
 	 * Clone.
-	 * 
-	 * @param inputStream
-	 *            the input stream
-	 * @param destDir
-	 *            the dest dir
+	 *
+	 * @param inputStream the input stream
+	 * @param destDir the dest dir
 	 * @return true, if successful
-	 * @throws RepositoryOperationException
+	 * @throws RepositoryOperationException the repository operation exception
 	 */
 	private boolean clone(final InputStream inputStream,
 	                      final String destDir) throws RepositoryOperationException {
@@ -370,7 +373,7 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 		final Tuple<Integer, List<String>> execute = CommandExecutor.execute("hg", new String[] { "--version" },
 		                                                                     FileUtils.tmpDir, null, null);
 		if (execute.getFirst() != 0) {
-			builder.append(getHandle()).append(" could not determine `hg` version. (Error code: ")
+			builder.append(getClassName()).append(" could not determine `hg` version. (Error code: ")
 			       .append(execute.getFirst()).append(").");
 			builder.append(FileUtils.lineSeparator);
 			try {
@@ -774,18 +777,13 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	
 	/**
 	 * main setup method.
-	 * 
-	 * @param address
-	 *            the address
-	 * @param inputStream
-	 *            the input stream
-	 * @param branchFactory
-	 *            the branch factory
-	 * @param tmpDir
-	 *            the tmp dir
-	 * @param mainBranchName
-	 *            the main branch name
-	 * @throws IOException
+	 *
+	 * @param address the address
+	 * @param inputStream the input stream
+	 * @param branchFactory the branch factory
+	 * @param tmpDir the tmp dir
+	 * @param mainBranchName the main branch name
+	 * @throws RepositoryOperationException the repository operation exception
 	 */
 	private void setup(@NotNull final URI address,
 	                   final InputStream inputStream,

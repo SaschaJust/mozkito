@@ -31,8 +31,9 @@ import org.mozkito.versions.Repository;
 import org.mozkito.versions.concurrent.ConcurrentRepository;
 
 /**
+ * The Class RepositoryStorage.
+ *
  * @author Sascha Just <sascha.just@mozkito.org>
- * 
  */
 public class RepositoryStorage extends Storage {
 	
@@ -42,6 +43,7 @@ public class RepositoryStorage extends Storage {
 	public static final class Options extends
 	        ArgumentSetOptions<RepositoryStorage, ArgumentSet<RepositoryStorage, Options>> {
 		
+		/** The repository options. */
 		RepositoryOptions repositoryOptions;
 		
 		/**
@@ -105,11 +107,13 @@ public class RepositoryStorage extends Storage {
 	/** The Constant TAG. */
 	private static final String TAG         = "repository";                                       //$NON-NLS-1$
 	                                                                                               
+	/** The repository. */
 	private Repository          repository;
 	
 	/**
-	 * @param repository
-	 * 
+	 * Instantiates a new repository storage.
+	 *
+	 * @param repository the repository
 	 */
 	public RepositoryStorage(final ConcurrentRepository repository) {
 		// PRECONDITIONS

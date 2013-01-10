@@ -47,9 +47,9 @@ public class RevDependencyGraph_PersistenceTest extends VersionsTest {
 	
 	/**
 	 * Test restored rev dep graph.
-	 * 
-	 * @throws IOException
-	 * @throws RepositoryOperationException
+	 *
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws RepositoryOperationException the repository operation exception
 	 */
 	@Test
 	public void testRestoredRevDepGraph() throws IOException, RepositoryOperationException {

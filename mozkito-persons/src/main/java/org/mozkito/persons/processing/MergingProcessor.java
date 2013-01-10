@@ -29,23 +29,30 @@ import org.mozkito.persons.elements.PersonBucket;
 import org.mozkito.persons.engine.MergingEngine;
 
 /**
+ * The Class MergingProcessor.
+ *
  * @author Sascha Just <sascha.just@mozkito.org>
- * 
  */
 public class MergingProcessor {
 	
+	/** The manager. */
 	private PersonManager                    manager;
+	
+	/** The engines. */
 	private final Map<String, MergingEngine> engines = new HashMap<String, MergingEngine>();
 	
 	/**
-	 * @param engine
+	 * Adds the engine.
+	 *
+	 * @param engine the engine
 	 */
 	public void addEngine(final MergingEngine engine) {
 		this.engines.put(engine.getClass().getCanonicalName(), engine);
 	}
 	
 	/**
-	 * The method is called after processing all {@link Person}s to consolidate the {@link Person}s in the created
+	 * The method is called after processing all {@link Person}s to consolidate the {@link Person}s in the created.
+	 *
 	 * {@link PersonBucket}s.
 	 */
 	public void consolidate() {

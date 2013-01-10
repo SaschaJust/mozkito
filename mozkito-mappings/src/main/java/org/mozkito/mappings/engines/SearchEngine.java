@@ -103,8 +103,10 @@ public abstract class SearchEngine extends Engine {
 	/** The Constant DESCRIPTION. */
 	private static final String DESCRIPTION     = Messages.getString("SearchEngine.description"); //$NON-NLS-1$
 	                                                                                              
+	/** The Constant MIN_QUERY_CHARS. */
 	private static final int    MIN_QUERY_CHARS = 8;
 	
+	/** The Constant MAX_QUERY_CHARS. */
 	private static final int    MAX_QUERY_CHARS = 255;
 	
 	/**

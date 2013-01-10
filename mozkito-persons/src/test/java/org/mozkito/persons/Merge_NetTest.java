@@ -40,17 +40,18 @@ import org.mozkito.testing.annotation.DatabaseSettings;
 import org.mozkito.versions.model.ChangeSet;
 
 /**
+ * The Class Merge_NetTest.
+ *
  * @author Sascha Just <sascha.just@mozkito.org>
- * 
  */
 @DatabaseSettings (unit = "versions")
 public class Merge_NetTest extends DatabaseTest {
 	
 	/**
-	 * Test for {@link Person}, {@link PersonContainer}, {@link PersonManager}
-	 * 
-	 * @throws ArgumentRegistrationException
-	 * @throws SettingsParseError
+	 * Test for {@link Person}, {@link PersonContainer}, {@link PersonManager}.
+	 *
+	 * @throws SettingsParseError the settings parse error
+	 * @throws ArgumentRegistrationException the argument registration exception
 	 */
 	@SuppressWarnings ("deprecation")
 	@Test

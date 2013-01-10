@@ -227,7 +227,7 @@ public class RepositoryOptions extends ArgumentSetOptions<Repository, ArgumentSe
 					                 mainBranchArgument.getValue());
 				}
 				
-				this.settings.addInformation(repository.getHandle(), repository.gatherToolInformation());
+				this.settings.addInformation(repository.getClassName(), repository.gatherToolInformation());
 				
 				return repository;
 			} catch (final Exception e) {

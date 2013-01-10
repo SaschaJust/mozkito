@@ -127,6 +127,8 @@ public class MethodModificationEngine extends Engine {
 	
 	/** The constant description. */
 	private static final String DESCRIPTION        = Messages.getString("MethodModificationEngine.description"); //$NON-NLS-1$
+	
+	/** The Constant TAG. */
 	private static final String TAG                = "methodModification";                                      //$NON-NLS-1$
 	                                                                                                             
 	/**

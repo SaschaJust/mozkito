@@ -199,7 +199,7 @@ public class DatabaseTest {
 	 * Setup database.
 	 */
 	private void setupDatabase() {
-		Condition.notNull(this.processor, "Field '%s' in '%s'.", "processor", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		Condition.notNull(this.processor, "Field '%s' in '%s'.", "processor", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
 		this.processor.setup(this, this.annotation);
 	}
 	
@@ -217,7 +217,7 @@ public class DatabaseTest {
 	 * Shutdown database.
 	 */
 	private void shutdownDatabase() {
-		Condition.notNull(this.processor, "Field '%s' in '%s'.", "processor", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		Condition.notNull(this.processor, "Field '%s' in '%s'.", "processor", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
 		this.processor.tearDown(this, this.annotation);
 	}
 }

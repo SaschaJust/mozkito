@@ -108,6 +108,7 @@ public class SummarySearchEngine extends SearchEngine {
 	/** The parser. */
 	private QueryParser         parser      = null;
 	
+	/** The top x hits. */
 	private final int           TOP_X_HITS  = 1000;
 	
 	/**

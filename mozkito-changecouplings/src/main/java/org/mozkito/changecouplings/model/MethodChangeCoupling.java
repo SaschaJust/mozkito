@@ -44,6 +44,14 @@ public class MethodChangeCoupling implements Comparable<MethodChangeCoupling> {
 	/** The confidence. */
 	private final Double                    confidence;
 	
+	/**
+	 * Instantiates a new method change coupling.
+	 *
+	 * @param premise the premise
+	 * @param implication the implication
+	 * @param support the support
+	 * @param confidence the confidence
+	 */
 	protected MethodChangeCoupling(final Set<JavaMethodDefinition> premise, final JavaMethodDefinition implication,
 	        final Integer support, final Double confidence) {
 		this.premise = premise;

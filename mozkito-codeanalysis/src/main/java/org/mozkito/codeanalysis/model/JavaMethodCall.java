@@ -197,6 +197,9 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 		
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.mozkito.codeanalysis.model.JavaElement#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(final Object obj) {
 		if (this == obj) {
@@ -306,6 +309,9 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 		return thisElement;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.mozkito.codeanalysis.model.JavaElement#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;

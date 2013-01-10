@@ -51,7 +51,7 @@ import org.mozkito.datastructures.BidirectionalMultiMap;
 public class RevDependencyGraph {
 	
 	/**
-	 * Possible edge labels
+	 * Possible edge labels.
 	 */
 	public enum EdgeType {
 		
@@ -65,7 +65,7 @@ public class RevDependencyGraph {
 	}
 	
 	/**
-	 * Possible vertex types
+	 * Possible vertex types.
 	 */
 	private enum NodeType {
 		
@@ -81,6 +81,7 @@ public class RevDependencyGraph {
 	/** The Constant BRANCH. */
 	private static final String                         BRANCH_ID = "branch_name";                              //$NON-NLS-1$
 	                                                                                                             
+	/** The tags. */
 	private final BidirectionalMultiMap<String, String> tags      = new BidirectionalMultiMap<String, String>();
 	
 	/** The Constant NODE_TYPE. */
@@ -89,13 +90,13 @@ public class RevDependencyGraph {
 	/** The graph. */
 	private final TitanGraph                            graph;
 	
+	/** The db file. */
 	private final File                                  dbFile;
 	
 	/**
 	 * Create a new RevDependencyGraph based on an underlying GraphDB.
-	 * 
-	 * @throws IOException
-	 * 
+	 *
+	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
 	@NoneNull
 	public RevDependencyGraph() throws IOException {
@@ -303,12 +304,10 @@ public class RevDependencyGraph {
 	}
 	
 	/**
-	 * Return true if there exists a path from fromHash to toHash
-	 * 
-	 * @param fromHash
-	 *            the from hash
-	 * @param toHash
-	 *            the to hash
+	 * Return true if there exists a path from fromHash to toHash.
+	 *
+	 * @param fromHash the from hash
+	 * @param toHash the to hash
 	 * @return true, if successful
 	 */
 	@NoneNull
@@ -362,6 +361,12 @@ public class RevDependencyGraph {
 		return (getChangeSet(hash) != null);
 	}
 	
+	/**
+	 * Gets the branch.
+	 *
+	 * @param nodeID the node id
+	 * @return the branch
+	 */
 	@NoneNull
 	private Vertex getBranch(@NotEmptyString final String nodeID) {
 		return getNode(BRANCH_ID, nodeID);
@@ -383,6 +388,12 @@ public class RevDependencyGraph {
 		return result;
 	}
 	
+	/**
+	 * Gets the branch head.
+	 *
+	 * @param branchName the branch name
+	 * @return the branch head
+	 */
 	@NoneNull
 	private Vertex getBranchHead(@NotEmptyString final String branchName) {
 		final Vertex branchVertex = getBranch(branchName);
@@ -469,11 +480,24 @@ public class RevDependencyGraph {
 		return new TransactionIterator(branchHeadVertex.getProperty(NODE_ID).toString(), this);
 	}
 	
+	/**
+	 * Gets the change set.
+	 *
+	 * @param fromHash the from hash
+	 * @return the change set
+	 */
 	@NoneNull
 	private Vertex getChangeSet(@NotEmptyString final String fromHash) {
 		return getNode(NODE_ID, fromHash);
 	}
 	
+	/**
+	 * Gets the edge.
+	 *
+	 * @param node the node
+	 * @param parent the parent
+	 * @return the edge
+	 */
 	@NoneNull
 	private EdgeType getEdge(@NotEmptyString final String node,
 	                         @NotEmptyString final String parent) {
@@ -547,6 +571,13 @@ public class RevDependencyGraph {
 		return result;
 	}
 	
+	/**
+	 * Gets the node.
+	 *
+	 * @param nodeIDProperty the node id property
+	 * @param nodeID the node id
+	 * @return the node
+	 */
 	@NoneNull
 	private Vertex getNode(@NotEmptyString final String nodeIDProperty,
 	                       @NotEmptyString final String nodeID) {
@@ -658,10 +689,9 @@ public class RevDependencyGraph {
 	
 	/**
 	 * Checks if this RevDependencyGraph contains the same RevDepdendecy structure as the provided other
-	 * RevDependencyGraph
-	 * 
-	 * @param other
-	 *            the other
+	 * RevDependencyGraph.
+	 *
+	 * @param other the other
 	 * @return true, if is equals to
 	 */
 	public boolean isEqualsTo(final RevDependencyGraph other) {
@@ -717,9 +747,9 @@ public class RevDependencyGraph {
 	}
 	
 	/**
-	 * Removes a tag
-	 * 
-	 * @param tagName
+	 * Removes a tag.
+	 *
+	 * @param tagName the tag name
 	 */
 	@NoneNull
 	public void removeTag(@NotEmptyString final String tagName) {

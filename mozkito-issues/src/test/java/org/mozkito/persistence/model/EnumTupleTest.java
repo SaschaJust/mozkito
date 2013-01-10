@@ -33,8 +33,9 @@ import org.mozkito.testing.TestEnum;
 import org.mozkito.testing.annotation.DatabaseSettings;
 
 /**
+ * The Class EnumTupleTest.
+ *
  * @author Sascha Just <sascha.just@mozkito.org>
- * 
  */
 @DatabaseSettings (unit = "issues")
 public class EnumTupleTest extends DatabaseTest {

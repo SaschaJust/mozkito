@@ -5,9 +5,7 @@ package org.mozkito.versions.exceptions;
  */
 public class NoSuchHandleException extends Exception {
 	
-	/**
-     * 
-     */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 7902755533383802066L;
 	
 	/**

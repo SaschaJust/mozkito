@@ -59,14 +59,10 @@ import org.xml.sax.SAXException;
 @Entity
 public class Attachment implements Annotated {
 	
-	/**
-     * 
-     */
+	/** The Constant SHA1_SIZE. */
 	private static final int  SHA1_SIZE        = 32;
 	
-	/**
-     * 
-     */
+	/** The Constant MD5_SIZE. */
 	private static final int  MD5_SIZE         = 16;
 	
 	/** The Constant serialVersionUID. */

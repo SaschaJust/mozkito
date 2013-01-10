@@ -18,8 +18,9 @@ import java.util.List;
 import org.mozkito.mappings.mappable.model.MappableEntity;
 
 /**
+ * The Class ByPass.
+ *
  * @author Sascha Just <sascha.just@mozkito.org>
- * 
  */
 public final class ByPass extends Expression {
 	

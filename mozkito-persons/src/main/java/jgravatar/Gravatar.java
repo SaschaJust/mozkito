@@ -31,18 +31,32 @@ import org.apache.commons.lang.Validate;
  */
 public final class Gravatar {
 
+	/** The Constant DEFAULT_SIZE. */
 	private final static int DEFAULT_SIZE = 80;
+	
+	/** The Constant GRAVATAR_URL. */
 	private final static String GRAVATAR_URL = "http://www.gravatar.com/avatar/";
+	
+	/** The Constant DEFAULT_RATING. */
 	private static final GravatarRating DEFAULT_RATING = GravatarRating.GENERAL_AUDIENCES;
+	
+	/** The Constant DEFAULT_DEFAULT_IMAGE. */
 	private static final GravatarDefaultImage DEFAULT_DEFAULT_IMAGE = GravatarDefaultImage.HTTP_404;
 
+	/** The size. */
 	private int size = DEFAULT_SIZE;
+	
+	/** The rating. */
 	private GravatarRating rating = DEFAULT_RATING;
+	
+	/** The default image. */
 	private GravatarDefaultImage defaultImage = DEFAULT_DEFAULT_IMAGE;
 
 	/**
 	 * Specify a gravatar size between 1 and 512 pixels. If you omit this, a
 	 * default size of 80 pixels is used.
+	 *
+	 * @param sizeInPixels the new size
 	 */
 	public void setSize(int sizeInPixels) {
 		Validate.isTrue(sizeInPixels >= 1 && sizeInPixels <= 512,
@@ -52,6 +66,8 @@ public final class Gravatar {
 
 	/**
 	 * Specify a rating to ban gravatar images with explicit content.
+	 *
+	 * @param rating the new rating
 	 */
 	public void setRating(GravatarRating rating) {
 		Validate.notNull(rating, "rating");
@@ -60,6 +76,8 @@ public final class Gravatar {
 
 	/**
 	 * Specify the default image to be produced if no gravatar image was found.
+	 *
+	 * @param defaultImage the new default image
 	 */
 	public void setDefaultImage(GravatarDefaultImage defaultImage) {
 		Validate.notNull(defaultImage, "defaultImage");
@@ -68,6 +86,9 @@ public final class Gravatar {
 
 	/**
 	 * Returns the Gravatar URL for the given email address.
+	 *
+	 * @param email the email
+	 * @return the url
 	 */
 	public String getUrl(String email) {
 		Validate.notNull(email, "email");
@@ -83,6 +104,10 @@ public final class Gravatar {
 	 * Downloads the gravatar for the given URL using Java {@link URL} and
 	 * returns a byte array containing the gravatar jpg, returns null if no
 	 * gravatar was found.
+	 *
+	 * @param email the email
+	 * @return the byte[]
+	 * @throws GravatarDownloadException the gravatar download exception
 	 */
 	public byte[] download(String email) throws GravatarDownloadException {
 		InputStream stream = null;
@@ -99,6 +124,11 @@ public final class Gravatar {
 		}
 	}
 
+	/**
+	 * Format url parameters.
+	 *
+	 * @return the string
+	 */
 	private String formatUrlParameters() {
 		List<String> params = new ArrayList<String>();
 

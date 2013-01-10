@@ -114,8 +114,8 @@ public class MercurialRepositoryTest extends VersionsTest {
 	
 	/**
 	 * Test annotate.
-	 * 
-	 * @throws RepositoryOperationException
+	 *
+	 * @throws RepositoryOperationException the repository operation exception
 	 */
 	@Test
 	public void testAnnotate() throws RepositoryOperationException {
@@ -171,8 +171,8 @@ public class MercurialRepositoryTest extends VersionsTest {
 	
 	/**
 	 * Test checkout path fail.
-	 * 
-	 * @throws RepositoryOperationException
+	 *
+	 * @throws RepositoryOperationException the repository operation exception
 	 */
 	@Test (expected = RepositoryOperationException.class)
 	public void testCheckoutPathFail() throws RepositoryOperationException {
@@ -181,8 +181,8 @@ public class MercurialRepositoryTest extends VersionsTest {
 	
 	/**
 	 * Test checkout path success.
-	 * 
-	 * @throws RepositoryOperationException
+	 *
+	 * @throws RepositoryOperationException the repository operation exception
 	 */
 	@Test
 	public void testCheckoutPathSuccess() throws RepositoryOperationException {
@@ -194,8 +194,8 @@ public class MercurialRepositoryTest extends VersionsTest {
 	
 	/**
 	 * Test diff.
-	 * 
-	 * @throws RepositoryOperationException
+	 *
+	 * @throws RepositoryOperationException the repository operation exception
 	 */
 	@Test
 	public void testDiff() throws RepositoryOperationException {
@@ -213,8 +213,8 @@ public class MercurialRepositoryTest extends VersionsTest {
 	
 	/**
 	 * Test get changes paths.
-	 * 
-	 * @throws RepositoryOperationException
+	 *
+	 * @throws RepositoryOperationException the repository operation exception
 	 */
 	@Test
 	public void testGetChangesPaths() throws RepositoryOperationException {
@@ -255,8 +255,8 @@ public class MercurialRepositoryTest extends VersionsTest {
 	
 	/**
 	 * Test get log.
-	 * 
-	 * @throws RepositoryOperationException
+	 *
+	 * @throws RepositoryOperationException the repository operation exception
 	 */
 	@Test
 	public void testGetLog() throws RepositoryOperationException {
@@ -302,8 +302,8 @@ public class MercurialRepositoryTest extends VersionsTest {
 	
 	/**
 	 * Test get rev dependency graph.
-	 * 
-	 * @throws RepositoryOperationException
+	 *
+	 * @throws RepositoryOperationException the repository operation exception
 	 */
 	@Test
 	public void testGetRevDependencyGraph() throws RepositoryOperationException {
@@ -399,8 +399,8 @@ public class MercurialRepositoryTest extends VersionsTest {
 	
 	/**
 	 * Test get transaction count.
-	 * 
-	 * @throws RepositoryOperationException
+	 *
+	 * @throws RepositoryOperationException the repository operation exception
 	 */
 	@Test
 	public void testGetTransactionCount() throws RepositoryOperationException {
@@ -420,8 +420,8 @@ public class MercurialRepositoryTest extends VersionsTest {
 	
 	/**
 	 * Test get transaction index.
-	 * 
-	 * @throws RepositoryOperationException
+	 *
+	 * @throws RepositoryOperationException the repository operation exception
 	 */
 	@Test
 	public void testGetTransactionIndex() throws RepositoryOperationException {

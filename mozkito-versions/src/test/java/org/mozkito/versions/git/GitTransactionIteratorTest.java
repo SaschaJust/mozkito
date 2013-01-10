@@ -38,8 +38,9 @@ import org.mozkito.versions.model.Branch;
 import org.mozkito.versions.model.ChangeSet;
 
 /**
+ * The Class GitTransactionIteratorTest.
+ *
  * @author "Kim Herzig <herzig@cs.uni-saarland.de>"
- * 
  */
 @RepositorySetting (id = "testGit", type = RepositoryType.GIT, uri = "testGit.zip")
 public class GitTransactionIteratorTest extends VersionsTest {
@@ -59,9 +60,9 @@ public class GitTransactionIteratorTest extends VersionsTest {
 	
 	/**
 	 * Before class.
-	 * 
-	 * @throws IOException
-	 * @throws RepositoryOperationException
+	 *
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws RepositoryOperationException the repository operation exception
 	 */
 	@Before
 	public void setup() throws IOException, RepositoryOperationException {
@@ -119,9 +120,9 @@ public class GitTransactionIteratorTest extends VersionsTest {
 	
 	/**
 	 * Test maintenance branch.
-	 * 
-	 * @throws IOException
-	 * @throws RepositoryOperationException
+	 *
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws RepositoryOperationException the repository operation exception
 	 */
 	@Test
 	public void testMaintenanceBranch() throws IOException, RepositoryOperationException {
@@ -169,9 +170,9 @@ public class GitTransactionIteratorTest extends VersionsTest {
 	
 	/**
 	 * Test master branch.
-	 * 
-	 * @throws IOException
-	 * @throws RepositoryOperationException
+	 *
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws RepositoryOperationException the repository operation exception
 	 */
 	@Test
 	public void testMasterBranch() throws IOException, RepositoryOperationException {

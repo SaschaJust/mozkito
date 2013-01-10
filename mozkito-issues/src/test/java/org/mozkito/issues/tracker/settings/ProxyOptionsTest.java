@@ -56,8 +56,8 @@ public class ProxyOptionsTest {
 	
 	/**
 	 * Before class.
-	 * 
-	 * @throws IOException
+	 *
+	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
 	@BeforeClass
 	public static void beforeClass() throws IOException {

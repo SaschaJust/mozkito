@@ -75,7 +75,7 @@ public class AnnotationEntry {
 		this.line = line;
 		
 		if (Logger.logTrace()) {
-			Logger.trace("Creating " + getHandle() + ": " + this);
+			Logger.trace("Creating " + getClassName() + ": " + this);
 		}
 	}
 	

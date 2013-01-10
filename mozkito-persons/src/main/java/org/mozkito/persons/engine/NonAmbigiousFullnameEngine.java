@@ -29,14 +29,13 @@ import org.mozkito.persons.messages.Messages;
 import org.mozkito.persons.processing.PersonManager;
 
 /**
+ * The Class NonAmbigiousFullnameEngine.
+ *
  * @author Sascha Just <sascha.just@mozkito.org>
- * 
  */
 public class NonAmbigiousFullnameEngine extends MergingEngine {
 	
-	/**
-     * 
-     */
+	/** The Constant DESCRIPTION. */
 	private static final String DESCRIPTION = Messages.getString("NonAmbigiousFullnameEngine.description"); //$NON-NLS-1$
 	                                                                                                        
 	/*

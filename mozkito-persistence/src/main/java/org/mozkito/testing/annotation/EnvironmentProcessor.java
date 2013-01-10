@@ -21,8 +21,9 @@ import java.lang.annotation.Target;
 import org.mozkito.testing.annotation.processors.MozkitoSettingsProcessor;
 
 /**
+ * The Interface EnvironmentProcessor.
+ *
  * @author Sascha Just <sascha.just@mozkito.org>
- * 
  */
 @Documented
 @Retention (RetentionPolicy.RUNTIME)

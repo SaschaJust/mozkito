@@ -27,16 +27,19 @@ import org.mozkito.persistence.model.PersonContainer;
 import org.mozkito.persons.processing.MergingProcessor;
 
 /**
+ * The Class PersonsMerger.
+ *
  * @author Sascha Just <sascha.just@mozkito.org>
- * 
  */
 public class PersonsMerger extends Sink<PersonContainer> {
 	
 	/**
-	 * @param threadGroup
-	 * @param settings
-	 * @param persistenceUtil
-	 * @param processor
+	 * Instantiates a new persons merger.
+	 *
+	 * @param threadGroup the thread group
+	 * @param settings the settings
+	 * @param persistenceUtil the persistence util
+	 * @param processor the processor
 	 */
 	public PersonsMerger(final Group threadGroup, final Settings settings, final PersistenceUtil persistenceUtil,
 	        final MergingProcessor processor) {

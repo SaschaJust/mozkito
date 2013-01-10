@@ -14,13 +14,14 @@
 package org.mozkito.infozilla.model.stacktrace;
 
 /**
+ * The Class JavaStacktraceEntry.
+ *
  * @author Sascha Just <sascha.just@mozkito.org>
- * 
  */
 public class JavaStacktraceEntry extends StacktraceEntry {
 	
 	/**
-	 * 
+	 * Instantiates a new java stacktrace entry.
 	 */
 	public JavaStacktraceEntry() {
 		// PRECONDITIONS

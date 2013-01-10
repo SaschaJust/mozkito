@@ -16,39 +16,44 @@
 package org.mozkito.exceptions;
 
 /**
+ * The Class UninitializedDatabaseException.
+ *
  * @author Sascha Just <sascha.just@mozkito.org>
- * 
  */
 public class UninitializedDatabaseException extends Exception {
 	
-	/**
-     * 
-     */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -2020013706740319545L;
 	
 	/**
-	 * 
+	 * Instantiates a new uninitialized database exception.
 	 */
 	public UninitializedDatabaseException() {
 	}
 	
 	/**
-	 * @param arg0
+	 * Instantiates a new uninitialized database exception.
+	 *
+	 * @param arg0 the arg0
 	 */
 	public UninitializedDatabaseException(final String arg0) {
 		super(arg0);
 	}
 	
 	/**
-	 * @param arg0
-	 * @param arg1
+	 * Instantiates a new uninitialized database exception.
+	 *
+	 * @param arg0 the arg0
+	 * @param arg1 the arg1
 	 */
 	public UninitializedDatabaseException(final String arg0, final Throwable arg1) {
 		super(arg0, arg1);
 	}
 	
 	/**
-	 * @param arg0
+	 * Instantiates a new uninitialized database exception.
+	 *
+	 * @param arg0 the arg0
 	 */
 	public UninitializedDatabaseException(final Throwable arg0) {
 		super(arg0);

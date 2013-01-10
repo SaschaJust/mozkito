@@ -112,6 +112,8 @@ public class CreationOrderEngine extends Engine {
 	
 	/** The constant description. */
 	private static final String DESCRIPTION        = Messages.getString("CreationOrderEngine.description"); //$NON-NLS-1$
+	
+	/** The Constant TAG. */
 	private static final String TAG                = "creationOrder";                                      //$NON-NLS-1$
 	                                                                                                        
 	/**
@@ -135,7 +137,9 @@ public class CreationOrderEngine extends Engine {
 	private Double confidence;
 	
 	/**
-	 * @param confidence
+	 * Instantiates a new creation order engine.
+	 *
+	 * @param confidence the confidence
 	 */
 	public CreationOrderEngine(final Double confidence) {
 		// PRECONDITIONS

@@ -40,6 +40,7 @@ import org.mozkito.persistence.PersistenceUtil;
  */
 public class TransactionFinder extends Transformer<Report, Candidate> {
 	
+	/** The candidate factory. */
 	private final CandidateFactory<MappableReport, MappableTransaction> candidateFactory = CandidateFactory.getInstance(MappableReport.class,
 	                                                                                                                    MappableTransaction.class);
 	

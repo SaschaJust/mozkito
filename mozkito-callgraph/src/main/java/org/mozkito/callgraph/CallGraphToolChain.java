@@ -86,6 +86,7 @@ public class CallGraphToolChain {
 	/** The out argument. */
 	private OutputFileArgument                         outArgument;
 	
+	/** The negative filename list argument. */
 	private ListArgument                               negativeFilenameListArgument;
 	
 	/**

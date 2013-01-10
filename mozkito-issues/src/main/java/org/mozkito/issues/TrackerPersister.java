@@ -31,6 +31,7 @@ import org.mozkito.persistence.PersistenceUtil;
  */
 public class TrackerPersister extends Sink<Report> {
 	
+	/** The Constant COMMIT_SIZE. */
 	private static final int COMMIT_SIZE = 15;
 	/** The i. */
 	private Integer          i           = 0;

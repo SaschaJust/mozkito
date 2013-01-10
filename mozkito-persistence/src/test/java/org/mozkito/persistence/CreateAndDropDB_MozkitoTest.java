@@ -48,8 +48,8 @@ public class CreateAndDropDB_MozkitoTest extends DatabaseTest {
 	}
 	
 	/**
-     * 
-     */
+	 * Instantiates a new creates the and drop d b_ mozkito test.
+	 */
 	public CreateAndDropDB_MozkitoTest() {
 		// PRECONDITIONS
 		

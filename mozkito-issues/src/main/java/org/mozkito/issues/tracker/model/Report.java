@@ -71,6 +71,7 @@ import org.mozkito.persistence.model.PersonContainer;
 @Table (name = "report")
 public class Report implements Annotated, Comparable<Report> {
 	
+	/** The Constant HASH_SIZE. */
 	private static final int      HASH_SIZE         = 33;
 	
 	/** The Constant serialVersionUID. */

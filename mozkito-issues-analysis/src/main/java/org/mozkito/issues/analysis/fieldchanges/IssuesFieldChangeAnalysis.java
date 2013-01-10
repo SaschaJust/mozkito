@@ -34,7 +34,10 @@ import org.mozkito.persistence.PersistenceUtil;
  */
 public class IssuesFieldChangeAnalysis implements IssuesAnalysis {
 	
+	/** The field file argument. */
 	private OutputFileArgument fieldFileArgument;
+	
+	/** The type file argument. */
 	private OutputFileArgument typeFileArgument;
 	
 	/*

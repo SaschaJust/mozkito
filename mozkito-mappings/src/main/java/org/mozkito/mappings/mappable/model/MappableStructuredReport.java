@@ -23,16 +23,16 @@ import org.mozkito.infozilla.model.EnhancedReport;
 import org.mozkito.mappings.mappable.FieldKey;
 
 /**
+ * The Class MappableStructuredReport.
+ *
  * @author Sascha Just <sascha.just@mozkito.org>
- * 
  */
 public class MappableStructuredReport extends MappableEntity {
 	
+	/** The report. */
 	EnhancedReport            report;
 	
-	/**
-     * 
-     */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -4080743755314740530L;
 	
 	/**

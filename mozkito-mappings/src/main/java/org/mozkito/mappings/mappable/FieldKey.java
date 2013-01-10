@@ -81,6 +81,6 @@ public enum FieldKey {
 	/** The TYPE. */
 	TYPE,
 	
-	/** The DESCRIPTION */
+	/** The DESCRIPTION. */
 	DESCRIPTION;
 }

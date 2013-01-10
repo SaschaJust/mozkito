@@ -21,8 +21,9 @@ import net.ownhero.dev.kisa.Logger;
 import org.mozkito.genealogies.GenealogyToolChain;
 
 /**
+ * The Class Main.
+ *
  * @author Sascha Just <sascha.just@mozkito.org>
- * 
  */
 public class Main {
 	
@@ -31,7 +32,9 @@ public class Main {
 	}
 	
 	/**
-	 * @param args
+	 * The main method.
+	 *
+	 * @param args the arguments
 	 */
 	public static void main(final String[] args) {
 		GenealogyToolChain genealogies;

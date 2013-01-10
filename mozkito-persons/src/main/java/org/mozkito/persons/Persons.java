@@ -57,16 +57,12 @@ public class Persons extends Chain<Settings> {
 	
 	/**
 	 * Instantiates a new persons.
-	 * 
+	 *
+	 * @param util the util
+	 * @throws SettingsParseError the settings parse error
+	 * @throws ArgumentRegistrationException the argument registration exception
+	 * @throws ArgumentSetRegistrationException the argument set registration exception
 	 * @deprecated only to be used in tests
-	 * @param util
-	 *            the util
-	 * @throws SettingsParseError
-	 *             the settings parse error
-	 * @throws ArgumentRegistrationException
-	 *             the argument registration exception
-	 * @throws ArgumentSetRegistrationException
-	 *             the argument set registration exception
 	 */
 	@Deprecated
 	Persons(final PersistenceUtil util) throws SettingsParseError, ArgumentRegistrationException,

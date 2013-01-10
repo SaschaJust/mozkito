@@ -13,8 +13,9 @@
 package org.mozkito.mappings.training;
 
 /**
+ * The Class MalletTrainer.
+ *
  * @author Sascha Just <sascha.just@mozkito.org>
- * 
  */
 public class MalletTrainer extends Trainer {
 	

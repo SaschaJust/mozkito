@@ -60,9 +60,9 @@ public class TransactionChangeGenealogy_MozkitoTest extends DatabaseTest {
 	
 	/**
 	 * Test.
-	 * 
-	 * @throws IOException
-	 * @throws FilePermissionException
+	 *
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws FilePermissionException the file permission exception
 	 */
 	@Test
 	public void test() throws IOException, FilePermissionException {

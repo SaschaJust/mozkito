@@ -44,27 +44,19 @@ import org.mozkito.mappings.strategies.SVMStrategy;
  */
 public class LibSVMTrainer extends Trainer {
 	
-	/**
-     * 
-     */
+	/** The Constant EPS. */
 	private static final double EPS        = 0.001d;
-	/**
-     * 
-     */
+	
+	/** The Constant P. */
 	private static final double P          = 0.10000000;
-	/**
-     * 
-     */
+	
+	/** The Constant CACHE_SIZE. */
 	private static final double CACHE_SIZE = 100d;
 	
-	/**
-     * 
-     */
+	/** The Constant NU. */
 	private static final double NU         = 0.5d;
 	
-	/**
-     * 
-     */
+	/** The Constant DEGREE. */
 	private static final int    DEGREE     = 3;
 	
 	/** The model. */

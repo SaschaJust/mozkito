@@ -37,6 +37,7 @@ import org.mozkito.issues.tracker.model.AttachmentEntry;
  */
 public class MantisParser_NetTest {
 	
+	/** The report19810. */
 	private RawContent report19810;
 	
 	/**

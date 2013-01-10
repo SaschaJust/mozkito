@@ -37,11 +37,13 @@ import org.mozkito.mappings.utils.Enumeration;
 import org.mozkito.mappings.utils.EnumerationEntry;
 
 /**
+ * The Class EnumerationTest.
+ *
  * @author Sascha Just <sascha.just@mozkito.org>
- * 
  */
 public class EnumerationTest {
 	
+	/** The enum text. */
 	private static String enumText;
 	
 	/**
@@ -74,7 +76,9 @@ public class EnumerationTest {
 	}
 	
 	/**
-	 * @throws java.lang.Exception
+	 * Sets the up.
+	 *
+	 * @throws Exception the exception
 	 */
 	@Before
 	public void setUp() throws Exception {
@@ -82,7 +86,9 @@ public class EnumerationTest {
 	}
 	
 	/**
-	 * @throws java.lang.Exception
+	 * Tear down.
+	 *
+	 * @throws Exception the exception
 	 */
 	@After
 	public void tearDown() throws Exception {
@@ -161,7 +167,8 @@ public class EnumerationTest {
 	}
 	
 	/**
-	 * Test method for
+	 * Test method for.
+	 *
 	 * {@link org.mozkito.mappings.utils.Enumeration#extract(java.lang.String, org.mozkito.mappings.utils.Enumeration.Type[])}
 	 * .
 	 */
@@ -171,7 +178,8 @@ public class EnumerationTest {
 	}
 	
 	/**
-	 * Test method for
+	 * Test method for.
+	 *
 	 * {@link org.mozkito.mappings.utils.Enumeration#extract(java.lang.String, org.mozkito.mappings.utils.Enumeration.Type[], int, int)}
 	 * .
 	 */

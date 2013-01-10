@@ -26,8 +26,9 @@ import org.mozkito.codeanalysis.model.JavaMethodDefinitionTest;
 import org.mozkito.codeanalysis.utils.PPAUtilsTest;
 
 /**
+ * The Class AllTests.
+ *
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
- * 
  */
 @RunWith (Suite.class)
 @SuiteClasses ({ ChangeOperationsTest.class, JavaChangeOperationTest.class, JavaClassDefinitionTest.class,
