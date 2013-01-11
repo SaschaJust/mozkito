@@ -12,12 +12,15 @@
  ******************************************************************************/
 package org.mozkito.versions.model;
 
+import javax.persistence.Table;
+
 import org.mozkito.persistence.Annotated;
 import org.mozkito.versions.RevDependencyGraph;
 
 /**
  * The Class VersionArchive.
  */
+@Table (name = "version_archive")
 public class VersionArchive implements Annotated {
 	
 	/** The Constant serialVersionUID. */
