@@ -14,22 +14,34 @@
 package net.ownhero.dev.ioda;
 
 /**
+ * The Class Tuple.
+ *
+ * @param <K> the key type
+ * @param <M> the generic type
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
- * @param <K>
- * @param <M>
  */
 public class Tuple<K, M> {
 	
+	/** The first. */
 	private K first;
+	
+	/** The second. */
 	private M second;
 	
+	/**
+	 * Instantiates a new tuple.
+	 *
+	 * @param f the f
+	 * @param s the s
+	 */
 	public Tuple(K f, M s) {
 		this.first = f;
 		this.second = s;
 	}
 	
 	/**
+	 * Gets the first.
+	 *
 	 * @return the first
 	 */
 	public K getFirst() {
@@ -37,13 +49,17 @@ public class Tuple<K, M> {
 	}
 	
 	/**
+	 * Gets the class name.
+	 *
 	 * @return the simple class name
 	 */
-	public String getHandle() {
+	public String getClassName() {
 		return this.getClass().getSimpleName();
 	}
 	
 	/**
+	 * Gets the second.
+	 *
 	 * @return the second
 	 */
 	public M getSecond() {
@@ -51,16 +67,18 @@ public class Tuple<K, M> {
 	}
 	
 	/**
-	 * @param first
-	 *            the first to set
+	 * Sets the first.
+	 *
+	 * @param first the first to set
 	 */
 	public void setFirst(K first) {
 		this.first = first;
 	}
 	
 	/**
-	 * @param second
-	 *            the second to set
+	 * Sets the second.
+	 *
+	 * @param second the second to set
 	 */
 	public void setSecond(M second) {
 		this.second = second;

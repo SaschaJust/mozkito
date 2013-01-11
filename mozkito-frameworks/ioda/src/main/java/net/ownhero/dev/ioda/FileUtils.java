@@ -58,13 +58,52 @@ import ucar.unidata.io.bzip2.CBZip2InputStream;
  */
 public class FileUtils {
 	
+	/**
+	 * The Enum FileShutdownAction.
+	 */
 	public static enum FileShutdownAction {
-		KEEP, DELETE
+		
+		/** The keep. */
+		KEEP,
+		/** The delete. */
+		DELETE
 	}
 	
+	/**
+	 * The Enum SupportedPackers.
+	 */
 	public static enum SupportedPackers {
-		ZIP, JAR, LZMA, GZ, GZIP, BZIP, BZIP2, BZ, BZ2, XZ, XZIP, TAR;
 		
+		/** The zip. */
+		ZIP,
+		/** The jar. */
+		JAR,
+		/** The lzma. */
+		LZMA,
+		/** The gz. */
+		GZ,
+		/** The gzip. */
+		GZIP,
+		/** The bzip. */
+		BZIP,
+		/** The BZI p2. */
+		BZIP2,
+		/** The bz. */
+		BZ,
+		/** The B z2. */
+		BZ2,
+		/** The xz. */
+		XZ,
+		/** The xzip. */
+		XZIP,
+		/** The tar. */
+		TAR;
+		
+		/**
+		 * Gets the string values.
+		 * 
+		 * @return the string values
+		 */
 		public static Set<String> getStringValues() {
 			final Set<String> result = new HashSet<String>();
 			for (final SupportedPackers value : SupportedPackers.values()) {
@@ -74,6 +113,7 @@ public class FileUtils {
 		}
 	}
 	
+	/** The Constant supportedPackers. */
 	public static final Set<String>                   supportedPackers  = SupportedPackers.getStringValues();
 	
 	static {
@@ -125,28 +165,68 @@ public class FileUtils {
 		});
 	}
 	
+	/** The Constant fileSeparator. */
 	public static final String                        fileSeparator     = System.getProperty("file.separator");
 	
+	/** The Constant lineSeparator. */
 	public static final String                        lineSeparator     = System.getProperty("line.separator");
+	
+	/** The Constant pathSeparator. */
 	public static final String                        pathSeparator     = System.getProperty("path.separator");
+	
+	/** The Constant tmpDir. */
 	public static final File                          tmpDir            = org.apache.commons.io.FileUtils.getTempDirectory();
+	
+	/** The max perm. */
 	private static int                                MAX_PERM          = 0;
 	
+	/** The Constant EXECUTABLE. */
 	public static final int                           EXECUTABLE        = (int) Math.pow(2, MAX_PERM++);
 	
+	/** The Constant WRITABLE. */
 	public static final int                           WRITABLE          = (int) Math.pow(2, MAX_PERM++);
+	
+	/** The Constant READABLE. */
 	public static final int                           READABLE          = (int) Math.pow(2, MAX_PERM++);
+	
+	/** The Constant FILE. */
 	public static final int                           FILE              = (int) Math.pow(2, MAX_PERM++);
+	
+	/** The Constant DIRECTORY. */
 	public static final int                           DIRECTORY         = (int) Math.pow(2, MAX_PERM++);
+	
+	/** The Constant EXISTING. */
 	public static final int                           EXISTING          = (int) Math.pow(2, MAX_PERM++);
+	
+	/** The Constant ACCESSIBLE_DIR. */
 	public static final int                           ACCESSIBLE_DIR    = EXISTING | DIRECTORY | READABLE | EXECUTABLE;
+	
+	/** The Constant WRITABLE_DIR. */
 	public static final int                           WRITABLE_DIR      = ACCESSIBLE_DIR | WRITABLE;
+	
+	/** The Constant READABLE_FILE. */
 	public static final int                           READABLE_FILE     = EXISTING | FILE | READABLE;
+	
+	/** The Constant WRITABLE_FILE. */
 	public static final int                           WRITABLE_FILE     = FILE | WRITABLE;
+	
+	/** The Constant OVERWRITABLE_FILE. */
 	public static final int                           OVERWRITABLE_FILE = FILE | EXISTING | WRITABLE;
+	
+	/** The Constant EXECUTABLE_FILE. */
 	public static final int                           EXECUTABLE_FILE   = EXISTING | FILE | EXECUTABLE;
+	
+	/** The file manager. */
 	private static Map<FileShutdownAction, Set<File>> fileManager       = new HashMap<FileShutdownAction, Set<File>>();
 	
+	/**
+	 * Adds the to file manager.
+	 * 
+	 * @param file
+	 *            the file
+	 * @param shutdownAction
+	 *            the shutdown action
+	 */
 	public static void addToFileManager(final File file,
 	                                    final FileShutdownAction shutdownAction) {
 		if (!fileManager.containsKey(shutdownAction)) {
@@ -156,11 +236,16 @@ public class FileUtils {
 	}
 	
 	/**
+	 * Bunzip2.
+	 * 
 	 * @param bzip2File
+	 *            the bzip2 file
 	 * @param directory
-	 * @return
+	 *            the directory
 	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 * @throws FilePermissionException
+	 *             the file permission exception
 	 */
 	public static void bunzip2(final File bzip2File,
 	                           final File directory) throws IOException, FilePermissionException {
@@ -258,9 +343,16 @@ public class FileUtils {
 	}
 	
 	/**
+	 * Copy file to directory.
+	 * 
 	 * @param srcFile
+	 *            the src file
 	 * @param destDir
+	 *            the dest dir
+	 * @param shutdownAction
+	 *            the shutdown action
 	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@NoneNull
 	public static void copyFileToDirectory(final File srcFile,
@@ -282,10 +374,15 @@ public class FileUtils {
 	}
 	
 	/**
+	 * Creates the dir.
+	 * 
 	 * @param directory
+	 *            the directory
 	 * @param shutdownAction
-	 * @return
+	 *            the shutdown action
+	 * @return the file
 	 * @throws FilePermissionException
+	 *             the file permission exception
 	 */
 	public static File createDir(final File directory,
 	                             final FileShutdownAction shutdownAction) throws FilePermissionException {
@@ -302,9 +399,12 @@ public class FileUtils {
 	 *            the parent directory
 	 * @param name
 	 *            the name of the new directory to be created
+	 * @param shutdownAction
+	 *            the shutdown action
 	 * @return the file handle corresponding to the requested new directory if existed or created. <code>null</code>
 	 *         otherwise.
 	 * @throws FilePermissionException
+	 *             the file permission exception
 	 */
 	public static File createDir(final File parentDir,
 	                             final String name,
@@ -353,8 +453,11 @@ public class FileUtils {
 	 *            the prefix
 	 * @param suffix
 	 *            the suffix
+	 * @param shutdownAction
+	 *            the shutdown action
 	 * @return the file
 	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	public static File createRandomDir(final File parentDir,
 	                                   final String prefix,
@@ -410,11 +513,17 @@ public class FileUtils {
 	}
 	
 	/**
+	 * Creates the random file.
+	 * 
 	 * @param prefix
+	 *            the prefix
 	 * @param suffix
+	 *            the suffix
 	 * @param shutdownAction
-	 * @return
+	 *            the shutdown action
+	 * @return the file
 	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	public static File createRandomFile(final String prefix,
 	                                    final String suffix,
@@ -426,13 +535,14 @@ public class FileUtils {
 	}
 	
 	/**
-	 * Delete directory.
+	 * Delete directory. See also {@link org.apache.commons.io.FileUtils#deleteDirectory(File)}
 	 * 
 	 * @param directory
 	 *            the directory
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
-	 * @see {@link org.apache.commons.io.FileUtils#deleteDirectory(File)}
+	 * 
+	 * 
 	 */
 	public static void deleteDirectory(final File directory) throws IOException {
 		org.apache.commons.io.FileUtils.deleteDirectory(directory);
@@ -440,9 +550,14 @@ public class FileUtils {
 	}
 	
 	/**
+	 * Dump.
+	 * 
 	 * @param data
+	 *            the data
 	 * @param file
+	 *            the file
 	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	public static void dump(final byte[] data,
 	                        final File file) throws IOException {
@@ -500,15 +615,20 @@ public class FileUtils {
 	 *            the file
 	 * @return the list
 	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	public static List<String> fileToLines(final File file) throws IOException {
 		return org.apache.commons.io.FileUtils.readLines(file);
 	}
 	
 	/**
+	 * Find files.
+	 * 
 	 * @param topLevelDir
+	 *            the top level dir
 	 * @param filter
-	 * @return
+	 *            the filter
+	 * @return the iterator
 	 */
 	public static Iterator<File> findFiles(final File topLevelDir,
 	                                       final IOFileFilter filter) {
@@ -559,9 +679,13 @@ public class FileUtils {
 	}
 	
 	/**
+	 * Find files.
+	 * 
 	 * @param topLevelDir
+	 *            the top level dir
 	 * @param name
-	 * @return
+	 *            the name
+	 * @return the iterator
 	 */
 	public static Iterator<File> findFiles(final File topLevelDir,
 	                                       final String name) {
@@ -584,13 +708,12 @@ public class FileUtils {
 	}
 	
 	/**
-	 * Force delete.
+	 * Force delete. See also {@link org.apache.commons.io.FileUtils#forceDelete(File)}.
 	 * 
 	 * @param file
 	 *            the file
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
-	 * @see {@link org.apache.commons.io.FileUtils#forceDelete(File)}
 	 */
 	public static void forceDelete(final File file) throws IOException {
 		org.apache.commons.io.FileUtils.forceDelete(file);
@@ -598,16 +721,16 @@ public class FileUtils {
 	}
 	
 	/**
-	 * @deprecated Does not work anyway. Reposuite now uses a file manager that deleted open file handles (marked to be
-	 *             deleted) at termination anyway. Usage is implicit when using ToolChain.
-	 * 
-	 *             Force delete on exit.
+	 * Force delete on exit. See also {@link org.apache.commons.io.FileUtils#forceDeleteOnExit(File)}.
 	 * 
 	 * @param file
 	 *            the file
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
-	 * @see {@link org.apache.commons.io.FileUtils#forceDeleteOnExit(File)}
+	 * @deprecated Does not work anyway. Reposuite now uses a file manager that deleted open file handles (marked to be
+	 *             deleted) at termination anyway. Usage is implicit when using ToolChain.
+	 * 
+	 *             Force delete on exit.
 	 */
 	@Deprecated
 	public static void forceDeleteOnExit(final File file) throws IOException {
@@ -623,8 +746,9 @@ public class FileUtils {
 	 *            List of file extensions to be matched
 	 * @param recursive
 	 *            Iterate recursively other the sub-directories
-	 * @return
+	 * @return the file iterator
 	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	public static Iterator<File> getFileIterator(final File directory,
 	                                             final String[] extensions,
@@ -645,6 +769,11 @@ public class FileUtils {
 		return org.apache.commons.io.FileUtils.lineIterator(file);
 	}
 	
+	/**
+	 * Gets the managed open files.
+	 * 
+	 * @return the managed open files
+	 */
 	public static Map<FileShutdownAction, Set<File>> getManagedOpenFiles() {
 		final Map<FileShutdownAction, Set<File>> openFiles = new HashMap<FileShutdownAction, Set<File>>();
 		for (final FileShutdownAction key : fileManager.keySet()) {
@@ -683,10 +812,10 @@ public class FileUtils {
 	}
 	
 	/**
-	 * 
 	 * This method returns an file iterator the iterates over sub-directories only.
 	 * 
 	 * @param topLevelDir
+	 *            the top level dir
 	 * @return An valid file iterator if given top level directory exists and is a directory. Null otherwise.
 	 */
 	@NoneNull
@@ -723,8 +852,11 @@ public class FileUtils {
 	}
 	
 	/**
+	 * Gets the unpacked name.
+	 * 
 	 * @param file
-	 * @return
+	 *            the file
+	 * @return the unpacked name
 	 */
 	public static String getUnpackedName(final File file) {
 		final String[] split = file.getName().split("\\.");
@@ -743,11 +875,16 @@ public class FileUtils {
 	}
 	
 	/**
+	 * Gunzip.
+	 * 
 	 * @param gzipFile
+	 *            the gzip file
 	 * @param directory
-	 * @return
+	 *            the directory
 	 * @throws FilePermissionException
+	 *             the file permission exception
 	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	public static void gunzip(final File gzipFile,
 	                          final File directory) throws FilePermissionException, IOException {
@@ -763,6 +900,7 @@ public class FileUtils {
 		if (i > 0) {
 			path = directory.getAbsolutePath() + FileUtils.fileSeparator + path.substring(0, i - 1);
 		} else {
+			zis.close();
 			throw new IOException("Compressed file does not contain a file extension like `.zip`.");
 		}
 		
@@ -796,6 +934,13 @@ public class FileUtils {
 		return org.apache.commons.io.FileUtils.listFiles(directory, extensions, recursive);
 	}
 	
+	/**
+	 * Permissions to string.
+	 * 
+	 * @param file
+	 *            the file
+	 * @return the string
+	 */
 	public static String permissionsToString(final File file) {
 		final StringBuilder builder = new StringBuilder();
 		
@@ -823,10 +968,25 @@ public class FileUtils {
 		return builder.toString();
 	}
 	
+	/**
+	 * Read file to string.
+	 * 
+	 * @param file
+	 *            the file
+	 * @return the string
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	public static String readFileToString(final File file) throws IOException {
 		return org.apache.commons.io.FileUtils.readFileToString(file);
 	}
 	
+	/**
+	 * Removes the from file manager.
+	 * 
+	 * @param file
+	 *            the file
+	 */
 	private static void removeFromFileManager(final File file) {
 		for (final FileShutdownAction key : fileManager.keySet()) {
 			fileManager.get(key).remove(file);
@@ -834,11 +994,16 @@ public class FileUtils {
 	}
 	
 	/**
+	 * Unlzma.
+	 * 
 	 * @param lzmaFile
+	 *            the lzma file
 	 * @param directory
-	 * @return
+	 *            the directory
 	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 * @throws FilePermissionException
+	 *             the file permission exception
 	 */
 	public static void unlzma(final File lzmaFile,
 	                          final File directory) throws IOException, FilePermissionException {
@@ -854,6 +1019,7 @@ public class FileUtils {
 		if (i > 0) {
 			path = directory.getAbsolutePath() + FileUtils.fileSeparator + path.substring(0, i - 1);
 		} else {
+			zis.close();
 			throw new IOException("Compressed file does not contain a file extension like `.zip`.");
 		}
 		
@@ -871,6 +1037,18 @@ public class FileUtils {
 		
 	}
 	
+	/**
+	 * Unpack.
+	 * 
+	 * @param packedFile
+	 *            the packed file
+	 * @param directory
+	 *            the directory
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 * @throws FilePermissionException
+	 *             the file permission exception
+	 */
 	public static void unpack(final File packedFile,
 	                          final File directory) throws IOException, FilePermissionException {
 		String[] split;
@@ -916,11 +1094,16 @@ public class FileUtils {
 	}
 	
 	/**
+	 * Untar.
+	 * 
 	 * @param tarFile
+	 *            the tar file
 	 * @param directory
-	 * @return
+	 *            the directory
 	 * @throws FilePermissionException
+	 *             the file permission exception
 	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	public static void untar(final File tarFile,
 	                         final File directory) throws FilePermissionException, IOException {
@@ -941,7 +1124,7 @@ public class FileUtils {
 				Logger.debug("Extracting: " + entry);
 			}
 			int count;
-			final byte data[] = new byte[BUFFER];
+			final byte[] data = new byte[BUFFER];
 			// write the files to the disk
 			final FileOutputStream fos = new FileOutputStream(new File(directory.getAbsolutePath()
 			        + FileUtils.fileSeparator + entry.getName()));
@@ -963,10 +1146,12 @@ public class FileUtils {
 	 *            the zip compressed file, not null
 	 * @param directory
 	 *            the target directory, not null
-	 * @return true on success, false otherwise
 	 * @throws FilePermissionException
-	 * @throws IOException
+	 *             the file permission exception
 	 * @throws FileNotFoundException
+	 *             the file not found exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@NoneNull
 	public static void unzip(final File zipFile,
@@ -988,7 +1173,7 @@ public class FileUtils {
 				Logger.debug("Extracting: " + entry);
 			}
 			int count;
-			final byte data[] = new byte[BUFFER];
+			final byte[] data = new byte[BUFFER];
 			// write the files to the disk
 			final FileOutputStream fos = new FileOutputStream(new File(directory.getAbsolutePath()
 			        + FileUtils.fileSeparator + entry.getName()));
@@ -1007,7 +1192,7 @@ public class FileUtils {
 	 * 
 	 * @return the simple class name
 	 */
-	public String getHandle() {
+	public String getClassName() {
 		return this.getClass().getSimpleName();
 	}
 	

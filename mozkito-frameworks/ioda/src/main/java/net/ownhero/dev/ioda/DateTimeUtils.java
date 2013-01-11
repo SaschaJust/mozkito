@@ -1,6 +1,15 @@
-/**
+/*******************************************************************************
+ * Copyright 2013 Kim Herzig, Sascha Just
  * 
- */
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ ******************************************************************************/
 package net.ownhero.dev.ioda;
 
 import java.util.HashMap;
@@ -19,11 +28,13 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class DateTimeUtils.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class DateTimeUtils {
 	
+	/** The Constant timestampRegex. */
 	private static final Regex               timestampRegex = new Regex(
 	                                                                    "({yyyy}\\d{4})[-:/_]({MM}[0-2]\\d)[-:/_]({dd}[0-3]\\d)\\s+({HH}[0-2]\\d)[-:/_]({mm}[0-5]\\d)([-:/_]({ss}[0-5]\\d))?(({z}\\s+[A-Za-z]{3,4})|({Z}\\s+[+-]\\d{4}))?");
 	
@@ -32,8 +43,8 @@ public class DateTimeUtils {
 	}
 	
 	/**
-	 * @see <a href=http://en.wikipedia.org/wiki/List_of_time_zone_abbreviations> Wikipedia:List of time zone
-	 *      abbreviations</a>
+	 * The Constant timezones. @see <a href=http://en.wikipedia.org/wiki/List_of_time_zone_abbreviations> Wikipedia:List
+	 * of time zone abbreviations</a>
 	 */
 	private static final Map<String, String> timezones      = new HashMap<String, String>() {
 		                                                        
@@ -167,6 +178,13 @@ public class DateTimeUtils {
 		                                                        }
 	                                                        };
 	
+	/**
+	 * Parses the date.
+	 * 
+	 * @param dateTimeString
+	 *            the date time string
+	 * @return the date time
+	 */
 	public static DateTime parseDate(final String dateTimeString) {
 		return parseDate(dateTimeString, timestampRegex);
 	}
@@ -177,6 +195,8 @@ public class DateTimeUtils {
 	 * 
 	 * @param dateTimeString
 	 *            the datetime string, not null
+	 * @param pattern
+	 *            the pattern
 	 * @return the date time
 	 */
 	@NoneNull
@@ -228,7 +248,7 @@ public class DateTimeUtils {
 	}
 	
 	/**
-	 * Takes a time zone abbreviation and returns the corresponding offset relative to UTC
+	 * Takes a time zone abbreviation and returns the corresponding offset relative to UTC.
 	 * 
 	 * @param timezone
 	 *            the abbreviation

@@ -23,13 +23,14 @@ import javax.net.SocketFactory;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 /**
+ * A factory for creating CachingSocket objects.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class CachingSocketFactory extends SocketFactory {
 	
 	/**
-	 * 
+	 * Instantiates a new caching socket factory.
 	 */
 	public CachingSocketFactory() {
 		// PRECONDITIONS
@@ -119,7 +120,7 @@ public class CachingSocketFactory extends SocketFactory {
 	 * 
 	 * @return the simple name of the class.
 	 */
-	public final String getHandle() {
+	public final String getClassName() {
 		// PRECONDITIONS
 		
 		final StringBuilder builder = new StringBuilder();

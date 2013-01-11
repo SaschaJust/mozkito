@@ -21,11 +21,15 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
 /**
+ * The Class SocketUtils.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class SocketUtils {
 	
+	/**
+	 * Enable caching.
+	 */
 	public static final void enableCaching() {
 		try {
 			Socket.setSocketImplFactory(new CachingSocketImplFactory());
@@ -42,7 +46,7 @@ public class SocketUtils {
 	 * 
 	 * @return the simple name of the class.
 	 */
-	public final String getHandle() {
+	public final String getClassName() {
 		// PRECONDITIONS
 		
 		final StringBuilder builder = new StringBuilder();
