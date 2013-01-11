@@ -24,7 +24,6 @@ import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.model.Person;
 import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
-import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.RevDependencyGraph;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.model.Branch;
@@ -53,12 +52,10 @@ public class OpenJPA_PPA_MozkitoTest extends DatabaseTest {
 		final DateTime now = new DateTime();
 		
 		final Person p = new Person("kim", "", "");
-		final BranchFactory branchFactory = new BranchFactory(getPersistenceUtil());
-		final Branch masterBranch = branchFactory.getMasterBranch();
 		final RevDependencyGraph revDependencyGraph = new RevDependencyGraph();
-		revDependencyGraph.addBranch(branchFactory.getMasterBranch().getName(), "1");
-		final VersionArchive versionArchive = new VersionArchive(branchFactory, revDependencyGraph);
-		
+		revDependencyGraph.addBranch(Branch.MASTER_BRANCH_NAME, "1");
+		final VersionArchive versionArchive = new VersionArchive(revDependencyGraph);
+		final Branch masterBranch = versionArchive.getMasterBranch();
 		final ChangeSet changeSet = new ChangeSet(versionArchive, "1", "", now, p, "1");
 		
 		masterBranch.setHead(changeSet);

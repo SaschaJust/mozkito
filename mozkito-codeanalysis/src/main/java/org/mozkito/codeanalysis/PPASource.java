@@ -29,12 +29,12 @@ import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.persistence.RCSPersistenceUtil;
-import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.collections.ChangeSetSet;
 import org.mozkito.versions.collections.ChangeSetSet.TransactionSetOrder;
 import org.mozkito.versions.model.Branch;
-import org.mozkito.versions.model.Revision;
 import org.mozkito.versions.model.ChangeSet;
+import org.mozkito.versions.model.Revision;
+import org.mozkito.versions.model.VersionArchive;
 
 /**
  * The Class PPASource.
@@ -44,13 +44,13 @@ import org.mozkito.versions.model.ChangeSet;
 public class PPASource extends Source<ChangeSet> {
 	
 	/** The branch iterator. */
-	private Iterator<Branch>      branchIterator   = null;
+	private Iterator<Branch>    branchIterator   = null;
 	
 	/** The t iterator. */
 	private Iterator<ChangeSet> tIterator        = null;
 	
 	/** The transaction limit. */
-	private Set<String>              transactionLimit = null;
+	private Set<String>         transactionLimit = null;
 	
 	/**
 	 * Instantiates a new pPA source.
@@ -76,14 +76,15 @@ public class PPASource extends Source<ChangeSet> {
 				if ((PPASource.this.transactionLimit != null) && (!PPASource.this.transactionLimit.isEmpty())) {
 					PPASource.this.transactionLimit = transactionLimit;
 				} else {
-					final List<Branch> branches = new LinkedList<Branch>();
-					final BranchFactory branchFactory = new BranchFactory(persistenceUtil);
-					branches.add(branchFactory.getMasterBranch());
 					
-					final Criteria<Branch> criteria = persistenceUtil.createCriteria(Branch.class);
-					for (final Branch rCSBranch : persistenceUtil.load(criteria)) {
-						if (!rCSBranch.isMasterBranch()) {
-							branches.add(rCSBranch);
+					final VersionArchive versionArchive = VersionArchive.loadVersionArchive(persistenceUtil);
+					
+					final List<Branch> branches = new LinkedList<Branch>();
+					branches.add(versionArchive.getMasterBranch());
+					
+					for (final Branch branch : versionArchive.getBranches().values()) {
+						if (!branch.isMasterBranch()) {
+							branches.add(branch);
 						}
 					}
 					PPASource.this.branchIterator = branches.iterator();
@@ -125,7 +126,7 @@ public class PPASource extends Source<ChangeSet> {
 						if (PPASource.this.branchIterator.hasNext()) {
 							final Branch next = PPASource.this.branchIterator.next();
 							final ChangeSetSet set = RCSPersistenceUtil.getChangeSet(persistenceUtil, next,
-							                                                              TransactionSetOrder.ASC);
+							                                                         TransactionSetOrder.ASC);
 							PPASource.this.tIterator = set.iterator();
 							if (Logger.logInfo()) {
 								Logger.info("Processing RCSBRanch %s with %s transactions.", next.toString(),

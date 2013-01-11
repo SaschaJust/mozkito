@@ -37,9 +37,9 @@ import org.mozkito.persistence.model.PersonContainer;
 import org.mozkito.persons.processing.PersonManager;
 import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
-import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.RevDependencyGraph;
 import org.mozkito.versions.RevDependencyGraph.EdgeType;
+import org.mozkito.versions.model.Branch;
 import org.mozkito.versions.model.ChangeSet;
 import org.mozkito.versions.model.VersionArchive;
 
@@ -75,15 +75,13 @@ public class Merge_NetTest extends DatabaseTest {
 		        new Person("just", "Sascha Just", null), new Person(null, "Sascha Just", "sascha.just@mozkito.org"),
 		        new Person("just", null, "sascha.just@mozkito.org") };
 		
-		final BranchFactory branchFactory = new BranchFactory(getPersistenceUtil());
-		
 		final RevDependencyGraph revDepGraph = new RevDependencyGraph();
-		revDepGraph.addBranch(branchFactory.getMasterBranch().getName(), "" + (persons.length - 1));
+		revDepGraph.addBranch(Branch.MASTER_BRANCH_NAME, "" + (persons.length - 1));
 		for (int i = (persons.length - 1); i > -1; --i) {
 			revDepGraph.addEdge(String.valueOf(i - 1), String.valueOf(i), EdgeType.BRANCH_EDGE);
 		}
 		
-		final VersionArchive versionArchive = new VersionArchive(branchFactory, revDepGraph);
+		final VersionArchive versionArchive = new VersionArchive(revDepGraph);
 		
 		ChangeSet changeset = null;
 		

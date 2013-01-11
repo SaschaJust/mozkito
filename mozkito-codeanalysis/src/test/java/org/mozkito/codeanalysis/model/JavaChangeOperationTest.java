@@ -22,9 +22,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mozkito.persistence.ModelStorage;
 import org.mozkito.persistence.model.Person;
-import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.RevDependencyGraph;
 import org.mozkito.versions.elements.ChangeType;
+import org.mozkito.versions.model.Branch;
 import org.mozkito.versions.model.ChangeSet;
 import org.mozkito.versions.model.Handle;
 import org.mozkito.versions.model.Revision;
@@ -69,11 +69,10 @@ public class JavaChangeOperationTest {
 		                                                                   "org/mozkito/codeanalysis/model/TestClass.java",
 		                                                                   20, 23, 43674, 20);
 		
-		final BranchFactory branchFactory = new BranchFactory(null);
 		final RevDependencyGraph revDependencyGraph = new RevDependencyGraph();
-		revDependencyGraph.addBranch(branchFactory.getMasterBranch().getName(), "hash");
+		revDependencyGraph.addBranch(Branch.MASTER_BRANCH_NAME, "hash");
 		
-		final VersionArchive versionArchive = new VersionArchive(branchFactory, revDependencyGraph);
+		final VersionArchive versionArchive = new VersionArchive(revDependencyGraph);
 		
 		this.changeSet = new ChangeSet(versionArchive, "hash", "hubba hubba hopp!", new DateTime(), new Person("kim",
 		                                                                                                       null,

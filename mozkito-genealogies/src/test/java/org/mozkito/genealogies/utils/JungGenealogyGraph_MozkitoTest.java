@@ -32,7 +32,6 @@ import org.mozkito.persistence.ConnectOptions;
 import org.mozkito.persistence.DatabaseType;
 import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
-import org.mozkito.versions.BranchFactory;
 
 /**
  * The Class JungGenealogyGraph_MozkitoTest.
@@ -49,18 +48,19 @@ public class JungGenealogyGraph_MozkitoTest extends DatabaseTest {
 	
 	/**
 	 * Test core layer.
-	 *
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 * @throws FilePermissionException the file permission exception
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 * @throws FilePermissionException
+	 *             the file permission exception
 	 */
 	@Test
 	public void testCoreLayer() throws IOException, FilePermissionException {
 		final File tmpGraphDBFile = FileUtils.createRandomDir(this.getClass().getSimpleName(), "",
 		                                                      FileShutdownAction.KEEP);
 		
-		final BranchFactory branchFactory = new BranchFactory(getPersistenceUtil());
 		final GenealogyTestEnvironment testEnvironment = ChangeGenealogyUtils.getGenealogyTestEnvironment(tmpGraphDBFile,
-		                                                                                                  branchFactory);
+		                                                                                                  getPersistenceUtil());
 		final CoreChangeGenealogy changeGenealogy = testEnvironment.getChangeGenealogy();
 		
 		final JungGenealogyGraph<JavaChangeOperation> jungGraph = new JungGenealogyGraph<JavaChangeOperation>(

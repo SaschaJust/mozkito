@@ -14,7 +14,9 @@ package org.mozkito.versions.model;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -32,6 +34,7 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.persistence.Annotated;
+import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.RevDependencyGraph;
 import org.mozkito.versions.RevDependencyGraph.EdgeType;
 
@@ -43,16 +46,36 @@ import org.mozkito.versions.RevDependencyGraph.EdgeType;
 public class VersionArchive implements Annotated {
 	
 	/** The Constant serialVersionUID. */
-	private static final long      serialVersionUID = -3701231007051514130L;
+	private static final long serialVersionUID = -3701231007051514130L;
+	
+	/**
+	 * Load persisted VersionArchive from DB
+	 * 
+	 * @param persistenceUtil
+	 *            the persistence util
+	 * @return the version archive
+	 */
+	public static VersionArchive loadVersionArchive(final PersistenceUtil persistenceUtil) {
+		final List<VersionArchive> versionArchives = persistenceUtil.load(persistenceUtil.createCriteria(VersionArchive.class));
+		if (versionArchives.isEmpty()) {
+			throw new NoSuchElementException(
+			                                 "There exists no persisted VersionArchive instance. Please run mozkito-versions first.");
+		}
+		if (versionArchives.size() > 1) {
+			throw new UnrecoverableError(
+			                             "Found more than one persisted VersionArchive instance. This is unexpected. Multiple VersionArchives in the same database are not supported.");
+		}
+		return versionArchives.get(0);
+	}
 	
 	/** The rev dep graph. */
-	private RevDependencyGraph     revDepGraph      = null;
+	private RevDependencyGraph     revDepGraph = null;
 	
 	/** The generated id. */
 	private long                   generatedId;
-	
 	private Map<String, ChangeSet> changeSets;
-	private Map<String, Branch>    branches;
+	
+	private Map<String, Branch>    branches;           ;
 	
 	/**
 	 * Instantiates a new version archive.
@@ -61,7 +84,7 @@ public class VersionArchive implements Annotated {
 	 */
 	@Deprecated
 	public VersionArchive() {
-	};
+	}
 	
 	/**
 	 * Instantiates a new version archive.
@@ -234,7 +257,7 @@ public class VersionArchive implements Annotated {
 	}
 	
 	/**
-	 * Sets the generated id.
+	 * Sets the ged id.
 	 * 
 	 * @param generatedId
 	 *            the new generated id

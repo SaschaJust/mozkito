@@ -38,7 +38,6 @@ import org.mozkito.persistence.PPAPersistenceUtil;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.persistence.RCSPersistenceUtil;
 import org.mozkito.settings.DatabaseOptions;
-import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.collections.ChangeSetSet;
 import org.mozkito.versions.collections.ChangeSetSet.TransactionSetOrder;
 import org.mozkito.versions.model.Branch;
@@ -124,9 +123,6 @@ public class ChangeOperationReader implements Iterator<Collection<JavaChangeOper
 	/** The iterator. */
 	private final Iterator<ChangeSet> iterator;
 	
-	/** The branch factory. */
-	private final BranchFactory       branchFactory;
-	
 	/** The persistence util. */
 	private final PersistenceUtil     persistenceUtil;
 	
@@ -152,7 +148,6 @@ public class ChangeOperationReader implements Iterator<Collection<JavaChangeOper
 	private ChangeOperationReader(final PersistenceUtil persistenceUtil, final String branchName,
 	        final boolean ignoreTests) {
 		this.persistenceUtil = persistenceUtil;
-		this.branchFactory = new BranchFactory(persistenceUtil);
 		this.ignoreTests = ignoreTests;
 		final Branch masterBranch = persistenceUtil.loadById(branchName, Branch.class);
 		
@@ -168,13 +163,11 @@ public class ChangeOperationReader implements Iterator<Collection<JavaChangeOper
 			throw new Shutdown();
 		}
 		
-		final ChangeSetSet masterChangeSets = RCSPersistenceUtil.getChangeSet(this.branchFactory.getPersistenceUtil(),
-		                                                                             masterBranch,
-		                                                                             TransactionSetOrder.ASC);
+		final ChangeSetSet masterChangeSets = RCSPersistenceUtil.getChangeSet(persistenceUtil, masterBranch,
+		                                                                      TransactionSetOrder.ASC);
 		if (Logger.logInfo()) {
 			Logger.info("Added " + masterChangeSets.size()
-			                    + " ChangeSet that were found in branch %s to build the change genealogy.",
-			            this.branchFactory.getMasterBranch().getName());
+			        + " ChangeSet that were found in branch %s to build the change genealogy.", masterBranch.getName());
 		}
 		this.numTransaction = masterChangeSets.size();
 		this.iterator = masterChangeSets.iterator();

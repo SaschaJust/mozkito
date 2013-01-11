@@ -33,10 +33,10 @@ import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.persistence.model.Person;
 import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
-import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.RevDependencyGraph;
 import org.mozkito.versions.RevDependencyGraph.EdgeType;
 import org.mozkito.versions.elements.ChangeType;
+import org.mozkito.versions.model.Branch;
 import org.mozkito.versions.model.ChangeSet;
 import org.mozkito.versions.model.Handle;
 import org.mozkito.versions.model.Revision;
@@ -109,21 +109,18 @@ public class ChangeCouplingRuleFactory_PostgresTest extends DatabaseTest {
 		final Person person = new Person("kim", "", "");
 		final DateTime now = new DateTime();
 		
-		final BranchFactory branchFactory = new BranchFactory(getPersistenceUtil());
 		final RevDependencyGraph revDepGraph = new RevDependencyGraph();
-		revDepGraph.addBranch(branchFactory.getMasterBranch().getName(), "3");
+		revDepGraph.addBranch(Branch.MASTER_BRANCH_NAME, "3");
 		revDepGraph.addEdge("2", "3", EdgeType.BRANCH_HEAD);
 		revDepGraph.addEdge("1", "2", EdgeType.BRANCH_HEAD);
 		revDepGraph.addEdge("0", "1", EdgeType.BRANCH_HEAD);
 		
-		final VersionArchive versionArchive = new VersionArchive(branchFactory, revDepGraph);
+		final VersionArchive versionArchive = new VersionArchive(revDepGraph);
 		
 		final ChangeSet cs0 = new ChangeSet(versionArchive, "0", "", now, person, "");
 		final ChangeSet cs1 = new ChangeSet(versionArchive, "1", "", now.plus(10000), person, "");
 		final ChangeSet cs2 = new ChangeSet(versionArchive, "2", "", now.plus(20000), person, "");
 		final ChangeSet cs3 = new ChangeSet(versionArchive, "3", "", now.plus(30000), person, "");
-		
-		versionArchive.setRevDependencyGraph(revDepGraph);
 		
 		// ###transaction 1
 		

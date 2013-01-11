@@ -41,7 +41,6 @@ import org.mozkito.persistence.DatabaseType;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
-import org.mozkito.versions.BranchFactory;
 
 /**
  * The Class CoreChangeGenealogy_MozkitoTest.
@@ -62,19 +61,19 @@ public class CoreChangeGenealogy_MozkitoTest extends DatabaseTest {
 	
 	/**
 	 * Test change genealogy.
-	 *
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 * @throws FilePermissionException the file permission exception
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 * @throws FilePermissionException
+	 *             the file permission exception
 	 */
 	@Test
 	public void testChangeGenealogy() throws IOException, FilePermissionException {
 		final File tmpGraphDBFile = FileUtils.createRandomDir(this.getClass().getSimpleName(), "",
 		                                                      FileShutdownAction.DELETE);
 		
-		final BranchFactory branchFactory = new BranchFactory(getPersistenceUtil());
-		
 		final GenealogyTestEnvironment testEnvironment = ChangeGenealogyUtils.getGenealogyTestEnvironment(tmpGraphDBFile,
-		                                                                                                  branchFactory);
+		                                                                                                  getPersistenceUtil());
 		CoreChangeGenealogy changeGenealogy = testEnvironment.getChangeGenealogy();
 		final PersistenceUtil persistenceUtil = testEnvironment.getPersistenceUtil();
 		final Map<TestEnvironmentOperation, JavaChangeOperation> environmentOperations = testEnvironment.getEnvironmentOperations();

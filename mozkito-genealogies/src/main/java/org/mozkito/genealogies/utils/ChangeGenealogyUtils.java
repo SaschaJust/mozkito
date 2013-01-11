@@ -13,7 +13,6 @@
 package org.mozkito.genealogies.utils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -31,6 +30,7 @@ import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.ioda.exceptions.FilePermissionException;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.CollectionCondition;
 import net.ownhero.dev.kisa.Logger;
 
@@ -40,7 +40,6 @@ import org.mozkito.genealogies.core.GenealogyEdgeType;
 import org.mozkito.genealogies.utils.GenealogyTestEnvironment.TestEnvironmentOperation;
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.Repository;
 import org.mozkito.versions.RepositoryFactory;
 import org.mozkito.versions.RepositoryType;
@@ -104,19 +103,17 @@ public class ChangeGenealogyUtils {
 	 * 
 	 * @param tmpGraphDBFile
 	 *            the tmp graph db file
-	 * @param branchFactory
-	 *            the branch factory
+	 * @param persistenceUtil
+	 *            the persistence util
 	 * @return the genealogy test environment
-	 * @throws FileNotFoundException
-	 *             the file not found exception
 	 * @throws FilePermissionException
 	 *             the file permission exception
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	public static GenealogyTestEnvironment getGenealogyTestEnvironment(final File tmpGraphDBFile,
-	                                                                   final BranchFactory branchFactory) throws FilePermissionException,
-	                                                                                                     IOException {
+	public static GenealogyTestEnvironment getGenealogyTestEnvironment(@NotNull final File tmpGraphDBFile,
+	                                                                   @NotNull final PersistenceUtil persistenceUtil) throws FilePermissionException,
+	                                                                                                                  IOException {
 		
 		// UNZIP git repo
 		final URL zipURL = ChangeGenealogyUtils.class.getResource(FileUtils.fileSeparator + "genealogies_test.git.zip");
@@ -166,7 +163,7 @@ public class ChangeGenealogyUtils {
 		}
 		
 		try {
-			repository.setup(urlFile.toURI(), branchFactory, null, "master");
+			repository.setup(urlFile.toURI(), null, "master");
 		} catch (final Exception e) {
 			throw new UnrecoverableError(e);
 		}
@@ -214,9 +211,8 @@ public class ChangeGenealogyUtils {
 		final Map<ChangeSet, Set<JavaChangeOperation>> transactionMap = new HashMap<ChangeSet, Set<JavaChangeOperation>>();
 		
 		// read all transactions and JavaChangeOperations
-		final Criteria<ChangeSet> transactionCriteria = branchFactory.getPersistenceUtil()
-		                                                             .createCriteria(ChangeSet.class);
-		final List<ChangeSet> transactionList = branchFactory.getPersistenceUtil().load(transactionCriteria);
+		final Criteria<ChangeSet> transactionCriteria = persistenceUtil.createCriteria(ChangeSet.class);
+		final List<ChangeSet> transactionList = persistenceUtil.load(transactionCriteria);
 		CollectionCondition.size(transactionList, 10, "Transaction list from database has fixed precomputed size.");
 		if (Logger.logDebug()) {
 			Logger.debug(JavaUtils.collectionToString(transactionList));
@@ -249,10 +245,9 @@ public class ChangeGenealogyUtils {
 			final Set<JavaChangeOperation> operations = new HashSet<JavaChangeOperation>();
 			
 			for (final Revision revision : transaction.getRevisions()) {
-				final Criteria<JavaChangeOperation> operationCriteria = branchFactory.getPersistenceUtil()
-				                                                                     .createCriteria(JavaChangeOperation.class);
+				final Criteria<JavaChangeOperation> operationCriteria = persistenceUtil.createCriteria(JavaChangeOperation.class);
 				operationCriteria.eq("revision", revision);
-				final List<JavaChangeOperation> changeOps = branchFactory.getPersistenceUtil().load(operationCriteria);
+				final List<JavaChangeOperation> changeOps = persistenceUtil.load(operationCriteria);
 				if (Logger.logDebug()) {
 					Logger.debug(JavaUtils.collectionToString(changeOps));
 				}
@@ -324,8 +319,7 @@ public class ChangeGenealogyUtils {
 			                                     + transactionMap.size());
 		}
 		
-		final CoreChangeGenealogy changeGenealogy = ChangeGenealogyUtils.readFromDB(tmpGraphDBFile,
-		                                                                            branchFactory.getPersistenceUtil());
+		final CoreChangeGenealogy changeGenealogy = ChangeGenealogyUtils.readFromDB(tmpGraphDBFile, persistenceUtil);
 		
 		if (changeGenealogy == null) {
 			throw new UnrecoverableError(
@@ -406,9 +400,8 @@ public class ChangeGenealogyUtils {
 		                        environmentOperations.get(TestEnvironmentOperation.T5F4),
 		                        GenealogyEdgeType.DeletedCallOnCall);
 		
-		return new GenealogyTestEnvironment(branchFactory.getPersistenceUtil(), transactionMap,
-		                                    environmentTransactions, environmentOperations, repository,
-		                                    changeGenealogy, tmpGraphDBFile);
+		return new GenealogyTestEnvironment(persistenceUtil, transactionMap, environmentTransactions,
+		                                    environmentOperations, repository, changeGenealogy, tmpGraphDBFile);
 	}
 	
 	/**
