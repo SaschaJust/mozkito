@@ -28,10 +28,10 @@ import org.mozkito.testing.annotation.DatabaseSettings;
 import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.exceptions.NoSuchHandleException;
-import org.mozkito.versions.model.Handle;
 import org.mozkito.versions.model.Branch;
-import org.mozkito.versions.model.Revision;
 import org.mozkito.versions.model.ChangeSet;
+import org.mozkito.versions.model.Handle;
+import org.mozkito.versions.model.Revision;
 import org.mozkito.versions.model.VersionArchive;
 
 /**
@@ -55,18 +55,15 @@ public class OpenJPA_PersistenceTest extends DatabaseTest {
 	 * Test rcs branch.
 	 */
 	@Test
-	public void testRCSBranch() {
+	public void testBranch() {
 		this.branchFactory = new BranchFactory(getPersistenceUtil());
 		final Branch rCSBranch = this.branchFactory.getBranch("testBranch");
-		final ChangeSet beginTransaction = new ChangeSet("000000000000000", "committed begin",
-		                                                           new DateTime(),
-		                                                           new Person("just", "Sascha Just",
-		                                                                      "sascha.just@mozkito.org"),
-		                                                           "000000000000000");
+		final ChangeSet beginTransaction = new ChangeSet("000000000000000", "committed begin", new DateTime(),
+		                                                 new Person("just", "Sascha Just", "sascha.just@mozkito.org"),
+		                                                 "000000000000000");
 		final ChangeSet endTransaction = new ChangeSet("0123456789abcde", "committed end", new DateTime(),
-		                                                         new Person("just", "Sascha Just",
-		                                                                    "sascha.just@mozkito.org"),
-		                                                         "0123456789abcde");
+		                                               new Person("just", "Sascha Just", "sascha.just@mozkito.org"),
+		                                               "0123456789abcde");
 		
 		rCSBranch.setHead(endTransaction);
 		
@@ -94,11 +91,11 @@ public class OpenJPA_PersistenceTest extends DatabaseTest {
 	 * Test rcs revision.
 	 */
 	@Test
-	public void testRCSRevision() {
+	public void testRevision() {
 		
 		final VersionArchive versionArchive = new VersionArchive();
-		
 		this.branchFactory = new BranchFactory(getPersistenceUtil());
+		versionArchive.setBranchFactory(this.branchFactory);
 		final Person person = new Person("just", null, null);
 		final ChangeSet changeset = new ChangeSet("0", "", new DateTime(), person, "");
 		final Handle handle = new Handle(versionArchive);
@@ -107,6 +104,7 @@ public class OpenJPA_PersistenceTest extends DatabaseTest {
 		
 		assertTrue(changeset.getRevisions().contains(revision));
 		this.branchFactory.getMasterBranch().setHead(changeset);
+		
 		getPersistenceUtil().beginTransaction();
 		getPersistenceUtil().save(changeset);
 		getPersistenceUtil().commitTransaction();
