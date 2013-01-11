@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<prerequisites>
@@ -64,7 +64,8 @@
 		<module>mozkito-codeanalysis</module>
 		<module>mozkito-callgraph</module>
 		<module>mozkito-atomicchanges</module>
-	</modules>
+    <module>mozkito-maven-plugin</module>
+  </modules>
 	<dependencyManagement/>
 	<dependencies>
 		<dependency>
@@ -198,6 +199,19 @@
 	</distributionManagement>
 	<build>
 		<plugins>
+	        <plugin>
+	          <groupId>org.mozkito</groupId>
+	          <artifactId>mozkito-maven-plugin</artifactId>
+	          <version>0.4-SNAPSHOT</version>
+	          <executions>
+	            <execution>
+	              <phase>generate-resources</phase>
+	              <goals>
+	                <goal>meta</goal>
+	              </goals>
+	            </execution>
+	          </executions>
+	        </plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>

@@ -82,12 +82,13 @@ public class MozkitoMetaMojo extends AbstractMojo {
 		        "HEAD^..HEAD", "--pretty=format:%H" }, this.baseDir, null, new HashMap<String, String>());
 		final List<String> output = execution.getSecond();
 		String head = null;
+		
 		if (output.isEmpty()) {
 			getLog().error("Getting git head revision failed.");
 			return;
 		} else {
 			final String firstLine = output.iterator().next();
-			if (firstLine.startsWith("fatal:")) {
+			if ((execution.getFirst() != 0) || firstLine.startsWith("fatal:")) {
 				getLog().error("Getting git head revision failed: " + firstLine);
 			} else {
 				final Matcher matcher = pattern.matcher(firstLine);
@@ -98,6 +99,10 @@ public class MozkitoMetaMojo extends AbstractMojo {
 				}
 			}
 		}
+		
+		final Tuple<Integer, List<String>> diff = CommandExecutor.execute("git", new String[] { "diff" }, this.baseDir,
+		                                                                  null, new HashMap<String, String>());
+		final boolean modified = !diff.getFirst().equals(0) || !diff.getSecond().isEmpty();
 		
 		final File f = this.outputDirectory;
 		
@@ -126,6 +131,9 @@ public class MozkitoMetaMojo extends AbstractMojo {
 			if (head != null) {
 				w.write("head=");
 				w.write(head);
+				if (modified) {
+					w.write(" (modified)");
+				}
 				w.write(ls);
 			}
 			
@@ -144,6 +152,7 @@ public class MozkitoMetaMojo extends AbstractMojo {
 			if (getLog().isInfoEnabled()) {
 				getLog().info("Adding resource to project.");
 			}
+			
 			this.projectHelper.addResource(this.project, directory.getAbsolutePath(), includes, excludes);
 		} catch (final IOException e) {
 			throw new MojoExecutionException("Error creating file " + file, e);
