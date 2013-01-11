@@ -101,9 +101,11 @@ public class CallGraph extends AbstractGraph<MethodVertex, CallGraphEdge> implem
 		this.classCallGraph = other.classCallGraph;
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see edu.uci.ics.jung.graph.AbstractGraph#addEdge(java.lang.Object, edu.uci.ics.jung.graph.util.Pair)
+	 * @deprecated
 	 */
 	@Override
 	@Deprecated
@@ -131,11 +133,12 @@ public class CallGraph extends AbstractGraph<MethodVertex, CallGraphEdge> implem
 		return true;
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see edu.uci.ics.jung.graph.AbstractGraph#addEdge(java.lang.Object, edu.uci.ics.jung.graph.util.Pair,
-	 * edu.uci.ics.jung.graph.util.EdgeType)
-	 * @deprecated use {@link #addEdge(MethodVertex,MethodVertex}. This method exists due to Jung requirements
+	 *      edu.uci.ics.jung.graph.util.EdgeType)
+	 * @deprecated
 	 */
 	@Override
 	@Deprecated
@@ -412,8 +415,9 @@ public class CallGraph extends AbstractGraph<MethodVertex, CallGraphEdge> implem
 		return this.methodCallGraph.getVertices();
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -429,8 +433,9 @@ public class CallGraph extends AbstractGraph<MethodVertex, CallGraphEdge> implem
 		return result;
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see edu.uci.ics.jung.graph.Graph#isDest(java.lang.Object, java.lang.Object)
 	 */
 	@Override
@@ -439,8 +444,9 @@ public class CallGraph extends AbstractGraph<MethodVertex, CallGraphEdge> implem
 		return this.methodCallGraph.isDest(vertex, edge);
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see edu.uci.ics.jung.graph.Graph#isSource(java.lang.Object, java.lang.Object)
 	 */
 	@Override
@@ -449,10 +455,11 @@ public class CallGraph extends AbstractGraph<MethodVertex, CallGraphEdge> implem
 		return this.methodCallGraph.isSource(vertex, edge);
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see edu.uci.ics.jung.graph.Hypergraph#removeEdge(java.lang.Object)
-	 * @deprecated use {@link #removeEdge(MethodVertex,MethodVertex}. This method exists due to Jung requirements
+	 * @deprecated
 	 */
 	@Override
 	@Deprecated
