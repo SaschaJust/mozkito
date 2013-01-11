@@ -384,6 +384,20 @@ public class SubversionRepository extends Repository {
 	/**
 	 * {@inheritDoc}
 	 * 
+	 * @see org.mozkito.versions.Repository#getChangeSetCount()
+	 */
+	@Override
+	public long getChangeSetCount() {
+		try {
+			return this.repository.getLatestRevision();
+		} catch (final SVNException e) {
+			throw new UnrecoverableError(e);
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see org.mozkito.versions.Repository#getChangeSetId(long)
 	 */
 	@Override
@@ -460,7 +474,6 @@ public class SubversionRepository extends Repository {
 			
 			for (final SVNLogEntry entry : logs) {
 				
-				@SuppressWarnings ("unchecked")
 				final Map<String, SVNLogEntryPath> changedPaths = entry.getChangedPaths();
 				for (final String o : changedPaths.keySet()) {
 					final SVNLogEntryPath logEntryPath = changedPaths.get(o);
@@ -555,20 +568,6 @@ public class SubversionRepository extends Repository {
 			return this.revDepGraph;
 		} catch (final IOException e) {
 			throw new RepositoryOperationException(e);
-		}
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * @see org.mozkito.versions.Repository#getChangeSetCount()
-	 */
-	@Override
-	public long getChangeSetCount() {
-		try {
-			return this.repository.getLatestRevision();
-		} catch (final SVNException e) {
-			throw new UnrecoverableError(e);
 		}
 	}
 	
