@@ -47,9 +47,11 @@ public class RevDependencyGraph_PersistenceTest extends VersionsTest {
 	
 	/**
 	 * Test restored rev dep graph.
-	 *
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 * @throws RepositoryOperationException the repository operation exception
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
 	 */
 	@Test
 	public void testRestoredRevDepGraph() throws IOException, RepositoryOperationException {
@@ -59,7 +61,8 @@ public class RevDependencyGraph_PersistenceTest extends VersionsTest {
 		
 		final Repository repository = getRepositories().get("testGit");
 		
-		final VersionArchive versionArchive = new VersionArchive();
+		final RevDependencyGraph revDepGraph = repository.getRevDependencyGraph();
+		final VersionArchive versionArchive = new VersionArchive(new BranchFactory(getPersistenceUtil()), revDepGraph);
 		versionArchive.setRevDependencyGraph(repository.getRevDependencyGraph());
 		
 		persistenceUtil.beginTransaction();
@@ -72,8 +75,6 @@ public class RevDependencyGraph_PersistenceTest extends VersionsTest {
 			persistenceUtil.save(changeset);
 		}
 		persistenceUtil.commitTransaction();
-		
-		final RevDependencyGraph revDepGraph = repository.getRevDependencyGraph();
 		
 		final GraphBuilder graphBuilder = new GraphBuilder(repository, persistenceUtil);
 		graphBuilder.phaseOne();

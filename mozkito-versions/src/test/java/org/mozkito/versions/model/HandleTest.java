@@ -13,7 +13,6 @@
 package org.mozkito.versions.model;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
@@ -23,6 +22,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mozkito.persistence.model.Person;
+import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.RevDependencyGraph;
 import org.mozkito.versions.RevDependencyGraph.EdgeType;
 import org.mozkito.versions.elements.ChangeType;
@@ -72,17 +72,29 @@ public class HandleTest {
 	
 	/**
 	 * Setup.
+	 * 
+	 * @throws IOException
 	 */
 	@Before
-	public void setup() {
+	public void setup() throws IOException {
 		this.person = new Person("kim", "", "");
+		final BranchFactory branchFactory = new BranchFactory(null);
 		
-		this.t_0 = new ChangeSet("0", "", new DateTime(), this.person, "");
-		this.t_1 = new ChangeSet("1", "", new DateTime(), this.person, "");
-		this.t_2 = new ChangeSet("2", "", new DateTime(), this.person, "");
-		this.t_3 = new ChangeSet("3", "", new DateTime(), this.person, "");
-		this.t_4 = new ChangeSet("4", "", new DateTime(), this.person, "");
-		this.t_5 = new ChangeSet("5", "", new DateTime(), this.person, "");
+		final RevDependencyGraph revDepGraph = new RevDependencyGraph();
+		revDepGraph.addBranch(branchFactory.getMasterBranch().getName(), "5");
+		revDepGraph.addEdge("4", "5", EdgeType.BRANCH_EDGE);
+		revDepGraph.addEdge("3", "4", EdgeType.BRANCH_EDGE);
+		revDepGraph.addEdge("2", "3", EdgeType.BRANCH_EDGE);
+		revDepGraph.addEdge("1", "2", EdgeType.BRANCH_EDGE);
+		revDepGraph.addEdge("0", "1", EdgeType.BRANCH_EDGE);
+		this.versionArchive = new VersionArchive(branchFactory, revDepGraph);
+		
+		this.t_0 = new ChangeSet(this.versionArchive, "0", "", new DateTime(), this.person, "");
+		this.t_1 = new ChangeSet(this.versionArchive, "1", "", new DateTime(), this.person, "");
+		this.t_2 = new ChangeSet(this.versionArchive, "2", "", new DateTime(), this.person, "");
+		this.t_3 = new ChangeSet(this.versionArchive, "3", "", new DateTime(), this.person, "");
+		this.t_4 = new ChangeSet(this.versionArchive, "4", "", new DateTime(), this.person, "");
+		this.t_5 = new ChangeSet(this.versionArchive, "5", "", new DateTime(), this.person, "");
 		
 		this.t_1.setBranchParent(this.t_0);
 		this.t_2.setBranchParent(this.t_0);
@@ -91,50 +103,6 @@ public class HandleTest {
 		this.t_4.setMergeParent(this.t_3);
 		this.t_5.setBranchParent(this.t_1);
 		this.t_5.setMergeParent(this.t_4);
-		
-		this.versionArchive = new VersionArchive() {
-			
-			/**
-             * 
-             */
-			private static final long serialVersionUID = 8388504356360016697L;
-			
-			@Override
-			public ChangeSet getChangeSetById(final String id) {
-				switch (id) {
-					case "0":
-						return HandleTest.this.t_0;
-					case "1":
-						return HandleTest.this.t_1;
-					case "2":
-						return HandleTest.this.t_2;
-					case "3":
-						return HandleTest.this.t_3;
-					case "4":
-						return HandleTest.this.t_4;
-					case "5":
-						return HandleTest.this.t_5;
-					default:
-						return null;
-				}
-			}
-		};
-		this.revDepGraph = null;
-		try {
-			this.revDepGraph = new RevDependencyGraph();
-		} catch (final IOException e1) {
-			fail();
-		}
-		assertNotNull(this.revDepGraph);
-		this.revDepGraph.addBranch("master", "5");
-		this.revDepGraph.addEdge("4", "5", EdgeType.MERGE_EDGE);
-		this.revDepGraph.addEdge("1", "5", EdgeType.BRANCH_EDGE);
-		this.revDepGraph.addEdge("3", "4", EdgeType.MERGE_EDGE);
-		this.revDepGraph.addEdge("2", "4", EdgeType.BRANCH_EDGE);
-		this.revDepGraph.addEdge("2", "3", EdgeType.BRANCH_EDGE);
-		this.revDepGraph.addEdge("0", "2", EdgeType.BRANCH_EDGE);
-		this.revDepGraph.addEdge("0", "1", EdgeType.BRANCH_EDGE);
-		this.versionArchive.setRevDependencyGraph(this.revDepGraph);
 	}
 	
 	/**

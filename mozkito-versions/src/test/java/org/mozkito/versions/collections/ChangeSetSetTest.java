@@ -18,6 +18,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,38 +29,47 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mozkito.persistence.model.Person;
 import org.mozkito.versions.BranchFactory;
+import org.mozkito.versions.RevDependencyGraph;
+import org.mozkito.versions.RevDependencyGraph.EdgeType;
 import org.mozkito.versions.collections.ChangeSetSet.TransactionSetOrder;
 import org.mozkito.versions.model.Branch;
 import org.mozkito.versions.model.ChangeSet;
+import org.mozkito.versions.model.VersionArchive;
 
 /**
  * The Class TransactionSetTest.
  */
-public class TransactionSetTest {
+public class ChangeSetSetTest {
 	
 	/** The t list. */
-	private List<ChangeSet> tList;
+	private List<ChangeSet>    tList;
 	
 	/** The other t. */
-	private ChangeSet       otherT;
+	private ChangeSet          otherT;
 	
 	/** The other branch. */
-	private Branch            otherBranch;
+	private Branch             otherBranch;
 	
 	/** The person. */
-	private Person               person;
+	private Person             person;
 	
 	/** The index. */
-	private long                 index;
+	private long               index;
 	
 	/** The branch. */
-	private Branch            branch;
+	private Branch             branch;
+	
+	private RevDependencyGraph revDepGraph;
+	
+	private VersionArchive     versionArchive;
 	
 	/**
 	 * Setup.
+	 * 
+	 * @throws IOException
 	 */
 	@Before
-	public void setup() {
+	public void setup() throws IOException {
 		/*
 		 * @formatter:off
 		 * 
@@ -89,68 +99,101 @@ public class TransactionSetTest {
 		this.person = new Person("kim", null, null);
 		final BranchFactory branchFactory = new BranchFactory(null);
 		this.branch = branchFactory.getMasterBranch();
+		this.otherBranch = branchFactory.getBranch("otherBranch");
 		this.index = 0;
 		
-		this.otherBranch = branchFactory.getBranch("otherBranch");
-		this.otherT = new ChangeSet("280b1b8695286699770c5da85204e1718fXXXXXX", "", now, this.person, null);
+		this.revDepGraph = new RevDependencyGraph();
+		this.revDepGraph.addBranch(this.branch.getName(), "280b1b8695286699770c5da85204e1718f7f4b66");
+		this.revDepGraph.addBranch(this.otherBranch.getName(), "280b1b8695286699770c5da85204e1718fXXXXXX");
+		this.revDepGraph.addEdge("702abfed3f8ca043b2636efd31c14ba7552603dd",
+		                         "280b1b8695286699770c5da85204e1718f7f4b66", EdgeType.MERGE_EDGE);
+		this.revDepGraph.addEdge("9c7c6d1ef4ffe95dfcbaf850f869d6742d16bd59",
+		                         "280b1b8695286699770c5da85204e1718f7f4b66", EdgeType.BRANCH_EDGE);
+		this.revDepGraph.addEdge("cce07fdcb9f3a0efcd67c75de60d5608c63cb5c2",
+		                         "702abfed3f8ca043b2636efd31c14ba7552603dd", EdgeType.BRANCH_EDGE);
+		this.revDepGraph.addEdge("94f8b9f16e9f3d423225b28619281a5ecf877275",
+		                         "cce07fdcb9f3a0efcd67c75de60d5608c63cb5c2", EdgeType.MERGE_EDGE);
+		this.revDepGraph.addEdge("5813ab7d15c9c97ff45a44e051f8e9776a1f7e42",
+		                         "cce07fdcb9f3a0efcd67c75de60d5608c63cb5c2", EdgeType.BRANCH_EDGE);
+		this.revDepGraph.addEdge("9f6f106cdc16effd8c093defd47f1626195d03db",
+		                         "94f8b9f16e9f3d423225b28619281a5ecf877275", EdgeType.BRANCH_EDGE);
+		this.revDepGraph.addEdge("8bc0679ca73760e68c0c27b54dc2855de34c1bdb",
+		                         "5813ab7d15c9c97ff45a44e051f8e9776a1f7e42", EdgeType.BRANCH_EDGE);
+		this.revDepGraph.addEdge("9f6f106cdc16effd8c093defd47f1626195d03db",
+		                         "8bc0679ca73760e68c0c27b54dc2855de34c1bdb", EdgeType.BRANCH_EDGE);
+		this.revDepGraph.addEdge("6bfee30b10fb0498f3d70f383814a669939bb1c7",
+		                         "9f6f106cdc16effd8c093defd47f1626195d03db", EdgeType.MERGE_EDGE);
+		this.revDepGraph.addEdge("45702d2a094554789dc51bd23869ed5ddd8822a6",
+		                         "9f6f106cdc16effd8c093defd47f1626195d03db", EdgeType.BRANCH_EDGE);
+		this.revDepGraph.addEdge("45702d2a094554789dc51bd23869ed5ddd8822a6",
+		                         "6bfee30b10fb0498f3d70f383814a669939bb1c7", EdgeType.BRANCH_EDGE);
+		this.revDepGraph.addEdge("d522956171853fc2d7ca106d9c8d2b93e82df9d3",
+		                         "45702d2a094554789dc51bd23869ed5ddd8822a6", EdgeType.BRANCH_EDGE);
+		this.revDepGraph.addEdge("d522956171853fc2d7ca106d9c8d2b93e82df9d3",
+		                         "9c7c6d1ef4ffe95dfcbaf850f869d6742d16bd59", EdgeType.BRANCH_EDGE);
+		
+		this.versionArchive = new VersionArchive(branchFactory, this.revDepGraph);
+		
+		this.otherT = new ChangeSet(this.versionArchive, "280b1b8695286699770c5da85204e1718fXXXXXX", "", now,
+		                            this.person, null);
 		this.otherT.addBranch(this.otherBranch, 0l);
 		this.otherBranch.setHead(this.otherT);
 		
 		this.tList = new LinkedList<ChangeSet>();
 		
-		final ChangeSet t_280b1b = new ChangeSet("280b1b8695286699770c5da85204e1718f7f4b66", "", now,
-		                                                   this.person, null);
+		final ChangeSet t_280b1b = new ChangeSet(this.versionArchive, "280b1b8695286699770c5da85204e1718f7f4b66", "",
+		                                         now, this.person, null);
 		this.branch.setHead(t_280b1b);
 		t_280b1b.addBranch(this.branch, this.index);
 		this.tList.add(t_280b1b);
 		
-		final ChangeSet t_702abf = new ChangeSet("702abfed3f8ca043b2636efd31c14ba7552603dd", "", now,
-		                                                   this.person, null);
+		final ChangeSet t_702abf = new ChangeSet(this.versionArchive, "702abfed3f8ca043b2636efd31c14ba7552603dd", "",
+		                                         now, this.person, null);
 		t_702abf.addBranch(this.branch, --this.index);
 		this.tList.add(t_702abf);
 		
-		final ChangeSet t_cce07f = new ChangeSet("cce07fdcb9f3a0efcd67c75de60d5608c63cb5c2", "", now,
-		                                                   this.person, null);
+		final ChangeSet t_cce07f = new ChangeSet(this.versionArchive, "cce07fdcb9f3a0efcd67c75de60d5608c63cb5c2", "",
+		                                         now, this.person, null);
 		t_cce07f.addBranch(this.branch, --this.index);
 		this.tList.add(t_cce07f);
 		
-		final ChangeSet t_94f8b9 = new ChangeSet("94f8b9f16e9f3d423225b28619281a5ecf877275", "", now,
-		                                                   this.person, null);
+		final ChangeSet t_94f8b9 = new ChangeSet(this.versionArchive, "94f8b9f16e9f3d423225b28619281a5ecf877275", "",
+		                                         now, this.person, null);
 		t_94f8b9.addBranch(this.branch, --this.index);
 		this.tList.add(t_94f8b9);
 		
-		final ChangeSet t_5813ab = new ChangeSet("5813ab7d15c9c97ff45a44e051f8e9776a1f7e42", "", now,
-		                                                   this.person, null);
+		final ChangeSet t_5813ab = new ChangeSet(this.versionArchive, "5813ab7d15c9c97ff45a44e051f8e9776a1f7e42", "",
+		                                         now, this.person, null);
 		t_5813ab.addBranch(this.branch, --this.index);
 		this.tList.add(t_5813ab);
 		
-		final ChangeSet t_8bc067 = new ChangeSet("8bc0679ca73760e68c0c27b54dc2855de34c1bdb", "", now,
-		                                                   this.person, null);
+		final ChangeSet t_8bc067 = new ChangeSet(this.versionArchive, "8bc0679ca73760e68c0c27b54dc2855de34c1bdb", "",
+		                                         now, this.person, null);
 		t_8bc067.addBranch(this.branch, --this.index);
 		this.tList.add(t_8bc067);
 		
-		final ChangeSet t_9f6f10 = new ChangeSet("9f6f106cdc16effd8c093defd47f1626195d03db", "", now,
-		                                                   this.person, null);
+		final ChangeSet t_9f6f10 = new ChangeSet(this.versionArchive, "9f6f106cdc16effd8c093defd47f1626195d03db", "",
+		                                         now, this.person, null);
 		t_9f6f10.addBranch(this.branch, --this.index);
 		this.tList.add(t_9f6f10);
 		
-		final ChangeSet t_6bfee3 = new ChangeSet("6bfee30b10fb0498f3d70f383814a669939bb1c7", "", now,
-		                                                   this.person, null);
+		final ChangeSet t_6bfee3 = new ChangeSet(this.versionArchive, "6bfee30b10fb0498f3d70f383814a669939bb1c7", "",
+		                                         now, this.person, null);
 		t_6bfee3.addBranch(this.branch, --this.index);
 		this.tList.add(t_6bfee3);
 		
-		final ChangeSet t_45702d = new ChangeSet("45702d2a094554789dc51bd23869ed5ddd8822a6", "", now,
-		                                                   this.person, null);
+		final ChangeSet t_45702d = new ChangeSet(this.versionArchive, "45702d2a094554789dc51bd23869ed5ddd8822a6", "",
+		                                         now, this.person, null);
 		t_45702d.addBranch(this.branch, --this.index);
 		this.tList.add(t_45702d);
 		
-		final ChangeSet t_9c7c6d = new ChangeSet("9c7c6d1ef4ffe95dfcbaf850f869d6742d16bd59", "", now,
-		                                                   this.person, null);
+		final ChangeSet t_9c7c6d = new ChangeSet(this.versionArchive, "9c7c6d1ef4ffe95dfcbaf850f869d6742d16bd59", "",
+		                                         now, this.person, null);
 		t_9c7c6d.addBranch(this.branch, --this.index);
 		this.tList.add(t_9c7c6d);
 		
-		final ChangeSet t_d52295 = new ChangeSet("d522956171853fc2d7ca106d9c8d2b93e82df9d3", "", now,
-		                                                   this.person, null);
+		final ChangeSet t_d52295 = new ChangeSet(this.versionArchive, "d522956171853fc2d7ca106d9c8d2b93e82df9d3", "",
+		                                         now, this.person, null);
 		t_d52295.addBranch(this.branch, --this.index);
 		this.tList.add(t_d52295);
 	}
@@ -240,8 +283,8 @@ public class TransactionSetTest {
 		assertTrue(tSet.containsAll(this.tList));
 		this.tList.remove(2);
 		assertTrue(tSet.containsAll(this.tList));
-		final ChangeSet infinityTransaction = new ChangeSet("inifinity", "none", new DateTime(), this.person,
-		                                                              "");
+		final ChangeSet infinityTransaction = new ChangeSet(this.versionArchive, "inifinity", "none", new DateTime(),
+		                                                    this.person, "");
 		infinityTransaction.addBranch(this.branch, --this.index);
 		this.tList.add(infinityTransaction);
 		assertFalse(tSet.containsAll(this.tList));
@@ -327,8 +370,8 @@ public class TransactionSetTest {
 		tSet.addAll(this.tList);
 		final ChangeSet t7 = this.tList.get(7);
 		assertTrue(tSet.remove(t7));
-		final ChangeSet infinityTransaction = new ChangeSet("inifinity", "none", new DateTime(), this.person,
-		                                                              "");
+		final ChangeSet infinityTransaction = new ChangeSet(this.versionArchive, "inifinity", "none", new DateTime(),
+		                                                    this.person, "");
 		infinityTransaction.addBranch(this.branch, --this.index);
 		assertFalse(tSet.remove(infinityTransaction));
 		assertEquals(this.tList.size() - 1, tSet.size());
@@ -347,8 +390,8 @@ public class TransactionSetTest {
 		assertTrue(tSet.isEmpty());
 		
 		tSet.addAll(this.tList);
-		final ChangeSet infinityTransaction = new ChangeSet("inifinity", "none", new DateTime(), this.person,
-		                                                              "");
+		final ChangeSet infinityTransaction = new ChangeSet(this.versionArchive, "inifinity", "none", new DateTime(),
+		                                                    this.person, "");
 		infinityTransaction.addBranch(this.branch, --this.index);
 		final List<ChangeSet> t2List = new LinkedList<>();
 		t2List.addAll(this.tList);

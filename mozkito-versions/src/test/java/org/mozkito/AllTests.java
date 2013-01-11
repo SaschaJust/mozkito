@@ -17,7 +17,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import org.mozkito.versions.RepositoryFactoryTest;
 import org.mozkito.versions.RevDependencyGraphTest;
-import org.mozkito.versions.collections.TransactionSetTest;
+import org.mozkito.versions.collections.ChangeSetSetTest;
 import org.mozkito.versions.elements.RevDependencyTest;
 import org.mozkito.versions.git.GitLogParserTest;
 import org.mozkito.versions.git.GitRepositoryTest;
@@ -33,7 +33,7 @@ import org.mozkito.versions.subversion.SubversionRepositoryTest;
  * The Class AllTests.
  */
 @RunWith (Suite.class)
-@SuiteClasses ({ RepositoryFactoryTest.class, TransactionSetTest.class, GitLogParserTest.class,
+@SuiteClasses ({ RepositoryFactoryTest.class, ChangeSetSetTest.class, GitLogParserTest.class,
         GitRepositoryTest.class, RevDependencyGraphTest.class, GitTransactionIteratorTest.class, HandleTest.class,
         ChangeSetTest.class, MercurialRepositoryTest.class, MercurialLogParserTest.class,
         SubversionRepositoryTest.class, RevDependencyTest.class, SubversionDiffParserTest.class })

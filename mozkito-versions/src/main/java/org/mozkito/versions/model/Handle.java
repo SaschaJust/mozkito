@@ -49,7 +49,7 @@ import org.mozkito.versions.exceptions.NoSuchHandleException;
 public class Handle implements Annotated, Serializable {
 	
 	/** The archive. */
-	private VersionArchive        archive          = null;
+	private VersionArchive        versionArchive   = null;
 	
 	/** The Constant serialVersionUID. */
 	private static final long     serialVersionUID = 7232712367403624199L;
@@ -74,7 +74,7 @@ public class Handle implements Annotated, Serializable {
 	 *            the archive
 	 */
 	public Handle(final VersionArchive archive) {
-		this.archive = archive;
+		this.versionArchive = archive;
 	}
 	
 	/**
@@ -131,17 +131,6 @@ public class Handle implements Annotated, Serializable {
 	}
 	
 	/**
-	 * Gets the archive.
-	 * 
-	 * @return the archive
-	 */
-	@ManyToOne (cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
-	@Column (nullable = false)
-	public VersionArchive getArchive() {
-		return this.archive;
-	}
-	
-	/**
 	 * Gets the changed names.
 	 * 
 	 * @return the changedNames
@@ -184,7 +173,7 @@ public class Handle implements Annotated, Serializable {
 	 */
 	@Transient
 	public String getLatestPath() throws NoSuchHandleException {
-		final Branch masterBranch = this.archive.getMasterBranch();
+		final Branch masterBranch = this.versionArchive.getMasterBranch();
 		final ChangeSet masterBranchHead = masterBranch.getHead();
 		try {
 			final String path = getPath(masterBranchHead);
@@ -207,7 +196,7 @@ public class Handle implements Annotated, Serializable {
 	@Transient
 	public String getPath(final ChangeSet transaction) throws NoSuchHandleException {
 		
-		final RevDependencyGraph revDependencyGraph = this.archive.getRevDependencyGraph();
+		final RevDependencyGraph revDependencyGraph = this.versionArchive.getRevDependencyGraph();
 		
 		for (final Revision revision : transaction.getRevisions()) {
 			if (getChangedNames().containsKey(revision)) {
@@ -216,7 +205,7 @@ public class Handle implements Annotated, Serializable {
 		}
 		
 		for (final String parentId : revDependencyGraph.getPreviousTransactions(transaction.getId())) {
-			final ChangeSet parentTransaction = this.archive.getChangeSetById(parentId);
+			final ChangeSet parentTransaction = this.versionArchive.getChangeSetById(parentId);
 			for (final Revision revision : parentTransaction.getRevisions()) {
 				if (getChangedNames().containsKey(revision)) {
 					return getChangedNames().get(revision);
@@ -246,6 +235,17 @@ public class Handle implements Annotated, Serializable {
 		                                   String.valueOf(getGeneratedId()), revision.toString());
 	}
 	
+	/**
+	 * Gets the archive.
+	 * 
+	 * @return the archive
+	 */
+	@ManyToOne (cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
+	@Column (nullable = false)
+	public VersionArchive getVersionArchive() {
+		return this.versionArchive;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
@@ -269,16 +269,6 @@ public class Handle implements Annotated, Serializable {
 	}
 	
 	/**
-	 * Sets the archive.
-	 * 
-	 * @param archive
-	 *            the new archive
-	 */
-	public void setArchive(final VersionArchive archive) {
-		this.archive = archive;
-	}
-	
-	/**
 	 * Sets the changed names.
 	 * 
 	 * @param changedNames
@@ -296,6 +286,16 @@ public class Handle implements Annotated, Serializable {
 	 */
 	protected void setGeneratedId(final long generatedId) {
 		this.generatedId = generatedId;
+	}
+	
+	/**
+	 * Sets the archive.
+	 * 
+	 * @param archive
+	 *            the new archive
+	 */
+	public void setVersionArchive(final VersionArchive archive) {
+		this.versionArchive = archive;
 	}
 	
 	/*

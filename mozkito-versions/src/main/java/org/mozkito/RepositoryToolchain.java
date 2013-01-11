@@ -24,13 +24,16 @@ import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.settings.DatabaseOptions;
 import org.mozkito.settings.RepositoryOptions;
+import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.Repository;
+import org.mozkito.versions.exceptions.RepositoryOperationException;
 import org.mozkito.versions.model.VersionArchive;
 
 /**
@@ -134,20 +137,23 @@ public class RepositoryToolchain extends Chain<Settings> {
 		this.repository = this.repositoryArguments.getValue();
 		
 		// TODO complete the VersionArchive Setup
-		
-		final VersionArchive versionArchive = new VersionArchive();
-		this.persistenceUtil.beginTransaction();
-		this.persistenceUtil.save(versionArchive);
-		this.persistenceUtil.commitTransaction();
-		
-		new RepositoryReader(this.threadPool.getThreadGroup(), getSettings(), this.repository);
-		new RepositoryParser(this.threadPool.getThreadGroup(), getSettings(), this.repository, versionArchive);
-		
-		if (this.persistenceUtil != null) {
-			new RepositoryPersister(this.threadPool.getThreadGroup(), getSettings(), this.persistenceUtil);
-		} else {
-			new RepositoryVoidSink(this.threadPool.getThreadGroup(), getSettings());
+		try {
+			final VersionArchive versionArchive = new VersionArchive(new BranchFactory(getPersistenceUtil()),
+			                                                         this.repository.getRevDependencyGraph());
+			this.persistenceUtil.beginTransaction();
+			this.persistenceUtil.save(versionArchive);
+			this.persistenceUtil.commitTransaction();
+			
+			new RepositoryReader(this.threadPool.getThreadGroup(), getSettings(), this.repository);
+			new RepositoryParser(this.threadPool.getThreadGroup(), getSettings(), this.repository, versionArchive);
+			
+			if (this.persistenceUtil != null) {
+				new RepositoryPersister(this.threadPool.getThreadGroup(), getSettings(), this.persistenceUtil);
+			} else {
+				new RepositoryVoidSink(this.threadPool.getThreadGroup(), getSettings());
+			}
+		} catch (final RepositoryOperationException e) {
+			throw new UnrecoverableError(e);
 		}
 	}
-	
 }

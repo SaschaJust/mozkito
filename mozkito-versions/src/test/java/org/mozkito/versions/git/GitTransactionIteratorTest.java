@@ -27,19 +27,20 @@ import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 
 import org.junit.Before;
 import org.junit.Test;
-
 import org.mozkito.testing.VersionsTest;
 import org.mozkito.testing.annotation.RepositorySetting;
+import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.RepositoryType;
 import org.mozkito.versions.RevDependencyGraph;
 import org.mozkito.versions.elements.LogEntry;
 import org.mozkito.versions.exceptions.RepositoryOperationException;
 import org.mozkito.versions.model.Branch;
 import org.mozkito.versions.model.ChangeSet;
+import org.mozkito.versions.model.VersionArchive;
 
 /**
  * The Class GitTransactionIteratorTest.
- *
+ * 
  * @author "Kim Herzig <herzig@cs.uni-saarland.de>"
  */
 @RepositorySetting (id = "testGit", type = RepositoryType.GIT, uri = "testGit.zip")
@@ -50,19 +51,21 @@ public class GitTransactionIteratorTest extends VersionsTest {
 	}
 	
 	/** The repo. */
-	private GitRepository                     repo;
+	private GitRepository                repo;
 	
 	/** The transaction map. */
 	private final Map<String, ChangeSet> transactionMap = new HashMap<String, ChangeSet>();
 	
 	/** The branch map. */
-	private final Map<String, Branch>      branchMap      = new HashMap<String, Branch>();
+	private final Map<String, Branch>    branchMap      = new HashMap<String, Branch>();
 	
 	/**
 	 * Before class.
-	 *
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 * @throws RepositoryOperationException the repository operation exception
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
 	 */
 	@Before
 	public void setup() throws IOException, RepositoryOperationException {
@@ -71,13 +74,15 @@ public class GitTransactionIteratorTest extends VersionsTest {
 		this.transactionMap.clear();
 		this.branchMap.clear();
 		
+		final VersionArchive versionArchive = new VersionArchive(new BranchFactory(null),
+		                                                         this.repo.getRevDependencyGraph());
 		final Iterator<LogEntry> log = this.repo.log(this.repo.getFirstRevisionId(), this.repo.getEndRevision(), 100);
 		
 		while (log.hasNext()) {
 			final LogEntry logEntry = log.next();
-			final ChangeSet changeset = new ChangeSet(logEntry.getRevision(), logEntry.getMessage(),
-			                                                         logEntry.getDateTime(), logEntry.getAuthor(),
-			                                                         logEntry.getOriginalId());
+			final ChangeSet changeset = new ChangeSet(versionArchive, logEntry.getRevision(), logEntry.getMessage(),
+			                                          logEntry.getDateTime(), logEntry.getAuthor(),
+			                                          logEntry.getOriginalId());
 			this.transactionMap.put(logEntry.getRevision(), changeset);
 		}
 		
@@ -120,9 +125,11 @@ public class GitTransactionIteratorTest extends VersionsTest {
 	
 	/**
 	 * Test maintenance branch.
-	 *
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 * @throws RepositoryOperationException the repository operation exception
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
 	 */
 	@Test
 	public void testMaintenanceBranch() throws IOException, RepositoryOperationException {
@@ -170,9 +177,11 @@ public class GitTransactionIteratorTest extends VersionsTest {
 	
 	/**
 	 * Test master branch.
-	 *
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 * @throws RepositoryOperationException the repository operation exception
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
 	 */
 	@Test
 	public void testMasterBranch() throws IOException, RepositoryOperationException {

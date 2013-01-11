@@ -57,14 +57,14 @@ public class RepositoryParser extends Transformer<LogEntry, ChangeSet> {
 	 * 
 	 * @param repository
 	 *            the repository
-	 * @param archive
+	 * @param versionArchive
 	 *            the archive
 	 * @param data
 	 *            the data
 	 * @return the rCS transaction
 	 */
 	public static ChangeSet parseLogEntry(final Repository repository,
-	                                      final VersionArchive archive,
+	                                      final VersionArchive versionArchive,
 	                                      final LogEntry data) {
 		
 		try {
@@ -77,8 +77,8 @@ public class RepositoryParser extends Transformer<LogEntry, ChangeSet> {
 				        + data.getRevision() + ")");
 			}
 			
-			final ChangeSet changeSet = new ChangeSet(data.getRevision(), data.getMessage(), data.getDateTime(),
-			                                          data.getAuthor(), data.getOriginalId());
+			final ChangeSet changeSet = new ChangeSet(versionArchive, data.getRevision(), data.getMessage(),
+			                                          data.getDateTime(), data.getAuthor(), data.getOriginalId());
 			TRANSACTION_IDS.add(data.getRevision());
 			final Map<String, ChangeType> changedPaths = repository.getChangedPaths(data.getRevision());
 			for (final String fileName : changedPaths.keySet()) {
@@ -90,7 +90,7 @@ public class RepositoryParser extends Transformer<LogEntry, ChangeSet> {
 								Logger.error("Renaming of unknown file with file name %s. Assuming 'ADD' operation instead. Data may be incosistent!",
 								             fileName);
 							}
-							renamedHandle = new Handle(archive);
+							renamedHandle = new Handle(versionArchive);
 							CURRENT_FILES.put(fileName, renamedHandle);
 							final Revision addRevision = new Revision(changeSet, renamedHandle,
 							                                          changedPaths.get(fileName));
@@ -102,7 +102,7 @@ public class RepositoryParser extends Transformer<LogEntry, ChangeSet> {
 						renamedHandle.assignRevision(renameRevision, fileName);
 						break;
 					case Added:
-						final Handle addedHandle = new Handle(archive);
+						final Handle addedHandle = new Handle(versionArchive);
 						CURRENT_FILES.put(fileName, addedHandle);
 						final Revision revision = new Revision(changeSet, addedHandle, changedPaths.get(fileName));
 						addedHandle.assignRevision(revision, fileName);
@@ -125,7 +125,7 @@ public class RepositoryParser extends Transformer<LogEntry, ChangeSet> {
 								Logger.error("Modification of unknown file with file name %s. Assuming 'ADD' operation instead. Data may be incosistent!",
 								             fileName);
 							}
-							modifiedHandle = new Handle(archive);
+							modifiedHandle = new Handle(versionArchive);
 							CURRENT_FILES.put(fileName, modifiedHandle);
 							final Revision addRevision = new Revision(changeSet, modifiedHandle,
 							                                          changedPaths.get(fileName));

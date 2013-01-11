@@ -17,15 +17,17 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.joda.time.DateTime;
-import org.junit.Before;
 import org.junit.Test;
 import org.mozkito.persistence.model.Person;
 import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
 import org.mozkito.versions.BranchFactory;
+import org.mozkito.versions.RevDependencyGraph;
+import org.mozkito.versions.RevDependencyGraph.EdgeType;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.exceptions.NoSuchHandleException;
 import org.mozkito.versions.model.Branch;
@@ -40,37 +42,37 @@ import org.mozkito.versions.model.VersionArchive;
 @DatabaseSettings (unit = "versions", options = ConnectOptions.DROP_AND_CREATE_DATABASE)
 public class OpenJPA_PersistenceTest extends DatabaseTest {
 	
-	/** The branch factory. */
-	private BranchFactory branchFactory;
-	
-	/**
-	 * Before.
-	 */
-	@Before
-	public void before() {
-		this.branchFactory = new BranchFactory(getPersistenceUtil());
-	}
-	
 	/**
 	 * Test rcs branch.
+	 * 
+	 * @throws IOException
 	 */
 	@Test
-	public void testBranch() {
-		this.branchFactory = new BranchFactory(getPersistenceUtil());
-		final Branch rCSBranch = this.branchFactory.getBranch("testBranch");
-		final ChangeSet beginTransaction = new ChangeSet("000000000000000", "committed begin", new DateTime(),
-		                                                 new Person("just", "Sascha Just", "sascha.just@mozkito.org"),
+	public void testBranch() throws IOException {
+		final BranchFactory branchFactory = new BranchFactory(getPersistenceUtil());
+		final Branch testBranch = branchFactory.getBranch("testBranch");
+		
+		final RevDependencyGraph revDepGraph = new RevDependencyGraph();
+		revDepGraph.addBranch(testBranch.getName(), "0123456789abcde");
+		revDepGraph.addEdge("000000000000000", "0123456789abcde", EdgeType.BRANCH_EDGE);
+		
+		final VersionArchive versionArchive = new VersionArchive(branchFactory, revDepGraph);
+		
+		final ChangeSet beginTransaction = new ChangeSet(versionArchive, "000000000000000", "committed begin",
+		                                                 new DateTime(), new Person("just", "Sascha Just",
+		                                                                            "sascha.just@mozkito.org"),
 		                                                 "000000000000000");
-		final ChangeSet endTransaction = new ChangeSet("0123456789abcde", "committed end", new DateTime(),
-		                                               new Person("just", "Sascha Just", "sascha.just@mozkito.org"),
+		final ChangeSet endTransaction = new ChangeSet(versionArchive, "0123456789abcde", "committed end",
+		                                               new DateTime(), new Person("just", "Sascha Just",
+		                                                                          "sascha.just@mozkito.org"),
 		                                               "0123456789abcde");
 		
-		rCSBranch.setHead(endTransaction);
+		testBranch.setHead(endTransaction);
 		
 		getPersistenceUtil().beginTransaction();
 		getPersistenceUtil().save(beginTransaction);
 		getPersistenceUtil().save(endTransaction);
-		getPersistenceUtil().save(rCSBranch);
+		getPersistenceUtil().save(testBranch);
 		beginTransaction.addChild(endTransaction);
 		endTransaction.setBranchParent(beginTransaction);
 		getPersistenceUtil().commitTransaction();
@@ -79,31 +81,37 @@ public class OpenJPA_PersistenceTest extends DatabaseTest {
 		
 		assertFalse(list.isEmpty());
 		assertEquals(1, list.size());
-		assertTrue(list.contains(rCSBranch));
+		assertTrue(list.contains(testBranch));
 		for (final Branch b : list) {
-			if (b.getName().equals(rCSBranch.getName())) {
-				assertEquals(endTransaction, rCSBranch.getHead());
+			if (b.getName().equals(testBranch.getName())) {
+				assertEquals(endTransaction, testBranch.getHead());
 			}
 		}
 	}
 	
 	/**
 	 * Test rcs revision.
+	 * 
+	 * @throws IOException
 	 */
 	@Test
-	public void testRevision() {
+	public void testRevision() throws IOException {
 		
-		final VersionArchive versionArchive = new VersionArchive();
-		this.branchFactory = new BranchFactory(getPersistenceUtil());
-		versionArchive.setBranchFactory(this.branchFactory);
+		final BranchFactory branchFactory = new BranchFactory(getPersistenceUtil());
+		
+		final RevDependencyGraph revDepGraph = new RevDependencyGraph();
+		revDepGraph.addBranch(branchFactory.getMasterBranch().getName(), "0");
+		
+		final VersionArchive versionArchive = new VersionArchive(branchFactory, revDepGraph);
+		
 		final Person person = new Person("just", null, null);
-		final ChangeSet changeset = new ChangeSet("0", "", new DateTime(), person, "");
+		final ChangeSet changeset = new ChangeSet(versionArchive, "0", "", new DateTime(), person, "");
 		final Handle handle = new Handle(versionArchive);
 		final Revision revision = new Revision(changeset, handle, ChangeType.Added);
 		handle.assignRevision(revision, "test.java");
 		
 		assertTrue(changeset.getRevisions().contains(revision));
-		this.branchFactory.getMasterBranch().setHead(changeset);
+		versionArchive.getBranchFactory().getMasterBranch().setHead(changeset);
 		
 		getPersistenceUtil().beginTransaction();
 		getPersistenceUtil().save(changeset);
@@ -158,22 +166,28 @@ public class OpenJPA_PersistenceTest extends DatabaseTest {
 	
 	/**
 	 * Test save rcs file.
+	 * 
+	 * @throws IOException
 	 */
 	@Test
-	public void testSaveHandle() {
+	public void testSaveHandle() throws IOException {
 		
-		final VersionArchive versionArchive = new VersionArchive();
+		final BranchFactory branchFactory = new BranchFactory(getPersistenceUtil());
 		
-		this.branchFactory = new BranchFactory(getPersistenceUtil());
+		final RevDependencyGraph revDepGraph = new RevDependencyGraph();
+		revDepGraph.addBranch(branchFactory.getMasterBranch().getName(), "0");
+		
+		final VersionArchive versionArchive = new VersionArchive(branchFactory, revDepGraph);
+		
 		final Person person = new Person("kim", null, null);
-		final ChangeSet changeset = new ChangeSet("0", "", new DateTime(), person, "");
+		final ChangeSet changeset = new ChangeSet(versionArchive, "0", "", new DateTime(), person, "");
 		
 		final Handle handle = new Handle(versionArchive);
 		final Revision revision = new Revision(changeset, handle, ChangeType.Added);
 		handle.assignRevision(revision, "formerTest.java");
 		getPersistenceUtil().beginTransaction();
 		
-		this.branchFactory.getMasterBranch().setHead(changeset);
+		versionArchive.getBranchFactory().getMasterBranch().setHead(changeset);
 		
 		getPersistenceUtil().saveOrUpdate(changeset);
 		getPersistenceUtil().commitTransaction();

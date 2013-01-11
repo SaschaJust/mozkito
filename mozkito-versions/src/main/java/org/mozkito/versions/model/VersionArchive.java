@@ -12,7 +12,11 @@
  ******************************************************************************/
 package org.mozkito.versions.model;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -32,15 +36,51 @@ import org.mozkito.versions.RevDependencyGraph;
 public class VersionArchive implements Annotated {
 	
 	/** The Constant serialVersionUID. */
-	private static final long  serialVersionUID = -3701231007051514130L;
+	private static final long      serialVersionUID = -3701231007051514130L;
 	
 	/** The rev dep graph. */
-	private RevDependencyGraph revDepGraph;
+	private RevDependencyGraph     revDepGraph;
 	
 	/** The generated id. */
-	private long               generatedId;
+	private long                   generatedId;
 	
-	private BranchFactory      branchFactory;
+	private BranchFactory          branchFactory;
+	
+	private Map<String, ChangeSet> changeSets;
+	
+	/**
+	 * Instantiates a new version archive.
+	 * 
+	 * @deprecated exists for OpenJPA. Please use {@link #VersionArchive(BranchFactory, RevDependencyGraph)} instead.
+	 */
+	@Deprecated
+	public VersionArchive() {
+	};
+	
+	/**
+	 * Instantiates a new version archive.
+	 * 
+	 * @param branchFactory
+	 *            the branch factory
+	 * @param revDependencyGraph
+	 *            the rev dependency graph
+	 */
+	public VersionArchive(final BranchFactory branchFactory, final RevDependencyGraph revDependencyGraph) {
+		this.branchFactory = branchFactory;
+		this.revDepGraph = revDependencyGraph;
+		setChangeSets(new HashMap<String, ChangeSet>());
+	}
+	
+	/**
+	 * Adds the change set.
+	 * 
+	 * @param changeSet
+	 *            the change set
+	 */
+	@Transient
+	protected void addChangeSet(final ChangeSet changeSet) {
+		this.changeSets.put(changeSet.getId(), changeSet);
+	}
 	
 	/**
 	 * Gets the branch factory.
@@ -59,9 +99,22 @@ public class VersionArchive implements Annotated {
 	 *            the id
 	 * @return the transaction by id
 	 */
+	@Transient
 	public ChangeSet getChangeSetById(final String id) {
-		// TODO implement
-		return null;
+		return this.changeSets.get(id);
+	}
+	
+	/**
+	 * Gets the change sets.
+	 * 
+	 * @return the change sets
+	 */
+	// @OneToMany (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, targetEntity = ChangeSet.class)
+	// @JoinTable (name = "versionarchive_changesets",
+	// joinColumns = { @JoinColumn (name = "changesetid", nullable = false) })
+	@ElementCollection
+	public Map<String, ChangeSet> getChangeSets() {
+		return this.changeSets;
 	}
 	
 	/*
@@ -114,6 +167,16 @@ public class VersionArchive implements Annotated {
 	 */
 	public void setBranchFactory(final BranchFactory branchFactory) {
 		this.branchFactory = branchFactory;
+	}
+	
+	/**
+	 * Sets the change sets.
+	 * 
+	 * @param changeSets
+	 *            the change sets
+	 */
+	public void setChangeSets(final Map<String, ChangeSet> changeSets) {
+		this.changeSets = changeSets;
 	}
 	
 	/**

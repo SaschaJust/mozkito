@@ -96,6 +96,8 @@ public class ChangeSet implements Annotated {
 	/** The atomic. */
 	private boolean              atomic           = false;
 	
+	private VersionArchive       versionArchive;
+	
 	/** The branch indices. */
 	private Map<String, Long>    branchIndices    = new HashMap<String, Long>();
 	
@@ -109,6 +111,8 @@ public class ChangeSet implements Annotated {
 	/**
 	 * Instantiates a new rCS transaction.
 	 * 
+	 * @param versionArchive
+	 *            the version archive
 	 * @param id
 	 *            the id
 	 * @param message
@@ -120,16 +124,20 @@ public class ChangeSet implements Annotated {
 	 * @param originalId
 	 *            the original id
 	 */
-	public ChangeSet(@NotNull final String id, @NotNull final String message, @NotNull final DateTime timestamp,
-	        @NotNull final Person author, final String originalId) {
+	public ChangeSet(@NotNull final VersionArchive versionArchive, @NotNull final String id,
+	        @NotNull final String message, @NotNull final DateTime timestamp, @NotNull final Person author,
+	        final String originalId) {
 		setId(id);
 		setMessage(message);
 		setTimestamp(timestamp);
 		setAuthor(author);
 		setOriginalId(originalId);
+		setVersionArchive(versionArchive);
+		getVersionArchive().addChangeSet(this);
 		if (Logger.logTrace()) {
 			Logger.trace("Creating " + getClassName() + ": " + this);
 		}
+		
 	}
 	
 	/**
@@ -439,6 +447,17 @@ public class ChangeSet implements Annotated {
 	}
 	
 	/**
+	 * Gets the version archive.
+	 * 
+	 * @return the version archive
+	 */
+	@ManyToOne (cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
+	@Column (nullable = false)
+	public VersionArchive getVersionArchive() {
+		return this.versionArchive;
+	}
+	
+	/**
 	 * Checks if is atomic.
 	 * 
 	 * @return true, if is atomic
@@ -604,6 +623,16 @@ public class ChangeSet implements Annotated {
 	 */
 	protected void setTimestamp(final DateTime timestamp) {
 		this.javaTimestamp = timestamp;
+	}
+	
+	/**
+	 * Sets the version archive.
+	 * 
+	 * @param versionArchive
+	 *            the new version archive
+	 */
+	public void setVersionArchive(final VersionArchive versionArchive) {
+		this.versionArchive = versionArchive;
 	}
 	
 	/*
