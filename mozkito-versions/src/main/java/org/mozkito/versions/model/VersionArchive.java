@@ -12,6 +12,7 @@
  ******************************************************************************/
 package org.mozkito.versions.model;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,9 +27,13 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kisa.Logger;
+
 import org.mozkito.persistence.Annotated;
-import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.RevDependencyGraph;
+import org.mozkito.versions.RevDependencyGraph.EdgeType;
 
 /**
  * The Class VersionArchive.
@@ -41,19 +46,18 @@ public class VersionArchive implements Annotated {
 	private static final long      serialVersionUID = -3701231007051514130L;
 	
 	/** The rev dep graph. */
-	private RevDependencyGraph     revDepGraph;
+	private RevDependencyGraph     revDepGraph      = null;
 	
 	/** The generated id. */
 	private long                   generatedId;
 	
-	private BranchFactory          branchFactory;
-	
 	private Map<String, ChangeSet> changeSets;
+	private Map<String, Branch>    branches;
 	
 	/**
 	 * Instantiates a new version archive.
 	 * 
-	 * @deprecated exists for OpenJPA. Please use {@link #VersionArchive(BranchFactory, RevDependencyGraph)} instead.
+	 * @deprecated exists for OpenJPA. Please use {@link #VersionArchive(RevDependencyGraph)} instead.
 	 */
 	@Deprecated
 	public VersionArchive() {
@@ -62,15 +66,13 @@ public class VersionArchive implements Annotated {
 	/**
 	 * Instantiates a new version archive.
 	 * 
-	 * @param branchFactory
-	 *            the branch factory
 	 * @param revDependencyGraph
 	 *            the rev dependency graph
 	 */
-	public VersionArchive(final BranchFactory branchFactory, final RevDependencyGraph revDependencyGraph) {
-		this.branchFactory = branchFactory;
+	public VersionArchive(final RevDependencyGraph revDependencyGraph) {
 		this.revDepGraph = revDependencyGraph;
 		setChangeSets(new HashMap<String, ChangeSet>());
+		setBranches(new HashMap<String, Branch>());
 	}
 	
 	/**
@@ -85,13 +87,33 @@ public class VersionArchive implements Annotated {
 	}
 	
 	/**
-	 * Gets the branch factory.
+	 * Gets the branch.
 	 * 
-	 * @return the branch factory
+	 * @param name
+	 *            the name
+	 * @return the branch
 	 */
 	@Transient
-	public BranchFactory getBranchFactory() {
-		return this.branchFactory;
+	public synchronized Branch getBranch(@NotNull final String name) {
+		if (!this.branches.containsKey(name)) {
+			
+			final Branch newBranch = new Branch(this, name);
+			if (Logger.logDebug()) {
+				Logger.debug("Creating new Branch " + newBranch.toString());
+			}
+			this.branches.put(newBranch.getName(), newBranch);
+		}
+		return this.branches.get(name);
+	}
+	
+	/**
+	 * Gets all branches.
+	 * 
+	 * @return the branches
+	 */
+	@OneToMany (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, targetEntity = Branch.class)
+	public Map<String, Branch> getBranches() {
+		return this.branches;
 	}
 	
 	/**
@@ -146,7 +168,7 @@ public class VersionArchive implements Annotated {
 	 */
 	@Transient
 	public Branch getMasterBranch() {
-		return this.branchFactory.getMasterBranch();
+		return getBranch(Branch.MASTER_BRANCH_NAME);
 	}
 	
 	/**
@@ -156,17 +178,49 @@ public class VersionArchive implements Annotated {
 	 */
 	@Transient
 	public RevDependencyGraph getRevDependencyGraph() {
+		if (this.revDepGraph == null) {
+			this.revDepGraph = loadRevDependencyGraph();
+		}
 		return this.revDepGraph;
 	}
 	
+	private RevDependencyGraph loadRevDependencyGraph() {
+		try {
+			if (this.revDepGraph == null) {
+				this.revDepGraph = new RevDependencyGraph();
+				for (final Branch branch : getBranches().values()) {
+					this.revDepGraph.addBranch(branch.getName(), branch.getHead().getId());
+				}
+				for (final ChangeSet changeSet : getChangeSets().values()) {
+					this.revDepGraph.addChangeSet(changeSet.getId());
+					for (final String tagName : changeSet.getTags()) {
+						this.revDepGraph.addTag(tagName, changeSet.getId());
+					}
+					if (changeSet.getBranchParent() != null) {
+						this.revDepGraph.addEdge(changeSet.getBranchParent().getId(), changeSet.getId(),
+						                         EdgeType.BRANCH_EDGE);
+						if (changeSet.getMergeParent() != null) {
+							this.revDepGraph.addEdge(changeSet.getMergeParent().getId(), changeSet.getId(),
+							                         EdgeType.MERGE_EDGE);
+						}
+					}
+					
+				}
+			}
+			return this.revDepGraph;
+		} catch (final IOException e) {
+			throw new UnrecoverableError(e);
+		}
+	}
+	
 	/**
-	 * Sets the branch factory.
+	 * Sets the branches.
 	 * 
-	 * @param branchFactory
-	 *            the new branch factory
+	 * @param branches
+	 *            the branches
 	 */
-	public void setBranchFactory(final BranchFactory branchFactory) {
-		this.branchFactory = branchFactory;
+	public void setBranches(final Map<String, Branch> branches) {
+		this.branches = branches;
 	}
 	
 	/**

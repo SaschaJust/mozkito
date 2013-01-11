@@ -49,7 +49,6 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.DistributedCommandLineRepository;
 import org.mozkito.versions.LogParser;
 import org.mozkito.versions.RevDependencyGraph;
@@ -112,9 +111,6 @@ public class GitRepository extends DistributedCommandLineRepository {
 	
 	/** The transaction i ds. */
 	private final List<String>               changeSetIds        = new LinkedList<String>();
-	
-	/** The branch factory. */
-	private BranchFactory                    branchFactory;
 	
 	/** The rev dep graph. */
 	private RevDependencyGraph               revDepGraph;
@@ -366,21 +362,6 @@ public class GitRepository extends DistributedCommandLineRepository {
 		return builder.toString();
 	}
 	
-	/**
-	 * Gets the branch factory.
-	 * 
-	 * @return the branch factory
-	 */
-	public BranchFactory getBranchFactory() {
-		// PRECONDITIONS
-		
-		try {
-			return this.branchFactory;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
 	/*
 	 * (non-Javadoc)
 	 * @see org.mozkito.versions.Repository#getChangedPaths()
@@ -449,6 +430,20 @@ public class GitRepository extends DistributedCommandLineRepository {
 			}
 		}
 		return result;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.versions.Repository#getTransactionCount()
+	 */
+	@Override
+	public long getChangeSetCount() {
+		final String[] args = new String[] { "log", "--branches", "--remotes", "--pretty=format:''" };
+		final Tuple<Integer, List<String>> response = CommandExecutor.execute("git", args, this.cloneDir, null, null);
+		if (response.getFirst() != 0) {
+			return -1;
+		}
+		return response.getSecond().size();
 	}
 	
 	/*
@@ -708,20 +703,6 @@ public class GitRepository extends DistributedCommandLineRepository {
 	}
 	
 	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.versions.Repository#getTransactionCount()
-	 */
-	@Override
-	public long getChangeSetCount() {
-		final String[] args = new String[] { "log", "--branches", "--remotes", "--pretty=format:''" };
-		final Tuple<Integer, List<String>> response = CommandExecutor.execute("git", args, this.cloneDir, null, null);
-		if (response.getFirst() != 0) {
-			return -1;
-		}
-		return response.getSecond().size();
-	}
-	
-	/*
 	 * In case of git this method returns a file pointing to a bare repository mirror!
 	 * @see org.mozkito.versions.Repository#getWokingCopyLocation()
 	 */
@@ -757,27 +738,31 @@ public class GitRepository extends DistributedCommandLineRepository {
 	 */
 	@Override
 	public void setup(@NotNull final URI address,
-	                  @NotNull final BranchFactory branchFactory,
 	                  final File tmpDir,
 	                  final String mainBranchName) throws RepositoryOperationException {
 		Condition.notNull(address, "Setting up a repository without a corresponding address won't work.");
 		
-		setup(address, null, branchFactory, tmpDir, mainBranchName);
+		setup(address, null, tmpDir, mainBranchName);
 	}
 	
 	/**
 	 * main setup method.
-	 *
-	 * @param address the address
-	 * @param inputStream the input stream
-	 * @param branchFactory the branch factory
-	 * @param tmpDir the tmp dir
-	 * @param mainBranchName the main branch name
-	 * @throws RepositoryOperationException the repository operation exception
+	 * 
+	 * @param address
+	 *            the address
+	 * @param inputStream
+	 *            the input stream
+	 * @param branchFactory
+	 *            the branch factory
+	 * @param tmpDir
+	 *            the tmp dir
+	 * @param mainBranchName
+	 *            the main branch name
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
 	 */
 	private void setup(@NotNull final URI address,
 	                   final InputStream inputStream,
-	                   @NotNull final BranchFactory branchFactory,
 	                   final File tmpDir,
 	                   @NotNull final String mainBranchName) throws RepositoryOperationException {
 		Condition.notNull(address, "Setting up a repository without a corresponding address won't work.");
@@ -785,7 +770,6 @@ public class GitRepository extends DistributedCommandLineRepository {
 		try {
 			setMainBranchName(mainBranchName);
 			setUri(address);
-			this.branchFactory = branchFactory;
 			
 			File localCloneDir = null;
 			if (tmpDir == null) {
@@ -849,13 +833,12 @@ public class GitRepository extends DistributedCommandLineRepository {
 	public void setup(@NotNull final URI address,
 	                  @NotNull final String username,
 	                  @NotNull final String password,
-	                  @NotNull final BranchFactory branchFactory,
 	                  final File tmpDir,
 	                  final String mainBranchName) throws RepositoryOperationException {
 		Condition.notNull(address, "Setting up a repository without a corresponding address won't work.");
 		Condition.notNull(username, "Calling this method requires user to be set.");
 		Condition.notNull(password, "Calling this method requires password to be set.");
-		setup(URIUtils.encodeUsername(address, username), new ByteArrayInputStream(password.getBytes()), branchFactory,
-		      tmpDir, mainBranchName);
+		setup(URIUtils.encodeUsername(address, username), new ByteArrayInputStream(password.getBytes()), tmpDir,
+		      mainBranchName);
 	}
 }

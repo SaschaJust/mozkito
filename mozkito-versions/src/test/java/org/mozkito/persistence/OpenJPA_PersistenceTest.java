@@ -25,7 +25,6 @@ import org.junit.Test;
 import org.mozkito.persistence.model.Person;
 import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
-import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.RevDependencyGraph;
 import org.mozkito.versions.RevDependencyGraph.EdgeType;
 import org.mozkito.versions.elements.ChangeType;
@@ -49,14 +48,12 @@ public class OpenJPA_PersistenceTest extends DatabaseTest {
 	 */
 	@Test
 	public void testBranch() throws IOException {
-		final BranchFactory branchFactory = new BranchFactory(getPersistenceUtil());
-		final Branch testBranch = branchFactory.getBranch("testBranch");
 		
 		final RevDependencyGraph revDepGraph = new RevDependencyGraph();
-		revDepGraph.addBranch(testBranch.getName(), "0123456789abcde");
+		revDepGraph.addBranch("testBranch", "0123456789abcde");
 		revDepGraph.addEdge("000000000000000", "0123456789abcde", EdgeType.BRANCH_EDGE);
 		
-		final VersionArchive versionArchive = new VersionArchive(branchFactory, revDepGraph);
+		final VersionArchive versionArchive = new VersionArchive(revDepGraph);
 		
 		final ChangeSet beginTransaction = new ChangeSet(versionArchive, "000000000000000", "committed begin",
 		                                                 new DateTime(), new Person("just", "Sascha Just",
@@ -66,7 +63,7 @@ public class OpenJPA_PersistenceTest extends DatabaseTest {
 		                                               new DateTime(), new Person("just", "Sascha Just",
 		                                                                          "sascha.just@mozkito.org"),
 		                                               "0123456789abcde");
-		
+		final Branch testBranch = versionArchive.getBranch("testBranch");
 		testBranch.setHead(endTransaction);
 		
 		getPersistenceUtil().beginTransaction();
@@ -97,12 +94,10 @@ public class OpenJPA_PersistenceTest extends DatabaseTest {
 	@Test
 	public void testRevision() throws IOException {
 		
-		final BranchFactory branchFactory = new BranchFactory(getPersistenceUtil());
-		
 		final RevDependencyGraph revDepGraph = new RevDependencyGraph();
-		revDepGraph.addBranch(branchFactory.getMasterBranch().getName(), "0");
+		revDepGraph.addBranch(Branch.MASTER_BRANCH_NAME, "0");
 		
-		final VersionArchive versionArchive = new VersionArchive(branchFactory, revDepGraph);
+		final VersionArchive versionArchive = new VersionArchive(revDepGraph);
 		
 		final Person person = new Person("just", null, null);
 		final ChangeSet changeset = new ChangeSet(versionArchive, "0", "", new DateTime(), person, "");
@@ -111,7 +106,7 @@ public class OpenJPA_PersistenceTest extends DatabaseTest {
 		handle.assignRevision(revision, "test.java");
 		
 		assertTrue(changeset.getRevisions().contains(revision));
-		versionArchive.getBranchFactory().getMasterBranch().setHead(changeset);
+		versionArchive.getMasterBranch().setHead(changeset);
 		
 		getPersistenceUtil().beginTransaction();
 		getPersistenceUtil().save(changeset);
@@ -172,12 +167,10 @@ public class OpenJPA_PersistenceTest extends DatabaseTest {
 	@Test
 	public void testSaveHandle() throws IOException {
 		
-		final BranchFactory branchFactory = new BranchFactory(getPersistenceUtil());
-		
 		final RevDependencyGraph revDepGraph = new RevDependencyGraph();
-		revDepGraph.addBranch(branchFactory.getMasterBranch().getName(), "0");
+		revDepGraph.addBranch(Branch.MASTER_BRANCH_NAME, "0");
 		
-		final VersionArchive versionArchive = new VersionArchive(branchFactory, revDepGraph);
+		final VersionArchive versionArchive = new VersionArchive(revDepGraph);
 		
 		final Person person = new Person("kim", null, null);
 		final ChangeSet changeset = new ChangeSet(versionArchive, "0", "", new DateTime(), person, "");
@@ -187,7 +180,7 @@ public class OpenJPA_PersistenceTest extends DatabaseTest {
 		handle.assignRevision(revision, "formerTest.java");
 		getPersistenceUtil().beginTransaction();
 		
-		versionArchive.getBranchFactory().getMasterBranch().setHead(changeset);
+		versionArchive.getMasterBranch().setHead(changeset);
 		
 		getPersistenceUtil().saveOrUpdate(changeset);
 		getPersistenceUtil().commitTransaction();

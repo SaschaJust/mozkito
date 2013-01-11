@@ -32,7 +32,6 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.Repository;
 import org.mozkito.versions.RepositoryFactory;
 import org.mozkito.versions.RepositoryType;
@@ -59,9 +58,6 @@ public class RepositoryOptions extends ArgumentSetOptions<Repository, ArgumentSe
 	
 	/** The persistence util. */
 	PersistenceUtil                              persistenceUtil;
-	
-	/** The branch factory. */
-	private BranchFactory                        branchFactory;
 	
 	/** The tmp dir arg. */
 	private DirectoryArgument.Options            tmpDirArg;
@@ -90,18 +86,6 @@ public class RepositoryOptions extends ArgumentSetOptions<Repository, ArgumentSe
 		super(argumentSet, "repository", "Options used to setup the repository environment.", requirement);
 		this.settings = argumentSet.getSettings();
 		this.databaseOptions = databaseOptions;
-	}
-	
-	/**
-	 * Gets the branch factory.
-	 * 
-	 * @return the branch factory
-	 */
-	public BranchFactory getBranchFactory() {
-		if (this.branchFactory == null) {
-			this.branchFactory = new BranchFactory(this.persistenceUtil);
-		}
-		return this.branchFactory;
 	}
 	
 	/**
@@ -220,10 +204,9 @@ public class RepositoryOptions extends ArgumentSetOptions<Repository, ArgumentSe
 				}
 				
 				if ((username == null) && (password == null)) {
-					repository.setup(repositoryURI, getBranchFactory(), tmpDirArgument.getValue(),
-					                 mainBranchArgument.getValue());
+					repository.setup(repositoryURI, tmpDirArgument.getValue(), mainBranchArgument.getValue());
 				} else {
-					repository.setup(repositoryURI, username, password, getBranchFactory(), tmpDirArgument.getValue(),
+					repository.setup(repositoryURI, username, password, tmpDirArgument.getValue(),
 					                 mainBranchArgument.getValue());
 				}
 				

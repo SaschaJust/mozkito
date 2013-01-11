@@ -22,7 +22,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mozkito.persistence.model.Person;
-import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.RevDependencyGraph;
 import org.mozkito.versions.RevDependencyGraph.EdgeType;
 import org.mozkito.versions.elements.ChangeType;
@@ -78,16 +77,15 @@ public class HandleTest {
 	@Before
 	public void setup() throws IOException {
 		this.person = new Person("kim", "", "");
-		final BranchFactory branchFactory = new BranchFactory(null);
 		
 		this.revDepGraph = new RevDependencyGraph();
-		this.revDepGraph.addBranch(branchFactory.getMasterBranch().getName(), "5");
+		this.revDepGraph.addBranch(Branch.MASTER_BRANCH_NAME, "5");
 		this.revDepGraph.addEdge("4", "5", EdgeType.BRANCH_EDGE);
 		this.revDepGraph.addEdge("3", "4", EdgeType.BRANCH_EDGE);
 		this.revDepGraph.addEdge("2", "3", EdgeType.BRANCH_EDGE);
 		this.revDepGraph.addEdge("1", "2", EdgeType.BRANCH_EDGE);
 		this.revDepGraph.addEdge("0", "1", EdgeType.BRANCH_EDGE);
-		this.versionArchive = new VersionArchive(branchFactory, this.revDepGraph);
+		this.versionArchive = new VersionArchive(this.revDepGraph);
 		
 		this.t_0 = new ChangeSet(this.versionArchive, "0", "", new DateTime(), this.person, "");
 		this.t_1 = new ChangeSet(this.versionArchive, "1", "", new DateTime(), this.person, "");

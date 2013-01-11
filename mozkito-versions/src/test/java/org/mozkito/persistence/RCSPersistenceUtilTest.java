@@ -27,7 +27,6 @@ import org.junit.Test;
 import org.mozkito.persistence.model.Person;
 import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
-import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.RevDependencyGraph;
 import org.mozkito.versions.RevDependencyGraph.EdgeType;
 import org.mozkito.versions.collections.ChangeSetSet.TransactionSetOrder;
@@ -113,13 +112,10 @@ public class RCSPersistenceUtilTest extends DatabaseTest {
 		
 		final DateTime now = new DateTime();
 		final Person person = new Person("kim", null, null);
-		final BranchFactory branchFactory = new BranchFactory(getPersistenceUtil());
-		final Branch masterBranch = branchFactory.getMasterBranch();
-		final Branch otherBranch = branchFactory.getBranch("otherBranch");
 		
 		final RevDependencyGraph revDepGraph = new RevDependencyGraph();
-		revDepGraph.addBranch(masterBranch.getName(), "280b1b8695286699770c5da85204e1718f7f4b66");
-		revDepGraph.addBranch(otherBranch.getName(), "280b1b8695286699770c5da85204e1718fXXXXXX");
+		revDepGraph.addBranch(Branch.MASTER_BRANCH_NAME, "280b1b8695286699770c5da85204e1718f7f4b66");
+		revDepGraph.addBranch("otherBranch", "280b1b8695286699770c5da85204e1718fXXXXXX");
 		revDepGraph.addEdge("702abfed3f8ca043b2636efd31c14ba7552603dd", "280b1b8695286699770c5da85204e1718f7f4b66",
 		                    EdgeType.MERGE_EDGE);
 		revDepGraph.addEdge("9c7c6d1ef4ffe95dfcbaf850f869d6742d16bd59", "280b1b8695286699770c5da85204e1718f7f4b66",
@@ -152,7 +148,9 @@ public class RCSPersistenceUtilTest extends DatabaseTest {
 		revDepGraph.addEdge("cce07fdcb9f3a0efcd67c75de60d5608c6XXXXXX", "702abfed3f8ca043b2636efd31c14ba75XXXXXX",
 		                    EdgeType.BRANCH_EDGE);
 		
-		this.versionArchive = new VersionArchive(branchFactory, revDepGraph);
+		this.versionArchive = new VersionArchive(revDepGraph);
+		final Branch masterBranch = this.versionArchive.getMasterBranch();
+		final Branch otherBranch = this.versionArchive.getBranch("otherBranch");
 		
 		long index = 0;
 		
@@ -245,9 +243,8 @@ public class RCSPersistenceUtilTest extends DatabaseTest {
 	@Test
 	public void testBranchASC() {
 		
-		final BranchFactory branchFactory = this.versionArchive.getBranchFactory();
 		final Iterator<ChangeSet> iterator = RCSPersistenceUtil.getChangeSet(getPersistenceUtil(),
-		                                                                     branchFactory.getMasterBranch(),
+		                                                                     this.versionArchive.getMasterBranch(),
 		                                                                     TransactionSetOrder.ASC).iterator();
 		int gindex = this.tList.size();
 		
@@ -283,10 +280,8 @@ public class RCSPersistenceUtilTest extends DatabaseTest {
 	@Test
 	public void testBranchDESC() {
 		
-		final BranchFactory branchFactory = this.versionArchive.getBranchFactory();
-		
 		final Iterator<ChangeSet> iterator = RCSPersistenceUtil.getChangeSet(getPersistenceUtil(),
-		                                                                     branchFactory.getMasterBranch(),
+		                                                                     this.versionArchive.getMasterBranch(),
 		                                                                     TransactionSetOrder.DESC).iterator();
 		int gindex = -1;
 		

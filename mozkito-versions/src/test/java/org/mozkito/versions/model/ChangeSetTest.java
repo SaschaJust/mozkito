@@ -21,7 +21,6 @@ import java.util.Collection;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.mozkito.persistence.model.Person;
-import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.RevDependencyGraph;
 import org.mozkito.versions.RevDependencyGraph.EdgeType;
 import org.mozkito.versions.elements.ChangeType;
@@ -39,11 +38,9 @@ public class ChangeSetTest {
 	@Test
 	public void testGetChangedFiles() throws IOException {
 		final Person person = new Person("kim", "", "");
-		final BranchFactory branchFactory = new BranchFactory(null);
 		final RevDependencyGraph revDepGraph = new RevDependencyGraph();
-		revDepGraph.addBranch(branchFactory.getMasterBranch().getName(), "0");
-		
-		final VersionArchive versionArchive = new VersionArchive(branchFactory, revDepGraph);
+		revDepGraph.addBranch(Branch.MASTER_BRANCH_NAME, "0");
+		final VersionArchive versionArchive = new VersionArchive(revDepGraph);
 		
 		final ChangeSet t_0 = new ChangeSet(versionArchive, "0", "", new DateTime(), person, "");
 		
@@ -82,9 +79,8 @@ public class ChangeSetTest {
 		
 		final Person person = new Person("kim", "", "");
 		
-		final BranchFactory branchFactory = new BranchFactory(null);
 		final RevDependencyGraph revDepGraph = new RevDependencyGraph();
-		revDepGraph.addBranch("master", "5");
+		revDepGraph.addBranch(Branch.MASTER_BRANCH_NAME, "5");
 		revDepGraph.addEdge("4", "5", EdgeType.MERGE_EDGE);
 		revDepGraph.addEdge("1", "5", EdgeType.BRANCH_EDGE);
 		revDepGraph.addEdge("3", "4", EdgeType.MERGE_EDGE);
@@ -93,7 +89,7 @@ public class ChangeSetTest {
 		revDepGraph.addEdge("0", "2", EdgeType.BRANCH_EDGE);
 		revDepGraph.addEdge("0", "1", EdgeType.BRANCH_EDGE);
 		
-		final VersionArchive versionArchive = new VersionArchive(branchFactory, revDepGraph);
+		final VersionArchive versionArchive = new VersionArchive(revDepGraph);
 		
 		final ChangeSet t_0 = new ChangeSet(versionArchive, "0", "", new DateTime(), person, "");
 		final ChangeSet t_1 = new ChangeSet(versionArchive, "1", "", new DateTime(), person, "");

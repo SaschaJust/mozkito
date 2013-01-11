@@ -22,10 +22,12 @@ import java.util.TreeSet;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -56,6 +58,8 @@ public class Branch implements Annotated {
 	/** The merged in. */
 	private Set<String>       mergedIn           = new HashSet<String>();
 	
+	private VersionArchive    versionArchive;
+	
 	/** The Constant MASTER_BRANCH_NAME. */
 	public static String      MASTER_BRANCH_NAME = "master";             //$NON-NLS-1$
 	                                                                      
@@ -79,11 +83,14 @@ public class Branch implements Annotated {
 	/**
 	 * Instantiates a new rCS branch.
 	 * 
+	 * @param versionArchive
+	 *            the version archive
 	 * @param name
 	 *            the name
 	 */
-	public Branch(final String name) {
+	public Branch(final VersionArchive versionArchive, final String name) {
 		setName(name);
+		setVersionArchive(versionArchive);
 	}
 	
 	/**
@@ -206,6 +213,17 @@ public class Branch implements Annotated {
 		return this.name;
 	}
 	
+	/**
+	 * Gets the version archive.
+	 * 
+	 * @return the version archive
+	 */
+	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	@Column (nullable = false)
+	public VersionArchive getVersionArchive() {
+		return this.versionArchive;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
@@ -268,6 +286,16 @@ public class Branch implements Annotated {
 	 */
 	public void setName(final String name) {
 		this.name = name;
+	}
+	
+	/**
+	 * Sets the version archive.
+	 * 
+	 * @param versionArchive
+	 *            the new version archive
+	 */
+	public void setVersionArchive(final VersionArchive versionArchive) {
+		this.versionArchive = versionArchive;
 	}
 	
 	/*

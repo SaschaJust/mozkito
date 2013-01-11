@@ -43,7 +43,6 @@ import org.apache.commons.io.output.NullOutputStream;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.mozkito.persistence.model.Person;
-import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.ProtocolType;
 import org.mozkito.versions.Repository;
 import org.mozkito.versions.RevDependencyGraph;
@@ -650,28 +649,25 @@ public class SubversionRepository extends Repository {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.versions.Repository#setup(java.net.URI, org.mozkito.versions.BranchFactory, java.io.File,
-	 *      java.lang.String)
+	 * @see org.mozkito.versions.Repository#setup(java.net.URI, java.io.File, java.lang.String)
 	 */
 	@Override
 	public void setup(@NotNull final URI address,
-	                  @NotNull final BranchFactory branchFactory,
 	                  final File tmpDir,
 	                  @NotNull final String mainBranchName) throws RepositoryOperationException {
-		setup(address, null, null, branchFactory, tmpDir, mainBranchName);
+		setup(address, null, null, tmpDir, mainBranchName);
 	}
 	
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.versions.Repository#setup(java.net.URI, java.lang.String, java.lang.String,
-	 *      org.mozkito.versions.BranchFactory, java.io.File, java.lang.String)
+	 * @see org.mozkito.versions.Repository#setup(java.net.URI, java.lang.String, java.lang.String, java.io.File,
+	 *      java.lang.String)
 	 */
 	@Override
 	public void setup(@NotNull final URI address,
 	                  final String username,
 	                  final String password,
-	                  @NotNull final BranchFactory branchFactory,
 	                  final File tmpDir,
 	                  @NotNull final String mainBranchName) throws RepositoryOperationException {
 		try {

@@ -451,7 +451,7 @@ public class ChangeSet implements Annotated {
 	 * 
 	 * @return the version archive
 	 */
-	@ManyToOne (cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
+	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	@Column (nullable = false)
 	public VersionArchive getVersionArchive() {
 		return this.versionArchive;

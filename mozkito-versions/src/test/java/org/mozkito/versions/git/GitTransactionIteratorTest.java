@@ -29,7 +29,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mozkito.testing.VersionsTest;
 import org.mozkito.testing.annotation.RepositorySetting;
-import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.RepositoryType;
 import org.mozkito.versions.RevDependencyGraph;
 import org.mozkito.versions.elements.LogEntry;
@@ -74,8 +73,7 @@ public class GitTransactionIteratorTest extends VersionsTest {
 		this.transactionMap.clear();
 		this.branchMap.clear();
 		
-		final VersionArchive versionArchive = new VersionArchive(new BranchFactory(null),
-		                                                         this.repo.getRevDependencyGraph());
+		final VersionArchive versionArchive = new VersionArchive(this.repo.getRevDependencyGraph());
 		final Iterator<LogEntry> log = this.repo.log(this.repo.getFirstRevisionId(), this.repo.getEndRevision(), 100);
 		
 		while (log.hasNext()) {
@@ -115,7 +113,7 @@ public class GitTransactionIteratorTest extends VersionsTest {
 			// persist branches
 			final String branchName = revDepGraph.isBranchHead(hash);
 			if (branchName != null) {
-				final Branch rCSBranch = this.repo.getBranchFactory().getBranch(branchName);
+				final Branch rCSBranch = versionArchive.getBranch(branchName);
 				rCSBranch.setHead(changeset);
 				this.branchMap.put(branchName, rCSBranch);
 			}

@@ -28,7 +28,6 @@ import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.mozkito.persistence.model.Person;
-import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.RevDependencyGraph;
 import org.mozkito.versions.RevDependencyGraph.EdgeType;
 import org.mozkito.versions.collections.ChangeSetSet.TransactionSetOrder;
@@ -97,14 +96,11 @@ public class ChangeSetSetTest {
 		
 		final DateTime now = new DateTime();
 		this.person = new Person("kim", null, null);
-		final BranchFactory branchFactory = new BranchFactory(null);
-		this.branch = branchFactory.getMasterBranch();
-		this.otherBranch = branchFactory.getBranch("otherBranch");
 		this.index = 0;
 		
 		this.revDepGraph = new RevDependencyGraph();
-		this.revDepGraph.addBranch(this.branch.getName(), "280b1b8695286699770c5da85204e1718f7f4b66");
-		this.revDepGraph.addBranch(this.otherBranch.getName(), "280b1b8695286699770c5da85204e1718fXXXXXX");
+		this.revDepGraph.addBranch(Branch.MASTER_BRANCH_NAME, "280b1b8695286699770c5da85204e1718f7f4b66");
+		this.revDepGraph.addBranch("otherBranch", "280b1b8695286699770c5da85204e1718fXXXXXX");
 		this.revDepGraph.addEdge("702abfed3f8ca043b2636efd31c14ba7552603dd",
 		                         "280b1b8695286699770c5da85204e1718f7f4b66", EdgeType.MERGE_EDGE);
 		this.revDepGraph.addEdge("9c7c6d1ef4ffe95dfcbaf850f869d6742d16bd59",
@@ -132,7 +128,9 @@ public class ChangeSetSetTest {
 		this.revDepGraph.addEdge("d522956171853fc2d7ca106d9c8d2b93e82df9d3",
 		                         "9c7c6d1ef4ffe95dfcbaf850f869d6742d16bd59", EdgeType.BRANCH_EDGE);
 		
-		this.versionArchive = new VersionArchive(branchFactory, this.revDepGraph);
+		this.versionArchive = new VersionArchive(this.revDepGraph);
+		this.branch = this.versionArchive.getMasterBranch();
+		this.otherBranch = this.versionArchive.getBranch("otherBranch");
 		
 		this.otherT = new ChangeSet(this.versionArchive, "280b1b8695286699770c5da85204e1718fXXXXXX", "", now,
 		                            this.person, null);

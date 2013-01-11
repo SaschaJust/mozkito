@@ -34,7 +34,6 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
-import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.Repository;
 import org.mozkito.versions.RevDependencyGraph;
 import org.mozkito.versions.elements.AnnotationEntry;
@@ -142,8 +141,9 @@ public class ConcurrentRepository extends Repository {
 	
 	/**
 	 * Cleanup.
-	 *
-	 * @throws RepositoryOperationException the repository operation exception
+	 * 
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
 	 */
 	private synchronized void cleanup() throws RepositoryOperationException {
 		++this.cleanupCount;
@@ -229,6 +229,24 @@ public class ConcurrentRepository extends Repository {
 		
 		try {
 			return getRepository().getChangedPaths(revision);
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @throws RepositoryOperationException
+	 * 
+	 * @see org.mozkito.versions.Repository#getChangeSetCount()
+	 */
+	@Override
+	public long getChangeSetCount() throws RepositoryOperationException {
+		// PRECONDITIONS
+		
+		try {
+			return getRepository().getChangeSetCount();
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -345,7 +363,7 @@ public class ConcurrentRepository extends Repository {
 				final File dir = FileUtils.createRandomDir("mozkito_concurrent_" + this.repository.getClassName().toLowerCase() + "_" + thread.getId(), null, FileShutdownAction.DELETE); //$NON-NLS-1$ //$NON-NLS-2$
 				try {
 					final Repository repoClone = this.repository.getClass().newInstance();
-					repoClone.setup(this.repository.getUri(), null, dir, this.repository.getMainBranchName());
+					repoClone.setup(this.repository.getUri(), dir, this.repository.getMainBranchName());
 					
 					this.threadToRevisionMap.put(thread.getId(), repoClone);
 				} catch (final InstantiationException e) {
@@ -378,24 +396,6 @@ public class ConcurrentRepository extends Repository {
 		
 		try {
 			return getRepository().getRevDependencyGraph();
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * @throws RepositoryOperationException
-	 * 
-	 * @see org.mozkito.versions.Repository#getChangeSetCount()
-	 */
-	@Override
-	public long getChangeSetCount() throws RepositoryOperationException {
-		// PRECONDITIONS
-		
-		try {
-			return getRepository().getChangeSetCount();
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -441,12 +441,10 @@ public class ConcurrentRepository extends Repository {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.versions.Repository#setup(java.net.URI, org.mozkito.versions.BranchFactory, java.io.File,
-	 *      java.lang.String)
+	 * @see org.mozkito.versions.Repository#setup(java.net.URI, java.io.File, java.lang.String)
 	 */
 	@Override
 	public void setup(final URI address,
-	                  final BranchFactory branchFactory,
 	                  final File tmpDir,
 	                  final String mainBranchName) throws RepositoryOperationException {
 		// PRECONDITIONS
@@ -461,14 +459,13 @@ public class ConcurrentRepository extends Repository {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.versions.Repository#setup(java.net.URI, java.lang.String, java.lang.String,
-	 *      org.mozkito.versions.BranchFactory, java.io.File, java.lang.String)
+	 * @see org.mozkito.versions.Repository#setup(java.net.URI, java.lang.String, java.lang.String, java.io.File,
+	 *      java.lang.String)
 	 */
 	@Override
 	public void setup(final URI address,
 	                  final String username,
 	                  final String password,
-	                  final BranchFactory branchFactory,
 	                  final File tmpDir,
 	                  final String mainBranchName) throws RepositoryOperationException {
 		// PRECONDITIONS

@@ -60,17 +60,17 @@ public class Main {
 	public static void main(final String[] args) {
 		try {
 			final Settings settings = new Settings();
-			final RepositoryToolchain rCS = new RepositoryToolchain(settings);
-			rCS.setName(rCS.getClass().getSimpleName());
-			rCS.start();
-			rCS.join();
+			final RepositoryToolchain repoToolChain = new RepositoryToolchain(settings);
+			repoToolChain.setName(repoToolChain.getClass().getSimpleName());
+			repoToolChain.start();
+			repoToolChain.join();
 			
 			if (Logger.logInfo()) {
-				Logger.info("%s: %s finished. Starting GraphToolChain ...", MODULE_NAME, rCS.getClass().getSimpleName());
+				Logger.info("%s: %s finished. Starting GraphToolChain ...", MODULE_NAME, repoToolChain.getClass().getSimpleName());
 			}
 			
 			final Thread graphBuilderThread = new Thread(
-			                                             new GraphBuilder(rCS.getRepository(), rCS.getPersistenceUtil()));
+			                                             new GraphBuilder(repoToolChain.getRepository(), repoToolChain.getVersionArchive(),repoToolChain.getPersistenceUtil()));
 			graphBuilderThread.setName(GraphBuilder.class.getSimpleName());
 			graphBuilderThread.start();
 			graphBuilderThread.join();

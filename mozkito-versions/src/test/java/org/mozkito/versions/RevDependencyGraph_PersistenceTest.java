@@ -62,7 +62,7 @@ public class RevDependencyGraph_PersistenceTest extends VersionsTest {
 		final Repository repository = getRepositories().get("testGit");
 		
 		final RevDependencyGraph revDepGraph = repository.getRevDependencyGraph();
-		final VersionArchive versionArchive = new VersionArchive(new BranchFactory(getPersistenceUtil()), revDepGraph);
+		final VersionArchive versionArchive = new VersionArchive(revDepGraph);
 		versionArchive.setRevDependencyGraph(repository.getRevDependencyGraph());
 		
 		persistenceUtil.beginTransaction();
@@ -76,14 +76,13 @@ public class RevDependencyGraph_PersistenceTest extends VersionsTest {
 		}
 		persistenceUtil.commitTransaction();
 		
-		final GraphBuilder graphBuilder = new GraphBuilder(repository, persistenceUtil);
+		final GraphBuilder graphBuilder = new GraphBuilder(repository, versionArchive, persistenceUtil);
 		graphBuilder.phaseOne();
 		graphBuilder.phaseTwo();
 		graphBuilder.phaseThree();
+		versionArchive.setRevDependencyGraph(null);
 		
-		repository.resetRevDependencyGraph();
-		
-		final RevDependencyGraph persistedRevDepGraph = repository.getRevDependencyGraph(persistenceUtil);
+		final RevDependencyGraph persistedRevDepGraph = versionArchive.getRevDependencyGraph();
 		assertEquals(true, revDepGraph.isEqualsTo(persistedRevDepGraph));
 	}
 }

@@ -31,7 +31,6 @@ import net.ownhero.dev.kisa.Logger;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.settings.DatabaseOptions;
 import org.mozkito.settings.RepositoryOptions;
-import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.Repository;
 import org.mozkito.versions.exceptions.RepositoryOperationException;
 import org.mozkito.versions.model.VersionArchive;
@@ -59,6 +58,8 @@ public class RepositoryToolchain extends Chain<Settings> {
 	
 	/** The repository. */
 	private Repository                                          repository;
+	
+	private VersionArchive                                      versionArchive;
 	
 	/**
 	 * Instantiates a new repository toolchain.
@@ -118,6 +119,15 @@ public class RepositoryToolchain extends Chain<Settings> {
 		}
 	}
 	
+	/**
+	 * Gets the version archive.
+	 * 
+	 * @return the version archive
+	 */
+	public VersionArchive getVersionArchive() {
+		return this.versionArchive;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see org.mozkito.RepoSuiteToolchain#setup()
@@ -136,16 +146,14 @@ public class RepositoryToolchain extends Chain<Settings> {
 		
 		this.repository = this.repositoryArguments.getValue();
 		
-		// TODO complete the VersionArchive Setup
 		try {
-			final VersionArchive versionArchive = new VersionArchive(new BranchFactory(getPersistenceUtil()),
-			                                                         this.repository.getRevDependencyGraph());
+			this.versionArchive = new VersionArchive(this.repository.getRevDependencyGraph());
 			this.persistenceUtil.beginTransaction();
-			this.persistenceUtil.save(versionArchive);
+			this.persistenceUtil.save(this.versionArchive);
 			this.persistenceUtil.commitTransaction();
 			
 			new RepositoryReader(this.threadPool.getThreadGroup(), getSettings(), this.repository);
-			new RepositoryParser(this.threadPool.getThreadGroup(), getSettings(), this.repository, versionArchive);
+			new RepositoryParser(this.threadPool.getThreadGroup(), getSettings(), this.repository, this.versionArchive);
 			
 			if (this.persistenceUtil != null) {
 				new RepositoryPersister(this.threadPool.getThreadGroup(), getSettings(), this.persistenceUtil);

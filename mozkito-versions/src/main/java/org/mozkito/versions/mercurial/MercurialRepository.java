@@ -50,7 +50,6 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.DistributedCommandLineRepository;
 import org.mozkito.versions.LogParser;
 import org.mozkito.versions.RevDependencyGraph;
@@ -776,10 +775,9 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	 */
 	@Override
 	public void setup(@NotNull final URI address,
-	                  @NotNull final BranchFactory branchFactory,
 	                  final File tmpDir,
 	                  @NotNull final String mainBranchName) throws RepositoryOperationException {
-		setup(address, null, branchFactory, tmpDir, mainBranchName);
+		setup(address, null, tmpDir, mainBranchName);
 	}
 	
 	/**
@@ -800,7 +798,6 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	 */
 	private void setup(@NotNull final URI address,
 	                   final InputStream inputStream,
-	                   @NotNull final BranchFactory branchFactory,
 	                   final File tmpDir,
 	                   @NotNull final String mainBranchName) throws RepositoryOperationException {
 		try {
@@ -866,10 +863,9 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	public void setup(@NotNull final URI address,
 	                  @NotNull final String username,
 	                  @NotNull final String password,
-	                  @NotNull final BranchFactory branchFactory,
 	                  final File tmpDir,
 	                  @NotNull final String mainBranchName) throws RepositoryOperationException {
-		setup(URIUtils.encodeUsername(address, username), new ByteArrayInputStream(password.getBytes()), branchFactory,
-		      tmpDir, mainBranchName);
+		setup(URIUtils.encodeUsername(address, username), new ByteArrayInputStream(password.getBytes()), tmpDir,
+		      mainBranchName);
 	}
 }

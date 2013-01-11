@@ -23,12 +23,12 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.Repository;
 import org.mozkito.versions.RevDependencyGraph;
 import org.mozkito.versions.exceptions.RepositoryOperationException;
 import org.mozkito.versions.model.Branch;
 import org.mozkito.versions.model.ChangeSet;
+import org.mozkito.versions.model.VersionArchive;
 
 /**
  * The Class GraphBuilder.
@@ -46,26 +46,28 @@ public class GraphBuilder implements Runnable {
 	/** The persistence util. */
 	private final PersistenceUtil    persistenceUtil;
 	
-	/** The branch factory. */
-	private final BranchFactory      branchFactory;
+	private VersionArchive           versionArchive;
 	
 	/**
 	 * Instantiates a new graph builder.
 	 * 
 	 * @param repository
 	 *            the repository
+	 * @param versionArchive
+	 *            the version archive all model objects will be associated with
 	 * @param persistenceUtil
 	 *            the PersitenceUtil allowing DB connection
 	 */
 	@NoneNull
-	public GraphBuilder(final Repository repository, final PersistenceUtil persistenceUtil) {
+	public GraphBuilder(final Repository repository, final VersionArchive versionArchive,
+	        final PersistenceUtil persistenceUtil) {
 		try {
 			this.revDepGraph = repository.getRevDependencyGraph();
+			this.versionArchive = versionArchive;
 		} catch (final RepositoryOperationException e) {
 			throw new UnrecoverableError(e);
 		}
 		this.persistenceUtil = persistenceUtil;
-		this.branchFactory = new BranchFactory(persistenceUtil);
 	}
 	
 	/**
@@ -109,7 +111,7 @@ public class GraphBuilder implements Runnable {
 			// persist branches
 			final String branchName = this.revDepGraph.isBranchHead(hash);
 			if (branchName != null) {
-				final Branch rCSBranch = this.branchFactory.getBranch(branchName);
+				final Branch rCSBranch = this.versionArchive.getBranch(branchName);
 				if (Logger.logDebug()) {
 					Logger.debug("Adding branch " + branchName);
 				}
@@ -193,8 +195,7 @@ public class GraphBuilder implements Runnable {
 				final ChangeSet changeSet = this.persistenceUtil.loadById(changeSetId, ChangeSet.class);
 				if (!changeSet.addBranch(rCSBranch, index)) {
 					throw new UnrecoverableError("Could not add branch index " + rCSBranch.getName()
-					        + " to transaction: " + changeSet.getId()
-					        + ". It appreas to be set before. Fatal error.");
+					        + " to transaction: " + changeSet.getId() + ". It appreas to be set before. Fatal error.");
 				}
 				--index;
 				if ((index % GraphBuilder.COMMIT_LIMIT) == 0) {

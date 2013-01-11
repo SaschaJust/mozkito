@@ -13,7 +13,6 @@
 package org.mozkito.versions;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Iterator;
@@ -22,16 +21,12 @@ import java.util.Map;
 
 import net.ownhero.dev.ioda.JavaUtils;
 
-import org.mozkito.persistence.Criteria;
-import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.versions.RevDependencyGraph.EdgeType;
 import org.mozkito.versions.elements.AnnotationEntry;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.LogEntry;
 import org.mozkito.versions.elements.LogIterator;
 import org.mozkito.versions.exceptions.RepositoryOperationException;
 import org.mozkito.versions.mercurial.MercurialRepository;
-import org.mozkito.versions.model.Branch;
 import org.mozkito.versions.model.ChangeSet;
 
 import difflib.Delta;
@@ -50,22 +45,19 @@ import difflib.Delta;
 public abstract class Repository {
 	
 	/** The uri. */
-	private URI                uri;
+	private URI       uri;
 	
 	/** The start revision. */
-	private String             startRevision;
+	private String    startRevision;
 	
 	/** The end revision. */
-	private String             endRevision;
+	private String    endRevision;
 	
 	/** The start transaction. */
-	private ChangeSet          startTransaction = null;
+	private ChangeSet startTransaction = null;
 	
 	/** The main branch name. */
-	private String             mainBranchName;
-	
-	/** The rev dep graph. */
-	private RevDependencyGraph revDepGraph      = null;
+	private String    mainBranchName;
 	
 	/**
 	 * Instantiates a new repository.
@@ -139,6 +131,15 @@ public abstract class Repository {
 	 *             the repository operation exception
 	 */
 	public abstract Map<String, ChangeType> getChangedPaths(String revision) throws RepositoryOperationException;
+	
+	/**
+	 * Gets the transaction count.
+	 * 
+	 * @return the total number of revisions in the repository, -1 if error occured
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
+	 */
+	public abstract long getChangeSetCount() throws RepositoryOperationException;
 	
 	/**
 	 * Returns the transaction id string to the transaction determined by the given index.
@@ -256,48 +257,6 @@ public abstract class Repository {
 	public abstract RevDependencyGraph getRevDependencyGraph() throws RepositoryOperationException;
 	
 	/**
-	 * Gets the rev dependency graph.
-	 * 
-	 * @param persistenceUtil
-	 *            the persistence util
-	 * @return the rev dependency graph
-	 * @throws RepositoryOperationException
-	 *             the repository operation exception
-	 */
-	public final RevDependencyGraph getRevDependencyGraph(final PersistenceUtil persistenceUtil) throws RepositoryOperationException {
-		try {
-			if (this.revDepGraph == null) {
-				this.revDepGraph = new RevDependencyGraph();
-				final Criteria<Branch> branchCriteria = persistenceUtil.createCriteria(Branch.class);
-				final List<Branch> branches = persistenceUtil.load(branchCriteria);
-				for (final Branch branch : branches) {
-					this.revDepGraph.addBranch(branch.getName(), branch.getHead().getId());
-				}
-				final Criteria<ChangeSet> transactionCriteria = persistenceUtil.createCriteria(ChangeSet.class);
-				final List<ChangeSet> transactions = persistenceUtil.load(transactionCriteria);
-				for (final ChangeSet transaction : transactions) {
-					this.revDepGraph.addChangeSet(transaction.getId());
-					for (final String tagName : transaction.getTags()) {
-						this.revDepGraph.addTag(tagName, transaction.getId());
-					}
-					if (transaction.getBranchParent() != null) {
-						this.revDepGraph.addEdge(transaction.getBranchParent().getId(), transaction.getId(),
-						                         EdgeType.BRANCH_EDGE);
-						if (transaction.getMergeParent() != null) {
-							this.revDepGraph.addEdge(transaction.getMergeParent().getId(), transaction.getId(),
-							                         EdgeType.MERGE_EDGE);
-						}
-					}
-					
-				}
-			}
-			return this.revDepGraph;
-		} catch (final IOException e) {
-			throw new RepositoryOperationException(e);
-		}
-	}
-	
-	/**
 	 * Gets the start revision.
 	 * 
 	 * @return the startRevision
@@ -314,15 +273,6 @@ public abstract class Repository {
 	public ChangeSet getStartTransaction() {
 		return this.startTransaction;
 	}
-	
-	/**
-	 * Gets the transaction count.
-	 * 
-	 * @return the total number of revisions in the repository, -1 if error occured
-	 * @throws RepositoryOperationException
-	 *             the repository operation exception
-	 */
-	public abstract long getChangeSetCount() throws RepositoryOperationException;
 	
 	/**
 	 * Gets the uri.
@@ -377,13 +327,6 @@ public abstract class Repository {
 	}
 	
 	/**
-	 * Reset RevDependencyGraph.
-	 */
-	protected void resetRevDependencyGraph() {
-		this.revDepGraph = null;
-	}
-	
-	/**
 	 * Sets the end revision.
 	 * 
 	 * @param endRevision
@@ -428,8 +371,6 @@ public abstract class Repository {
 	 * 
 	 * @param address
 	 *            the address the repository can be found
-	 * @param branchFactory
-	 *            the branch factory
 	 * @param tmpDir
 	 *            the tmp dir
 	 * @param mainBranchName
@@ -438,7 +379,6 @@ public abstract class Repository {
 	 *             the repository operation exception
 	 */
 	public abstract void setup(URI address,
-	                           BranchFactory branchFactory,
 	                           File tmpDir,
 	                           String mainBranchName) throws RepositoryOperationException;
 	
@@ -451,8 +391,6 @@ public abstract class Repository {
 	 *            the username
 	 * @param password
 	 *            the password
-	 * @param branchFactory
-	 *            the branch factory
 	 * @param tmpDir
 	 *            the tmp dir
 	 * @param mainBranchName
@@ -463,7 +401,6 @@ public abstract class Repository {
 	public abstract void setup(URI address,
 	                           String username,
 	                           String password,
-	                           BranchFactory branchFactory,
 	                           File tmpDir,
 	                           String mainBranchName) throws RepositoryOperationException;
 	

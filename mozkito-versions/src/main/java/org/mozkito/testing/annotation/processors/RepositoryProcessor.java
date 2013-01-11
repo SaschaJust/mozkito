@@ -42,7 +42,6 @@ import org.mozkito.testing.VersionsTest;
 import org.mozkito.testing.annotation.RepositorySetting;
 import org.mozkito.testing.annotation.RepositorySettings;
 import org.mozkito.testing.annotation.type.SourceType;
-import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.Repository;
 import org.mozkito.versions.RepositoryFactory;
 import org.mozkito.versions.RepositoryType;
@@ -245,7 +244,7 @@ public class RepositoryProcessor implements MozkitoSettingsProcessor {
 					                                                          + repositorySetting.id(), null,
 					                                                  FileShutdownAction.DELETE);
 					vTest.addWorkingDirectory(workingDir);
-					repository.setup(repoDir.toURI(), new BranchFactory(null), workingDir, "master");
+					repository.setup(repoDir.toURI(), workingDir, "master");
 					map.put(repositorySetting.id(), repository);
 				} catch (final IOException | URISyntaxException | RepositoryOperationException e) {
 					throw new TestSettingsError("Could not create repository.", e);
