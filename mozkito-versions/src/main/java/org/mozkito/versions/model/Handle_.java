@@ -18,12 +18,10 @@ import javax.persistence.metamodel.SingularAttribute;
 
 /**
  * The Class Handle_.
- * 
- * @author "Kim Herzig <herzig@cs.uni-saarland.de>"
  */
 @javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.versions.model.Handle.class)
 @javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
-                             date = "Thu Jan 10 17:52:36 CET 2013")
+                             date = "Fri Jan 11 10:58:22 CET 2013")
 public class Handle_ {
 	
 	/** The archive. */

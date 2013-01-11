@@ -10,18 +10,17 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  ******************************************************************************/
-
 package org.mozkito.versions.model;
 
 import javax.persistence.metamodel.SetAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 
 /**
- * The Class RCSBranch_.
+ * The Class Branch_.
  */
 @javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.versions.model.Branch.class)
 @javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
-                             date = "Thu Jan 10 17:52:36 CET 2013")
+                             date = "Fri Jan 11 10:58:22 CET 2013")
 public class Branch_ {
 	
 	/** The head. */

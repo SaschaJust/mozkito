@@ -15,25 +15,14 @@ package org.mozkito.versions.model;
 
 import javax.persistence.metamodel.SingularAttribute;
 
-import org.mozkito.versions.elements.ChangeType;
-
 /**
- * The Class Revision_.
+ * The Class VersionArchive_.
  */
-@javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.versions.model.Revision.class)
+@javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.versions.model.VersionArchive.class)
 @javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
                              date = "Fri Jan 11 10:58:22 CET 2013")
-public class Revision_ {
+public class VersionArchive_ {
 	
-	/** The change set. */
-	public static volatile SingularAttribute<Revision, ChangeSet>  changeSet;
-	
-	/** The change type. */
-	public static volatile SingularAttribute<Revision, ChangeType> changeType;
-	
-	/** The changed file. */
-	public static volatile SingularAttribute<Revision, Handle>     changedFile;
-	
-	/** The revision id. */
-	public static volatile SingularAttribute<Revision, Long>       revisionId;
+	/** The generated id. */
+	public static volatile SingularAttribute<VersionArchive, Long> generatedId;
 }
