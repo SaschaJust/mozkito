@@ -45,7 +45,7 @@ public class GravatarEngine extends MergingEngine {
 	/**
 	 * The Class Gravatar.
 	 */
-	private static final class Gravatar {
+	public static final class Gravatar {
 		
 		/**
 		 * Gets the.

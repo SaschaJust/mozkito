@@ -1,23 +1,42 @@
 package jgravatar;
 
+/**
+ * The Enum GravatarRating.
+ */
 public enum GravatarRating {
-
-	GENERAL_AUDIENCES("g"),
-
-	PARENTAL_GUIDANCE_SUGGESTED("pg"),
-
-	RESTRICTED("r"),
-
-	XPLICIT("x");
-
+	
+	/** The general audiences. */
+	GENERAL_AUDIENCES ("g"),
+	
+	/** The parental guidance suggested. */
+	PARENTAL_GUIDANCE_SUGGESTED ("pg"),
+	
+	/** The restricted. */
+	RESTRICTED ("r"),
+	
+	/** The xplicit. */
+	XPLICIT ("x");
+	
+	/** The code. */
 	private String code;
-
-	private GravatarRating(String code) {
+	
+	/**
+	 * Instantiates a new gravatar rating.
+	 * 
+	 * @param code
+	 *            the code
+	 */
+	private GravatarRating(final String code) {
 		this.code = code;
 	}
-
+	
+	/**
+	 * Gets the code.
+	 * 
+	 * @return the code
+	 */
 	public String getCode() {
-		return code;
+		return this.code;
 	}
-
+	
 }

@@ -257,8 +257,9 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 		                  GenealogyEdgeType.DeletedDefinitionOnDefinition);
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see org.mozkito.genealogies.ChangeGenealogy#getCore()
 	 */
 	@Override
@@ -267,10 +268,11 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 		return null;
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see org.mozkito.genealogies.ChangeGenealogy#getDependants(java.lang.Object,
-	 * org.mozkito.genealogies.core.GenealogyEdgeType[])
+	 *      org.mozkito.genealogies.core.GenealogyEdgeType[])
 	 */
 	@Override
 	public Collection<String> getDependants(final String t,
@@ -377,8 +379,9 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 		return result;
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see org.mozkito.genealogies.ChangeGenealogy#getGraphDBDir()
 	 */
 	@Override
@@ -386,8 +389,9 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 		return this.dbFile;
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see org.mozkito.genealogies.ChangeGenealogy#getGraphDBService()
 	 */
 	@Override
