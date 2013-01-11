@@ -268,11 +268,14 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	
 	/**
 	 * Clone.
-	 *
-	 * @param inputStream the input stream
-	 * @param destDir the dest dir
+	 * 
+	 * @param inputStream
+	 *            the input stream
+	 * @param destDir
+	 *            the dest dir
 	 * @return true, if successful
-	 * @throws RepositoryOperationException the repository operation exception
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
 	 */
 	private boolean clone(final InputStream inputStream,
 	                      final String destDir) throws RepositoryOperationException {
@@ -314,11 +317,15 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 			                                   String.format("Repository.diff() is only defined on file paths pointing to files not to directories. Supplied file path %s points to a directory.",
 			                                                 filePath));
 		} else {
-			final File filePathFileRevised = checkoutPath(filePath, revisedRevision);
-			if ((filePathFileRevised != null) && (filePathFileRevised.isDirectory())) {
-				throw new IllegalArgumentException(
-				                                   String.format("Repository.diff() is only defined on file paths pointing to files not to directories. Supplied file path %s points to a directory.",
-				                                                 filePath));
+			try {
+				final File filePathFileRevised = checkoutPath(filePath, revisedRevision);
+				if ((filePathFileRevised != null) && (filePathFileRevised.isDirectory())) {
+					throw new IllegalArgumentException(
+					                                   String.format("Repository.diff() is only defined on file paths pointing to files not to directories. Supplied file path %s points to a directory.",
+					                                                 filePath));
+				}
+			} catch (final RepositoryOperationException e) {
+				// ignore
 			}
 		}
 		
@@ -463,6 +470,29 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 			if (!modifiedPath.trim().isEmpty()) {
 				result.put("/" + modifiedPath, ChangeType.Modified);
 			}
+		}
+		return result;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.versions.Repository#getTransactionCount()
+	 */
+	@Override
+	public long getChangeSetCount() throws RepositoryOperationException {
+		
+		final Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log", "-r", "tip",
+		        "--template", "{rev}" + FileUtils.lineSeparator }, this.cloneDir, null, null);
+		if (response.getFirst() != 0) {
+			return -1;
+		}
+		final String rev = response.getSecond().get(0).trim();
+		Long result = Long.valueOf("-1");
+		try {
+			result = Long.valueOf(rev);
+			result += 1;
+		} catch (final NumberFormatException e) {
+			throw new RepositoryOperationException("Could not interpret revision cound " + rev + " as Long.");
 		}
 		return result;
 	}
@@ -720,29 +750,6 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.versions.Repository#getTransactionCount()
-	 */
-	@Override
-	public long getChangeSetCount() throws RepositoryOperationException {
-		
-		final Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log", "-r", "tip",
-		        "--template", "{rev}" + FileUtils.lineSeparator }, this.cloneDir, null, null);
-		if (response.getFirst() != 0) {
-			return -1;
-		}
-		final String rev = response.getSecond().get(0).trim();
-		Long result = Long.valueOf("-1");
-		try {
-			result = Long.valueOf(rev);
-			result += 1;
-		} catch (final NumberFormatException e) {
-			throw new RepositoryOperationException("Could not interpret revision cound " + rev + " as Long.");
-		}
-		return result;
-	}
-	
-	/*
-	 * (non-Javadoc)
 	 * @see org.mozkito.versions.Repository#getWokingCopyLocation()
 	 */
 	@Override
@@ -777,13 +784,19 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	
 	/**
 	 * main setup method.
-	 *
-	 * @param address the address
-	 * @param inputStream the input stream
-	 * @param branchFactory the branch factory
-	 * @param tmpDir the tmp dir
-	 * @param mainBranchName the main branch name
-	 * @throws RepositoryOperationException the repository operation exception
+	 * 
+	 * @param address
+	 *            the address
+	 * @param inputStream
+	 *            the input stream
+	 * @param branchFactory
+	 *            the branch factory
+	 * @param tmpDir
+	 *            the tmp dir
+	 * @param mainBranchName
+	 *            the main branch name
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
 	 */
 	private void setup(@NotNull final URI address,
 	                   final InputStream inputStream,
