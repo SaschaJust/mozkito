@@ -12,14 +12,22 @@
  ******************************************************************************/
 package org.mozkito.versions.model;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.mozkito.persistence.Annotated;
+import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.RevDependencyGraph;
 
 /**
  * The Class VersionArchive.
  */
+@Entity
 @Table (name = "version_archive")
 public class VersionArchive implements Annotated {
 	
@@ -29,33 +37,19 @@ public class VersionArchive implements Annotated {
 	/** The rev dep graph. */
 	private RevDependencyGraph revDepGraph;
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.persistence.Annotated#getHandle()
-	 */
-	@Override
-	public String getClassName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	/** The generated id. */
+	private long               generatedId;
+	
+	private BranchFactory      branchFactory;
 	
 	/**
-	 * Gets the master branch.
+	 * Gets the branch factory.
 	 * 
-	 * @return the master branch
+	 * @return the branch factory
 	 */
-	public Branch getMasterBranch() {
-		// TODO implement
-		return null;
-	}
-	
-	/**
-	 * Gets the rev dependency graph.
-	 * 
-	 * @return the rev dependency graph
-	 */
-	public RevDependencyGraph getRevDependencyGraph() {
-		return this.revDepGraph;
+	@Transient
+	public BranchFactory getBranchFactory() {
+		return this.branchFactory;
 	}
 	
 	/**
@@ -68,6 +62,68 @@ public class VersionArchive implements Annotated {
 	public ChangeSet getChangeSetById(final String id) {
 		// TODO implement
 		return null;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.persistence.Annotated#getHandle()
+	 */
+	@Override
+	@Transient
+	public String getClassName() {
+		return VersionArchive.class.getSimpleName();
+	}
+	
+	/**
+	 * Gets the generated id.
+	 * 
+	 * @return the generated id
+	 */
+	@Id
+	@Column (name = "id")
+	@GeneratedValue (strategy = GenerationType.SEQUENCE)
+	public long getGeneratedId() {
+		return this.generatedId;
+	}
+	
+	/**
+	 * Gets the master branch.
+	 * 
+	 * @return the master branch
+	 */
+	@Transient
+	public Branch getMasterBranch() {
+		return this.branchFactory.getMasterBranch();
+	}
+	
+	/**
+	 * Gets the rev dependency graph.
+	 * 
+	 * @return the rev dependency graph
+	 */
+	@Transient
+	public RevDependencyGraph getRevDependencyGraph() {
+		return this.revDepGraph;
+	}
+	
+	/**
+	 * Sets the branch factory.
+	 * 
+	 * @param branchFactory
+	 *            the new branch factory
+	 */
+	public void setBranchFactory(final BranchFactory branchFactory) {
+		this.branchFactory = branchFactory;
+	}
+	
+	/**
+	 * Sets the generated id.
+	 * 
+	 * @param generatedId
+	 *            the new generated id
+	 */
+	public void setGeneratedId(final long generatedId) {
+		this.generatedId = generatedId;
 	}
 	
 	/**
