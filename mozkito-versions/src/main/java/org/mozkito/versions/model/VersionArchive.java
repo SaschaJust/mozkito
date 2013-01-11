@@ -15,12 +15,14 @@ package org.mozkito.versions.model;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -109,10 +111,8 @@ public class VersionArchive implements Annotated {
 	 * 
 	 * @return the change sets
 	 */
-	// @OneToMany (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, targetEntity = ChangeSet.class)
-	// @JoinTable (name = "versionarchive_changesets",
-	// joinColumns = { @JoinColumn (name = "changesetid", nullable = false) })
-	@ElementCollection
+	//
+	@OneToMany (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, targetEntity = ChangeSet.class)
 	public Map<String, ChangeSet> getChangeSets() {
 		return this.changeSets;
 	}

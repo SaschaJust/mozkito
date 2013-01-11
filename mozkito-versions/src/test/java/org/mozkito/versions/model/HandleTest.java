@@ -80,14 +80,14 @@ public class HandleTest {
 		this.person = new Person("kim", "", "");
 		final BranchFactory branchFactory = new BranchFactory(null);
 		
-		final RevDependencyGraph revDepGraph = new RevDependencyGraph();
-		revDepGraph.addBranch(branchFactory.getMasterBranch().getName(), "5");
-		revDepGraph.addEdge("4", "5", EdgeType.BRANCH_EDGE);
-		revDepGraph.addEdge("3", "4", EdgeType.BRANCH_EDGE);
-		revDepGraph.addEdge("2", "3", EdgeType.BRANCH_EDGE);
-		revDepGraph.addEdge("1", "2", EdgeType.BRANCH_EDGE);
-		revDepGraph.addEdge("0", "1", EdgeType.BRANCH_EDGE);
-		this.versionArchive = new VersionArchive(branchFactory, revDepGraph);
+		this.revDepGraph = new RevDependencyGraph();
+		this.revDepGraph.addBranch(branchFactory.getMasterBranch().getName(), "5");
+		this.revDepGraph.addEdge("4", "5", EdgeType.BRANCH_EDGE);
+		this.revDepGraph.addEdge("3", "4", EdgeType.BRANCH_EDGE);
+		this.revDepGraph.addEdge("2", "3", EdgeType.BRANCH_EDGE);
+		this.revDepGraph.addEdge("1", "2", EdgeType.BRANCH_EDGE);
+		this.revDepGraph.addEdge("0", "1", EdgeType.BRANCH_EDGE);
+		this.versionArchive = new VersionArchive(branchFactory, this.revDepGraph);
 		
 		this.t_0 = new ChangeSet(this.versionArchive, "0", "", new DateTime(), this.person, "");
 		this.t_1 = new ChangeSet(this.versionArchive, "1", "", new DateTime(), this.person, "");
@@ -127,16 +127,6 @@ public class HandleTest {
 		 */
 		
 		//@formatter:on
-		
-		this.revDepGraph.addBranch("master", "5");
-		this.revDepGraph.addEdge("4", "5", EdgeType.MERGE_EDGE);
-		this.revDepGraph.addEdge("1", "5", EdgeType.BRANCH_EDGE);
-		this.revDepGraph.addEdge("3", "4", EdgeType.MERGE_EDGE);
-		this.revDepGraph.addEdge("2", "4", EdgeType.BRANCH_EDGE);
-		this.revDepGraph.addEdge("2", "3", EdgeType.BRANCH_EDGE);
-		this.revDepGraph.addEdge("0", "2", EdgeType.BRANCH_EDGE);
-		this.revDepGraph.addEdge("0", "1", EdgeType.BRANCH_EDGE);
-		this.versionArchive.setRevDependencyGraph(this.revDepGraph);
 		
 		final Handle handle = new Handle(this.versionArchive);
 		handle.assignRevision(new Revision(this.t_0, handle, ChangeType.Added), "public.java");

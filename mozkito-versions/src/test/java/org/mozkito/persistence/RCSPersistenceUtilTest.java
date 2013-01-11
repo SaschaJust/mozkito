@@ -81,13 +81,11 @@ public class RCSPersistenceUtilTest extends DatabaseTest {
 	/**
 	 * Setup.
 	 * 
-	 * @param persistenceUtil
-	 *            the persistence util
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
 	@Before
-	private void setup() throws IOException {
+	public void setup() throws IOException {
 		/*
 		 * @formatter:off
 		 * 
