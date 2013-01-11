@@ -19,13 +19,14 @@ import java.util.LinkedList;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 /**
+ * A factory for creating CachingSocketImpl objects.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class CachingSocketImplFactory implements SocketImplFactory {
 	
 	/**
-	 * 
+	 * Instantiates a new caching socket impl factory.
 	 */
 	public CachingSocketImplFactory() {
 		// PRECONDITIONS
@@ -57,7 +58,7 @@ public class CachingSocketImplFactory implements SocketImplFactory {
 	 * 
 	 * @return the simple name of the class.
 	 */
-	public final String getHandle() {
+	public final String getClassName() {
 		// PRECONDITIONS
 		
 		final StringBuilder builder = new StringBuilder();

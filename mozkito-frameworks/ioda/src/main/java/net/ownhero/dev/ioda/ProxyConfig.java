@@ -17,23 +17,49 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 
 /**
+ * The Class ProxyConfig.
+ *
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
- * 
  */
 public class ProxyConfig {
 	
+	/** The host. */
 	private String  host;
+	
+	/** The port. */
 	private int     port;
+	
+	/** The username. */
 	private String  username;
+	
+	/** The password. */
 	private String  password;
+	
+	/** The use socks. */
 	private boolean useSocks;
 	
+	/**
+	 * Instantiates a new proxy config.
+	 *
+	 * @param proxyHost the proxy host
+	 * @param proxyPort the proxy port
+	 * @param useSocks the use socks
+	 */
 	public ProxyConfig(final String proxyHost, @NotNull @NotNegative final int proxyPort, final boolean useSocks) {
 		setHost(proxyHost);
 		setPort(proxyPort);
 		setUseSocks(useSocks);
 	}
 	
+	/**
+	 * Instantiates a new proxy config.
+	 *
+	 * @param proxyHost the proxy host
+	 * @param proxyPort the proxy port
+	 * @param username the username
+	 * @param password the password
+	 * @param useSocks the use socks
+	 */
 	public ProxyConfig(final String proxyHost, @NotNull @NotNegative final int proxyPort, final String username,
 	        final String password, final boolean useSocks) {
 		setHost(proxyHost);
@@ -43,6 +69,11 @@ public class ProxyConfig {
 		setUseSocks(useSocks);
 	}
 	
+	/**
+	 * Gets the host.
+	 *
+	 * @return the host
+	 */
 	public String getHost() {
 		// PRECONDITIONS
 		
@@ -53,6 +84,11 @@ public class ProxyConfig {
 		}
 	}
 	
+	/**
+	 * Gets the password.
+	 *
+	 * @return the password
+	 */
 	public String getPassword() {
 		// PRECONDITIONS
 		
@@ -63,6 +99,11 @@ public class ProxyConfig {
 		}
 	}
 	
+	/**
+	 * Gets the port.
+	 *
+	 * @return the port
+	 */
 	public int getPort() {
 		// PRECONDITIONS
 		
@@ -73,6 +114,11 @@ public class ProxyConfig {
 		}
 	}
 	
+	/**
+	 * Gets the username.
+	 *
+	 * @return the username
+	 */
 	public String getUsername() {
 		// PRECONDITIONS
 		
@@ -83,6 +129,11 @@ public class ProxyConfig {
 		}
 	}
 	
+	/**
+	 * Sets the host.
+	 *
+	 * @param host the new host
+	 */
 	public void setHost(final String host) {
 		// PRECONDITIONS
 		try {
@@ -92,6 +143,11 @@ public class ProxyConfig {
 		}
 	}
 	
+	/**
+	 * Sets the password.
+	 *
+	 * @param password the new password
+	 */
 	public void setPassword(final String password) {
 		// PRECONDITIONS
 		try {
@@ -101,6 +157,11 @@ public class ProxyConfig {
 		}
 	}
 	
+	/**
+	 * Sets the port.
+	 *
+	 * @param port the new port
+	 */
 	public void setPort(@NotNegative final int port) {
 		// PRECONDITIONS
 		try {
@@ -112,6 +173,11 @@ public class ProxyConfig {
 		}
 	}
 	
+	/**
+	 * Sets the username.
+	 *
+	 * @param username the new username
+	 */
 	public void setUsername(final String username) {
 		// PRECONDITIONS
 		try {
@@ -121,16 +187,29 @@ public class ProxyConfig {
 		}
 	}
 	
+	/**
+	 * Sets the use socks.
+	 *
+	 * @param b the new use socks
+	 */
 	public void setUseSocks(final boolean b) {
 		this.useSocks = b;
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		return "ProxyConfig [host=" + this.host + ", port=" + this.port + ", username=" + this.username + ", password="
 		        + this.password + " useSocks=" + this.useSocks + "]";
 	}
 	
+	/**
+	 * Use socks.
+	 *
+	 * @return true, if successful
+	 */
 	public boolean useSocks() {
 		return this.useSocks;
 	}

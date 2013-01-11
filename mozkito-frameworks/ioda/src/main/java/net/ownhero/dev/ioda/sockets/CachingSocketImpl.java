@@ -24,13 +24,14 @@ import java.util.LinkedList;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 /**
+ * The Class CachingSocketImpl.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class CachingSocketImpl extends SocketImpl {
 	
 	/**
-	 * 
+	 * Instantiates a new caching socket impl.
 	 */
 	public CachingSocketImpl() {
 		// PRECONDITIONS
@@ -172,7 +173,7 @@ public class CachingSocketImpl extends SocketImpl {
 	 * 
 	 * @return the simple name of the class.
 	 */
-	public final String getHandle() {
+	public final String getClassName() {
 		// PRECONDITIONS
 		
 		final StringBuilder builder = new StringBuilder();

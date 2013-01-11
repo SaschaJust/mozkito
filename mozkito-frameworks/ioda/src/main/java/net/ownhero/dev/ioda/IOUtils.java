@@ -1,6 +1,15 @@
-/**
+/*******************************************************************************
+ * Copyright 2013 Kim Herzig, Sascha Just
  * 
- */
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ ******************************************************************************/
 package net.ownhero.dev.ioda;
 
 import java.io.BufferedReader;
@@ -72,10 +81,28 @@ import org.joda.time.DateTime;
  */
 public class IOUtils {
 	
+	/**
+	 * A factory for creating MySSLSocket objects.
+	 */
 	public static class MySSLSocketFactory extends SSLSocketFactory {
 		
+		/** The ssl context. */
 		SSLContext sslContext = SSLContext.getInstance("TLS");
 		
+		/**
+		 * Instantiates a new my ssl socket factory.
+		 * 
+		 * @param truststore
+		 *            the truststore
+		 * @throws NoSuchAlgorithmException
+		 *             the no such algorithm exception
+		 * @throws KeyManagementException
+		 *             the key management exception
+		 * @throws KeyStoreException
+		 *             the key store exception
+		 * @throws UnrecoverableKeyException
+		 *             the unrecoverable key exception
+		 */
 		public MySSLSocketFactory(final KeyStore truststore) throws NoSuchAlgorithmException, KeyManagementException,
 		        KeyStoreException, UnrecoverableKeyException {
 			super(truststore);
@@ -103,11 +130,19 @@ public class IOUtils {
 			this.sslContext.init(null, new TrustManager[] { tm }, null);
 		}
 		
+		/*
+		 * (non-Javadoc)
+		 * @see org.apache.http.conn.ssl.SSLSocketFactory#createSocket()
+		 */
 		@Override
 		public Socket createSocket() throws IOException {
 			return this.sslContext.getSocketFactory().createSocket();
 		}
 		
+		/*
+		 * (non-Javadoc)
+		 * @see org.apache.http.conn.ssl.SSLSocketFactory#createSocket(java.net.Socket, java.lang.String, int, boolean)
+		 */
 		@Override
 		public Socket createSocket(final Socket socket,
 		                           final String host,
@@ -184,7 +219,6 @@ public class IOUtils {
 	 * @return the byte[]
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
-	 * @throws UnsupportedSchemaException
 	 */
 	private static byte[] binaryfetchFile(final URI uri) throws IOException {
 		if (uri.getScheme().equals("file")) {
@@ -286,6 +320,11 @@ public class IOUtils {
 		return binaryfetchHttp(uri, username, password);
 	}
 	
+	/**
+	 * Builds the ssl socket factory.
+	 * 
+	 * @return the sSL socket factory
+	 */
 	private static SSLSocketFactory buildSSLSocketFactory() {
 		final TrustStrategy ts = new TrustStrategy() {
 			
@@ -310,6 +349,16 @@ public class IOUtils {
 		return sf;
 	}
 	
+	/**
+	 * Configure authentification.
+	 * 
+	 * @param hc
+	 *            the hc
+	 * @param username
+	 *            the username
+	 * @param password
+	 *            the password
+	 */
 	private static void configureAuthentification(@NotNull final DefaultHttpClient hc,
 	                                              final String username,
 	                                              final String password) {
@@ -327,6 +376,14 @@ public class IOUtils {
 		hc.setCredentialsProvider(credsProvider);
 	}
 	
+	/**
+	 * Configure proxy.
+	 * 
+	 * @param hc
+	 *            the hc
+	 * @param proxyConfig
+	 *            the proxy config
+	 */
 	private static void configureProxy(@NotNull final DefaultHttpClient hc,
 	                                   @NotNull final ProxyConfig proxyConfig) {
 		
@@ -352,6 +409,12 @@ public class IOUtils {
 		hc.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxyHost);
 	}
 	
+	/**
+	 * Configure ssl handling.
+	 * 
+	 * @param hc
+	 *            the hc
+	 */
 	private static void configureSSLHandling(@NotNull final HttpClient hc) {
 		if (Logger.logDebug()) {
 			Logger.debug("Configuring SSL handling for http fetch.");
@@ -535,10 +598,6 @@ public class IOUtils {
 	 * 
 	 * @param uri
 	 *            the uri
-	 * @param username
-	 *            the username
-	 * @param password
-	 *            the password
 	 * @param httpClient
 	 *            the http client
 	 * @return the raw content
@@ -600,6 +659,21 @@ public class IOUtils {
 		}
 	}
 	
+	/**
+	 * Fetch http.
+	 * 
+	 * @param uri
+	 *            the uri
+	 * @param username
+	 *            the username
+	 * @param password
+	 *            the password
+	 * @param proxyConfig
+	 *            the proxy config
+	 * @return the raw content
+	 * @throws FetchException
+	 *             the fetch exception
+	 */
 	public static RawContent fetchHttp(@NotNull final URI uri,
 	                                   final String username,
 	                                   final String password,
@@ -711,6 +785,7 @@ public class IOUtils {
 						final ZipEntry entry = jarFile.getEntry(entryName);
 						copyInputStream(jarFile.getInputStream(entry), outputStream);
 						outputStream.close();
+						jarFile.close();
 						return file;
 					}
 					throw new IOException("JAR file for resource does not exist: " + jarFilePath);

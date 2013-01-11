@@ -18,6 +18,9 @@ import java.net.URISyntaxException;
 
 import net.ownhero.dev.kisa.Logger;
 
+/**
+ * The Class URIUtils.
+ */
 public class URIUtils {
 	
 	/**
@@ -81,7 +84,8 @@ public class URIUtils {
 	/**
 	 * Uri2 string converts a URI to a string that conforms RFC 1738. Java refuses to implement this (see
 	 * http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6351751)
-	 * 
+	 *
+	 * @param uri the uri
 	 * @return the string
 	 */
 	public static String Uri2String(final URI uri) {

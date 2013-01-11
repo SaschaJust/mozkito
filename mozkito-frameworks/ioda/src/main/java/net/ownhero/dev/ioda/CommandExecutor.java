@@ -34,20 +34,40 @@ import net.ownhero.dev.kisa.Logger;
 import org.apache.commons.lang.StringEscapeUtils;
 
 /**
- * Command line process interaction wrapper class
+ * Command line process interaction wrapper class.
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class CommandExecutor extends Thread {
 	
 	/**
-	 * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+	 * The Enum Task.
 	 * 
+	 * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
 	 */
 	enum Task {
-		READER, WRITER;
+		
+		/** The reader. */
+		READER,
+		/** The writer. */
+		WRITER;
 	}
 	
+	/**
+	 * Execute.
+	 * 
+	 * @param command
+	 *            the command
+	 * @param arguments
+	 *            the arguments
+	 * @param dir
+	 *            the dir
+	 * @param input
+	 *            the input
+	 * @param environment
+	 *            the environment
+	 * @return the tuple
+	 */
 	public static Tuple<Integer, List<String>> execute(final String command,
 	                                                   final String[] arguments,
 	                                                   final File dir,
@@ -65,12 +85,13 @@ public class CommandExecutor extends Thread {
 	 * @param arguments
 	 *            optional arguments to the program
 	 * @param dir
-	 *            optional working directory. If unspecified the temporary directory from {@link FileUtils.tmpDir} is
-	 *            used.
+	 *            optional working directory.
 	 * @param input
 	 *            optional {@link InputStream} that is piped to
 	 * @param environment
 	 *            additional changes to the process environment. This is null in most scenarios.
+	 * @param charset
+	 *            the charset
 	 * @return a tuple with the program's exit code and a list of lines representing the output of the program
 	 */
 	public static Tuple<Integer, List<String>> execute(@NotNull final String command,
@@ -215,35 +236,42 @@ public class CommandExecutor extends Thread {
 	}
 	
 	/**
-	 * wrapper for the simple class name
+	 * wrapper for the simple class name.
 	 * 
-	 * @return
+	 * @return the class name
 	 */
-	public static String getHandle() {
+	public static String getClassName() {
 		return CommandExecutor.class.getSimpleName();
 	}
 	
+	/** The error. */
 	private boolean              error      = false;
 	
 	/*
 	 * input
 	 */
+	/** The pipe. */
 	private final BufferedReader pipe;
 	
 	/*
 	 * stdin
 	 */
+	/** The reader. */
 	private final BufferedReader reader;
 	
+	/** The read lines. */
 	private final List<String>   readLines  = new LinkedList<String>();
 	
+	/** The task. */
 	private final Task           task;
 	
 	/*
 	 * stdout
 	 */
+	/** The writer. */
 	private final BufferedWriter writer;
 	
+	/** The wrote lines. */
 	private final List<String>   wroteLines = new LinkedList<String>();
 	
 	/**
@@ -252,22 +280,27 @@ public class CommandExecutor extends Thread {
 	 * @param task
 	 *            determines task, i.e. communication with STDIN/STDOU/...
 	 * @param reader
+	 *            the reader
 	 * @param writer
+	 *            the writer
 	 * @param pipe
+	 *            the pipe
 	 */
 	private CommandExecutor(final Task task, final BufferedReader reader, final BufferedWriter writer,
 	        final BufferedReader pipe) {
 		if (Logger.logDebug()) {
-			Logger.debug("Spawning " + getHandle() + "[" + task.toString() + "] ");
+			Logger.debug("Spawning " + getClassName() + "[" + task.toString() + "] ");
 		}
 		this.task = task;
 		this.reader = reader;
 		this.writer = writer;
 		this.pipe = pipe;
-		setName(getHandle() + "-" + task.toString());
+		setName(getClassName() + "-" + task.toString());
 	}
 	
 	/**
+	 * Gets the read lines.
+	 * 
 	 * @return the read lines
 	 */
 	private List<String> getReadLines() {
@@ -275,6 +308,8 @@ public class CommandExecutor extends Thread {
 	}
 	
 	/**
+	 * Gets the wrote lines.
+	 * 
 	 * @return the wrote lines
 	 */
 	private List<String> getWroteLines() {
@@ -282,11 +317,11 @@ public class CommandExecutor extends Thread {
 	}
 	
 	/**
-	 * in case of an error, this method can be called to log the already processed lines
+	 * in case of an error, this method can be called to log the already processed lines.
 	 */
 	private void logLinesOnError() {
 		if (Logger.logError()) {
-			Logger.error(getHandle() + "[" + this.task.toString() + "] lines processed:");
+			Logger.error(getClassName() + "[" + this.task.toString() + "] lines processed:");
 			for (final String outputLine : getReadLines()) {
 				Logger.error("read<< " + outputLine);
 			}
@@ -297,7 +332,7 @@ public class CommandExecutor extends Thread {
 	}
 	
 	/**
-	 * handles the STDOUT communication
+	 * handles the STDOUT communication.
 	 */
 	private void reading() {
 		String line;
@@ -328,13 +363,13 @@ public class CommandExecutor extends Thread {
 				break;
 			default:
 				if (Logger.logError()) {
-					Logger.error("Unsupported task " + this.task + " for " + CommandExecutor.getHandle() + ".");
+					Logger.error("Unsupported task " + this.task + " for " + CommandExecutor.getClassName() + ".");
 				}
 		}
 	}
 	
 	/**
-	 * handles the STDIN communication
+	 * handles the STDIN communication.
 	 */
 	private void writing() {
 		String line;

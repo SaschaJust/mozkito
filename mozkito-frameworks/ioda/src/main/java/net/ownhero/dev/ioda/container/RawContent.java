@@ -1,6 +1,15 @@
-/**
+/*******************************************************************************
+ * Copyright 2013 Kim Herzig, Sascha Just
  * 
- */
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ ******************************************************************************/
 package net.ownhero.dev.ioda.container;
 
 import java.io.UnsupportedEncodingException;
@@ -15,29 +24,47 @@ import net.ownhero.dev.kanuni.annotations.simple.Size;
 import org.joda.time.DateTime;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class RawContent.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class RawContent implements Comparable<RawContent>, Storable {
 	
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -8090298340304255338L;
+	
+	/** The md5. */
 	private final byte[]      md5;
+	
+	/** The fetch time. */
 	private final DateTime    fetchTime;
+	
+	/** The format. */
 	private final String      format;
+	
+	/** The content. */
 	private final String      content;
+	
+	/** The uri. */
 	private final URI         uri;
+	
+	/** The filename. */
 	private String            filename;
+	
+	/** The cached. */
 	private boolean           cached;
 	
 	/**
+	 * Instantiates a new raw content.
+	 * 
+	 * @param uri
+	 *            the uri
 	 * @param md5
 	 *            not null
 	 * @param fetchTime
 	 *            not null
 	 * @param format
 	 *            not null
-	 * @param document
-	 *            will be null in most cases
 	 * @param content
 	 *            not null, 0 &lt; <code>content.length</code>
 	 */
@@ -53,11 +80,19 @@ public class RawContent implements Comparable<RawContent>, Storable {
 		this.content = content;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.ioda.interfaces.Storable#cached()
+	 */
 	@Override
 	public boolean cached() {
 		return this.cached;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
 	@Override
 	public int compareTo(final RawContent arg0) {
 		if (arg0 == null) {
@@ -67,6 +102,8 @@ public class RawContent implements Comparable<RawContent>, Storable {
 	}
 	
 	/**
+	 * Gets the content.
+	 * 
 	 * @return the content
 	 */
 	public String getContent() {
@@ -74,18 +111,26 @@ public class RawContent implements Comparable<RawContent>, Storable {
 	}
 	
 	/**
+	 * Gets the fetch time.
+	 * 
 	 * @return the fetchTime
 	 */
 	public DateTime getFetchTime() {
 		return this.fetchTime;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.ioda.interfaces.Storable#getFilename()
+	 */
 	@Override
 	public String getFilename() {
 		return this.filename;
 	}
 	
 	/**
+	 * Gets the format.
+	 * 
 	 * @return the format
 	 */
 	public String getFormat() {
@@ -93,23 +138,36 @@ public class RawContent implements Comparable<RawContent>, Storable {
 	}
 	
 	/**
+	 * Gets the md5.
+	 * 
 	 * @return the md5
 	 */
 	public byte[] getMd5() {
 		return this.md5;
 	}
 	
+	/**
+	 * Gets the size.
+	 * 
+	 * @return the size
+	 */
 	public long getSize() {
 		return this.content.length();
 	}
 	
 	/**
+	 * Gets the uri.
+	 * 
 	 * @return the uri
 	 */
 	public URI getUri() {
 		return this.uri;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.ioda.interfaces.Storable#setCached(java.lang.String)
+	 */
 	@Override
 	public void setCached(final String filename) {
 		this.filename = filename;

@@ -16,39 +16,44 @@
 package net.ownhero.dev.ioda.exceptions;
 
 /**
+ * The Class MIMETypeDeterminationException.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class MIMETypeDeterminationException extends Exception {
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -7912987273535001426L;
 	
 	/**
-	 * 
+	 * Instantiates a new mIME type determination exception.
 	 */
 	public MIMETypeDeterminationException() {
 	}
 	
 	/**
-	 * @param arg0
+	 * Instantiates a new mIME type determination exception.
+	 *
+	 * @param arg0 the arg0
 	 */
 	public MIMETypeDeterminationException(final String arg0) {
 		super(arg0);
 	}
 	
 	/**
-	 * @param arg0
-	 * @param arg1
+	 * Instantiates a new mIME type determination exception.
+	 *
+	 * @param arg0 the arg0
+	 * @param arg1 the arg1
 	 */
 	public MIMETypeDeterminationException(final String arg0, final Throwable arg1) {
 		super(arg0, arg1);
 	}
 	
 	/**
-	 * @param arg0
+	 * Instantiates a new mIME type determination exception.
+	 *
+	 * @param arg0 the arg0
 	 */
 	public MIMETypeDeterminationException(final Throwable arg0) {
 		super(arg0);

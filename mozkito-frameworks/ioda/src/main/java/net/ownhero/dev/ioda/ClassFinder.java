@@ -47,7 +47,8 @@ import org.apache.commons.lang.StringEscapeUtils;
  */
 public class ClassFinder {
 	
-	private static final Set<URL> externalResources = new HashSet<>();
+	/** The Constant externalResources. */
+	private static final Set<URL> EXTERNAL_RESOURCES = new HashSet<>();
 	
 	/**
 	 * Adds the external resource.
@@ -56,14 +57,18 @@ public class ClassFinder {
 	 *            the resource
 	 * @return true, if successful
 	 */
-	public static synchronized final boolean addExternalResource(final URL resource) {
-		return externalResources.add(resource);
+	public static final synchronized boolean addExternalResource(final URL resource) {
+		return EXTERNAL_RESOURCES.add(resource);
 	}
 	
 	/**
+	 * Extending.
+	 * 
 	 * @param baseClass
+	 *            the base class
 	 * @param superClass
-	 * @return
+	 *            the super class
+	 * @return true, if successful
 	 */
 	@NoneNull
 	public static boolean extending(final Class<?> baseClass,
@@ -79,14 +84,20 @@ public class ClassFinder {
 	}
 	
 	/**
+	 * Gets the all classes.
+	 * 
 	 * @param pakkage
+	 *            the pakkage
 	 * @param modifiers
 	 *            an Integer value representing properties the class shall not have (e.g. private, interface, abstract).
 	 *            See {@link Modifier} for details.
-	 * @return
+	 * @return the all classes
 	 * @throws ClassNotFoundException
+	 *             the class not found exception
 	 * @throws WrongClassSearchMethodException
+	 *             the wrong class search method exception
 	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	public static Collection<Class<?>> getAllClasses(@NotNull final Package pakkage,
 	                                                 final Integer modifiers) throws ClassNotFoundException,
@@ -111,7 +122,7 @@ public class ClassFinder {
 			}
 		}
 		
-		for (final URL resource : externalResources) {
+		for (final URL resource : EXTERNAL_RESOURCES) {
 			if (resource.getPath().toLowerCase().endsWith(".jar")) {
 				discoveredClasses.addAll(getClassesFromJarResource(thePackage, resource, modifiers));
 			} else if (resource.getPath().toLowerCase().endsWith(".class")) {
@@ -125,9 +136,13 @@ public class ClassFinder {
 	}
 	
 	/**
+	 * Gets the all class names.
+	 * 
 	 * @param classPath
-	 * @return
+	 *            the class path
+	 * @return the all class names
 	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	public static Set<String> getAllClassNames(final String classPath) throws IOException {
 		final HashSet<String> classNames = new HashSet<String>();
@@ -150,7 +165,7 @@ public class ClassFinder {
 			}
 		}
 		
-		for (final URL resource : externalResources) {
+		for (final URL resource : EXTERNAL_RESOURCES) {
 			if (resource.getPath().toLowerCase().endsWith(".jar")) {
 				classNames.addAll(getClassNamesFromJarResource(resource));
 			} else if (resource.getPath().toLowerCase().endsWith(".class")) {
@@ -168,6 +183,8 @@ public class ClassFinder {
 	 * derived from the supplied super class. If this is the case, they are added to a collection which will be returned
 	 * at the end of the method.
 	 * 
+	 * @param <T>
+	 *            the generic type
 	 * @param pakkage
 	 *            the package where the traversal search takes place (recursive), not null
 	 * @param superClass
@@ -177,8 +194,11 @@ public class ClassFinder {
 	 *            See {@link Modifier} for details.
 	 * @return a collection of classes matching the above conditions
 	 * @throws ClassNotFoundException
+	 *             the class not found exception
 	 * @throws WrongClassSearchMethodException
+	 *             the wrong class search method exception
 	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@SuppressWarnings ("unchecked")
 	@NoneNull
@@ -218,10 +238,14 @@ public class ClassFinder {
 	 * @param packageName
 	 *            the name of the package the classes have to be contained in
 	 * @param modifiers
+	 *            the modifiers
 	 * @return a collection of all classes from the supplied package
 	 * @throws ClassNotFoundException
+	 *             the class not found exception
 	 * @throws WrongClassSearchMethodException
+	 *             the wrong class search method exception
 	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	public static Collection<Class<?>> getClassesFromClasspath(final String packageName,
 	                                                           final Integer modifiers) throws ClassNotFoundException,
@@ -299,15 +323,19 @@ public class ClassFinder {
 	}
 	
 	/**
-	 * Scans through the given JAR file and finds all class objects for a given package name
+	 * Scans through the given JAR file and finds all class objects for a given package name.
 	 * 
 	 * @param packageName
 	 *            the name of the package the classes have to be contained in
+	 * @param filePath
+	 *            the file path
 	 * @param modifiers
+	 *            the modifiers
 	 * @return a collection of all classes from the supplied package
 	 * @throws ClassNotFoundException
+	 *             the class not found exception
 	 * @throws WrongClassSearchMethodException
-	 * @throws IOException
+	 *             the wrong class search method exception
 	 */
 	public static Collection<Class<?>> getClassesFromJarFile(final String packageName,
 	                                                         final String filePath,
@@ -325,6 +353,21 @@ public class ClassFinder {
 		}
 	}
 	
+	/**
+	 * Gets the classes from jar resource.
+	 * 
+	 * @param packageName
+	 *            the package name
+	 * @param resource
+	 *            the resource
+	 * @param modifiers
+	 *            the modifiers
+	 * @return the classes from jar resource
+	 * @throws ClassNotFoundException
+	 *             the class not found exception
+	 * @throws WrongClassSearchMethodException
+	 *             the wrong class search method exception
+	 */
 	public static Collection<Class<?>> getClassesFromJarResource(final String packageName,
 	                                                             final URL resource,
 	                                                             final Integer modifiers) throws ClassNotFoundException,
@@ -379,16 +422,23 @@ public class ClassFinder {
 	}
 	
 	/**
-	 * Finds all classes in a package that implement a given interface
+	 * Finds all classes in a package that implement a given interface.
 	 * 
+	 * @param <T>
+	 *            the generic type
 	 * @param pakkage
 	 *            the package that contains the classes
 	 * @param theInterface
 	 *            the interface the classes must implement
+	 * @param modifiers
+	 *            the modifiers
 	 * @return a list of all classes fitting the search criteria
 	 * @throws ClassNotFoundException
-	 * @throws IOException
+	 *             the class not found exception
 	 * @throws WrongClassSearchMethodException
+	 *             the wrong class search method exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@SuppressWarnings ("unchecked")
 	@NoneNull
@@ -468,9 +518,22 @@ public class ClassFinder {
 	}
 	
 	/**
+	 * Gets the class name.
+	 * 
+	 * @return the class name
+	 */
+	public static String getClassName() {
+		return ClassFinder.class.getSimpleName();
+	}
+	
+	/**
+	 * Gets the class names from class path.
+	 * 
 	 * @param cp
-	 * @return
+	 *            the cp
+	 * @return the class names from class path
 	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	private static Collection<? extends String> getClassNamesFromClassPath(final String cp) throws IOException {
 		final Set<String> classNames = new HashSet<String>();
@@ -506,8 +569,11 @@ public class ClassFinder {
 	}
 	
 	/**
+	 * Gets the class names from jar file.
+	 * 
 	 * @param filePath
-	 * @return
+	 *            the file path
+	 * @return the class names from jar file
 	 */
 	private static Set<String> getClassNamesFromJarFile(final String filePath) {
 		try {
@@ -522,8 +588,11 @@ public class ClassFinder {
 	}
 	
 	/**
+	 * Gets the class names from jar resource.
+	 * 
 	 * @param resource
-	 * @return
+	 *            the resource
+	 * @return the class names from jar resource
 	 */
 	private static Set<String> getClassNamesFromJarResource(final URL resource) {
 		// PRECONDITIONS
@@ -573,12 +642,5 @@ public class ClassFinder {
 		} finally {
 			// POSTCONDITIONS
 		}
-	}
-	
-	/**
-	 * @return
-	 */
-	public static String getHandle() {
-		return ClassFinder.class.getSimpleName();
 	}
 }
