@@ -144,7 +144,7 @@ public class PatchEngine extends Engine {
 			final EnhancedReport report = mappableStructuredReport.getReport();
 			
 			final MappableTransaction mappableTransaction = (MappableTransaction) to;
-			final ChangeSet transaction = mappableTransaction.getTransaction();
+			final ChangeSet transaction = mappableTransaction.getChangeSet();
 			
 			final RepositoryStorage storage = getStorage(RepositoryStorage.class);
 			final Repository repository = storage.getRepository();

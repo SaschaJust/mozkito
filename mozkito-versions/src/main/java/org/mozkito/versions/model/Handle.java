@@ -210,7 +210,7 @@ public class Handle implements Annotated, Serializable {
 		}
 		
 		for (final String parentId : revDependencyGraph.getPreviousTransactions(transaction.getId())) {
-			final ChangeSet parentTransaction = this.archive.getTransactionById(parentId);
+			final ChangeSet parentTransaction = this.archive.getChangeSetById(parentId);
 			for (final Revision revision : parentTransaction.getRevisions()) {
 				if (getChangedNames().containsKey(revision)) {
 					return getChangedNames().get(revision);

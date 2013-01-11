@@ -149,7 +149,7 @@ public class ArtificialBlob {
 	 */
 	public Long getDayWindow() {
 		final TreeSet<DateTime> timeStamps = new TreeSet<DateTime>();
-		for (final ChangeSet t : getTransactions()) {
+		for (final ChangeSet t : getChangeSets()) {
 			timeStamps.add(t.getTimestamp());
 		}
 		final Days daysBetween = Days.daysBetween(timeStamps.first(), timeStamps.last());
@@ -170,7 +170,7 @@ public class ArtificialBlob {
 	 * 
 	 * @return the transactions
 	 */
-	public Set<ChangeSet> getTransactions() {
+	public Set<ChangeSet> getChangeSets() {
 		final Set<ChangeSet> result = new HashSet<ChangeSet>();
 		for (final ChangeOperationSet t : this.blobTransactions) {
 			result.add(t.getChangeSet());

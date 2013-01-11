@@ -80,33 +80,33 @@ public class MappableTransaction extends MappableEntity {
 	public Object get(@NotNull final FieldKey key) {
 		switch (key) {
 			case AUTHOR:
-				return getTransaction().getAuthor();
+				return getChangeSet().getAuthor();
 			case BODY:
-				return getTransaction().getMessage();
+				return getChangeSet().getMessage();
 			case CLOSED_TIMESTAMP:
-				return getTransaction().getTimestamp();
+				return getChangeSet().getTimestamp();
 			case CLOSER:
-				return getTransaction().getAuthor();
+				return getChangeSet().getAuthor();
 			case CREATION_TIMESTAMP:
-				return getTransaction().getTimestamp();
+				return getChangeSet().getTimestamp();
 			case FILE:
 				// this should probably be a collection of mappings-files (own
 				// class for mappings)
-				return getTransaction().getChangedFiles();
+				return getChangeSet().getChangedFiles();
 			case PATH:
-				return getTransaction().getChangedFiles();
+				return getChangeSet().getChangedFiles();
 			case RESOLUTION_TIMESTAMP:
-				return getTransaction().getTimestamp();
+				return getChangeSet().getTimestamp();
 			case SUMMARY:
-				return getTransaction().getMessage();
+				return getChangeSet().getMessage();
 			case ID:
 				return getId();
 			case CHANGER:
-				return getTransaction().getAuthor();
+				return getChangeSet().getAuthor();
 			case COMMENT:
-				return getTransaction().getMessage();
+				return getChangeSet().getMessage();
 			case MODIFICATION_TIMESTAMP:
-				return getTransaction().getTimestamp();
+				return getChangeSet().getTimestamp();
 			default:
 				break;
 		}
@@ -155,7 +155,7 @@ public class MappableTransaction extends MappableEntity {
 	 */
 	@Transient
 	public Handle getFile(@NotNegative final int index) {
-		final Collection<Handle> changedFiles = getTransaction().getChangedFiles();
+		final Collection<Handle> changedFiles = getChangeSet().getChangedFiles();
 		
 		if (changedFiles.size() > index) {
 			return (Handle) CollectionUtils.get(changedFiles, index);
@@ -171,7 +171,7 @@ public class MappableTransaction extends MappableEntity {
 	@Override
 	@Transient
 	public String getId() {
-		return getTransaction().getId();
+		return getChangeSet().getId();
 	}
 	
 	/*
@@ -181,7 +181,7 @@ public class MappableTransaction extends MappableEntity {
 	@Override
 	@Transient
 	public String getText() {
-		return getTransaction().getMessage();
+		return getChangeSet().getMessage();
 	}
 	
 	/**
@@ -190,7 +190,7 @@ public class MappableTransaction extends MappableEntity {
 	 * @return the transaction
 	 */
 	@OneToOne (fetch = FetchType.LAZY)
-	public ChangeSet getTransaction() {
+	public ChangeSet getChangeSet() {
 		return this.changeset;
 	}
 	
@@ -238,7 +238,7 @@ public class MappableTransaction extends MappableEntity {
 		
 		builder.append(getClassName());
 		builder.append(" [transaction="); //$NON-NLS-1$
-		builder.append(getTransaction());
+		builder.append(getChangeSet());
 		builder.append("]"); //$NON-NLS-1$
 		
 		return builder.toString();

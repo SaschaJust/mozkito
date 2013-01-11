@@ -712,7 +712,7 @@ public class GitRepository extends DistributedCommandLineRepository {
 	 * @see org.mozkito.versions.Repository#getTransactionCount()
 	 */
 	@Override
-	public long getTransactionCount() {
+	public long getChangeSetCount() {
 		final String[] args = new String[] { "log", "--branches", "--remotes", "--pretty=format:''" };
 		final Tuple<Integer, List<String>> response = CommandExecutor.execute("git", args, this.cloneDir, null, null);
 		if (response.getFirst() != 0) {

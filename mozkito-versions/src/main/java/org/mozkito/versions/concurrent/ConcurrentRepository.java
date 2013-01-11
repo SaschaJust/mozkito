@@ -388,14 +388,14 @@ public class ConcurrentRepository extends Repository {
 	 * 
 	 * @throws RepositoryOperationException
 	 * 
-	 * @see org.mozkito.versions.Repository#getTransactionCount()
+	 * @see org.mozkito.versions.Repository#getChangeSetCount()
 	 */
 	@Override
-	public long getTransactionCount() throws RepositoryOperationException {
+	public long getChangeSetCount() throws RepositoryOperationException {
 		// PRECONDITIONS
 		
 		try {
-			return getRepository().getTransactionCount();
+			return getRepository().getChangeSetCount();
 		} finally {
 			// POSTCONDITIONS
 		}

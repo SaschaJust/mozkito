@@ -168,7 +168,7 @@ public class ChangeOperationReader implements Iterator<Collection<JavaChangeOper
 			throw new Shutdown();
 		}
 		
-		final ChangeSetSet masterChangeSets = RCSPersistenceUtil.getTransactions(this.branchFactory.getPersistenceUtil(),
+		final ChangeSetSet masterChangeSets = RCSPersistenceUtil.getChangeSet(this.branchFactory.getPersistenceUtil(),
 		                                                                             masterBranch,
 		                                                                             TransactionSetOrder.ASC);
 		if (Logger.logInfo()) {

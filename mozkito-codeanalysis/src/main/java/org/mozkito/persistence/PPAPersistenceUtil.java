@@ -233,7 +233,7 @@ public class PPAPersistenceUtil {
 	 */
 	@SuppressWarnings ("unchecked")
 	@NoneNull
-	public static List<ChangeSet> getTransactionsChangingElement(@NotNull final PersistenceUtil persistenceUtil,
+	public static List<ChangeSet> getChangeSetChangingElement(@NotNull final PersistenceUtil persistenceUtil,
 	                                                             @NotNull final JavaElement element) {
 		updateProcedures(persistenceUtil);
 		final List<ChangeSet> result = new LinkedList<ChangeSet>();
@@ -267,7 +267,7 @@ public class PPAPersistenceUtil {
 	 */
 	@SuppressWarnings ("unchecked")
 	@NoneNull
-	public static List<ChangeSet> getTransactionsChangingElement(@NotNull final PersistenceUtil persistenceUtil,
+	public static List<ChangeSet> getChangeSetChangingElement(@NotNull final PersistenceUtil persistenceUtil,
 	                                                             @NotNull final JavaElement element,
 	                                                             @NotNull final DateTime before,
 	                                                             @NotNull final DateTime after) {

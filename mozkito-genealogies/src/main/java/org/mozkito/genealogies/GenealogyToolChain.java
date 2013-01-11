@@ -120,7 +120,7 @@ public class GenealogyToolChain extends Chain<Settings> {
 		if (this.infoArgument.getValue()) {
 			
 			this.genealogy = this.genealogyArgs.getValue();
-			final TransactionChangeGenealogy transactionLayer = this.genealogy.getTransactionLayer();
+			final TransactionChangeGenealogy transactionLayer = this.genealogy.getChangeSetLayer();
 			if (Logger.logInfo()) {
 				Logger.info("Statistic on change genealogy graph:");
 				Logger.info("Number of vertices: " + this.genealogy.vertexSize());

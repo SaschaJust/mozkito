@@ -203,7 +203,7 @@ public class Untangling {
 	private UntanglingComparisonResult comparePartitions(final ArtificialBlob blob,
 	                                                     final Set<Set<JavaChangeOperation>> partitions) {
 		
-		Condition.check(blob.getTransactions().size() == partitions.size(),
+		Condition.check(blob.getChangeSets().size() == partitions.size(),
 		                "The size of partitions in artificial blob and the size of untangled partitions must be equal.");
 		
 		final List<List<JavaChangeOperation>> originalPartitions = blob.getChangeOperationPartitions();
@@ -778,7 +778,7 @@ public class Untangling {
 						throw new UnrecoverableError(e.getMessage(), e);
 					}
 				}
-				usedTransactions.addAll(blob.getTransactions());
+				usedTransactions.addAll(blob.getChangeSets());
 				
 			}
 			

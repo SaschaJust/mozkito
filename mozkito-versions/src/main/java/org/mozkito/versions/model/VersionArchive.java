@@ -65,7 +65,7 @@ public class VersionArchive implements Annotated {
 	 *            the id
 	 * @return the transaction by id
 	 */
-	public ChangeSet getTransactionById(final String id) {
+	public ChangeSet getChangeSetById(final String id) {
 		// TODO implement
 		return null;
 	}

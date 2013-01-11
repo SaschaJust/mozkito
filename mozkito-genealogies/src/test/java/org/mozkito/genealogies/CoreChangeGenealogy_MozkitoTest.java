@@ -78,7 +78,7 @@ public class CoreChangeGenealogy_MozkitoTest extends DatabaseTest {
 		CoreChangeGenealogy changeGenealogy = testEnvironment.getChangeGenealogy();
 		final PersistenceUtil persistenceUtil = testEnvironment.getPersistenceUtil();
 		final Map<TestEnvironmentOperation, JavaChangeOperation> environmentOperations = testEnvironment.getEnvironmentOperations();
-		changeGenealogy.getTransactionLayer().close();
+		changeGenealogy.getChangeSetLayer().close();
 		changeGenealogy.close();
 		changeGenealogy = ChangeGenealogyUtils.readFromDB(tmpGraphDBFile, persistenceUtil);
 		assertEquals(41, changeGenealogy.vertexSize());

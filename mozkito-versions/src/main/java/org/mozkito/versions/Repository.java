@@ -322,7 +322,7 @@ public abstract class Repository {
 	 * @throws RepositoryOperationException
 	 *             the repository operation exception
 	 */
-	public abstract long getTransactionCount() throws RepositoryOperationException;
+	public abstract long getChangeSetCount() throws RepositoryOperationException;
 	
 	/**
 	 * Gets the uri.

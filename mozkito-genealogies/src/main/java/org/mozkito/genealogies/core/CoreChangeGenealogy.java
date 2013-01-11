@@ -801,7 +801,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	 * 
 	 * @return the transaction layer
 	 */
-	public TransactionChangeGenealogy getTransactionLayer() {
+	public TransactionChangeGenealogy getChangeSetLayer() {
 		return this.transactionGenealogy;
 	}
 	

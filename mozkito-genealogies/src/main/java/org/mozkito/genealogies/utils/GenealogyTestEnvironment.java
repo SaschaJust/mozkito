@@ -77,7 +77,7 @@ public class GenealogyTestEnvironment {
 	private final PersistenceUtil                                    persistenceUtil;
 	
 	/** The transaction map. */
-	private final Map<ChangeSet, Set<JavaChangeOperation>>      transactionMap;
+	private final Map<ChangeSet, Set<JavaChangeOperation>>      changeSetMap;
 	
 	/** The environment transactions. */
 	private final Map<Integer, ChangeSet>                       environmentTransactions;
@@ -119,7 +119,7 @@ public class GenealogyTestEnvironment {
 	        final Repository repository, final CoreChangeGenealogy changeGenealogy, final File tmpGraphDBFile) {
 		
 		this.persistenceUtil = persistenceUtil;
-		this.transactionMap = transactionMap;
+		this.changeSetMap = transactionMap;
 		this.environmentTransactions = environmentTransactions;
 		this.environmentOperations = environmentOperations;
 		this.repository = repository;
@@ -261,8 +261,8 @@ public class GenealogyTestEnvironment {
 	 * 
 	 * @return the transaction map
 	 */
-	public Map<ChangeSet, Set<JavaChangeOperation>> getTransactionMap() {
-		return this.transactionMap;
+	public Map<ChangeSet, Set<JavaChangeOperation>> getChangeSetMap() {
+		return this.changeSetMap;
 	}
 	
 }

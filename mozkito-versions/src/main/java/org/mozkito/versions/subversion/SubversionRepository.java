@@ -388,7 +388,7 @@ public class SubversionRepository extends Repository {
 	 */
 	@Override
 	public String getChangeSetId(final long index) {
-		if (index < getTransactionCount()) {
+		if (index < getChangeSetCount()) {
 			return String.valueOf(1 + index);
 		}
 		return null;
@@ -561,10 +561,10 @@ public class SubversionRepository extends Repository {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.versions.Repository#getTransactionCount()
+	 * @see org.mozkito.versions.Repository#getChangeSetCount()
 	 */
 	@Override
-	public long getTransactionCount() {
+	public long getChangeSetCount() {
 		try {
 			return this.repository.getLatestRevision();
 		} catch (final SVNException e) {

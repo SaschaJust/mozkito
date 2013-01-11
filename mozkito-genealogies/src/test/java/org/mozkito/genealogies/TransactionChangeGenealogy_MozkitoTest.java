@@ -75,7 +75,7 @@ public class TransactionChangeGenealogy_MozkitoTest extends DatabaseTest {
 		final Map<Integer, ChangeSet> environmentTransactions = testEnvironment.getEnvironmentTransactions();
 		
 		changeGenealogy.close();
-		final TransactionChangeGenealogy tdg = changeGenealogy.getTransactionLayer();
+		final TransactionChangeGenealogy tdg = changeGenealogy.getChangeSetLayer();
 		
 		assertEquals(12, tdg.edgeSize());
 		
