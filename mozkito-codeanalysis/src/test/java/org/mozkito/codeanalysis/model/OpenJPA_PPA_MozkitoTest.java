@@ -13,7 +13,6 @@
 package org.mozkito.codeanalysis.model;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -42,9 +41,11 @@ public class OpenJPA_PPA_MozkitoTest extends DatabaseTest {
 	
 	/**
 	 * Test.
+	 * 
+	 * @throws IOException
 	 */
 	@Test
-	public void test() {
+	public void test() throws IOException {
 		final JavaElementFactory elementFactory = new JavaElementFactory();
 		getPersistenceUtil().beginTransaction();
 		final JavaElementLocationSet cache = new JavaElementLocationSet(elementFactory);
@@ -54,51 +55,28 @@ public class OpenJPA_PPA_MozkitoTest extends DatabaseTest {
 		final Person p = new Person("kim", "", "");
 		final BranchFactory branchFactory = new BranchFactory(getPersistenceUtil());
 		final Branch masterBranch = branchFactory.getMasterBranch();
+		final RevDependencyGraph revDependencyGraph = new RevDependencyGraph();
+		revDependencyGraph.addBranch(branchFactory.getMasterBranch().getName(), "1");
+		final VersionArchive versionArchive = new VersionArchive(branchFactory, revDependencyGraph);
 		
-		final ChangeSet changeSet = new ChangeSet("1", "", now, p, "1");
+		final ChangeSet changeSet = new ChangeSet(versionArchive, "1", "", now, p, "1");
 		
-		final VersionArchive versionArchive = new VersionArchive() {
-			
-			/**
-             * 
-             */
-			private static final long serialVersionUID = 1L;
-			
-			@Override
-			public ChangeSet getChangeSetById(final String id) {
-				switch (id) {
-					case "1":
-						return changeSet;
-					default:
-						return null;
-				}
-			}
-		};
+		masterBranch.setHead(changeSet);
 		
-		try {
-			final RevDependencyGraph revDepGraph = new RevDependencyGraph();
-			revDepGraph.addBranch(masterBranch.getName(), changeSet.getId());
-			versionArchive.setRevDependencyGraph(revDepGraph);
-			
-			masterBranch.setHead(changeSet);
-			
-			final Handle handle = new Handle(versionArchive);
-			handle.assignRevision(new Revision(changeSet, handle, ChangeType.Added), "a.java");
-			
-			final Revision rev = new Revision(changeSet, handle, ChangeType.Added);
-			final JavaChangeOperation op = new JavaChangeOperation(ChangeType.Added, classDefinition, rev);
-			getPersistenceUtil().save(changeSet);
-			getPersistenceUtil().save(op);
-			getPersistenceUtil().commitTransaction();
-			getPersistenceUtil().beginTransaction();
-			
-			final Criteria<JavaChangeOperation> criteria = getPersistenceUtil().createCriteria(JavaChangeOperation.class);
-			final List<JavaChangeOperation> list = getPersistenceUtil().load(criteria);
-			assertEquals(1, list.size());
-			getPersistenceUtil().commitTransaction();
-		} catch (final IOException e) {
-			fail();
-		}
+		final Handle handle = new Handle(versionArchive);
+		handle.assignRevision(new Revision(changeSet, handle, ChangeType.Added), "a.java");
+		
+		final Revision rev = new Revision(changeSet, handle, ChangeType.Added);
+		final JavaChangeOperation op = new JavaChangeOperation(ChangeType.Added, classDefinition, rev);
+		getPersistenceUtil().save(changeSet);
+		getPersistenceUtil().save(op);
+		getPersistenceUtil().commitTransaction();
+		getPersistenceUtil().beginTransaction();
+		
+		final Criteria<JavaChangeOperation> criteria = getPersistenceUtil().createCriteria(JavaChangeOperation.class);
+		final List<JavaChangeOperation> list = getPersistenceUtil().load(criteria);
+		assertEquals(1, list.size());
+		getPersistenceUtil().commitTransaction();
 	}
 	
 	/**

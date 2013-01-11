@@ -13,7 +13,6 @@
 package org.mozkito.codeanalysis.model;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 import java.io.IOException;
 
@@ -23,6 +22,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mozkito.persistence.ModelStorage;
 import org.mozkito.persistence.model.Person;
+import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.RevDependencyGraph;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.model.ChangeSet;
@@ -55,9 +55,11 @@ public class JavaChangeOperationTest {
 	
 	/**
 	 * Before.
+	 * 
+	 * @throws IOException
 	 */
 	@Before
-	public void before() {
+	public void before() throws IOException {
 		final JavaTypeDefinition javaType = new JavaTypeDefinition("org.mozkito.codeanalysis.model.TestClass");
 		
 		this.elementFactory = new JavaElementFactory();
@@ -66,39 +68,25 @@ public class JavaChangeOperationTest {
 		                                                                   "org.mozkito.codeanalysis.model.TestClass$1",
 		                                                                   "org/mozkito/codeanalysis/model/TestClass.java",
 		                                                                   20, 23, 43674, 20);
-		this.changeSet = new ChangeSet("hash", "hubba hubba hopp!", new DateTime(), new Person("kim", null, null),
+		
+		final BranchFactory branchFactory = new BranchFactory(null);
+		final RevDependencyGraph revDependencyGraph = new RevDependencyGraph();
+		revDependencyGraph.addBranch(branchFactory.getMasterBranch().getName(), "hash");
+		
+		final VersionArchive versionArchive = new VersionArchive(branchFactory, revDependencyGraph);
+		
+		this.changeSet = new ChangeSet(versionArchive, "hash", "hubba hubba hopp!", new DateTime(), new Person("kim",
+		                                                                                                       null,
+		                                                                                                       null),
 		                               "143");
 		
-		final VersionArchive versionArchive = new VersionArchive() {
-			
-			/**
-             * 
-             */
-			private static final long serialVersionUID = 1L;
-			
-			@Override
-			public ChangeSet getChangeSetById(final String id) {
-				switch (id) {
-					case "hash":
-						return JavaChangeOperationTest.this.changeSet;
-					default:
-						return null;
-				}
-			}
-		};
-		try {
-			final RevDependencyGraph revDepGraph = new RevDependencyGraph();
-			revDepGraph.addBranch("master", this.changeSet.getId());
-			versionArchive.setRevDependencyGraph(revDepGraph);
-			
-			this.handle = new Handle(versionArchive);
-			this.handle.assignRevision(new Revision(this.changeSet, this.handle, ChangeType.Modified),
-			                            "org/mozkito/codeanalysis/model/TestClass.java");
-			this.op = new JavaChangeOperation(ChangeType.Added, this.anonymousClassLocation,
-			                                  new Revision(this.changeSet, this.handle, ChangeType.Added));
-		} catch (final IOException e) {
-			fail();
-		}
+		this.handle = new Handle(versionArchive);
+		this.handle.assignRevision(new Revision(this.changeSet, this.handle, ChangeType.Modified),
+		                           "org/mozkito/codeanalysis/model/TestClass.java");
+		this.op = new JavaChangeOperation(ChangeType.Added, this.anonymousClassLocation, new Revision(this.changeSet,
+		                                                                                              this.handle,
+		                                                                                              ChangeType.Added));
+		
 	}
 	
 	/**
