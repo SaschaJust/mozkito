@@ -80,11 +80,9 @@ public class JavaChangeOperationTest {
 		                               "143");
 		
 		this.handle = new Handle(versionArchive);
-		this.handle.assignRevision(new Revision(this.changeSet, this.handle, ChangeType.Modified),
-		                           "org/mozkito/codeanalysis/model/TestClass.java");
-		this.op = new JavaChangeOperation(ChangeType.Added, this.anonymousClassLocation, new Revision(this.changeSet,
-		                                                                                              this.handle,
-		                                                                                              ChangeType.Added));
+		final Revision revision = new Revision(this.changeSet, this.handle, ChangeType.Modified);
+		this.handle.assignRevision(revision, "org/mozkito/codeanalysis/model/TestClass.java");
+		this.op = new JavaChangeOperation(ChangeType.Added, this.anonymousClassLocation, revision);
 		
 	}
 	
