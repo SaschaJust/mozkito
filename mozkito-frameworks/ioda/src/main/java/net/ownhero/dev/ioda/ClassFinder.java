@@ -343,7 +343,7 @@ public class ClassFinder {
 				if (!current.isDirectory()) {
 					if (currentName.toLowerCase().endsWith(".jar")) {
 						if (Logger.logError()) {
-							Logger.error("JAR in JAR is not supported yet. Come back to me after ICSE 2013 deadline.");
+							Logger.error("JAR in JAR is not supported yet. Found archive: " + currentName);
 						}
 					} else if ((current.getName().length() > path.length())
 					        && current.getName().substring(0, path.length()).equals(path)
@@ -541,7 +541,7 @@ public class ClassFinder {
 					if (!current.isDirectory()) {
 						if (currentName.toLowerCase().endsWith(".jar")) {
 							if (Logger.logError()) {
-								Logger.error("JAR in JAR is not supported yet. Come back to me after ICSE 2013 deadline.");
+								Logger.error("JAR in JAR is not supported yet. Found archive: " + currentName);
 							}
 						} else if (currentName.endsWith(".class")) {
 							String path = current.getName();
