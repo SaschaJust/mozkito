@@ -120,7 +120,7 @@ public class Main {
 			
 			final ArgumentSet<CoreChangeGenealogy, GenealogyOptions> genealogyArgument = ArgumentSetFactory.create(genealogyOptions);
 			final CoreChangeGenealogy coreChangeGenealogy = genealogyArgument.getValue();
-			final TransactionChangeGenealogy transactionLayer = coreChangeGenealogy.getTransactionLayer();
+			final TransactionChangeGenealogy transactionLayer = coreChangeGenealogy.getChangeSetLayer();
 			
 			final LTCFormulaFactory formulaFactory = new LTCFormulaFactory();
 			formulaFactory.register(new EF_FormulaGenearator());
@@ -148,7 +148,7 @@ public class Main {
 				throw new Shutdown();
 			}
 			
-			final ChangeSetSet masterTransactions = RCSPersistenceUtil.getTransactions(persistenceUtil, masterBranch,
+			final ChangeSetSet masterTransactions = RCSPersistenceUtil.getChangeSet(persistenceUtil, masterBranch,
 			                                                                             TransactionSetOrder.ASC);
 			final List<ChangeSet> changeSets = new LinkedList<>();
 			for (final ChangeSet t : masterTransactions) {

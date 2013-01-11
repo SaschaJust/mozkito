@@ -723,7 +723,7 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	 * @see org.mozkito.versions.Repository#getTransactionCount()
 	 */
 	@Override
-	public long getTransactionCount() throws RepositoryOperationException {
+	public long getChangeSetCount() throws RepositoryOperationException {
 		
 		final Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log", "-r", "tip",
 		        "--template", "{rev}" + FileUtils.lineSeparator }, this.cloneDir, null, null);

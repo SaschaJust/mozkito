@@ -110,7 +110,7 @@ public class Main {
 					aggregateToolChain.setName(aggregateToolChain.getClass().getSimpleName());
 					aggregateToolChain.start();
 					aggregateToolChain.join();
-					coreChangeGenealogy.getTransactionLayer().close();
+					coreChangeGenealogy.getChangeSetLayer().close();
 					coreChangeGenealogy.close();
 				} else {
 					if (Logger.logError()) {

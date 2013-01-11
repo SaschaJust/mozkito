@@ -248,7 +248,7 @@ public class GitRepositoryTest extends VersionsTest {
 	 */
 	@Test
 	public void testGetTransactionCount() {
-		assertEquals(20, this.repo.getTransactionCount());
+		assertEquals(20, this.repo.getChangeSetCount());
 	}
 	
 	/**

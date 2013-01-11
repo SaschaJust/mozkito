@@ -12,12 +12,15 @@
  ******************************************************************************/
 package org.mozkito.versions.model;
 
+import javax.persistence.Table;
+
 import org.mozkito.persistence.Annotated;
 import org.mozkito.versions.RevDependencyGraph;
 
 /**
  * The Class VersionArchive.
  */
+@Table (name = "version_archive")
 public class VersionArchive implements Annotated {
 	
 	/** The Constant serialVersionUID. */
@@ -62,7 +65,7 @@ public class VersionArchive implements Annotated {
 	 *            the id
 	 * @return the transaction by id
 	 */
-	public ChangeSet getTransactionById(final String id) {
+	public ChangeSet getChangeSetById(final String id) {
 		// TODO implement
 		return null;
 	}

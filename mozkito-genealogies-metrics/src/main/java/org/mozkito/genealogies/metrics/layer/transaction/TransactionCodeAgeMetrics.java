@@ -108,7 +108,7 @@ public class TransactionCodeAgeMetrics extends GenealogyTransactionMetric {
 			
 			final JavaElement element = op.getChangedElementLocation().getElement();
 			
-			final List<ChangeSet> pastTransactions = PPAPersistenceUtil.getTransactionsChangingElement(this.persistenceUtil,
+			final List<ChangeSet> pastTransactions = PPAPersistenceUtil.getChangeSetChangingElement(this.persistenceUtil,
 			                                                                                                element);
 			
 			if (!pastTransactions.isEmpty()) {

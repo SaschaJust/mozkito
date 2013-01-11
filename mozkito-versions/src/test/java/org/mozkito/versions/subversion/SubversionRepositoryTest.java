@@ -336,7 +336,7 @@ public class SubversionRepositoryTest extends VersionsTest {
 	 */
 	@Test
 	public void testGetTransactionCount() {
-		assertEquals(18, this.repo.getTransactionCount());
+		assertEquals(18, this.repo.getChangeSetCount());
 	}
 	
 	/**

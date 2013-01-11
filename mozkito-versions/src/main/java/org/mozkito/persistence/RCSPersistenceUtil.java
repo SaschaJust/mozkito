@@ -40,7 +40,7 @@ public class RCSPersistenceUtil {
 	 * 
 	 */
 	@NoneNull
-	public static ChangeSetSet getTransactions(final PersistenceUtil persistenceUtil,
+	public static ChangeSetSet getChangeSet(final PersistenceUtil persistenceUtil,
 	                                             final Branch rCSBranch,
 	                                             final TransactionSetOrder order) {
 		

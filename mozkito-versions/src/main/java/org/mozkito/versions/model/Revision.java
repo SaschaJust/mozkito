@@ -41,7 +41,7 @@ import org.mozkito.versions.elements.ChangeType;
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 @Entity
-@Table (name = "revision", uniqueConstraints = @UniqueConstraint (columnNames = { "TRANSACTION_ID", "CHANGEDFILE_ID" }))
+@Table (name = "revision", uniqueConstraints = @UniqueConstraint (columnNames = { "CHANGESET_ID", "CHANGEDFILE_ID" }))
 public class Revision implements Annotated {
 	
 	/** The Constant serialVersionUID. */
@@ -78,7 +78,7 @@ public class Revision implements Annotated {
 	 */
 	@NoneNull
 	public Revision(final ChangeSet changeSet, final Handle handle, final ChangeType changeType) {
-		setTransaction(changeSet);
+		setChangeSet(changeSet);
 		setChangedFile(handle);
 		setChangeType(changeType);
 		
@@ -243,7 +243,7 @@ public class Revision implements Annotated {
 	 * @param changeSet
 	 *            the transaction to set
 	 */
-	public void setTransaction(final ChangeSet changeSet) {
+	public void setChangeSet(final ChangeSet changeSet) {
 		this.changeSet = changeSet;
 	}
 	

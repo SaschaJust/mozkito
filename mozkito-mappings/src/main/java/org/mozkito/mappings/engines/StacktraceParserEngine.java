@@ -145,7 +145,7 @@ public class StacktraceParserEngine extends Engine {
 			final EnhancedReport report = mappableStructuredReport.getReport();
 			
 			final MappableTransaction mappableTransaction = (MappableTransaction) to;
-			final ChangeSet transaction = mappableTransaction.getTransaction();
+			final ChangeSet transaction = mappableTransaction.getChangeSet();
 			final PersistenceUtil persistenceUtil = getPersistenceUtil();
 			final Set<String> subjects = new HashSet<>();
 			final Collection<JavaChangeOperation> changeOperations = PPAPersistenceUtil.getChangeOperation(persistenceUtil,

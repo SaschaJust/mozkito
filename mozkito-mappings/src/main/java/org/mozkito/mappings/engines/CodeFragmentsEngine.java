@@ -172,15 +172,15 @@ public class CodeFragmentsEngine extends Engine {
 			
 			final RepositoryStorage repositoryStorage = getStorage(RepositoryStorage.class);
 			final Repository repository = repositoryStorage.getRepository();
-			final Collection<Handle> changedFiles = transaction.getTransaction().getChangedFiles();
+			final Collection<Handle> changedFiles = transaction.getChangeSet().getChangedFiles();
 			
 			for (final Handle handle : changedFiles) {
 				try {
 					String path;
-					path = handle.getPath(transaction.getTransaction());
+					path = handle.getPath(transaction.getChangeSet());
 					Collection<Delta> diff;
 					try {
-						diff = repository.diff(path, transaction.getTransaction().getBranchParent().getId(),
+						diff = repository.diff(path, transaction.getChangeSet().getBranchParent().getId(),
 						                       transaction.getId());
 					} catch (final RepositoryOperationException e) {
 						throw new UnrecoverableError(e);

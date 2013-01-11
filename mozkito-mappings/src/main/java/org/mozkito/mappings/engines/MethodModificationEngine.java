@@ -215,7 +215,7 @@ public class MethodModificationEngine extends Engine {
 		final Set<String> subjects = new HashSet<>();
 		
 		final Collection<JavaChangeOperation> changeOperations = PPAPersistenceUtil.getChangeOperation(persistenceUtil,
-		                                                                                               ((MappableTransaction) from).getTransaction());
+		                                                                                               ((MappableTransaction) from).getChangeSet());
 		
 		for (final JavaChangeOperation operation : changeOperations) {
 			if (operation.getChangeType().equals(ChangeType.Modified)) {

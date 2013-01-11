@@ -48,7 +48,7 @@ public class ChangeSetTest {
 			private static final long serialVersionUID = 8388504356360016697L;
 			
 			@Override
-			public ChangeSet getTransactionById(final String id) {
+			public ChangeSet getChangeSetById(final String id) {
 				switch (id) {
 					case "0":
 						return t_0;
@@ -121,7 +121,7 @@ public class ChangeSetTest {
 			private static final long serialVersionUID = 8388504356360016697L;
 			
 			@Override
-			public ChangeSet getTransactionById(final String id) {
+			public ChangeSet getChangeSetById(final String id) {
 				switch (id) {
 					case "0":
 						return t_0;

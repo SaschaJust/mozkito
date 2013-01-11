@@ -404,7 +404,7 @@ public class MercurialRepositoryTest extends VersionsTest {
 	 */
 	@Test
 	public void testGetTransactionCount() throws RepositoryOperationException {
-		assertEquals(22, this.repo.getTransactionCount());
+		assertEquals(22, this.repo.getChangeSetCount());
 	}
 	
 	/**

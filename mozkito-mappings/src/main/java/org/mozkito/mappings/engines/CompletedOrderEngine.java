@@ -187,7 +187,7 @@ public class CompletedOrderEngine extends Engine {
 	public final void score(final MappableEntity from,
 	                        final MappableEntity to,
 	                        final Relation score) {
-		final ChangeSet changeset = ((MappableTransaction) from).getTransaction();
+		final ChangeSet changeset = ((MappableTransaction) from).getChangeSet();
 		final Report report = ((MappableReport) to).getReport();
 		double localConfidence = 0d;
 		

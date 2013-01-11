@@ -62,7 +62,7 @@ public class RepositoryReader extends Source<LogEntry> {
 					Logger.info("Requesting logs from " + repository);
 				}
 				try {
-					repository.getTransactionCount();
+					repository.getChangeSetCount();
 					RepositoryReader.this.logIterator = repository.log(repository.getFirstRevisionId(),
 					                                                   repository.getEndRevision()).iterator();
 				} catch (final RepositoryOperationException e) {

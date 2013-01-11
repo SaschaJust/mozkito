@@ -212,7 +212,7 @@ public class LogEngine extends Engine {
 			final EnhancedReport report = mappableStructuredReport.getReport();
 			
 			final MappableTransaction mappableTransaction = (MappableTransaction) to;
-			final ChangeSet transaction = mappableTransaction.getTransaction();
+			final ChangeSet transaction = mappableTransaction.getChangeSet();
 			final Collection<Handle> changedFiles = transaction.getChangedFiles();
 			final RepositoryStorage storage = getStorage(RepositoryStorage.class);
 			final Repository repository = storage.getRepository();

@@ -35,5 +35,5 @@ public class Revision_ {
 	public static volatile SingularAttribute<Revision, Long>       revisionId;
 	
 	/** The transaction. */
-	public static volatile SingularAttribute<Revision, ChangeSet>  transaction;
+	public static volatile SingularAttribute<Revision, ChangeSet>  changeSet;
 }

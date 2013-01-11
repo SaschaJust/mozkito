@@ -77,7 +77,7 @@ public class JavaChangeOperationTest {
 			private static final long serialVersionUID = 1L;
 			
 			@Override
-			public ChangeSet getTransactionById(final String id) {
+			public ChangeSet getChangeSetById(final String id) {
 				switch (id) {
 					case "hash":
 						return JavaChangeOperationTest.this.changeSet;

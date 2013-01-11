@@ -194,7 +194,7 @@ public class RCSPersistenceUtilTest extends DatabaseTest {
 		final List<ChangeSet> tList = setup(getPersistenceUtil());
 		final BranchFactory branchFactory = new BranchFactory(getPersistenceUtil());
 		
-		final Iterator<ChangeSet> iterator = RCSPersistenceUtil.getTransactions(getPersistenceUtil(),
+		final Iterator<ChangeSet> iterator = RCSPersistenceUtil.getChangeSet(getPersistenceUtil(),
 		                                                                             branchFactory.getMasterBranch(),
 		                                                                             TransactionSetOrder.ASC)
 		                                                            .iterator();
@@ -235,7 +235,7 @@ public class RCSPersistenceUtilTest extends DatabaseTest {
 		final List<ChangeSet> tList = setup(getPersistenceUtil());
 		final BranchFactory branchFactory = new BranchFactory(getPersistenceUtil());
 		
-		final Iterator<ChangeSet> iterator = RCSPersistenceUtil.getTransactions(getPersistenceUtil(),
+		final Iterator<ChangeSet> iterator = RCSPersistenceUtil.getChangeSet(getPersistenceUtil(),
 		                                                                             branchFactory.getMasterBranch(),
 		                                                                             TransactionSetOrder.DESC)
 		                                                            .iterator();

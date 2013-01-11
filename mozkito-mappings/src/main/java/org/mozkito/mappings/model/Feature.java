@@ -204,7 +204,7 @@ public class Feature implements Annotated {
 	 * 
 	 * @return the transactionFieldName
 	 */
-	public String getTransactionFieldName() {
+	public String getChangeSetFieldName() {
 		return this.fromFieldName;
 	}
 	
@@ -213,7 +213,7 @@ public class Feature implements Annotated {
 	 * 
 	 * @return the transactionSubstring
 	 */
-	public String getTransactionSubstring() {
+	public String getChangeSetSubstring() {
 		return this.fromSubstring;
 	}
 	
@@ -288,13 +288,13 @@ public class Feature implements Annotated {
 		builder.append(" [confidence="); //$NON-NLS-1$
 		builder.append(getConfidence());
 		builder.append(", fromFieldName="); //$NON-NLS-1$
-		builder.append(getTransactionFieldName());
+		builder.append(getChangeSetFieldName());
 		builder.append(", toFieldName="); //$NON-NLS-1$
 		builder.append(getReportFieldName());
 		builder.append(", toSubstring="); //$NON-NLS-1$
 		builder.append(getReportSubstring());
 		builder.append(", fromSubstring="); //$NON-NLS-1$
-		builder.append(getTransactionSubstring());
+		builder.append(getChangeSetSubstring());
 		builder.append(", fqClassName="); //$NON-NLS-1$
 		builder.append(getFqClassName());
 		builder.append("]"); //$NON-NLS-1$

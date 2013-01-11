@@ -244,7 +244,7 @@ public class GenealogyMetricsToolChain extends Chain<Settings> {
 				// throw new UnrecoverableError(e);
 				// }
 			case TRANSACTION:
-				final TransactionChangeGenealogy transactionChangeGenealogy = this.genealogy.getTransactionLayer();
+				final TransactionChangeGenealogy transactionChangeGenealogy = this.genealogy.getChangeSetLayer();
 				new TransactionGenealogyReader(this.threadPool.getThreadGroup(), getSettings(),
 				                               transactionChangeGenealogy);
 				new TransactionGenealogyMetricMux(this.threadPool.getThreadGroup(), getSettings());

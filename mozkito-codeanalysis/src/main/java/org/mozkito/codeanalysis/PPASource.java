@@ -124,7 +124,7 @@ public class PPASource extends Source<ChangeSet> {
 						// load new transactions
 						if (PPASource.this.branchIterator.hasNext()) {
 							final Branch next = PPASource.this.branchIterator.next();
-							final ChangeSetSet set = RCSPersistenceUtil.getTransactions(persistenceUtil, next,
+							final ChangeSetSet set = RCSPersistenceUtil.getChangeSet(persistenceUtil, next,
 							                                                              TransactionSetOrder.ASC);
 							PPASource.this.tIterator = set.iterator();
 							if (Logger.logInfo()) {
