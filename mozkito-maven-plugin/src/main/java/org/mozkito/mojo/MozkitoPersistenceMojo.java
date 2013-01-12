@@ -47,8 +47,6 @@ import org.jdom2.output.XMLOutputter;
  * Goal that generates a persistence.xml file specific for the module that is currently build. You have to specify an
  * inclusion pattern matching all compilation units that shall be added as persistent classes.
  * 
- * 
- * 
  * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
@@ -68,9 +66,11 @@ public class MozkitoPersistenceMojo extends AbstractMojo {
 	@Component
 	private MavenProjectHelper  projectHelper;
 	
+	/** The connection url. */
 	@Parameter (required = true)
 	private String              connectionURL;
 	
+	/** The artifact id. */
 	@Parameter (defaultValue = "${project.artifactId}", readonly = true, required = true)
 	private String              artifactId;
 	
@@ -83,14 +83,13 @@ public class MozkitoPersistenceMojo extends AbstractMojo {
 	@Parameter (required = true)
 	private List<String>        includes;
 	
+	/** The excludes. */
 	@Parameter
 	private List<String>        excludes;
 	
+	/** The source directory. */
 	@Parameter (defaultValue = "${project.build.sourceDirectory}", required = true, readonly = true)
 	private File                sourceDirectory;
-	
-	@Parameter (defaultValue = "${project.compileSourceRoots}", required = true, readonly = true)
-	private List<File>          sourceRoots;
 	
 	/**
 	 * Location of the file.
@@ -98,6 +97,7 @@ public class MozkitoPersistenceMojo extends AbstractMojo {
 	@Parameter (defaultValue = "${project.build.directory}", property = "outputDir", required = true, readonly = true)
 	private File                outputDirectory;
 	
+	/** The OpenJPA options. */
 	@Parameter (required = true)
 	private Map<String, String> openJPAOptions;
 	
