@@ -34,31 +34,11 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 
 /**
- * Goal which touches a timestamp file.
+ * Goal that collects meta information such as module version and version archive hash and injects it into the project
+ * resources. The generated resource "metadata.properties" can be accessed at runtime to access this information.
  */
 @Mojo (name = "meta", defaultPhase = LifecyclePhase.GENERATE_RESOURCES)
 public class MozkitoMetaMojo extends AbstractMojo {
-	
-	/** The project version. */
-	@Parameter (defaultValue = "${project.version}", required = true, readonly = true)
-	private String             projectVersion;
-	
-	/**
-	 * Helper class to assist in attaching artifacts to the project instance. project-helper instance, used to make
-	 * addition of resources simpler.
-	 * 
-	 * @component
-	 * @required
-	 * @readonly
-	 */
-	@Component
-	private MavenProjectHelper projectHelper;
-	
-	/**
-	 * Project instance, needed for attaching the buildinfo file. Used to add new source directory to the build.
-	 */
-	@Parameter (defaultValue = "${project}", readonly = true, required = true)
-	private MavenProject       project;
 	
 	/** The base dir. */
 	@Parameter (defaultValue = "${basedir}", required = true, readonly = true)
@@ -69,6 +49,23 @@ public class MozkitoMetaMojo extends AbstractMojo {
 	 */
 	@Parameter (defaultValue = "${project.build.directory}", property = "outputDir", required = true, readonly = true)
 	private File               outputDirectory;
+	
+	/**
+	 * Project instance, needed for attaching the buildinfo file. Used to add new source directory to the build.
+	 */
+	@Parameter (defaultValue = "${project}", readonly = true, required = true)
+	private MavenProject       project;
+	
+	/**
+	 * Helper class to assist in attaching artifacts to the project instance. project-helper instance, used to make
+	 * addition of resources simpler.
+	 */
+	@Component
+	private MavenProjectHelper projectHelper;
+	
+	/** The project version. */
+	@Parameter (defaultValue = "${project.version}", required = true, readonly = true)
+	private String             projectVersion;
 	
 	/**
 	 * {@inheritDoc}
