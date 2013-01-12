@@ -50,7 +50,10 @@ import org.jdom2.output.XMLOutputter;
  * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
-@Mojo (name = "persistence", defaultPhase = LifecyclePhase.GENERATE_RESOURCES)
+@Mojo (name = "persistence",
+       requiresProject = true,
+       threadSafe = false,
+       defaultPhase = LifecyclePhase.GENERATE_RESOURCES)
 public class MozkitoPersistenceMojo extends AbstractMojo {
 	
 	/**
@@ -66,7 +69,7 @@ public class MozkitoPersistenceMojo extends AbstractMojo {
 	@Component
 	private MavenProjectHelper  projectHelper;
 	
-	/** The connection url. */
+	/** The connection URL used in the persistence.xml as default setting. */
 	@Parameter (required = true)
 	private String              connectionURL;
 	
@@ -83,7 +86,12 @@ public class MozkitoPersistenceMojo extends AbstractMojo {
 	@Parameter (required = true)
 	private List<String>        includes;
 	
-	/** The excludes. */
+	/**
+	 * The exclusion pattern. This should be something like:
+	 * <p>
+	 * **\/model\/*_.java
+	 * </p>
+	 */
 	@Parameter
 	private List<String>        excludes;
 	
@@ -97,9 +105,15 @@ public class MozkitoPersistenceMojo extends AbstractMojo {
 	@Parameter (defaultValue = "${project.build.directory}", property = "outputDir", required = true, readonly = true)
 	private File                outputDirectory;
 	
-	/** The OpenJPA options. */
+	/**
+	 * The OpenJPA options. Every key is prefixed with 'openjpa.' and then added as property to the persistence.xml
+	 * file. This is the place where you can add/overwrite things like 'RuntimeUnenhancedClasses -> unsupported'.
+	 */
 	@Parameter (required = true)
 	private Map<String, String> openJPAOptions;
+	
+	/** The Constant projectPreTag. */
+	private static final String projectPreTag = "mozkito-";
 	
 	/**
 	 * {@inheritDoc}
@@ -111,11 +125,19 @@ public class MozkitoPersistenceMojo extends AbstractMojo {
 		// PRECONDITIONS
 		
 		try {
+			final String moduleName = this.artifactId.replace(projectPreTag, "");
+			if (getLog().isInfoEnabled()) {
+				getLog().info("Gathering data to generate persistence.xml for module: " + moduleName);
+			}
 			
-			final String moduleName = this.artifactId.replace("mozkito-", "");
 			final InputStream stream = MozkitoPersistenceMojo.class.getResourceAsStream("/persistence-skeleton.xml");
 			InputStreamReader reader = null;
 			Document document = null;
+			
+			if (stream == null) {
+				throw new MojoExecutionException(
+				                                 "Cannot find persistence.xml skeleton file in the resources of this plugin.");
+			}
 			
 			try {
 				reader = new InputStreamReader(stream);
@@ -143,6 +165,10 @@ public class MozkitoPersistenceMojo extends AbstractMojo {
 			final Element unitElement = persistenceElement.getChild("persistence-unit",
 			                                                        persistenceElement.getNamespace());
 			
+			if (unitElement == null) {
+				throw new MojoExecutionException("[BUG] Invalid structure in skeleton file.");
+			}
+			
 			// set name of the persistence unit
 			unitElement.setAttribute("name", moduleName);
 			
@@ -151,7 +177,7 @@ public class MozkitoPersistenceMojo extends AbstractMojo {
 			final List<Dependency> dependencies = this.project.getDependencies();
 			final File parentBaseDir = this.project.getParent().getBasedir();
 			for (final Dependency dependency : dependencies) {
-				if (dependency.getArtifactId().startsWith("mozkito-")) {
+				if (dependency.getArtifactId().startsWith(projectPreTag)) {
 					final File moduleDir = new File(parentBaseDir, dependency.getArtifactId());
 					if (!moduleDir.exists()) {
 						throw new MojoExecutionException("Cannot build persistence.xml if not all modules are present.");
