@@ -23,6 +23,7 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.GraphBuilder;
 import org.mozkito.RepositoryToolchain;
+import org.mozkito.versions.exceptions.RepositoryOperationException;
 
 /**
  * The Class Main.
@@ -70,7 +71,8 @@ public class Main {
 				                                                                                      .getSimpleName());
 			}
 			
-			final Thread graphBuilderThread = new Thread(new GraphBuilder(repoToolChain.getRepository(),
+			final Thread graphBuilderThread = new Thread(new GraphBuilder(repoToolChain.getRepository()
+			                                                                           .getRevDependencyGraph(),
 			                                                              repoToolChain.getVersionArchive(),
 			                                                              repoToolChain.getPersistenceUtil()));
 			graphBuilderThread.setName(GraphBuilder.class.getSimpleName());
@@ -80,7 +82,7 @@ public class Main {
 			if (Logger.logInfo()) {
 				Logger.info("%s: All done. Cerio!", MODULE_NAME);
 			}
-		} catch (final Shutdown | InterruptedException | SettingsParseError e) {
+		} catch (final Shutdown | InterruptedException | SettingsParseError | RepositoryOperationException e) {
 			System.err.println(e.getMessage());
 			e.printStackTrace();
 		}

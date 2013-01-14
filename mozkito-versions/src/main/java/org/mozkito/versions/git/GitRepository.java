@@ -586,95 +586,95 @@ public class GitRepository extends DistributedCommandLineRepository {
 		
 		try {
 			try {
-				// if (this.revDepGraph == null) {
-				this.revDepGraph = new RevDependencyGraph();
-				
-				// use `git ls-remote .` to get all branches and their HEADs
-				final List<String> lsRemote = getLsRemote();
-				for (final String line : lsRemote) {
-					final String[] lineParts = line.split("\\s+");
-					final String clHash = lineParts[0];
-					String remoteName = lineParts[1];
-					if (Logger.logDebug()) {
-						Logger.debug("Found branch reference: " + remoteName);
-					}
-					if (remoteName.startsWith("refs/heads/")) {
-						remoteName = remoteName.substring(REFS_HEAD_LENGTH);
-						if ("master".equals(remoteName)) {
-							continue;
+				if (this.revDepGraph == null) {
+					this.revDepGraph = new RevDependencyGraph();
+					
+					// use `git ls-remote .` to get all branches and their HEADs
+					final List<String> lsRemote = getLsRemote();
+					for (final String line : lsRemote) {
+						final String[] lineParts = line.split("\\s+");
+						final String clHash = lineParts[0];
+						String remoteName = lineParts[1];
+						if (Logger.logDebug()) {
+							Logger.debug("Found branch reference: " + remoteName);
 						}
-					} else if (remoteName.startsWith("refs/remotes/")) {
-						remoteName = remoteName.substring(REFS_REMOTES_LENGTH);
-						if ("origin/HEAD".equals(remoteName)) {
-							continue;
-						}
-						if ("origin/master".equals(remoteName)) {
-							remoteName = Branch.MASTER_BRANCH_NAME;
-						}
-					} else if (remoteName.startsWith("refs/pull/")) {
-						remoteName = remoteName.substring(REFS_PULL_LENGTH);
-					} else if (remoteName.startsWith("refs/tags/")) {
-						remoteName = remoteName.substring(REFS_TAGS_LENGTH);
-						if (remoteName.endsWith("^{}")) {
-							remoteName = remoteName.replace("^{}", "");
-							if (!this.revDepGraph.addTag(remoteName, clHash)) {
-								final String hashForTag = this.revDepGraph.getHashForTag(remoteName);
-								if (hashForTag != null) {
-									this.revDepGraph.removeChangeSet(hashForTag);
+						if (remoteName.startsWith("refs/heads/")) {
+							remoteName = remoteName.substring(REFS_HEAD_LENGTH);
+							if ("master".equals(remoteName)) {
+								continue;
+							}
+						} else if (remoteName.startsWith("refs/remotes/")) {
+							remoteName = remoteName.substring(REFS_REMOTES_LENGTH);
+							if ("origin/HEAD".equals(remoteName)) {
+								continue;
+							}
+							if ("origin/master".equals(remoteName)) {
+								remoteName = Branch.MASTER_BRANCH_NAME;
+							}
+						} else if (remoteName.startsWith("refs/pull/")) {
+							remoteName = remoteName.substring(REFS_PULL_LENGTH);
+						} else if (remoteName.startsWith("refs/tags/")) {
+							remoteName = remoteName.substring(REFS_TAGS_LENGTH);
+							if (remoteName.endsWith("^{}")) {
+								remoteName = remoteName.replace("^{}", "");
+								if (!this.revDepGraph.addTag(remoteName, clHash)) {
+									final String hashForTag = this.revDepGraph.getHashForTag(remoteName);
+									if (hashForTag != null) {
+										this.revDepGraph.removeChangeSet(hashForTag);
+									}
+									this.revDepGraph.removeTag(remoteName);
+									this.revDepGraph.addTag(remoteName, clHash);
 								}
-								this.revDepGraph.removeTag(remoteName);
+							} else {
 								this.revDepGraph.addTag(remoteName, clHash);
 							}
+							continue;
 						} else {
-							this.revDepGraph.addTag(remoteName, clHash);
+							continue;
 						}
-						continue;
-					} else {
-						continue;
-					}
-					if (Logger.logDebug()) {
-						Logger.debug("Adding branch head for branch %s: %s.", remoteName, clHash);
-					}
-					this.revDepGraph.addBranch(remoteName, clHash);
-				}
-				
-				// use `git rev-list` to get revs and their children: <commit> <branch child> <children ...>
-				final List<String> revListParents = getRevListParents();
-				for (final String line : revListParents) {
-					final String[] lineParts = line.split("\\s+");
-					if (lineParts.length < 1) {
-						throw new UnrecoverableError(
-						                             "Cannot process rev-list --parents. Detected line with no entires.");
-					}
-					final String child = lineParts[0];
-					if (!this.revDepGraph.existsVertex(child)) {
-						if (this.revDepGraph.addChangeSet(child) != null) {
-							if (Logger.logError()) {
-								Logger.error("Could not add change set %s. This might lead to inconsistent data. Please check earlier warnings and errors.",
-								             child);
-							}
+						if (Logger.logDebug()) {
+							Logger.debug("Adding branch head for branch %s: %s.", remoteName, clHash);
 						}
+						this.revDepGraph.addBranch(remoteName, clHash);
 					}
 					
-					if (lineParts.length > 1) {
-						final String branchParent = lineParts[1];
-						if (!this.revDepGraph.addEdge(branchParent, child, EdgeType.BRANCH_EDGE)) {
-							if (Logger.logError()) {
-								Logger.error("Could not add edge between %s -> %s. This might lead to inconsistent data. Please check earlier warnings and errors.",
-								             branchParent, child);
+					// use `git rev-list` to get revs and their children: <commit> <branch child> <children ...>
+					final List<String> revListParents = getRevListParents();
+					for (final String line : revListParents) {
+						final String[] lineParts = line.split("\\s+");
+						if (lineParts.length < 1) {
+							throw new UnrecoverableError(
+							                             "Cannot process rev-list --parents. Detected line with no entires.");
+						}
+						final String child = lineParts[0];
+						if (!this.revDepGraph.existsVertex(child)) {
+							if (this.revDepGraph.addChangeSet(child) != null) {
+								if (Logger.logError()) {
+									Logger.error("Could not add change set %s. This might lead to inconsistent data. Please check earlier warnings and errors.",
+									             child);
+								}
 							}
 						}
-						for (int i = 2; i < lineParts.length; ++i) {
-							if (!this.revDepGraph.addEdge(lineParts[i], child, EdgeType.MERGE_EDGE)) {
+						
+						if (lineParts.length > 1) {
+							final String branchParent = lineParts[1];
+							if (!this.revDepGraph.addEdge(branchParent, child, EdgeType.BRANCH_EDGE)) {
 								if (Logger.logError()) {
 									Logger.error("Could not add edge between %s -> %s. This might lead to inconsistent data. Please check earlier warnings and errors.",
 									             branchParent, child);
 								}
 							}
+							for (int i = 2; i < lineParts.length; ++i) {
+								if (!this.revDepGraph.addEdge(lineParts[i], child, EdgeType.MERGE_EDGE)) {
+									if (Logger.logError()) {
+										Logger.error("Could not add edge between %s -> %s. This might lead to inconsistent data. Please check earlier warnings and errors.",
+										             branchParent, child);
+									}
+								}
+							}
 						}
 					}
 				}
-				// }
 				final Iterator<String> vIter = this.revDepGraph.getVertices().iterator();
 				final boolean hasVertices = vIter.hasNext();
 				return this.revDepGraph;

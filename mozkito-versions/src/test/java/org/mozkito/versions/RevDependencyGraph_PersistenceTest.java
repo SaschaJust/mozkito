@@ -76,7 +76,7 @@ public class RevDependencyGraph_PersistenceTest extends VersionsTest {
 		}
 		persistenceUtil.commitTransaction();
 		
-		final GraphBuilder graphBuilder = new GraphBuilder(repository, versionArchive, persistenceUtil);
+		final GraphBuilder graphBuilder = new GraphBuilder(revDepGraph, versionArchive, persistenceUtil);
 		graphBuilder.phaseOne();
 		graphBuilder.phaseTwo();
 		graphBuilder.phaseThree();
