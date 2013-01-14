@@ -86,7 +86,8 @@ public class VersionArchive implements Annotated {
 	private String                 mozkitoHash;
 	private String                 usedSettings;
 	private DateTime               miningDate;
-	private Map<String, Branch>    branches;           ;
+	private Map<String, Branch>    branches;
+	private String                 hostInfo;
 	
 	/**
 	 * Instantiates a new version archive.
@@ -193,6 +194,17 @@ public class VersionArchive implements Annotated {
 	@GeneratedValue (strategy = GenerationType.SEQUENCE)
 	public long getGeneratedId() {
 		return this.generatedId;
+	}
+	
+	/**
+	 * Gets the host info.
+	 * 
+	 * @return the host info
+	 */
+	@Basic
+	@Lob
+	public String getHostInfo() {
+		return this.hostInfo;
 	}
 	
 	/**
@@ -331,6 +343,16 @@ public class VersionArchive implements Annotated {
 	 */
 	public void setGeneratedId(final long generatedId) {
 		this.generatedId = generatedId;
+	}
+	
+	/**
+	 * Sets the host info.
+	 * 
+	 * @param hostInfo
+	 *            the new host info
+	 */
+	public void setHostInfo(final String hostInfo) {
+		this.hostInfo = hostInfo;
 	}
 	
 	/**

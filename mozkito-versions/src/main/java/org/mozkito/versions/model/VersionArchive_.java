@@ -37,4 +37,7 @@ public class VersionArchive_ {
 	
 	/** The used settings. */
 	public static volatile SingularAttribute<VersionArchive, String>       usedSettings;
+	
+	/** The host info. */
+	public static volatile SingularAttribute<VersionArchive, String>       hostInfo;
 }

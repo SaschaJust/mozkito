@@ -15,7 +15,7 @@
  */
 package org.mozkito;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Set;
 
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
@@ -179,22 +179,22 @@ public class GraphBuilder implements Runnable {
 			Logger.info("Phase II: Persisting branch transaction relationships ...");
 		}
 		
-		final List<Branch> branches = this.persistenceUtil.load(this.persistenceUtil.createCriteria(Branch.class));
+		final Collection<Branch> branches = this.versionArchive.getBranches().values();
 		
 		if (branches.isEmpty()) {
-			throw new UnrecoverableError("Could not load any transactions from DB. This is a fatal error!");
+			throw new UnrecoverableError("VersionArchive does not contain any Branch. This is a fatal error!");
 		}
 		
-		for (final Branch rCSBranch : branches) {
+		for (final Branch branch : branches) {
 			if (Logger.logDebug()) {
-				Logger.debug("Handling branch " + rCSBranch.getName() + " with headId=" + rCSBranch.getHead().getId());
+				Logger.debug("Handling branch " + branch.getName() + " with headId=" + branch.getHead().getId());
 			}
 			long index = 0l;
 			this.persistenceUtil.beginTransaction();
-			for (final String changeSetId : this.revDepGraph.getBranchTransactions(rCSBranch.getName())) {
+			for (final String changeSetId : this.revDepGraph.getBranchTransactions(branch.getName())) {
 				final ChangeSet changeSet = this.persistenceUtil.loadById(changeSetId, ChangeSet.class);
-				if (!changeSet.addBranch(rCSBranch, index)) {
-					throw new UnrecoverableError("Could not add branch index " + rCSBranch.getName()
+				if (!changeSet.addBranch(branch, index)) {
+					throw new UnrecoverableError("Could not add branch index " + branch.getName()
 					        + " to transaction: " + changeSet.getId() + ". It appreas to be set before. Fatal error.");
 				}
 				--index;

@@ -176,9 +176,9 @@ public class RepositoryToolchain extends Chain<Settings> {
 			this.versionArchive = new VersionArchive(this.repository.getRevDependencyGraph());
 			
 			this.versionArchive.setMiningDate(new DateTime());
-			this.versionArchive.setMozkitoHash(metadata.getProperty("hash"));
+			this.versionArchive.setMozkitoHash(metadata.getProperty("head"));
 			this.versionArchive.setMozkitoVersion(metadata.getProperty("version"));
-			this.versionArchive.setUsedSettings(getSettings().getRoot().getHelpString());
+			this.versionArchive.setUsedSettings(getSettings().toString());
 			
 			this.persistenceUtil.beginTransaction();
 			this.persistenceUtil.save(this.versionArchive);
@@ -192,6 +192,9 @@ public class RepositoryToolchain extends Chain<Settings> {
 			} else {
 				new RepositoryVoidSink(this.threadPool.getThreadGroup(), getSettings());
 			}
+			this.persistenceUtil.beginTransaction();
+			this.persistenceUtil.saveOrUpdate(this.versionArchive);
+			this.persistenceUtil.commitTransaction();
 		} catch (final RepositoryOperationException e) {
 			throw new UnrecoverableError(e);
 		}
