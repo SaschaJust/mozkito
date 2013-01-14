@@ -18,17 +18,16 @@ import static org.junit.Assert.assertFalse;
 import java.util.List;
 
 import org.junit.Test;
-
 import org.mozkito.persistence.model.Person;
 import org.mozkito.persistence.model.PersonContainer;
 import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
 
 /**
- * The Class OpenJPA_Persistence_MozkitoTest.
+ * The Class Person_PersistenceTest.
  */
 @DatabaseSettings (unit = "persistence")
-public class OpenJPA_Persistence_MozkitoTest extends DatabaseTest {
+public class Person_PersistenceTest extends DatabaseTest {
 	
 	/**
 	 * Test person.

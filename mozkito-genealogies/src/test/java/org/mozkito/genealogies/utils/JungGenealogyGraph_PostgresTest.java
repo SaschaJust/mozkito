@@ -34,7 +34,7 @@ import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
 
 /**
- * The Class JungGenealogyGraph_MozkitoTest.
+ * The Class JungGenealogyGraph_PostgresTest.
  */
 @DatabaseSettings (unit = "codeanalysis",
                    database = "moskito_genealogies_test_environment",
@@ -44,7 +44,7 @@ import org.mozkito.testing.annotation.DatabaseSettings;
                    username = "miner",
                    type = DatabaseType.POSTGRESQL,
                    remote = true)
-public class JungGenealogyGraph_MozkitoTest extends DatabaseTest {
+public class JungGenealogyGraph_PostgresTest extends DatabaseTest {
 	
 	/**
 	 * Test core layer.

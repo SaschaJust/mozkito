@@ -37,7 +37,7 @@ import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
 
 /**
- * The Class JavaChangeOperationProcessQueue_MozkitoTest.
+ * The Class JavaChangeOperationProcessQueue_PersistenceTest.
  */
 @DatabaseSettings (unit = "codeanalysis",
                    database = "moskito_genealogies_test_environment",
@@ -47,7 +47,7 @@ import org.mozkito.testing.annotation.DatabaseSettings;
                    username = "miner",
                    type = DatabaseType.POSTGRESQL,
                    remote = true)
-public class JavaChangeOperationProcessQueue_MozkitoTest extends DatabaseTest {
+public class JavaChangeOperationProcessQueue_PostgresTest extends DatabaseTest {
 	
 	static {
 		KanuniAgent.initialize();

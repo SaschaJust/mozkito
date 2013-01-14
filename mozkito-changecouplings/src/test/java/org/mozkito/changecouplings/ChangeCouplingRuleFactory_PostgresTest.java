@@ -64,7 +64,7 @@ public class ChangeCouplingRuleFactory_PostgresTest extends DatabaseTest {
 	 * Instantiates a new iGNOR e_ ownher o_ change coupling rule factory_ mozkito test.
 	 */
 	@Before
-	public void setupIGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest() {
+	public void setupIGNORE_OWNHERO_ChangeCouplingRuleFactory_PostgresTest() {
 		try {
 			
 			ChangeCouplingRuleFactory_PostgresTest.persistenceUtil = getPersistenceUtil();

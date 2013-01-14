@@ -33,10 +33,10 @@ import org.mozkito.versions.model.Revision;
 import org.mozkito.versions.model.VersionArchive;
 
 /**
- * The Class OpenJPA_PPA_MozkitoTest.
+ * The Class OpenJPA_PPA_PersistenceTest.
  */
 @DatabaseSettings (unit = "codeanalysis")
-public class OpenJPA_PPA_MozkitoTest extends DatabaseTest {
+public class PPA_PersistenceTest extends DatabaseTest {
 	
 	/**
 	 * Test.

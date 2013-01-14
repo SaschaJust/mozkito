@@ -29,7 +29,7 @@ import org.mozkito.testing.annotation.DatabaseSettings;
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 @DatabaseSettings (unit = "issues")
-public class OpenJPA_MozkitoTest extends DatabaseTest {
+public class OrphanPersonTest extends DatabaseTest {
 	
 	/**
 	 * Test orphan person.
