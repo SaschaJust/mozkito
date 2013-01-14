@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -648,10 +647,9 @@ public class GitRepository extends DistributedCommandLineRepository {
 						}
 						final String child = lineParts[0];
 						if (!this.revDepGraph.existsVertex(child)) {
-							if (this.revDepGraph.addChangeSet(child) != null) {
-								if (Logger.logError()) {
-									Logger.error("Could not add change set %s. This might lead to inconsistent data. Please check earlier warnings and errors.",
-									             child);
+							if (!this.revDepGraph.addChangeSet(child)) {
+								if (Logger.logDebug()) {
+									Logger.error("Could not add change set %s.", child);
 								}
 							}
 						}
@@ -675,8 +673,6 @@ public class GitRepository extends DistributedCommandLineRepository {
 						}
 					}
 				}
-				final Iterator<String> vIter = this.revDepGraph.getVertices().iterator();
-				final boolean hasVertices = vIter.hasNext();
 				return this.revDepGraph;
 			} catch (final IOException e) {
 				throw new RepositoryOperationException(e);

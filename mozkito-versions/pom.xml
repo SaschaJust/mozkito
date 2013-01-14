@@ -37,15 +37,55 @@
 			<version>4.11</version>
 		</dependency>
 		<dependency>
-   			<groupId>com.thinkaurelius.titan</groupId>
-   			<artifactId>titan</artifactId>
-   			<version>0.2.0</version>
-		</dependency>
-		<dependency>
-  			<groupId>com.tinkerpop.gremlin</groupId>
-  			<artifactId>gremlin-java</artifactId>
-  			<version>2.2.0</version>
-		</dependency>
+			<groupId>net.sf.jung</groupId>
+				<artifactId>jung-graph-impl</artifactId>
+				<version>2.0.1</version>
+			</dependency>
+			<dependency>
+				<groupId>net.sf.jung</groupId>
+				<artifactId>jung-algorithms</artifactId>
+				<version>2.0.1</version>
+			</dependency>
+			<dependency>
+				<groupId>net.sf.jung</groupId>
+				<artifactId>jung-io</artifactId>
+				<version>2.0.1</version>
+			</dependency>
+			<dependency>
+				<groupId>net.sf.jung</groupId>
+				<artifactId>jung-visualization</artifactId>
+				<version>2.0.1</version>
+			</dependency>
+			<dependency>
+				<groupId>net.sf.jung</groupId>
+				<artifactId>jung-samples</artifactId>
+				<version>2.0.1</version>
+			</dependency>
+			<dependency>
+				<groupId>net.sf.jung</groupId>
+				<artifactId>jung-jai</artifactId>
+				<version>2.0.1</version>
+			</dependency>
+			<dependency>
+				<groupId>net.sf.jung</groupId>
+				<artifactId>jung-jai-samples</artifactId>
+				<version>2.0.1</version>
+			</dependency>
+			<dependency>
+				<groupId>net.sf.jung</groupId>
+				<artifactId>jung-3d</artifactId>
+				<version>2.0.1</version>
+			</dependency>
+			<dependency>
+				<groupId>net.sf.jung</groupId>
+				<artifactId>jung-3d-demos</artifactId>
+				<version>2.0.1</version>
+			</dependency>
+			<dependency>
+				<groupId>net.sf.jung</groupId>
+				<artifactId>jung-api</artifactId>
+				<version>2.0.1</version>
+			</dependency>
 	</dependencies>
 	<build>
 		<resources>

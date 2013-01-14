@@ -32,8 +32,6 @@ import org.mozkito.testing.annotation.RepositorySettings;
 import org.mozkito.versions.RevDependencyGraph.EdgeType;
 import org.mozkito.versions.exceptions.RepositoryOperationException;
 
-import com.tinkerpop.blueprints.Vertex;
-
 /**
  * The Class RevDependencyGraphTest.
  */
@@ -162,7 +160,6 @@ public class RevDependencyGraphTest extends VersionsTest {
 		assertTrue(iterator.hasNext());
 		assertEquals("34195982cb52661e5498ff880dd7b5b5b3230790", iterator.next());
 		assertFalse(iterator.hasNext());
-		revGraph.close();
 	}
 	
 	// /**
@@ -277,7 +274,6 @@ public class RevDependencyGraphTest extends VersionsTest {
 		assertTrue(iterator.hasNext());
 		assertEquals("d522956171853fc2d7ca106d9c8d2b93e82df9d3", iterator.next());
 		assertFalse(iterator.hasNext());
-		revGraph.close();
 	}
 	
 	/**
@@ -298,7 +294,7 @@ public class RevDependencyGraphTest extends VersionsTest {
 	 */
 	@After
 	public void tearDown() {
-		this.graph.close();
+		// ignore
 	}
 	
 	/**
@@ -482,10 +478,8 @@ public class RevDependencyGraphTest extends VersionsTest {
 	@Test
 	public void testAddBranchTwice() throws IOException {
 		final RevDependencyGraph graph = new RevDependencyGraph();
-		graph.addChangeSet("changeSet");
-		final Vertex branchV = graph.addBranch("hubba", "changeSet");
-		assertEquals(branchV, graph.addBranch("hubba", "changeSet"));
-		
+		assertTrue(graph.addBranch("hubba", "changeSet"));
+		assertFalse(graph.addBranch("hubba", "changeSet2"));
 	}
 	
 	/**
@@ -497,8 +491,8 @@ public class RevDependencyGraphTest extends VersionsTest {
 	@Test
 	public void testAddChangeSetTwice() throws IOException {
 		final RevDependencyGraph graph = new RevDependencyGraph();
-		final Vertex vertex = graph.addChangeSet("hubba");
-		assertEquals(vertex, graph.addChangeSet("hubba"));
+		assertTrue(graph.addChangeSet("hubba"));
+		assertFalse(graph.addChangeSet("hubba"));
 	}
 	
 	/**
@@ -551,11 +545,13 @@ public class RevDependencyGraphTest extends VersionsTest {
 	
 	/**
 	 * Test get vertices.
+	 * 
+	 * @throws RepositoryOperationException
 	 */
 	@Test
-	public void testGetVertices() {
+	public void testGetVertices() throws RepositoryOperationException {
 		final Set<String> chnageSetIds = new HashSet<>();
-		for (final String v : this.graph.getVertices()) {
+		for (final String v : this.repo.getRevDependencyGraph().getVertices()) {
 			chnageSetIds.add(v);
 		}
 		assertEquals(20, chnageSetIds.size());

@@ -66,7 +66,7 @@ public class HandleTest {
 	 */
 	@After
 	public void after() {
-		this.revDepGraph.close();
+		// ignore
 	}
 	
 	/**
