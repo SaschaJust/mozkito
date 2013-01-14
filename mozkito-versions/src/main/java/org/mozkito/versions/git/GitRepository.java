@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -672,6 +673,14 @@ public class GitRepository extends DistributedCommandLineRepository {
 								}
 							}
 						}
+					}
+				}
+				if (Logger.logDebug()) {
+					final Iterator<String> vIter = this.revDepGraph.getVertices().iterator();
+					if (vIter.hasNext()) {
+						Logger.debug("RevDepGraph contains vertices");
+					} else {
+						Logger.debug("RevDepGraph contains no vertices");
 					}
 				}
 				return this.revDepGraph;
