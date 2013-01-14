@@ -245,7 +245,7 @@ public class PPAUtils {
 		
 		// should be in same method
 		// get the javaelement location of surrounding method definition
-		final String defIdQueryStr = "select * from javaelementlocation WHERE id = (select max(l.id) from javaelementlocation l, javaelement e, javachangeoperation o, rcsrevision r where filepath = '"
+		final String defIdQueryStr = "select * from javaelementlocation WHERE id = (select max(l.id) from javaelementlocation l, javaelement e, javachangeoperation o, revision r where filepath = '"
 		        + location.getFilePath()
 		        + "' AND startline <= "
 		        + location.getStartLine()
@@ -1608,7 +1608,7 @@ public class PPAUtils {
 		// get the highest location id within the same transaction
 		
 		@SuppressWarnings ("unchecked")
-		final List<Long> maxIdResultList = persistenceUtil.executeNativeSelectQuery("select max(l.id) from javaelementlocation l, javachangeoperation o WHERE l.id = o.changedelementlocation_id and o.revision_revisionid IN (select revisionid from rcsrevision where transaction_id = '"
+		final List<Long> maxIdResultList = persistenceUtil.executeNativeSelectQuery("select max(l.id) from javaelementlocation l, javachangeoperation o WHERE l.id = o.changedelementlocation_id and o.revision_revisionid IN (select revisionid from revision where transaction_id = '"
 		        + opTransaction.getId() + "')");
 		
 		final Long maxId = maxIdResultList.get(0);

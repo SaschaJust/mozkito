@@ -34,22 +34,23 @@ import org.mozkito.versions.atomic.AtomicTransactionImporter;
 
 /**
  * The Class Main.
- *
+ * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
 public class Main {
 	
 	/**
 	 * The main method.
-	 *
-	 * @param args the arguments
+	 * 
+	 * @param args
+	 *            the arguments
 	 */
 	public static void main(final String[] args) {
 		// PRECONDITIONS
 		
 		try {
 			final Settings settings = new Settings();
-			final DatabaseOptions dbOptions = new DatabaseOptions(settings.getRoot(), Requirement.required, "rcs");
+			final DatabaseOptions dbOptions = new DatabaseOptions(settings.getRoot(), Requirement.required, "versions");
 			final PersistenceUtil persistenceUtil = ArgumentSetFactory.create(dbOptions).getValue();
 			
 			final InputFileArgument.Options importFileOptions = new InputFileArgument.Options(

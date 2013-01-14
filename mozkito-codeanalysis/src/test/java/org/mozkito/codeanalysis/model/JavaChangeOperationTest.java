@@ -44,7 +44,7 @@ public class JavaChangeOperationTest {
 	/** The set. */
 	private JavaElementLocationSet set;
 	
-	/** The rcs file. */
+	/** The handle. */
 	private Handle                 handle;
 	
 	/** The op. */

@@ -50,11 +50,11 @@ public class MercurialLogParserTest {
 	 */
 	@Test
 	public void testFormerPathRegex() {
-		final String line = "reposuite-rcs/src/main/java/net.ownhero.dev.ioda/CommandExecutor.java (reposuite-rcs/src/main/java/net.ownhero.dev.ioda/CMDExecutor.java)";
+		final String line = "reposuite-versions/src/main/java/net.ownhero.dev.ioda/CommandExecutor.java (reposuite-versions/src/main/java/net.ownhero.dev.ioda/CMDExecutor.java)";
 		final Match found = MercurialRepository.FORMER_PATH_REGEX.find(line);
 		assertTrue(MercurialRepository.FORMER_PATH_REGEX.matches(line));
 		assertEquals(1, found.getGroupCount());
-		assertEquals("reposuite-rcs/src/main/java/net.ownhero.dev.ioda/CMDExecutor.java",
+		assertEquals("reposuite-versions/src/main/java/net.ownhero.dev.ioda/CMDExecutor.java",
 		             MercurialRepository.FORMER_PATH_REGEX.getGroup("result"));
 	}
 	
