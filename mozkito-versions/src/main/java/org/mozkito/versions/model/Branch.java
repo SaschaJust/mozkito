@@ -34,7 +34,6 @@ import javax.persistence.Transient;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 
-import org.apache.openjpa.persistence.jdbc.Index;
 import org.mozkito.persistence.Annotated;
 
 /**
@@ -208,7 +207,6 @@ public class Branch implements Annotated {
 	 */
 	@Id
 	@Basic
-	@Index (name = "idx_name")
 	public String getName() {
 		return this.name;
 	}
