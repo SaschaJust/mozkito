@@ -165,14 +165,42 @@
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
+			<id>own-hero.net-external</id>
+			<name>own-hero</name>
+			<url>https://nexus.own-hero.net/content/repositories/external/</url>
+		</pluginRepository>
+		<pluginRepository>
 			<id>codehaus-m2-repository</id>
 			<name>Codehaus Maven 2.x Repository</name>
 			<url>http://repository.codehaus.org</url>
 		</pluginRepository>
 		<pluginRepository>
-			<id>own-hero.net-external</id>
-			<name>own-hero</name>
-			<url>https://nexus.own-hero.net/content/repositories/external/</url>
+			<releases>
+				<enabled>false</enabled>
+				<checksumPolicy>warn</checksumPolicy>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+				<checksumPolicy>fail</checksumPolicy>
+			</snapshots>
+			<id>own-hero.net-snapshots</id>
+			<name>own-hero.net snapshots</name>
+			<url>https://nexus.own-hero.net/content/groups/snapshots</url>
+			<layout>default</layout>
+		</pluginRepository>
+		<pluginRepository>
+			<releases>
+				<enabled>true</enabled>
+				<checksumPolicy>warn</checksumPolicy>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+				<checksumPolicy>fail</checksumPolicy>
+			</snapshots>
+			<id>own-hero.net-releases</id>
+			<name>own-hero.net releases</name>
+			<url>https://nexus.own-hero.net/content/groups/releases</url>
+			<layout>default</layout>
 		</pluginRepository>
 	</pluginRepositories>
 	<distributionManagement>
