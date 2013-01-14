@@ -78,7 +78,8 @@ public class RepositoryToolchain extends Chain<Settings> {
 		try {
 			
 			this.threadPool = new Pool(RepositoryToolchain.class.getSimpleName(), this);
-			final DatabaseOptions databaseOptions = new DatabaseOptions(settings.getRoot(), Requirement.required, "rcs");
+			final DatabaseOptions databaseOptions = new DatabaseOptions(settings.getRoot(), Requirement.required,
+			                                                            "versions");
 			this.databaseArguments = ArgumentSetFactory.create(databaseOptions);
 			final RepositoryOptions repositoryOptions = new RepositoryOptions(settings.getRoot(), Requirement.required,
 			                                                                  databaseOptions);
