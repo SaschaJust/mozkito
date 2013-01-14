@@ -124,6 +124,7 @@ public class GraphBuilder implements Runnable {
 				this.persistenceUtil.beginTransaction();
 			}
 		}
+		this.persistenceUtil.saveOrUpdate(this.versionArchive);
 		this.persistenceUtil.commitTransaction();
 		if (Logger.logInfo()) {
 			Logger.info("done");
@@ -163,6 +164,7 @@ public class GraphBuilder implements Runnable {
 				}
 			}
 		}
+		this.persistenceUtil.saveOrUpdate(this.versionArchive);
 		this.persistenceUtil.commitTransaction();
 		
 		if (Logger.logInfo()) {
@@ -194,8 +196,8 @@ public class GraphBuilder implements Runnable {
 			for (final String changeSetId : this.revDepGraph.getBranchTransactions(branch.getName())) {
 				final ChangeSet changeSet = this.persistenceUtil.loadById(changeSetId, ChangeSet.class);
 				if (!changeSet.addBranch(branch, index)) {
-					throw new UnrecoverableError("Could not add branch index " + branch.getName()
-					        + " to transaction: " + changeSet.getId() + ". It appreas to be set before. Fatal error.");
+					throw new UnrecoverableError("Could not add branch index " + branch.getName() + " to transaction: "
+					        + changeSet.getId() + ". It appreas to be set before. Fatal error.");
 				}
 				--index;
 				if ((index % GraphBuilder.COMMIT_LIMIT) == 0) {
@@ -203,6 +205,7 @@ public class GraphBuilder implements Runnable {
 					this.persistenceUtil.beginTransaction();
 				}
 			}
+			this.persistenceUtil.saveOrUpdate(this.versionArchive);
 			this.persistenceUtil.commitTransaction();
 		}
 		
