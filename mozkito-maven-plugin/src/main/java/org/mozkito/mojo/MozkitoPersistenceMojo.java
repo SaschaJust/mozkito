@@ -125,6 +125,14 @@ public class MozkitoPersistenceMojo extends AbstractMojo {
 		// PRECONDITIONS
 		
 		try {
+			if (this.project.getParent() == null) {
+				if (getLog().isInfoEnabled()) {
+					getLog().info("Omitting generation of persistence.xml for master module: "
+					                      + this.project.getArtifactId());
+				}
+				return;
+			}
+			
 			final String moduleName = this.artifactId.replace(projectPreTag, "");
 			if (getLog().isInfoEnabled()) {
 				getLog().info("Gathering data to generate persistence.xml for module: " + moduleName);
