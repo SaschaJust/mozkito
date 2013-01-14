@@ -647,10 +647,9 @@ public class GitRepository extends DistributedCommandLineRepository {
 						}
 						final String child = lineParts[0];
 						if (!this.revDepGraph.existsVertex(child)) {
-							if (this.revDepGraph.addChangeSet(child) != null) {
-								if (Logger.logError()) {
-									Logger.error("Could not add change set %s. This might lead to inconsistent data. Please check earlier warnings and errors.",
-									             child);
+							if (!this.revDepGraph.addChangeSet(child)) {
+								if (Logger.logDebug()) {
+									Logger.error("Could not add change set %s.", child);
 								}
 							}
 						}

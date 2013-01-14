@@ -49,7 +49,7 @@ public class PPATransformerVisitor implements ChangeOperationVisitor {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.ppa.internal.visitors.ChangeOperationVisitor #visit(org.mozkito.rcs.model.ChangeSet)
+	 * @see org.mozkito.ppa.internal.visitors.ChangeOperationVisitor #visit(org.mozkito.versions.model.ChangeSet)
 	 */
 	@Override
 	public void visit(final ChangeSet changeSet) {

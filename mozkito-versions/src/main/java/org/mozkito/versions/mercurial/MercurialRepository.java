@@ -724,10 +724,7 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 						tagNames = lineParts[2].split(" ");
 					}
 					
-					if (this.revDepGraph.addChangeSet(node) == null) {
-						throw new RepositoryOperationException(
-						                                       "An error occured while adding a node to the graph DB. Please see earlier warning and error messages.");
-					}
+					this.revDepGraph.addChangeSet(node);
 					
 					for (final String tagName : tagNames) {
 						this.revDepGraph.addTag(tagName, node);

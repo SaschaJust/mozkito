@@ -12,36 +12,30 @@
  **********************************************************************************************************************/
 package org.mozkito.versions;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
-import com.thinkaurelius.titan.core.TitanFactory;
-import com.thinkaurelius.titan.core.TitanGraph;
-import com.thinkaurelius.titan.core.TitanTransaction;
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.blueprints.Edge;
-import com.tinkerpop.blueprints.TransactionalGraph.Conclusion;
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
-import com.tinkerpop.pipes.PipeFunction;
-import com.tinkerpop.pipes.branch.LoopPipe.LoopBundle;
-
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
-import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.string.NotEmptyString;
-import net.ownhero.dev.kanuni.conditions.StringCondition;
+import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.collections.CollectionUtils;
-
 import org.mozkito.datastructures.BidirectionalMultiMap;
+
+import edu.uci.ics.jung.algorithms.shortestpath.UnweightedShortestPath;
+import edu.uci.ics.jung.graph.AbstractTypedGraph;
+import edu.uci.ics.jung.graph.DirectedSparseGraph;
+import edu.uci.ics.jung.graph.util.Pair;
 
 /**
  * The Interface IRevDependencyGraph.
@@ -64,99 +58,146 @@ public class RevDependencyGraph {
 		BRANCH_HEAD;
 	}
 	
-	/**
-	 * Possible vertex types.
-	 */
-	private enum NodeType {
+	class RevDepEdge {
 		
-		/** The change set. */
-		CHANGE_SET,
-		/** The branch. */
-		BRANCH;
+		private final String   source;
+		
+		private final String   target;
+		
+		private final EdgeType type;
+		
+		public RevDepEdge(final String source, final String target, final EdgeType type) {
+			Condition.check(!source.equals(target), "Edges must not point from a vertex to the vertex itself.");
+			this.source = source;
+			this.target = target;
+			this.type = type;
+		}
+		
+		@Override
+		public boolean equals(final Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
+				return false;
+			}
+			final RevDepEdge other = (RevDepEdge) obj;
+			if (!getOuterType().equals(other.getOuterType())) {
+				return false;
+			}
+			if (this.source == null) {
+				if (other.source != null) {
+					return false;
+				}
+			} else if (!this.source.equals(other.source)) {
+				return false;
+			}
+			if (this.target == null) {
+				if (other.target != null) {
+					return false;
+				}
+			} else if (!this.target.equals(other.target)) {
+				return false;
+			}
+			if (this.type != other.type) {
+				return false;
+			}
+			return true;
+		}
+		
+		public EdgeType getEdgeType() {
+			return this.type;
+		}
+		
+		private RevDependencyGraph getOuterType() {
+			return RevDependencyGraph.this;
+		}
+		
+		public String getSource() {
+			return this.source;
+		}
+		
+		public String getTarget() {
+			return this.target;
+		}
+		
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = (prime * result) + getOuterType().hashCode();
+			result = (prime * result) + ((this.source == null)
+			                                                  ? 0
+			                                                  : this.source.hashCode());
+			result = (prime * result) + ((this.target == null)
+			                                                  ? 0
+			                                                  : this.target.hashCode());
+			result = (prime * result) + ((this.type == null)
+			                                                ? 0
+			                                                : this.type.hashCode());
+			return result;
+		}
+		
 	}
 	
-	/** The Constant NODE_ID. */
-	private static final String                         NODE_ID   = "revhash";                                  //$NON-NLS-1$
-	                                                                                                             
-	/** The Constant BRANCH. */
-	private static final String                         BRANCH_ID = "branch_name";                              //$NON-NLS-1$
-	                                                                                                             
-	/** The tags. */
-	private final BidirectionalMultiMap<String, String> tags      = new BidirectionalMultiMap<String, String>();
+	private final AbstractTypedGraph<String, RevDepEdge> graph;
 	
-	/** The Constant NODE_TYPE. */
-	private static final String                         NODE_TYPE = "type";                                     //$NON-NLS-1$
-	                                                                                                             
-	/** The graph. */
-	private final TitanGraph                            graph;
+	private final Map<String, String>                    branchHeads = new HashMap<>();
 	
-	/** The db file. */
-	private final File                                  dbFile;
+	private final BidirectionalMultiMap<String, String>  tags        = new BidirectionalMultiMap<String, String>();
 	
 	/**
 	 * Create a new RevDependencyGraph based on an underlying GraphDB.
-	 *
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@NoneNull
 	public RevDependencyGraph() throws IOException {
-		this.dbFile = FileUtils.createRandomDir("mozkito_", "rev_dep_graph_db", FileShutdownAction.DELETE); //$NON-NLS-1$ //$NON-NLS-2$
-		this.graph = TitanFactory.open(this.dbFile.getAbsolutePath());
-		this.graph.createKeyIndex(NODE_ID, Vertex.class);
-		this.graph.createKeyIndex(BRANCH_ID, Vertex.class);
+		this.graph = new DirectedSparseGraph<>();
 	}
 	
 	/**
-	 * Adds the branch with the specified change set as branch head.
+	 * Adds the branch with the specified change set as branch head. Returns true if the branch was successfully added
+	 * and did not exist before. Returns false otherwise and leaves the datastructure unchanged.
 	 * 
 	 * @param branchName
 	 *            the branch name
 	 * @param branchHead
 	 *            the branch head
-	 * @return the vertex
+	 * @return true, if successful
 	 */
 	@NoneNull
-	public Vertex addBranch(@NotEmptyString final String branchName,
-	                        final String branchHead) {
+	public boolean addBranch(@NotEmptyString final String branchName,
+	                         final String branchHead) {
 		// PRECONDITIONS
 		
 		try {
 			if (Logger.logDebug()) {
 				Logger.debug("Adding branch with name %s and branch head %s.", branchName, branchHead);
 			}
-			final Vertex branchHeadVertex = addChangeSet(branchHead);
-			
-			if (branchHeadVertex == null) {
-				throw UnrecoverableError.format("Trying to add %s as branch head but no vertex with this ID exists.",
-				                                branchHead);
+			if (this.branchHeads.containsKey(branchName)) {
+				return false;
 			}
-			
-			final Vertex branchVertex = getBranch(branchName);
-			if (branchVertex != null) {
-				return branchVertex;
-			}
-			final TitanTransaction titanTransaction = this.graph.startTransaction();
-			final Vertex vertex = this.graph.addVertex(null);
-			vertex.setProperty(BRANCH_ID, branchName);
-			vertex.setProperty(NODE_TYPE, NodeType.BRANCH);
-			this.graph.addEdge(null, vertex, branchHeadVertex, EdgeType.BRANCH_HEAD.toString());
-			titanTransaction.stopTransaction(Conclusion.SUCCESS);
-			return vertex;
+			this.branchHeads.put(branchName, branchHead);
+			return true;
 		} finally {
 			// POSTCONDITIONS
 		}
 	}
 	
 	/**
-	 * Adding a change set. Returns the vertex that was newly added or an existing vertex if the change set was added
-	 * before. Return null if the vertex could not be added.
+	 * Adding a change set. Returns true if the underlying data structure was changed. False otherwise.
 	 * 
 	 * @param v
 	 *            the v
 	 * @return the vertex
 	 */
 	@NoneNull
-	public Vertex addChangeSet(@NotEmptyString final String v) {
+	public boolean addChangeSet(@NotEmptyString final String v) {
 		// PRECONDITIONS
 		
 		try {
@@ -167,14 +208,9 @@ public class RevDependencyGraph {
 				if (Logger.logDebug()) {
 					Logger.debug("Change set node with id `" + v + "` already exists");
 				}
-				return getChangeSet(v);
+				return false;
 			}
-			final TitanTransaction titanTransaction = this.graph.startTransaction();
-			final Vertex vertex = this.graph.addVertex(null);
-			vertex.setProperty(NODE_ID, v);
-			vertex.setProperty(NODE_TYPE, NodeType.CHANGE_SET);
-			titanTransaction.stopTransaction(Conclusion.SUCCESS);
-			return vertex;
+			return this.graph.addVertex(v);
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -212,15 +248,15 @@ public class RevDependencyGraph {
 				return false;
 			}
 			
-			final Vertex parentNode = getChangeSet(parent);
-			final Vertex childNode = getChangeSet(child);
-			final TitanTransaction titanTransaction = this.graph.startTransaction();
-			final Edge newEdge = this.graph.addEdge(null, parentNode, childNode, edgeType.toString());
-			if (newEdge == null) {
-				this.graph.stopTransaction(Conclusion.FAILURE);
+			final RevDepEdge edge = new RevDepEdge(parent, child, edgeType);
+			if (!this.graph.addEdge(edge, new Pair<String>(parent, child),
+			                        edu.uci.ics.jung.graph.util.EdgeType.DIRECTED)) {
+				if (Logger.logError()) {
+					Logger.error("An edge between " + child + " <-- " + parent + " could not be added.");
+				}
 				return false;
 			}
-			titanTransaction.stopTransaction(Conclusion.SUCCESS);
+			
 			return true;
 		} finally {
 			// POSTCONDITIONS
@@ -246,30 +282,11 @@ public class RevDependencyGraph {
 			if (Logger.logDebug()) {
 				Logger.debug("Adding tag with name %s for change set %s.", tagName, changeSet);
 			}
-			final Vertex changeSetVertex = addChangeSet(changeSet);
-			if (changeSetVertex == null) {
-				if (Logger.logError()) {
-					Logger.error("Trying to add tag %s for not existing change set %s.", tagName, changeSet);
-				}
-				return false;
-			}
-			
 			if (this.tags.containsTo(tagName)) {
 				return false;
 			}
 			this.tags.put(changeSet, tagName);
 			return true;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/**
-	 * Closes the underlying graph DB layer.
-	 */
-	public void close() {
-		try {
-			this.graph.shutdown();
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -300,14 +317,16 @@ public class RevDependencyGraph {
 	 */
 	@NoneNull
 	public boolean existsBranch(@NotEmptyString final String branchName) {
-		return getBranch(branchName) != null;
+		return this.branchHeads.containsKey(branchName);
 	}
 	
 	/**
 	 * Return true if there exists a path from fromHash to toHash.
-	 *
-	 * @param fromHash the from hash
-	 * @param toHash the to hash
+	 * 
+	 * @param fromHash
+	 *            the from hash
+	 * @param toHash
+	 *            the to hash
 	 * @return true, if successful
 	 */
 	@NoneNull
@@ -318,35 +337,10 @@ public class RevDependencyGraph {
 			return true;
 		}
 		
-		final GremlinPipeline<Object, Vertex> pipe = new GremlinPipeline<>(getChangeSet(fromHash)).out(EdgeType.BRANCH_EDGE.toString(),
-		                                                                                               EdgeType.MERGE_EDGE.toString())
-		                                                                                          .loop(1,
-		                                                                                                new PipeFunction<LoopBundle<Vertex>, Boolean>() {
-			                                                                                                
-			                                                                                                @Override
-			                                                                                                public Boolean compute(final LoopBundle<Vertex> argument) {
-				                                                                                                return !toHash.equals(argument.getObject()
-				                                                                                                                              .getProperty(NODE_ID)
-				                                                                                                                              .toString());
-			                                                                                                }
-		                                                                                                })
-		                                                                                          .filter(new PipeFunction<Vertex, Boolean>() {
-			                                                                                                  
-			                                                                                                  @Override
-			                                                                                                  public Boolean compute(final Vertex argument) {
-				                                                                                                  return toHash.equals(argument.getProperty(NODE_ID)
-				                                                                                                                               .toString());
-			                                                                                                  }
-		                                                                                                  });
-		for (final Object hit : pipe) {
-			StringCondition.equals(toHash, ((Vertex) hit).getProperty(NODE_ID).toString(),
-			                       "Path must end with specified toHash.");
-			return true;
-		}
-		// final Query query = from.query().direction(Direction.OUT).has(NODE_ID, toHash);
-		// final Iterable<Vertex> vertices = query.vertices();
-		return false;
-		// vertices.iterator().hasNext();
+		final UnweightedShortestPath<String, RevDepEdge> path = new UnweightedShortestPath<>(this.graph);
+		return path.getDistance(fromHash, toHash) == null
+		                                                 ? false
+		                                                 : true;
 	}
 	
 	/**
@@ -358,18 +352,7 @@ public class RevDependencyGraph {
 	 */
 	@NoneNull
 	public boolean existsVertex(@NotEmptyString final String hash) {
-		return (getChangeSet(hash) != null);
-	}
-	
-	/**
-	 * Gets the branch.
-	 *
-	 * @param nodeID the node id
-	 * @return the branch
-	 */
-	@NoneNull
-	private Vertex getBranch(@NotEmptyString final String nodeID) {
-		return getNode(BRANCH_ID, nodeID);
+		return this.graph.containsVertex(hash);
 	}
 	
 	/**
@@ -378,42 +361,19 @@ public class RevDependencyGraph {
 	 * @return the branches
 	 */
 	public Set<String> getBranches() {
-		final Set<String> result = new HashSet<String>();
-		for (final Vertex node : this.graph.getVertices()) {
-			final Object property = node.getProperty(RevDependencyGraph.BRANCH_ID);
-			if (property != null) {
-				result.add(property.toString());
-			}
-		}
-		return result;
+		return this.branchHeads.keySet();
 	}
 	
 	/**
 	 * Gets the branch head.
-	 *
-	 * @param branchName the branch name
+	 * 
+	 * @param branchName
+	 *            the branch name
 	 * @return the branch head
 	 */
 	@NoneNull
-	private Vertex getBranchHead(@NotEmptyString final String branchName) {
-		final Vertex branchVertex = getBranch(branchName);
-		if (branchVertex == null) {
-			if (Logger.logWarn()) {
-				Logger.warn("Cannot find branch %s.");
-			}
-			return null;
-		}
-		final Iterator<Vertex> iter = branchVertex.query().direction(Direction.OUT)
-		                                          .labels(EdgeType.BRANCH_HEAD.toString()).vertices().iterator();
-		Vertex result = null;
-		while (iter.hasNext()) {
-			result = iter.next();
-			if (iter.hasNext()) {
-				throw new UnrecoverableError(
-				                             "Found more that one branch head for branch %s. This indicates data inconsistency!");
-			}
-		}
-		return result;
+	private String getBranchHead(@NotEmptyString final String branchName) {
+		return this.branchHeads.get(branchName);
 	}
 	
 	/**
@@ -423,11 +383,10 @@ public class RevDependencyGraph {
 	 */
 	private Set<String> getBranchHeads() {
 		final Set<String> branchHeads = new HashSet<>();
-		final Set<String> branches = getBranches();
-		for (final String branchName : branches) {
-			final Vertex branchHead = getBranchHead(branchName);
+		for (final String branchName : getBranches()) {
+			final String branchHead = getBranchHead(branchName);
 			if (branchHead != null) {
-				branchHeads.add(branchHead.getProperty(NODE_ID).toString());
+				branchHeads.add(branchHead);
 			}
 		}
 		return branchHeads;
@@ -442,23 +401,17 @@ public class RevDependencyGraph {
 	 */
 	@NoneNull
 	public String getBranchParent(@NotEmptyString final String hash) {
-		final Vertex node = getChangeSet(hash);
-		if (node == null) {
-			throw new UnrecoverableError("Requsting branch parent of node not contained by GitRevDependencyGraph.");
+		
+		final Collection<RevDepEdge> inEdges = this.graph.getInEdges(hash);
+		if (inEdges.size() > 2) {
+			throw new UnrecoverableError(String.format("Node %s  has more than two parents. This is impossible.", hash));
 		}
-		int counter = 0;
-		String result = null;
-		for (final Edge relation : node.getEdges(Direction.IN, EdgeType.BRANCH_EDGE.toString())) {
-			if (result == null) {
-				result = relation.getVertex(Direction.OUT).getProperty(RevDependencyGraph.NODE_ID).toString();
+		for (final RevDepEdge inEdge : inEdges) {
+			if (inEdge.getEdgeType().equals(EdgeType.BRANCH_EDGE)) {
+				return inEdge.getSource();
 			}
-			++counter;
 		}
-		if (counter > 1) {
-			throw new UnrecoverableError(String.format("Node %s  has more than one branch parent. This is impossible.",
-			                                           hash));
-		}
-		return result;
+		return null;
 	}
 	
 	/**
@@ -470,50 +423,37 @@ public class RevDependencyGraph {
 	 */
 	@NoneNull
 	public Iterable<String> getBranchTransactions(@NotEmptyString final String branchName) {
-		final Vertex branchHeadVertex = getBranchHead(branchName);
-		if (branchHeadVertex == null) {
+		final String branchHead = getBranchHead(branchName);
+		if (branchHead == null) {
 			if (Logger.logWarn()) {
 				Logger.warn("Returning empty branch transaction iterator.");
 			}
 			return new ArrayList<String>(0);
 		}
-		return new TransactionIterator(branchHeadVertex.getProperty(NODE_ID).toString(), this);
-	}
-	
-	/**
-	 * Gets the change set.
-	 *
-	 * @param fromHash the from hash
-	 * @return the change set
-	 */
-	@NoneNull
-	private Vertex getChangeSet(@NotEmptyString final String fromHash) {
-		return getNode(NODE_ID, fromHash);
+		return new TransactionIterator(branchHead, this);
 	}
 	
 	/**
 	 * Gets the edge.
-	 *
-	 * @param node the node
-	 * @param parent the parent
+	 * 
+	 * @param node
+	 *            the node
+	 * @param parent
+	 *            the parent
 	 * @return the edge
 	 */
 	@NoneNull
 	private EdgeType getEdge(@NotEmptyString final String node,
 	                         @NotEmptyString final String parent) {
-		final Vertex nodeNode = getChangeSet(node);
-		final Vertex parentNode = getChangeSet(parent);
-		if ((nodeNode == null) || (parentNode == null)) {
-			if (Logger.logWarn()) {
-				Logger.warn("You cannot retrieve edges for NULL vertices. Returning empty null.");
-			}
-			return null;
+		
+		final Collection<RevDepEdge> inEdges = this.graph.getInEdges(node);
+		if (inEdges.size() > 2) {
+			throw UnrecoverableError.format("Node %s  has more than two parents. This is impossible.", node);
 		}
 		
-		for (final Edge rel : parentNode.getEdges(Direction.OUT, EdgeType.BRANCH_EDGE.toString(),
-		                                          EdgeType.MERGE_EDGE.toString())) {
-			if (rel.getVertex(Direction.IN).equals(nodeNode)) {
-				return EdgeType.valueOf(rel.getLabel());
+		for (final RevDepEdge edge : inEdges) {
+			if (edge.getSource().equals(parent)) {
+				return edge.getEdgeType();
 			}
 		}
 		return null;
@@ -553,48 +493,17 @@ public class RevDependencyGraph {
 	 */
 	@NoneNull
 	public String getMergeParent(@NotEmptyString final String hash) {
-		final Vertex node = getChangeSet(hash);
-		if (node == null) {
-			throw new UnrecoverableError("Requsting branch parent of node not contained by GitRevDependencyGraph.");
+		
+		final Collection<RevDepEdge> inEdges = this.graph.getInEdges(hash);
+		if (inEdges.size() > 2) {
+			throw new UnrecoverableError(String.format("Node %s  has more than two parents. This is impossible.", hash));
 		}
-		int counter = 0;
-		String result = null;
-		for (final Edge relation : node.getEdges(Direction.IN, EdgeType.MERGE_EDGE.toString())) {
-			if (result == null) {
-				result = relation.getVertex(Direction.OUT).getProperty(RevDependencyGraph.NODE_ID).toString();
-			}
-			++counter;
-		}
-		if (counter > 1) {
-			throw new UnrecoverableError("Node " + hash + " has more than one merge parent. This should never occur.");
-		}
-		return result;
-	}
-	
-	/**
-	 * Gets the node.
-	 *
-	 * @param nodeIDProperty the node id property
-	 * @param nodeID the node id
-	 * @return the node
-	 */
-	@NoneNull
-	private Vertex getNode(@NotEmptyString final String nodeIDProperty,
-	                       @NotEmptyString final String nodeID) {
-		if (Logger.logDebug()) {
-			Logger.debug("Querying for node %s in neo4j graph.", nodeID);
-		}
-		Vertex result = null;
-		final Iterator<Vertex> iterator = this.graph.getVertices(nodeIDProperty, nodeID).iterator();
-		while (iterator.hasNext()) {
-			result = iterator.next();
-			if (iterator.hasNext()) {
-				throw new UnrecoverableError(
-				                             String.format("Found multiple nodes with nodeIDProperty %s and nodeID %s.",
-				                                           nodeIDProperty, nodeID));
+		for (final RevDepEdge inEdge : inEdges) {
+			if (inEdge.getEdgeType().equals(EdgeType.MERGE_EDGE)) {
+				return inEdge.getSource();
 			}
 		}
-		return result;
+		return null;
 	}
 	
 	/**
@@ -636,27 +545,7 @@ public class RevDependencyGraph {
 	 * @return the vertices
 	 */
 	public Iterable<String> getVertices() {
-		final Set<String> result = new HashSet<String>();
-		for (final Vertex node : this.graph.getVertices()) {
-			final Object property = node.getProperty(RevDependencyGraph.NODE_ID);
-			if (property != null) {
-				result.add(property.toString());
-			}
-		}
-		return new Iterable<String>() {
-			
-			@Override
-			public Iterator<String> iterator() {
-				// PRECONDITIONS
-				
-				try {
-					return result.iterator();
-				} finally {
-					// POSTCONDITIONS
-				}
-			}
-			
-		};
+		return this.graph.getVertices();
 	}
 	
 	/**
@@ -669,29 +558,20 @@ public class RevDependencyGraph {
 	 */
 	@NoneNull
 	public String isBranchHead(@NotEmptyString final String hash) {
-		final Vertex node = getChangeSet(hash);
-		if (node == null) {
-			throw new UnrecoverableError(
-			                             "Requsting a node not contained by GitRevDependencyGraph. This might indicate a inconsistent data state!");
-		}
-		final Iterator<Vertex> iterator = node.query().direction(Direction.IN).labels(EdgeType.BRANCH_HEAD.toString())
-		                                      .vertices().iterator();
-		String result = null;
-		while (iterator.hasNext()) {
-			result = iterator.next().getProperty(BRANCH_ID).toString();
-			if (iterator.hasNext()) {
-				throw new UnrecoverableError(
-				                             "Found change set that is branch head of multiple branches. This is impossible. This might indicate a inconsistent data state!");
+		for (final Entry<String, String> entry : this.branchHeads.entrySet()) {
+			if (entry.getValue().equals(hash)) {
+				return entry.getKey();
 			}
 		}
-		return result;
+		return null;
 	}
 	
 	/**
 	 * Checks if this RevDependencyGraph contains the same RevDepdendecy structure as the provided other
 	 * RevDependencyGraph.
-	 *
-	 * @param other the other
+	 * 
+	 * @param other
+	 *            the other
 	 * @return true, if is equals to
 	 */
 	public boolean isEqualsTo(final RevDependencyGraph other) {
@@ -728,7 +608,7 @@ public class RevDependencyGraph {
 	}
 	
 	/**
-	 * Removes a ChangeSet from the underlying graphDB.
+	 * Removes a ChangeSet from the underlying data structure.
 	 * 
 	 * @param hash
 	 *            the hash
@@ -738,18 +618,14 @@ public class RevDependencyGraph {
 		if (Logger.logDebug()) {
 			Logger.debug("Removing change set node %s from graph.", hash);
 		}
-		final Vertex vertex = getChangeSet(hash);
-		if (vertex != null) {
-			final TitanTransaction titanTransaction = this.graph.startTransaction();
-			this.graph.removeVertex(vertex);
-			titanTransaction.stopTransaction(Conclusion.SUCCESS);
-		}
+		this.graph.removeVertex(hash);
 	}
 	
 	/**
 	 * Removes a tag.
-	 *
-	 * @param tagName the tag name
+	 * 
+	 * @param tagName
+	 *            the tag name
 	 */
 	@NoneNull
 	public void removeTag(@NotEmptyString final String tagName) {

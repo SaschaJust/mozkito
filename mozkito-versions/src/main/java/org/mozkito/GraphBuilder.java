@@ -15,7 +15,7 @@
  */
 package org.mozkito;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Set;
 
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
@@ -23,9 +23,7 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.versions.Repository;
 import org.mozkito.versions.RevDependencyGraph;
-import org.mozkito.versions.exceptions.RepositoryOperationException;
 import org.mozkito.versions.model.Branch;
 import org.mozkito.versions.model.ChangeSet;
 import org.mozkito.versions.model.VersionArchive;
@@ -46,27 +44,23 @@ public class GraphBuilder implements Runnable {
 	/** The persistence util. */
 	private final PersistenceUtil    persistenceUtil;
 	
-	private VersionArchive           versionArchive;
+	private final VersionArchive     versionArchive;
 	
 	/**
 	 * Instantiates a new graph builder.
 	 * 
-	 * @param repository
-	 *            the repository
+	 * @param revDepGraph
+	 *            the rev dep graph
 	 * @param versionArchive
 	 *            the version archive all model objects will be associated with
 	 * @param persistenceUtil
 	 *            the PersitenceUtil allowing DB connection
 	 */
 	@NoneNull
-	public GraphBuilder(final Repository repository, final VersionArchive versionArchive,
+	public GraphBuilder(final RevDependencyGraph revDepGraph, final VersionArchive versionArchive,
 	        final PersistenceUtil persistenceUtil) {
-		try {
-			this.revDepGraph = repository.getRevDependencyGraph();
-			this.versionArchive = versionArchive;
-		} catch (final RepositoryOperationException e) {
-			throw new UnrecoverableError(e);
-		}
+		this.revDepGraph = revDepGraph;
+		this.versionArchive = versionArchive;
 		this.persistenceUtil = persistenceUtil;
 	}
 	
@@ -124,6 +118,7 @@ public class GraphBuilder implements Runnable {
 				this.persistenceUtil.beginTransaction();
 			}
 		}
+		this.persistenceUtil.saveOrUpdate(this.versionArchive);
 		this.persistenceUtil.commitTransaction();
 		if (Logger.logInfo()) {
 			Logger.info("done");
@@ -163,6 +158,7 @@ public class GraphBuilder implements Runnable {
 				}
 			}
 		}
+		this.persistenceUtil.saveOrUpdate(this.versionArchive);
 		this.persistenceUtil.commitTransaction();
 		
 		if (Logger.logInfo()) {
@@ -179,23 +175,23 @@ public class GraphBuilder implements Runnable {
 			Logger.info("Phase II: Persisting branch transaction relationships ...");
 		}
 		
-		final List<Branch> branches = this.persistenceUtil.load(this.persistenceUtil.createCriteria(Branch.class));
+		final Collection<Branch> branches = this.versionArchive.getBranches().values();
 		
 		if (branches.isEmpty()) {
-			throw new UnrecoverableError("Could not load any transactions from DB. This is a fatal error!");
+			throw new UnrecoverableError("VersionArchive does not contain any Branch. This is a fatal error!");
 		}
 		
-		for (final Branch rCSBranch : branches) {
+		for (final Branch branch : branches) {
 			if (Logger.logDebug()) {
-				Logger.debug("Handling branch " + rCSBranch.getName() + " with headId=" + rCSBranch.getHead().getId());
+				Logger.debug("Handling branch " + branch.getName() + " with headId=" + branch.getHead().getId());
 			}
 			long index = 0l;
 			this.persistenceUtil.beginTransaction();
-			for (final String changeSetId : this.revDepGraph.getBranchTransactions(rCSBranch.getName())) {
+			for (final String changeSetId : this.revDepGraph.getBranchTransactions(branch.getName())) {
 				final ChangeSet changeSet = this.persistenceUtil.loadById(changeSetId, ChangeSet.class);
-				if (!changeSet.addBranch(rCSBranch, index)) {
-					throw new UnrecoverableError("Could not add branch index " + rCSBranch.getName()
-					        + " to transaction: " + changeSet.getId() + ". It appreas to be set before. Fatal error.");
+				if (!changeSet.addBranch(branch, index)) {
+					throw new UnrecoverableError("Could not add branch index " + branch.getName() + " to transaction: "
+					        + changeSet.getId() + ". It appreas to be set before. Fatal error.");
 				}
 				--index;
 				if ((index % GraphBuilder.COMMIT_LIMIT) == 0) {
@@ -203,6 +199,7 @@ public class GraphBuilder implements Runnable {
 					this.persistenceUtil.beginTransaction();
 				}
 			}
+			this.persistenceUtil.saveOrUpdate(this.versionArchive);
 			this.persistenceUtil.commitTransaction();
 		}
 		
@@ -220,6 +217,5 @@ public class GraphBuilder implements Runnable {
 		phaseOne();
 		phaseTwo();
 		phaseThree();
-		this.revDepGraph.close();
 	}
 }

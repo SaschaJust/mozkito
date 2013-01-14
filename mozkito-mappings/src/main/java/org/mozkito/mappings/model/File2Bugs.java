@@ -53,12 +53,12 @@ public class File2Bugs implements Annotated {
 		                                               + "FROM (                                                                                " //$NON-NLS-1$
 		                                               + "SELECT changedfile_id, ARRAY(                                                         " //$NON-NLS-1$
 		                                               + "	SELECT reportid                                                                     " //$NON-NLS-1$
-		                                               + "	FROM rcsrevision AS revisions                                                       " //$NON-NLS-1$
+		                                               + "	FROM revision AS revisions                                                       " //$NON-NLS-1$
 		                                               + "	INNER JOIN rcsbugmapping AS mapping                                                 " //$NON-NLS-1$
 		                                               + "		ON (revisions.transaction_id = mapping.changesetid)                           " //$NON-NLS-1$
 		                                               + "	WHERE revisions.changedfile_id = A.changedfile_id                                   " //$NON-NLS-1$
 		                                               + ") AS issues                                                                             " //$NON-NLS-1$
-		                                               + "FROM rcsrevision AS A                                                                 " //$NON-NLS-1$
+		                                               + "FROM revision AS A                                                                 " //$NON-NLS-1$
 		                                               + "ORDER BY changedfile_id                                                               " //$NON-NLS-1$
 		                                               + ") innerquery                                                                          " //$NON-NLS-1$
 		                                               + "WHERE array_length(issues, 1) > 0                                                       " //$NON-NLS-1$
@@ -66,7 +66,7 @@ public class File2Bugs implements Annotated {
 		
 		PersistenceManager.registerNativeQuery(DatabaseType.POSTGRESQL,
 		                                       "files2bugs", "SELECT changedfile_id, reportid " //$NON-NLS-1$//$NON-NLS-2$ 
-		                                               + "FROM rcsrevision AS revision " + "JOIN rcsbugmapping AS mapping " //$NON-NLS-1$//$NON-NLS-2$
+		                                               + "FROM revision AS revision " + "JOIN rcsbugmapping AS mapping " //$NON-NLS-1$//$NON-NLS-2$
 		                                               + "  ON (revision.transaction_id = mapping.changesetid) " + "ORDER BY changedfile_id"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
