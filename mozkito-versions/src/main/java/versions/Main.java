@@ -66,11 +66,13 @@ public class Main {
 			repoToolChain.join();
 			
 			if (Logger.logInfo()) {
-				Logger.info("%s: %s finished. Starting GraphToolChain ...", MODULE_NAME, repoToolChain.getClass().getSimpleName());
+				Logger.info("%s: %s finished. Starting GraphToolChain ...", MODULE_NAME, repoToolChain.getClass()
+				                                                                                      .getSimpleName());
 			}
 			
-			final Thread graphBuilderThread = new Thread(
-			                                             new GraphBuilder(repoToolChain.getRepository(), repoToolChain.getVersionArchive(),repoToolChain.getPersistenceUtil()));
+			final Thread graphBuilderThread = new Thread(new GraphBuilder(repoToolChain.getRepository(),
+			                                                              repoToolChain.getVersionArchive(),
+			                                                              repoToolChain.getPersistenceUtil()));
 			graphBuilderThread.setName(GraphBuilder.class.getSimpleName());
 			graphBuilderThread.start();
 			graphBuilderThread.join();
@@ -78,18 +80,9 @@ public class Main {
 			if (Logger.logInfo()) {
 				Logger.info("%s: All done. Cerio!", MODULE_NAME);
 			}
-		} catch (final Shutdown e) {
-			if (Logger.logInfo()) {
-				Logger.info(e.getMessage());
-			}
-		} catch (final InterruptedException e) {
-			if (Logger.logError()) {
-				Logger.error(e);
-			}
-		} catch (final SettingsParseError e) {
-			if (Logger.logError()) {
-				Logger.error(e);
-			}
+		} catch (final Shutdown | InterruptedException | SettingsParseError e) {
+			System.err.println(e.getMessage());
+			e.printStackTrace();
 		}
 	}
 	
