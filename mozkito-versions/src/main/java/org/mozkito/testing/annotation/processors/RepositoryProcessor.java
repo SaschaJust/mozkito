@@ -36,6 +36,7 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringEscapeUtils;
+
 import org.mozkito.exceptions.TestSettingsError;
 import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.VersionsTest;
@@ -226,7 +227,9 @@ public class RepositoryProcessor implements MozkitoSettingsProcessor {
 							}
 						}
 					} else {
-						// TODO ...
+						throw new UnsupportedOperationException(
+						                                        "External repositories aren't yet support in RepositoryTests. Given source type: "
+						                                                + repositorySetting.sourceType());
 					}
 					
 					Repository repository = null;
