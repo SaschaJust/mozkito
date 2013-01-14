@@ -15,6 +15,10 @@
  */
 package org.mozkito;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.model.Pool;
@@ -28,6 +32,7 @@ import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kisa.Logger;
 
+import org.joda.time.DateTime;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.settings.DatabaseOptions;
 import org.mozkito.settings.RepositoryOptions;
@@ -146,8 +151,34 @@ public class RepositoryToolchain extends Chain<Settings> {
 		
 		this.repository = this.repositoryArguments.getValue();
 		
+		final InputStream metadataStream = RepositoryToolchain.class.getClassLoader()
+		                                                            .getResourceAsStream("metadata.properties");
+		if (metadataStream == null) {
+			throw new UnrecoverableError(
+			                             "Could not find required metadata.properties. This file must be on the classpath.");
+		}
+		final Properties metadata = new Properties();
+		try {
+			metadata.load(metadataStream);
+		} catch (final IOException e1) {
+			throw new UnrecoverableError(e1);
+		}
+		
+		if (!metadata.containsKey("head")) {
+			throw new UnrecoverableError("The metadata.properties file does not contain a value for 'hash'!");
+		}
+		if (!metadata.containsKey("version")) {
+			throw new UnrecoverableError("The metadata.properties file does not contain a value for 'version'!");
+		}
+		
 		try {
 			this.versionArchive = new VersionArchive(this.repository.getRevDependencyGraph());
+			
+			this.versionArchive.setMiningDate(new DateTime());
+			this.versionArchive.setMozkitoHash(metadata.getProperty("hash"));
+			this.versionArchive.setMozkitoVersion(metadata.getProperty("version"));
+			this.versionArchive.setUsedSettings(getSettings().getRoot().getHelpString());
+			
 			this.persistenceUtil.beginTransaction();
 			this.persistenceUtil.save(this.versionArchive);
 			this.persistenceUtil.commitTransaction();

@@ -13,11 +13,13 @@
 package org.mozkito.versions.model;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,14 +27,19 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.annotations.string.Length;
 import net.ownhero.dev.kisa.Logger;
 
+import org.joda.time.DateTime;
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.RevDependencyGraph;
@@ -75,6 +82,10 @@ public class VersionArchive implements Annotated {
 	private long                   generatedId;
 	private Map<String, ChangeSet> changeSets;
 	
+	private String                 mozkitoVersion;
+	private String                 mozkitoHash;
+	private String                 usedSettings;
+	private DateTime               miningDate;
 	private Map<String, Branch>    branches;           ;
 	
 	/**
@@ -195,6 +206,50 @@ public class VersionArchive implements Annotated {
 	}
 	
 	/**
+	 * Gets DateTime representing the local time stamp in the system on which the mining process was performed at the
+	 * time the mining process was initiated
+	 * 
+	 * @return the mining date
+	 */
+	@Transient
+	public DateTime getMiningDate() {
+		return this.miningDate;
+	}
+	
+	/**
+	 * Gets the last update java timestamp.
+	 * 
+	 * @return the last update java timestamp
+	 */
+	@Temporal (TemporalType.TIMESTAMP)
+	@Column (name = "miningDate")
+	private Date getMiningJavaDate() {
+		return getMiningDate() != null
+		                              ? getMiningDate().toDate()
+		                              : null;
+	}
+	
+	/**
+	 * Gets the mozkito hash.
+	 * 
+	 * @return the mozkito hash
+	 */
+	@Basic
+	@Column (length = 40)
+	public String getMozkitoHash() {
+		return this.mozkitoHash;
+	}
+	
+	/**
+	 * Gets the mozkito version.
+	 * 
+	 * @return the mozkito version
+	 */
+	public String getMozkitoVersion() {
+		return this.mozkitoVersion;
+	}
+	
+	/**
 	 * Gets the rev dependency graph.
 	 * 
 	 * @return the rev dependency graph
@@ -205,6 +260,18 @@ public class VersionArchive implements Annotated {
 			this.revDepGraph = loadRevDependencyGraph();
 		}
 		return this.revDepGraph;
+	}
+	
+	/**
+	 * Gets the used settings.
+	 * 
+	 * @return the used settings
+	 */
+	@Basic
+	@Lob
+	@Column (length = 0)
+	public String getUsedSettings() {
+		return this.usedSettings;
 	}
 	
 	private RevDependencyGraph loadRevDependencyGraph() {
@@ -267,6 +334,44 @@ public class VersionArchive implements Annotated {
 	}
 	
 	/**
+	 * Sets the mining date.
+	 * 
+	 * @param miningDate
+	 *            the new mining date
+	 */
+	@Transient
+	public void setMiningDate(final DateTime miningDate) {
+		this.miningDate = miningDate;
+	}
+	
+	@SuppressWarnings ("unused")
+	private void setMiningJavaDate(final Date date) {
+		setMiningDate(date != null
+		                          ? new DateTime(date)
+		                          : null);
+	}
+	
+	/**
+	 * Sets the mozkito hash.
+	 * 
+	 * @param mozkitoHash
+	 *            the new mozkito hash
+	 */
+	public void setMozkitoHash(@Length (length = 40) final String mozkitoHash) {
+		this.mozkitoHash = mozkitoHash;
+	}
+	
+	/**
+	 * Sets the mozkito version.
+	 * 
+	 * @param mozkitoVersion
+	 *            the new mozkito version
+	 */
+	public void setMozkitoVersion(final String mozkitoVersion) {
+		this.mozkitoVersion = mozkitoVersion;
+	}
+	
+	/**
 	 * Sets the rev dependency graph.
 	 * 
 	 * @param revDepGraph
@@ -274,6 +379,16 @@ public class VersionArchive implements Annotated {
 	 */
 	public void setRevDependencyGraph(final RevDependencyGraph revDepGraph) {
 		this.revDepGraph = revDepGraph;
+	}
+	
+	/**
+	 * Sets the used settings.
+	 * 
+	 * @param usedSettings
+	 *            the new used settings
+	 */
+	public void setUsedSettings(final String usedSettings) {
+		this.usedSettings = usedSettings;
 	}
 	
 }

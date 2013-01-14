@@ -43,7 +43,7 @@ import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
 
 /**
- * The Class CoreChangeGenealogy_MozkitoTest.
+ * The Class CoreChangeGenealogy_PersistenceTest.
  */
 @DatabaseSettings (unit = "codeanalysis",
                    database = "moskito_genealogies_test_environment",
@@ -53,7 +53,7 @@ import org.mozkito.testing.annotation.DatabaseSettings;
                    username = "miner",
                    type = DatabaseType.POSTGRESQL,
                    remote = true)
-public class CoreChangeGenealogy_MozkitoTest extends DatabaseTest {
+public class CoreChangeGenealogy_PostgresTest extends DatabaseTest {
 	
 	static {
 		KanuniAgent.initialize();

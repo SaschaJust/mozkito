@@ -36,15 +36,16 @@ import org.mozkito.versions.model.Revision;
 import org.mozkito.versions.model.VersionArchive;
 
 /**
- * The Class OpenJPA_RCS_MozkitoTest.
+ * The Class Versions_PersistenceTest.
  */
 @DatabaseSettings (unit = "versions", options = ConnectOptions.DROP_AND_CREATE_DATABASE)
-public class OpenJPA_PersistenceTest extends DatabaseTest {
+public class Versions_PersistenceTest extends DatabaseTest {
 	
 	/**
 	 * Test rcs branch.
 	 * 
 	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
 	public void testBranch() throws IOException {
@@ -90,6 +91,7 @@ public class OpenJPA_PersistenceTest extends DatabaseTest {
 	 * Test rcs revision.
 	 * 
 	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
 	public void testRevision() throws IOException {
@@ -163,6 +165,7 @@ public class OpenJPA_PersistenceTest extends DatabaseTest {
 	 * Test save rcs file.
 	 * 
 	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
 	public void testSaveHandle() throws IOException {
