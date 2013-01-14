@@ -675,14 +675,8 @@ public class GitRepository extends DistributedCommandLineRepository {
 						}
 					}
 				}
-				if (Logger.logDebug()) {
-					final Iterator<String> vIter = this.revDepGraph.getVertices().iterator();
-					if (vIter.hasNext()) {
-						Logger.debug("RevDepGraph contains vertices");
-					} else {
-						Logger.debug("RevDepGraph contains no vertices");
-					}
-				}
+				final Iterator<String> vIter = this.revDepGraph.getVertices().iterator();
+				final boolean hasVertices = vIter.hasNext();
 				return this.revDepGraph;
 			} catch (final IOException e) {
 				throw new RepositoryOperationException(e);
