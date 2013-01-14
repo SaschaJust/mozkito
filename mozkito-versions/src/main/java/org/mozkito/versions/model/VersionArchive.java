@@ -247,7 +247,7 @@ public class VersionArchive implements Annotated {
 	 * @return the mozkito hash
 	 */
 	@Basic
-	@Column (length = 40)
+	@Column (length = 51)
 	public String getMozkitoHash() {
 		return this.mozkitoHash;
 	}
