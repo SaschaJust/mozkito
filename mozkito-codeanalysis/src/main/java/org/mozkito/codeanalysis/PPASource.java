@@ -28,9 +28,7 @@ import net.ownhero.dev.kisa.Logger;
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.persistence.RCSPersistenceUtil;
-import org.mozkito.versions.collections.ChangeSetSet;
-import org.mozkito.versions.collections.ChangeSetSet.TransactionSetOrder;
+import org.mozkito.versions.elements.RevDependencyGraph;
 import org.mozkito.versions.model.Branch;
 import org.mozkito.versions.model.ChangeSet;
 import org.mozkito.versions.model.Revision;
@@ -51,6 +49,8 @@ public class PPASource extends Source<ChangeSet> {
 	
 	/** The transaction limit. */
 	private Set<String>         transactionLimit = null;
+	
+	private VersionArchive      versionArchive;
 	
 	/**
 	 * Instantiates a new pPA source.
@@ -77,12 +77,12 @@ public class PPASource extends Source<ChangeSet> {
 					PPASource.this.transactionLimit = transactionLimit;
 				} else {
 					
-					final VersionArchive versionArchive = VersionArchive.loadVersionArchive(persistenceUtil);
+					PPASource.this.versionArchive = VersionArchive.loadVersionArchive(persistenceUtil);
 					
 					final List<Branch> branches = new LinkedList<Branch>();
-					branches.add(versionArchive.getMasterBranch());
+					branches.add(PPASource.this.versionArchive.getMasterBranch());
 					
-					for (final Branch branch : versionArchive.getBranches().values()) {
+					for (final Branch branch : PPASource.this.versionArchive.getBranches().values()) {
 						if (!branch.isMasterBranch()) {
 							branches.add(branch);
 						}
@@ -124,13 +124,15 @@ public class PPASource extends Source<ChangeSet> {
 					if ((PPASource.this.tIterator == null) || (!PPASource.this.tIterator.hasNext())) {
 						// load new transactions
 						if (PPASource.this.branchIterator.hasNext()) {
-							final Branch next = PPASource.this.branchIterator.next();
-							final ChangeSetSet set = RCSPersistenceUtil.getChangeSet(persistenceUtil, next,
-							                                                         TransactionSetOrder.ASC);
-							PPASource.this.tIterator = set.iterator();
+							final Branch branch = PPASource.this.branchIterator.next();
+							
+							final RevDependencyGraph revDependencyGraph = PPASource.this.versionArchive.getRevDependencyGraph();
+							final Iterable<String> branchTransactions = revDependencyGraph.getBranchTransactions(branch.getName());
+							
+							// FIXME here we have to set the tIterator
+							
 							if (Logger.logInfo()) {
-								Logger.info("Processing RCSBRanch %s with %s transactions.", next.toString(),
-								            String.valueOf(set.size()));
+								Logger.info("Processing RCSBRanch %s.", branch.toString());
 							}
 						} else {
 							if (Logger.logTrace()) {

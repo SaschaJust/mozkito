@@ -36,12 +36,11 @@ import net.ownhero.dev.kisa.Logger;
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.persistence.PPAPersistenceUtil;
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.persistence.RCSPersistenceUtil;
 import org.mozkito.settings.DatabaseOptions;
-import org.mozkito.versions.collections.ChangeSetSet;
-import org.mozkito.versions.collections.ChangeSetSet.TransactionSetOrder;
+import org.mozkito.versions.elements.RevDependencyGraph;
 import org.mozkito.versions.model.Branch;
 import org.mozkito.versions.model.ChangeSet;
+import org.mozkito.versions.model.VersionArchive;
 
 /**
  * The Class ChangeOperationReader.
@@ -129,9 +128,6 @@ public class ChangeOperationReader implements Iterator<Collection<JavaChangeOper
 	/** The ignore tests. */
 	private final boolean             ignoreTests;
 	
-	/** The num transaction. */
-	private final int                 numTransaction;
-	
 	/** The t counter. */
 	private int                       tCounter = 0;
 	
@@ -163,13 +159,16 @@ public class ChangeOperationReader implements Iterator<Collection<JavaChangeOper
 			throw new Shutdown();
 		}
 		
-		final ChangeSetSet masterChangeSets = RCSPersistenceUtil.getChangeSet(persistenceUtil, masterBranch,
-		                                                                      TransactionSetOrder.ASC);
+		final VersionArchive versionArchive = VersionArchive.loadVersionArchive(persistenceUtil);
+		final RevDependencyGraph revDependencyGraph = versionArchive.getRevDependencyGraph();
+		final Iterable<ChangeSet> masterChangeSets = revDependencyGraph.getBranchTransactionsASC(versionArchive.getMasterBranch()
+		                                                                                                       .getName(),
+		                                                                                         persistenceUtil);
+		
 		if (Logger.logInfo()) {
-			Logger.info("Added " + masterChangeSets.size()
-			        + " ChangeSet that were found in branch %s to build the change genealogy.", masterBranch.getName());
+			Logger.info("Added ChangeSet that were found in branch %s to build the change genealogy.",
+			            masterBranch.getName());
 		}
-		this.numTransaction = masterChangeSets.size();
 		this.iterator = masterChangeSets.iterator();
 	}
 	
@@ -199,8 +198,7 @@ public class ChangeOperationReader implements Iterator<Collection<JavaChangeOper
 		try {
 			final ChangeSet changeSet = this.iterator.next();
 			if (Logger.logInfo()) {
-				Logger.info("Processing transaction %s (%s/%s).", changeSet.getId(), String.valueOf(this.tCounter),
-				            String.valueOf(this.numTransaction));
+				Logger.info("Processing transaction %s (%s).", changeSet.getId(), String.valueOf(this.tCounter));
 			}
 			Collection<JavaChangeOperation> changeOperations = new ArrayList<JavaChangeOperation>(0);
 			

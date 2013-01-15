@@ -42,12 +42,11 @@ import org.mozkito.genealogies.core.CoreChangeGenealogy;
 import org.mozkito.genealogies.core.TransactionChangeGenealogy;
 import org.mozkito.genealogies.settings.GenealogyOptions;
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.persistence.RCSPersistenceUtil;
 import org.mozkito.settings.DatabaseOptions;
-import org.mozkito.versions.collections.ChangeSetSet;
-import org.mozkito.versions.collections.ChangeSetSet.TransactionSetOrder;
+import org.mozkito.versions.elements.RevDependencyGraph;
 import org.mozkito.versions.model.Branch;
 import org.mozkito.versions.model.ChangeSet;
+import org.mozkito.versions.model.VersionArchive;
 
 /**
  * The Class Main.
@@ -148,18 +147,17 @@ public class Main {
 				throw new Shutdown();
 			}
 			
-			final ChangeSetSet masterTransactions = RCSPersistenceUtil.getChangeSet(persistenceUtil, masterBranch,
-			                                                                             TransactionSetOrder.ASC);
+			final VersionArchive versionArchive = VersionArchive.loadVersionArchive(persistenceUtil);
+			final RevDependencyGraph revDependencyGraph = versionArchive.getRevDependencyGraph();
+			final Iterable<ChangeSet> masterTransactions = revDependencyGraph.getBranchTransactionsASC(versionArchive.getMasterBranch()
+			                                                                                                         .getName(),
+			                                                                                           persistenceUtil);
+			
 			final List<ChangeSet> changeSets = new LinkedList<>();
 			for (final ChangeSet t : masterTransactions) {
 				if (transactionLayer.containsVertex(t)) {
 					changeSets.add(t);
 				}
-			}
-			
-			if (Logger.logDebug()) {
-				Logger.debug("%d out of %d transactions found in genealogy graph.", changeSets.size(),
-				             masterTransactions.size());
 			}
 			
 			final int trainSize = new Double(changeSets.size() * 0.1).intValue();

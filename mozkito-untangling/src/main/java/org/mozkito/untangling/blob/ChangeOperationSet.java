@@ -13,15 +13,16 @@
 package org.mozkito.untangling.blob;
 
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.codeanalysis.model.JavaElement;
-import org.mozkito.versions.collections.ChangeSetSet;
-import org.mozkito.versions.collections.ChangeSetSet.TransactionSetOrder;
+import org.mozkito.versions.exceptions.NotComparableException;
 import org.mozkito.versions.model.ChangeSet;
+import org.mozkito.versions.model.VersionArchive;
 
 /**
  * The Class BlobTransaction.
@@ -31,7 +32,7 @@ import org.mozkito.versions.model.ChangeSet;
 public class ChangeOperationSet implements Comparable<ChangeOperationSet> {
 	
 	/** The transaction. */
-	private final ChangeSet                  changeset;
+	private final ChangeSet                       changeset;
 	
 	/** The operations. */
 	private final Collection<JavaChangeOperation> operations;
@@ -56,8 +57,12 @@ public class ChangeOperationSet implements Comparable<ChangeOperationSet> {
 	@Override
 	public int compareTo(final ChangeOperationSet other) {
 		
-		final Comparator<? super ChangeSet> comparator = new ChangeSetSet(TransactionSetOrder.ASC).comparator();
-		return comparator.compare(other.getChangeSet(), this.changeset);
+		final VersionArchive versionArchive = getChangeSet().getVersionArchive();
+		try {
+			return versionArchive.compareChangeSets(getChangeSet(), other.getChangeSet());
+		} catch (final NotComparableException e) {
+			throw new UnrecoverableError(e);
+		}
 	}
 	
 	/*
@@ -106,21 +111,21 @@ public class ChangeOperationSet implements Comparable<ChangeOperationSet> {
 	}
 	
 	/**
-	 * Gets the operations.
-	 * 
-	 * @return the operations
-	 */
-	public Collection<JavaChangeOperation> getOperations() {
-		return this.operations;
-	}
-	
-	/**
 	 * Gets the transaction.
 	 * 
 	 * @return the transaction
 	 */
 	public ChangeSet getChangeSet() {
 		return this.changeset;
+	}
+	
+	/**
+	 * Gets the operations.
+	 * 
+	 * @return the operations
+	 */
+	public Collection<JavaChangeOperation> getOperations() {
+		return this.operations;
 	}
 	
 	/*
@@ -132,8 +137,8 @@ public class ChangeOperationSet implements Comparable<ChangeOperationSet> {
 		final int prime = 31;
 		int result = 1;
 		result = (prime * result) + ((this.changeset == null)
-		                                                          ? 0
-		                                                          : this.changeset.hashCode());
+		                                                     ? 0
+		                                                     : this.changeset.hashCode());
 		return result;
 	}
 	
