@@ -170,7 +170,7 @@ public class ChangeGenealogyUtils {
 		
 		// unzip the database dump
 		// zipURL = ChangeGenealogyUtils.class.getResource(FileUtils.fileSeparator
-		// + "moskito_genealogies_test_environment.psql.zip");
+		// + "mozkito_genealogies_test_environment.psql.zip");
 		// if (zipURL == null) {
 		// return null;
 		// }
@@ -187,7 +187,7 @@ public class ChangeGenealogyUtils {
 		//
 		// //load the database dump into the test database
 		// url = ChangeGenealogyUtils.class.getResource(FileUtils.fileSeparator
-		// + "moskito_genealogies_test_environment.psql");
+		// + "mozkito_genealogies_test_environment.psql");
 		// try {
 		// urlFile = new File(url.toURI());
 		// } catch (URISyntaxException e1) {

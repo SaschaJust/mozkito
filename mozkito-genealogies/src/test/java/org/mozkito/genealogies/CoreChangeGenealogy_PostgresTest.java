@@ -46,7 +46,7 @@ import org.mozkito.testing.annotation.DatabaseSettings;
  * The Class CoreChangeGenealogy_PersistenceTest.
  */
 @DatabaseSettings (unit = "codeanalysis",
-                   database = "moskito_genealogies_test_environment",
+                   database = "mozkito_genealogies_test_environment",
                    options = ConnectOptions.VALIDATE_OR_CREATE_SCHEMA,
                    hostname = "grid1.st.cs.uni-saarland.de",
                    password = "miner",
