@@ -127,10 +127,9 @@ public class PPASource extends Source<ChangeSet> {
 							final Branch branch = PPASource.this.branchIterator.next();
 							
 							final RevDependencyGraph revDependencyGraph = PPASource.this.versionArchive.getRevDependencyGraph();
-							final Iterable<String> branchTransactions = revDependencyGraph.getBranchTransactions(branch.getName());
-							
-							// FIXME here we have to set the tIterator
-							
+							PPASource.this.tIterator = revDependencyGraph.getBranchTransactionsASC(branch.getName(),
+							                                                                       persistenceUtil)
+							                                             .iterator();
 							if (Logger.logInfo()) {
 								Logger.info("Processing RCSBRanch %s.", branch.toString());
 							}
