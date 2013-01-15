@@ -173,7 +173,7 @@ public class VersionArchive implements Annotated {
 	 * 
 	 * @return the branches
 	 */
-	@OneToMany (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, targetEntity = Branch.class)
+	@OneToMany (cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, targetEntity = Branch.class)
 	public Map<String, Branch> getBranches() {
 		return this.branches;
 	}
