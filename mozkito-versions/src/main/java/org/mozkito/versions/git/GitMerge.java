@@ -18,7 +18,7 @@ import java.util.Set;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 
-import org.mozkito.versions.RevDependencyGraph.EdgeType;
+import org.mozkito.versions.elements.RevDependencyGraph.EdgeType;
 
 /**
  * The Class GitMerge.

@@ -36,7 +36,7 @@ import javax.persistence.Transient;
 import net.ownhero.dev.ioda.JavaUtils;
 
 import org.mozkito.persistence.Annotated;
-import org.mozkito.versions.RevDependencyGraph;
+import org.mozkito.versions.elements.RevDependencyGraph;
 import org.mozkito.versions.exceptions.NoSuchHandleException;
 
 /**

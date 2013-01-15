@@ -30,6 +30,7 @@ import org.mozkito.testing.annotation.DatabaseSettings;
 import org.mozkito.testing.annotation.RepositorySetting;
 import org.mozkito.testing.annotation.RepositorySettings;
 import org.mozkito.versions.elements.LogEntry;
+import org.mozkito.versions.elements.RevDependencyGraph;
 import org.mozkito.versions.exceptions.RepositoryOperationException;
 import org.mozkito.versions.model.ChangeSet;
 import org.mozkito.versions.model.VersionArchive;

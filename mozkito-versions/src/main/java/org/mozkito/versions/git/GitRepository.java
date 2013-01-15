@@ -51,10 +51,10 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.mozkito.versions.DistributedCommandLineRepository;
 import org.mozkito.versions.LogParser;
-import org.mozkito.versions.RevDependencyGraph;
-import org.mozkito.versions.RevDependencyGraph.EdgeType;
 import org.mozkito.versions.elements.AnnotationEntry;
 import org.mozkito.versions.elements.ChangeType;
+import org.mozkito.versions.elements.RevDependencyGraph;
+import org.mozkito.versions.elements.RevDependencyGraph.EdgeType;
 import org.mozkito.versions.exceptions.RepositoryOperationException;
 import org.mozkito.versions.model.Branch;
 

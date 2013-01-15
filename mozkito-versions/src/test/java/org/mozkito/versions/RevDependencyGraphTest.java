@@ -29,7 +29,8 @@ import org.junit.Test;
 import org.mozkito.testing.VersionsTest;
 import org.mozkito.testing.annotation.RepositorySetting;
 import org.mozkito.testing.annotation.RepositorySettings;
-import org.mozkito.versions.RevDependencyGraph.EdgeType;
+import org.mozkito.versions.elements.RevDependencyGraph;
+import org.mozkito.versions.elements.RevDependencyGraph.EdgeType;
 import org.mozkito.versions.exceptions.RepositoryOperationException;
 
 /**

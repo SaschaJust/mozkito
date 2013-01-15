@@ -10,7 +10,7 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  **********************************************************************************************************************/
-package org.mozkito.versions;
+package org.mozkito.versions.elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,12 +25,15 @@ import java.util.Set;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.annotations.string.NotEmptyString;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.mozkito.datastructures.BidirectionalMultiMap;
+import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.versions.model.ChangeSet;
 
 import edu.uci.ics.jung.algorithms.shortestpath.UnweightedShortestPath;
 import edu.uci.ics.jung.graph.AbstractTypedGraph;
@@ -430,7 +433,7 @@ public class RevDependencyGraph {
 			}
 			return new ArrayList<String>(0);
 		}
-		return new TransactionIterator(branchHead, this);
+		return new RevDepIterator(branchHead, this);
 	}
 	
 	/**
@@ -512,16 +515,38 @@ public class RevDependencyGraph {
 	 * 
 	 * @param hash
 	 *            the hash
-	 * @return the previous transactions
+	 * @return the previous change set hashes
 	 */
 	@NoneNull
 	public Iterable<String> getPreviousTransactions(@NotEmptyString final String hash) {
-		final TransactionIterator iter = new TransactionIterator(hash, this);
+		final RevDepIterator iter = new RevDepIterator(hash, this);
 		if (iter.hasNext()) {
 			iter.next();
 			return iter;
 		}
 		return new ArrayList<String>(0);
+	}
+	
+	/**
+	 * Return a list of change sets applied before the change set corresponding to the provided hash (top-down order).
+	 * The database instances will be fetched using the provided persistenceUtil. Returns an empty list if no previous
+	 * transaction exist or if the transaction hash is unknown.
+	 * 
+	 * @param hash
+	 *            the hash
+	 * @param persistenceUtil
+	 *            the persistence util
+	 * @return the previous change sets
+	 */
+	@NoneNull
+	public Iterable<ChangeSet> getPreviousTransactions(@NotEmptyString final String hash,
+	                                                   @NotNull final PersistenceUtil persistenceUtil) {
+		final RevDepIterator iter = new RevDepIterator(hash, this);
+		if (iter.hasNext()) {
+			iter.next();
+			return new ChangeSetIterator(persistenceUtil, iter);
+		}
+		return new ArrayList<ChangeSet>(0);
 	}
 	
 	/**

@@ -42,8 +42,8 @@ import net.ownhero.dev.kisa.Logger;
 import org.joda.time.DateTime;
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.versions.RevDependencyGraph;
-import org.mozkito.versions.RevDependencyGraph.EdgeType;
+import org.mozkito.versions.elements.RevDependencyGraph;
+import org.mozkito.versions.elements.RevDependencyGraph.EdgeType;
 
 /**
  * The Class VersionArchive.

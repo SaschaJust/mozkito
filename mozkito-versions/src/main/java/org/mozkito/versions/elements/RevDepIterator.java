@@ -10,11 +10,12 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  ******************************************************************************/
-package org.mozkito.versions;
+package org.mozkito.versions.elements;
 
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kisa.Logger;
@@ -24,7 +25,7 @@ import net.ownhero.dev.kisa.Logger;
  * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
-public class TransactionIterator implements Iterator<String>, Iterable<String> {
+public class RevDepIterator implements Iterator<String>, Iterable<String> {
 	
 	/** The root. */
 	private final String             root;
@@ -33,7 +34,7 @@ public class TransactionIterator implements Iterator<String>, Iterable<String> {
 	private String                   current;
 	
 	/** The delegate. */
-	private TransactionIterator      delegate        = null;
+	private RevDepIterator      delegate        = null;
 	
 	/** The rev graph. */
 	private final RevDependencyGraph revGraph;
@@ -50,7 +51,7 @@ public class TransactionIterator implements Iterator<String>, Iterable<String> {
 	 *            the rev graph
 	 */
 	@NoneNull
-	public TransactionIterator(final String root, final RevDependencyGraph revGraph) {
+	public RevDepIterator(final String root, final RevDependencyGraph revGraph) {
 		this.root = root;
 		this.current = this.root;
 		this.revGraph = revGraph;
@@ -67,7 +68,7 @@ public class TransactionIterator implements Iterator<String>, Iterable<String> {
 	 * @param beforeDelegates
 	 *            the before delegates
 	 */
-	public TransactionIterator(final String root, final RevDependencyGraph revGraph, final Set<String> beforeDelegates) {
+	public RevDepIterator(final String root, final RevDependencyGraph revGraph, final Set<String> beforeDelegates) {
 		this.root = root;
 		this.current = this.root;
 		this.revGraph = revGraph;
@@ -132,7 +133,7 @@ public class TransactionIterator implements Iterator<String>, Iterable<String> {
 		if (mergeParent != null) {
 			final Set<String> stopAt = new HashSet<String>();
 			stopAt.addAll(this.beforeDelegates);
-			this.delegate = new TransactionIterator(mergeParent, this.revGraph, stopAt);
+			this.delegate = new RevDepIterator(mergeParent, this.revGraph, stopAt);
 		}
 		
 		if (Logger.logDebug()) {
