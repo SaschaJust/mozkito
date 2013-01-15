@@ -173,7 +173,7 @@ public class Handle implements Annotated, Serializable {
 	 */
 	@Transient
 	public String getLatestPath() throws NoSuchHandleException {
-		final Branch masterBranch = this.versionArchive.getMasterBranch();
+		final Branch masterBranch = getVersionArchive().getMasterBranch();
 		final ChangeSet masterBranchHead = masterBranch.getHead();
 		try {
 			final String path = getPath(masterBranchHead);
@@ -196,7 +196,7 @@ public class Handle implements Annotated, Serializable {
 	@Transient
 	public String getPath(final ChangeSet transaction) throws NoSuchHandleException {
 		
-		final RevDependencyGraph revDependencyGraph = this.versionArchive.getRevDependencyGraph();
+		final RevDependencyGraph revDependencyGraph = getVersionArchive().getRevDependencyGraph();
 		
 		for (final Revision revision : transaction.getRevisions()) {
 			if (getChangedNames().containsKey(revision)) {
@@ -205,7 +205,7 @@ public class Handle implements Annotated, Serializable {
 		}
 		
 		for (final String parentId : revDependencyGraph.getPreviousTransactions(transaction.getId())) {
-			final ChangeSet parentTransaction = this.versionArchive.getChangeSetById(parentId);
+			final ChangeSet parentTransaction = getVersionArchive().getChangeSetById(parentId);
 			for (final Revision revision : parentTransaction.getRevisions()) {
 				if (getChangedNames().containsKey(revision)) {
 					return getChangedNames().get(revision);
