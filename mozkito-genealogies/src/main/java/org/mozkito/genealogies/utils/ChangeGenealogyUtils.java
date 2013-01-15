@@ -253,57 +253,254 @@ public class ChangeGenealogyUtils {
 				}
 				operations.addAll(changeOps);
 				for (final JavaChangeOperation op : changeOps) {
-					switch ((int) op.getId()) {
-						case 203:
-							environmentOperations.put(TestEnvironmentOperation.T1F2, op);
+					final String changeSetId = op.getRevision().getChangeSet().getId();
+					
+					switch (changeSetId) {
+						case "a64df287a21f8a7b0690d13c1561171cbf48a0e1":
+							// // case 203:
+							// // environmentOperations.put(TestEnvironmentOperation.T1F2, op);
+							// // break;
+							// //case 201:
+							// //environmentOperations.put(TestEnvironmentOperation.T1F1, op);
+							// //break;
+							if (op.getChangedElementLocation().getFilePath()
+							      .equals("src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/B.java")
+							        && op.getChangedElementLocation().getElement().getElementType()
+							             .equals("org.mozkito.codeanalysis.model.JavaMethodDefinition")
+							        && (op.getChangedElementLocation().getPosition() == 90)) {
+								environmentOperations.put(TestEnvironmentOperation.T1F2, op);
+							} else if (op.getChangedElementLocation()
+							             .getFilePath()
+							             .equals("src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/A.java")
+							        && op.getChangedElementLocation().getElement().getElementType()
+							             .equals("org.mozkito.codeanalysis.model.JavaMethodDefinition")
+							        && (op.getChangedElementLocation().getPosition() == 90)) {
+								environmentOperations.put(TestEnvironmentOperation.T1F1, op);
+							}
 							break;
-						case 201:
-							environmentOperations.put(TestEnvironmentOperation.T1F1, op);
+						case "a10344533c2b442235aa3bf3dc87dd0ac37cb0af":
+							// case 224:
+							// environmentOperations.put(TestEnvironmentOperation.T2F3, op);
+							// break;
+							if (op.getChangedElementLocation().getFilePath()
+							      .equals("src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/C.java")
+							        && op.getChangedElementLocation().getElement().getElementType()
+							             .equals("org.mozkito.codeanalysis.model.JavaMethodCall")
+							        && (op.getChangedElementLocation().getPosition() == 125)) {
+								environmentOperations.put(TestEnvironmentOperation.T2F3, op);
+							}
 							break;
-						case 224:
-							environmentOperations.put(TestEnvironmentOperation.T2F3, op);
+						case "f281d550d264f53c7e5fd8c7390627c2aaaf2b8a":
+							// case 228:
+							// environmentOperations.put(TestEnvironmentOperation.T3F1D, op);
+							// break;
+							// case 229:
+							// environmentOperations.put(TestEnvironmentOperation.T3F1A, op);
+							// break;
+							// case 232:
+							// environmentOperations.put(TestEnvironmentOperation.T3F2M, op);
+							// break;
+							// case 231:
+							// environmentOperations.put(TestEnvironmentOperation.T3F2, op);
+							// break;
+							if (op.getChangedElementLocation().getFilePath()
+							      .equals("src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/A.java")
+							        && op.getChangedElementLocation().getElement().getElementType()
+							             .equals("org.mozkito.codeanalysis.model.JavaMethodDefinition")
+							        && (op.getChangedElementLocation().getPosition() == 90)
+							        && op.getChangedElementLocation()
+							             .getElement()
+							             .getFullQualifiedName()
+							             .equals("de.unisaarland.cs.st.reposuite.genealogies.test.evironment.A.foo(int)")) {
+								environmentOperations.put(TestEnvironmentOperation.T3F1D, op);
+							} else if (op.getChangedElementLocation()
+							             .getFilePath()
+							             .equals("src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/A.java")
+							        && op.getChangedElementLocation().getElement().getElementType()
+							             .equals("org.mozkito.codeanalysis.model.JavaMethodDefinition")
+							        && (op.getChangedElementLocation().getPosition() == 90)
+							        && op.getChangedElementLocation()
+							             .getElement()
+							             .getFullQualifiedName()
+							             .equals("de.unisaarland.cs.st.reposuite.genealogies.test.evironment.A.foo(float)")) {
+								environmentOperations.put(TestEnvironmentOperation.T3F1A, op);
+							} else if (op.getChangedElementLocation()
+							             .getFilePath()
+							             .equals("src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/B.java")
+							        && op.getChangedElementLocation().getElement().getElementType()
+							             .equals("org.mozkito.codeanalysis.model.JavaMethodDefinition")
+							        && (op.getChangedElementLocation().getPosition() == 90)
+							        && op.getChangedElementLocation()
+							             .getElement()
+							             .getFullQualifiedName()
+							             .equals("de.unisaarland.cs.st.reposuite.genealogies.test.evironment.B.bar(int)")) {
+								environmentOperations.put(TestEnvironmentOperation.T3F2M, op);
+							} else if (op.getChangedElementLocation()
+							             .getFilePath()
+							             .equals("src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/B.java")
+							        && op.getChangedElementLocation().getElement().getElementType()
+							             .equals("org.mozkito.codeanalysis.model.JavaMethodCall")
+							        && (op.getChangedElementLocation().getPosition() == 129)
+							        && op.getChangedElementLocation()
+							             .getElement()
+							             .getFullQualifiedName()
+							             .equals("de.unisaarland.cs.st.reposuite.genealogies.test.evironment.B.foo(float)")) {
+								environmentOperations.put(TestEnvironmentOperation.T3F2, op);
+							}
 							break;
-						case 228:
-							environmentOperations.put(TestEnvironmentOperation.T3F1D, op);
+						case "b38a68d16490c120920fe2281c40317fae960f86":
+							// case 238:
+							// environmentOperations.put(TestEnvironmentOperation.T4F3D, op);
+							// break;
+							// case 239:
+							// environmentOperations.put(TestEnvironmentOperation.T4F3A, op);
+							// break;
+							// case 234:
+							// environmentOperations.put(TestEnvironmentOperation.T4F4, op);
+							// break;
+							if (op.getChangedElementLocation().getFilePath()
+							      .equals("src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/C.java")
+							        && op.getChangedElementLocation().getElement().getElementType()
+							             .equals("org.mozkito.codeanalysis.model.JavaMethodCall")
+							        && (op.getChangedElementLocation().getPosition() == 125)
+							        && op.getChangedElementLocation()
+							             .getElement()
+							             .getFullQualifiedName()
+							             .equals("de.unisaarland.cs.st.reposuite.genealogies.test.evironment.B.bar(int)")) {
+								environmentOperations.put(TestEnvironmentOperation.T4F3D, op);
+							} else if (op.getChangedElementLocation()
+							             .getFilePath()
+							             .equals("src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/C.java")
+							        && op.getChangedElementLocation().getElement().getElementType()
+							             .equals("org.mozkito.codeanalysis.model.JavaMethodCall")
+							        && (op.getChangedElementLocation().getPosition() == 125)
+							        && op.getChangedElementLocation()
+							             .getElement()
+							             .getFullQualifiedName()
+							             .equals("de.unisaarland.cs.st.reposuite.genealogies.test.evironment.A.foo(float)")) {
+								environmentOperations.put(TestEnvironmentOperation.T4F3A, op);
+							} else if (op.getChangedElementLocation()
+							             .getFilePath()
+							             .equals("src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/D.java")
+							        && op.getChangedElementLocation().getElement().getElementType()
+							             .equals("org.mozkito.codeanalysis.model.JavaMethodCall")
+							        && (op.getChangedElementLocation().getPosition() == 128)
+							        && op.getChangedElementLocation()
+							             .getElement()
+							             .getFullQualifiedName()
+							             .equals("de.unisaarland.cs.st.reposuite.genealogies.test.evironment.A.foo(float)")) {
+								environmentOperations.put(TestEnvironmentOperation.T4F4, op);
+							}
 							break;
-						case 229:
-							environmentOperations.put(TestEnvironmentOperation.T3F1A, op);
+						case "47e6e4206b716af283f583e4d1963a32bef38a92":
+							// case 218:
+							// environmentOperations.put(TestEnvironmentOperation.T5F4, op);
+							// break;
+							if (op.getChangedElementLocation().getFilePath()
+							      .equals("src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/D.java")
+							        && op.getChangedElementLocation().getElement().getElementType()
+							             .equals("org.mozkito.codeanalysis.model.JavaMethodCall")
+							        && (op.getChangedElementLocation().getPosition() == 150)
+							        && op.getChangedElementLocation()
+							             .getElement()
+							             .getFullQualifiedName()
+							             .equals("de.unisaarland.cs.st.reposuite.genealogies.test.evironment.A.foo(float)")) {
+								environmentOperations.put(TestEnvironmentOperation.T5F4, op);
+							}
 							break;
-						case 232:
-							environmentOperations.put(TestEnvironmentOperation.T3F2M, op);
+						case "2005a1a45c9d28a03166d2f61df82552e9b9d502":
+							// case 207:
+							// environmentOperations.put(TestEnvironmentOperation.T6F2, op);
+							// break;
+							if (op.getChangedElementLocation().getFilePath()
+							      .equals("src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/B.java")
+							        && op.getChangedElementLocation().getElement().getElementType()
+							             .equals("org.mozkito.codeanalysis.model.JavaMethodeDefinition")
+							        && (op.getChangedElementLocation().getPosition() == 90)
+							        && op.getChangedElementLocation()
+							             .getElement()
+							             .getFullQualifiedName()
+							             .equals("de.unisaarland.cs.st.reposuite.genealogies.test.evironment.B.bar(int)")) {
+								environmentOperations.put(TestEnvironmentOperation.T6F2, op);
+							}
 							break;
-						case 231:
-							environmentOperations.put(TestEnvironmentOperation.T3F2, op);
+						case "f3cb1d5a03f6ecda2ce67e2f716f8b0c2d2842f0":
+							// case 210:
+							// environmentOperations.put(TestEnvironmentOperation.T7F2, op);
+							// break;
+							if (op.getChangedElementLocation().getFilePath()
+							      .equals("src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/B.java")
+							        && op.getChangedElementLocation().getElement().getElementType()
+							             .equals("org.mozkito.codeanalysis.model.JavaMethodeDefinition")
+							        && (op.getChangedElementLocation().getPosition() == 90)
+							        && op.getChangedElementLocation()
+							             .getElement()
+							             .getFullQualifiedName()
+							             .equals("de.unisaarland.cs.st.reposuite.genealogies.test.evironment.B.bar(int)")) {
+								environmentOperations.put(TestEnvironmentOperation.T7F2, op);
+							}
 							break;
-						case 238:
-							environmentOperations.put(TestEnvironmentOperation.T4F3D, op);
+						case "0c078d2b779e24fe341028ee132f9613e58763c2":
+							// case 221:
+							// environmentOperations.put(TestEnvironmentOperation.T8F2, op);
+							// break;
+							if (op.getChangedElementLocation().getFilePath()
+							      .equals("src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/B.java")
+							        && op.getChangedElementLocation().getElement().getElementType()
+							             .equals("org.mozkito.codeanalysis.model.JavaMethodeDefinition")
+							        && (op.getChangedElementLocation().getPosition() == 90)
+							        && op.getChangedElementLocation()
+							             .getElement()
+							             .getFullQualifiedName()
+							             .equals("de.unisaarland.cs.st.reposuite.genealogies.test.evironment.B.bar(int)")) {
+								environmentOperations.put(TestEnvironmentOperation.T8F2, op);
+							}
 							break;
-						case 239:
-							environmentOperations.put(TestEnvironmentOperation.T4F3A, op);
+						case "3039e34e53c1bfecfac2e21544b041c890bac8b4":
+							// case 241:
+							// environmentOperations.put(TestEnvironmentOperation.T9F1, op);
+							// break;
+							if (op.getChangedElementLocation().getFilePath()
+							      .equals("src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/A.java")
+							        && op.getChangedElementLocation().getElement().getElementType()
+							             .equals("org.mozkito.codeanalysis.model.JavaMethodeDefinition")
+							        && (op.getChangedElementLocation().getPosition() == 90)
+							        && op.getChangedElementLocation()
+							             .getElement()
+							             .getFullQualifiedName()
+							             .equals("de.unisaarland.cs.st.reposuite.genealogies.test.evironment.A.foo(float)")) {
+								environmentOperations.put(TestEnvironmentOperation.T9F1, op);
+							}
 							break;
-						case 234:
-							environmentOperations.put(TestEnvironmentOperation.T4F4, op);
-							break;
-						case 218:
-							environmentOperations.put(TestEnvironmentOperation.T5F4, op);
-							break;
-						case 207:
-							environmentOperations.put(TestEnvironmentOperation.T6F2, op);
-							break;
-						case 210:
-							environmentOperations.put(TestEnvironmentOperation.T7F2, op);
-							break;
-						case 221:
-							environmentOperations.put(TestEnvironmentOperation.T8F2, op);
-							break;
-						case 241:
-							environmentOperations.put(TestEnvironmentOperation.T9F1, op);
-							break;
-						case 217:
-							environmentOperations.put(TestEnvironmentOperation.T10F3, op);
-							break;
-						case 211:
-							environmentOperations.put(TestEnvironmentOperation.T10F4, op);
+						case "5658606e2f80c30d0b835ed4216e9f8e0cc996fb":
+							// case 217:
+							// environmentOperations.put(TestEnvironmentOperation.T10F3, op);
+							// break;
+							// case 211:
+							// environmentOperations.put(TestEnvironmentOperation.T10F4, op);
+							// break;
+							if (op.getChangedElementLocation().getFilePath()
+							      .equals("src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/D.java")
+							        && op.getChangedElementLocation().getElement().getElementType()
+							             .equals("org.mozkito.codeanalysis.model.JavaMethodeCall")
+							        && (op.getChangedElementLocation().getPosition() == 150)
+							        && op.getChangedElementLocation()
+							             .getElement()
+							             .getFullQualifiedName()
+							             .equals("de.unisaarland.cs.st.reposuite.genealogies.test.evironment.A.foo(float)")) {
+								environmentOperations.put(TestEnvironmentOperation.T10F4, op);
+							} else if (op.getChangedElementLocation()
+							             .getFilePath()
+							             .equals("src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/C.java")
+							        && op.getChangedElementLocation().getElement().getElementType()
+							             .equals("org.mozkito.codeanalysis.model.JavaMethodeCall")
+							        && (op.getChangedElementLocation().getPosition() == 125)
+							        && op.getChangedElementLocation()
+							             .getElement()
+							             .getFullQualifiedName()
+							             .equals("de.unisaarland.cs.st.reposuite.genealogies.test.evironment.A.foo(int)")) {
+								environmentOperations.put(TestEnvironmentOperation.T10F3, op);
+							}
 							break;
 						default:
 							break;
