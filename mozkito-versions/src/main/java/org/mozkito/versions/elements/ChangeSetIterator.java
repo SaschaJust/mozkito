@@ -12,7 +12,10 @@
  ******************************************************************************/
 package org.mozkito.versions.elements;
 
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.model.ChangeSet;
@@ -22,8 +25,61 @@ import org.mozkito.versions.model.ChangeSet;
  */
 public class ChangeSetIterator implements Iterable<ChangeSet>, Iterator<ChangeSet> {
 	
-	private final RevDepIterator  revDepIterator;
-	private final PersistenceUtil persistenceUtil;
+	/**
+	 * The Enum ChangeSetOrder.
+	 */
+	public enum ChangeSetOrder {
+		
+		/** The asc. */
+		ASC,
+		/** The desc. */
+		DESC;
+	}
+	
+	/**
+	 * From rev dep iterator.
+	 * 
+	 * @param persistenceUtil
+	 *            the persistence util
+	 * @param revDepIterator
+	 *            the rev dep iterator
+	 * @return the change set iterator
+	 */
+	public static ChangeSetIterator fromRevDepIterator(final PersistenceUtil persistenceUtil,
+	                                                   final RevDepIterator revDepIterator) {
+		return fromRevDepIterator(persistenceUtil, revDepIterator, ChangeSetOrder.DESC);
+	}
+	
+	/**
+	 * From rev dep iterator.
+	 * 
+	 * @param persistenceUtil
+	 *            the persistence util
+	 * @param revDepIterator
+	 *            the rev dep iterator
+	 * @param order
+	 *            the order. DESC means from the last transaction to previous transactions.
+	 * @return the change set iterator
+	 */
+	public static ChangeSetIterator fromRevDepIterator(final PersistenceUtil persistenceUtil,
+	                                                   final RevDepIterator revDepIterator,
+	                                                   final ChangeSetOrder order) {
+		if (order.equals(ChangeSetOrder.DESC)) {
+			return new ChangeSetIterator(persistenceUtil, revDepIterator);
+		}
+		final List<String> reverseList = new LinkedList<String>();
+		for (final String s : revDepIterator) {
+			reverseList.add(s);
+		}
+		Collections.reverse(reverseList);
+		return new ChangeSetIterator(persistenceUtil, reverseList.iterator());
+	}
+	
+	/** The rev dep iterator. */
+	private final Iterator<String> revDepIterator;
+	
+	/** The persistence util. */
+	private final PersistenceUtil  persistenceUtil;
 	
 	/**
 	 * Instantiates a new change set iterator.
@@ -33,27 +89,43 @@ public class ChangeSetIterator implements Iterable<ChangeSet>, Iterator<ChangeSe
 	 * @param revDepIterator
 	 *            the rev dep iterator
 	 */
-	public ChangeSetIterator(final PersistenceUtil persistenceUtil, final RevDepIterator revDepIterator) {
+	private ChangeSetIterator(final PersistenceUtil persistenceUtil, final Iterator<String> revDepIterator) {
 		this.persistenceUtil = persistenceUtil;
 		this.revDepIterator = revDepIterator;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.util.Iterator#hasNext()
+	 */
 	@Override
 	public boolean hasNext() {
 		return this.revDepIterator.hasNext();
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Iterable#iterator()
+	 */
 	@Override
 	public Iterator<ChangeSet> iterator() {
 		return this;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.util.Iterator#next()
+	 */
 	@Override
 	public ChangeSet next() {
 		final String nextChangeSetHash = this.revDepIterator.next();
 		return this.persistenceUtil.loadById(nextChangeSetHash, ChangeSet.class);
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.util.Iterator#remove()
+	 */
 	@Override
 	public void remove() {
 		this.revDepIterator.remove();
