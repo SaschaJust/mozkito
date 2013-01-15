@@ -44,6 +44,7 @@ import org.mozkito.persistence.Annotated;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.elements.RevDependencyGraph;
 import org.mozkito.versions.elements.RevDependencyGraph.EdgeType;
+import org.mozkito.versions.exceptions.NotComparableException;
 
 /**
  * The Class VersionArchive.
@@ -119,6 +120,32 @@ public class VersionArchive implements Annotated {
 	@Transient
 	protected void addChangeSet(final ChangeSet changeSet) {
 		this.changeSets.put(changeSet.getId(), changeSet);
+	}
+	
+	/**
+	 * Compare change sets.
+	 * 
+	 * @param cs1
+	 *            the cs1
+	 * @param cs2
+	 *            the cs2
+	 * @return 0 is both change sets are equal, -1 if cs1 was applied before cs2, +1 if c1 was applied later than cs2.
+	 * @throws NotComparableException
+	 *             if both change sets were not applied in any common branch
+	 */
+	public int compareChangeSets(final ChangeSet cs1,
+	                             final ChangeSet cs2) throws NotComparableException {
+		if (cs1.getId().equals(cs2.getId())) {
+			return 0;
+		}
+		if (getRevDependencyGraph().existsPath(cs1.getId(), cs2.getId())) {
+			return -1;
+		}
+		if (getRevDependencyGraph().existsPath(cs2.getId(), cs1.getId())) {
+			return 1;
+		}
+		throw NotComparableException.format("The change sets %s and %s are not comparable. It seems both change sets were applied to different non-merging branches.",
+		                                    cs1.toString(), cs2.toString());
 	}
 	
 	/**

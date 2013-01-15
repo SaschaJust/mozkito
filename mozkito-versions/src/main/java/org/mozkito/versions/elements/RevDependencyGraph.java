@@ -33,6 +33,7 @@ import net.ownhero.dev.kisa.Logger;
 import org.apache.commons.collections.CollectionUtils;
 import org.mozkito.datastructures.BidirectionalMultiMap;
 import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.versions.elements.ChangeSetIterator.ChangeSetOrder;
 import org.mozkito.versions.model.ChangeSet;
 
 import edu.uci.ics.jung.algorithms.shortestpath.UnweightedShortestPath;
@@ -437,6 +438,51 @@ public class RevDependencyGraph {
 	}
 	
 	/**
+	 * Gets the change sets in the specified branch (in top-down order).
+	 * 
+	 * @param branchName
+	 *            the branch name
+	 * @param persistenceUtil
+	 *            the persistence util
+	 * @return the branch transactions
+	 */
+	@NoneNull
+	public Iterable<ChangeSet> getBranchTransactions(@NotEmptyString final String branchName,
+	                                                 @NotNull final PersistenceUtil persistenceUtil) {
+		final String branchHead = getBranchHead(branchName);
+		if (branchHead == null) {
+			if (Logger.logWarn()) {
+				Logger.warn("Returning empty branch transaction iterator.");
+			}
+			return new ArrayList<ChangeSet>(0);
+		}
+		return ChangeSetIterator.fromRevDepIterator(persistenceUtil, new RevDepIterator(branchHead, this));
+	}
+	
+	/**
+	 * Gets the change sets in the specified branch (in top-down order).
+	 * 
+	 * @param branchName
+	 *            the branch name
+	 * @param persistenceUtil
+	 *            the persistence util
+	 * @return the branch transactions
+	 */
+	@NoneNull
+	public Iterable<ChangeSet> getBranchTransactionsASC(@NotEmptyString final String branchName,
+	                                                    @NotNull final PersistenceUtil persistenceUtil) {
+		final String branchHead = getBranchHead(branchName);
+		if (branchHead == null) {
+			if (Logger.logWarn()) {
+				Logger.warn("Returning empty branch transaction iterator.");
+			}
+			return new ArrayList<ChangeSet>(0);
+		}
+		return ChangeSetIterator.fromRevDepIterator(persistenceUtil, new RevDepIterator(branchHead, this),
+		                                            ChangeSetOrder.ASC);
+	}
+	
+	/**
 	 * Gets the edge.
 	 * 
 	 * @param node
@@ -544,7 +590,29 @@ public class RevDependencyGraph {
 		final RevDepIterator iter = new RevDepIterator(hash, this);
 		if (iter.hasNext()) {
 			iter.next();
-			return new ChangeSetIterator(persistenceUtil, iter);
+			return ChangeSetIterator.fromRevDepIterator(persistenceUtil, iter);
+		}
+		return new ArrayList<ChangeSet>(0);
+	}
+	
+	/**
+	 * Return a list of change sets applied before the change set corresponding to the provided hash (top-down order).
+	 * The database instances will be fetched using the provided persistenceUtil. Returns an empty list if no previous
+	 * transaction exist or if the transaction hash is unknown.
+	 * 
+	 * @param hash
+	 *            the hash
+	 * @param persistenceUtil
+	 *            the persistence util
+	 * @return the previous change sets
+	 */
+	@NoneNull
+	public Iterable<ChangeSet> getPreviousTransactionsASC(@NotEmptyString final String hash,
+	                                                      @NotNull final PersistenceUtil persistenceUtil) {
+		final RevDepIterator iter = new RevDepIterator(hash, this);
+		if (iter.hasNext()) {
+			iter.next();
+			return ChangeSetIterator.fromRevDepIterator(persistenceUtil, iter, ChangeSetOrder.ASC);
 		}
 		return new ArrayList<ChangeSet>(0);
 	}
