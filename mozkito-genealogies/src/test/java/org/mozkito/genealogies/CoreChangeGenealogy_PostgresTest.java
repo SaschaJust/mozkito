@@ -368,7 +368,7 @@ public class CoreChangeGenealogy_PostgresTest extends DatabaseTest {
 			}
 			++iterCounter;
 		}
-		assertEquals(41, iterCounter);
+		assertEquals(42, iterCounter);
 		assertEquals(17, hitCounter);
 		
 		// test roots
