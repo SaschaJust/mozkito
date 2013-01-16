@@ -122,6 +122,8 @@ public class ChangeCouplingRuleFactory_PostgresTest extends DatabaseTest {
 		final ChangeSet cs2 = new ChangeSet(versionArchive, "2", "", now.plus(20000), person, "");
 		final ChangeSet cs3 = new ChangeSet(versionArchive, "3", "", now.plus(30000), person, "");
 		
+		versionArchive.getMasterBranch().setHead(cs3);
+		
 		// ###transaction 1
 		
 		final Handle fileA = new Handle(versionArchive);
@@ -157,6 +159,8 @@ public class ChangeCouplingRuleFactory_PostgresTest extends DatabaseTest {
 		new Revision(cs3, fileC, ChangeType.Modified);
 		new Revision(cs3, fileB, ChangeType.Modified);
 		ChangeCouplingRuleFactory_PostgresTest.persistenceUtil.saveOrUpdate(cs3);
+		
+		ChangeCouplingRuleFactory_PostgresTest.persistenceUtil.saveOrUpdate(versionArchive);
 		
 		ChangeCouplingRuleFactory_PostgresTest.persistenceUtil.commitTransaction();
 		
