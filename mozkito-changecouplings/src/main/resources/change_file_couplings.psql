@@ -15,7 +15,7 @@ CREATE OR REPLACE FUNCTION mozkito_file_changecouplings(tid character varying(40
   def cc_support(s,ctime):
     args = list(s)
     counter = 1
-    basequery = " SELECT transaction_id FROM revision WHERE changedfile_id = $"
+    basequery = " SELECT changeset_id FROM revision WHERE changedfile_id = $"
     argtypes = []
     if len(s) < 1:
       return 0
@@ -26,7 +26,7 @@ CREATE OR REPLACE FUNCTION mozkito_file_changecouplings(tid character varying(40
       q = q + " INTERSECT " + basequery +str(counter)
       argtypes.append("integer")
       counter = counter + 1
-    q = "SELECT COUNT(distinct t.id) AS support FROM ("+q+") AS r INNER JOIN changeset t ON r.transaction_id = t.id WHERE timestamp < $"+str(counter)
+    q = "SELECT COUNT(distinct t.id) AS support FROM ("+q+") AS r INNER JOIN changeset t ON r.changeset_id = t.id WHERE timestamp < $"+str(counter)
     args.append(ctime)
     argtypes.append("timestamp")
     q = plpy.prepare(q,argtypes)
@@ -46,7 +46,7 @@ CREATE OR REPLACE FUNCTION mozkito_file_changecouplings(tid character varying(40
   plpy.execute("DROP TABLE IF EXISTS "+str(tablename))
   plpy.execute("CREATE TABLE "+str(tablename)+" (premise integer[], implication integer, support integer, confidence float)")
   
-  q = plpy.prepare("select r1.changedfile_id AS premise, r2.changedfile_id AS implication from revision r1 CROSS JOIN revision r2 WHERE r2.transaction_id = $1 AND r1.transaction_id = $1 AND r1.changedfile_id <> r2.changedfile_id ORDER BY premise",["text"])
+  q = plpy.prepare("select r1.changedfile_id AS premise, r2.changedfile_id AS implication from revision r1 CROSS JOIN revision r2 WHERE r2.changeset_id = $1 AND r1.changeset_id = $1 AND r1.changedfile_id <> r2.changedfile_id ORDER BY premise",["text"])
   q_rows = plpy.execute(q, [tid])
   plpy.notice("hubba")
   cquery = plpy.prepare("SELECT timestamp FROM changeset WHERE id = $1",["text"])
