@@ -13,6 +13,7 @@
 package org.mozkito.genealogies;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import java.io.File;
 import java.io.IOException;
@@ -115,29 +116,29 @@ public class JavaChangeOperationProcessQueue_PostgresTest extends DatabaseTest {
 			++counter;
 			
 			if (!deletedDefinitions.isEmpty()) {
-				assert (!modifiedDefinitions.contains(next));
-				assert (!addedDefinitions.contains(next));
-				assert (!deletedCalls.contains(next));
-				assert (!modifiedCalls.contains(next));
-				assert (!addedCalls.contains(next));
+				assertFalse(modifiedDefinitions.contains(next));
+				assertFalse(addedDefinitions.contains(next));
+				assertFalse(deletedCalls.contains(next));
+				assertFalse(modifiedCalls.contains(next));
+				assertFalse(addedCalls.contains(next));
 				deletedDefinitions.remove(next);
 			} else if (!modifiedDefinitions.isEmpty()) {
-				assert (!addedDefinitions.contains(next));
-				assert (!deletedCalls.contains(next));
-				assert (!modifiedCalls.contains(next));
-				assert (!addedCalls.contains(next));
+				assertFalse(addedDefinitions.contains(next));
+				assertFalse(deletedCalls.contains(next));
+				assertFalse(modifiedCalls.contains(next));
+				assertFalse(addedCalls.contains(next));
 				modifiedDefinitions.remove(next);
 			} else if (!addedDefinitions.isEmpty()) {
-				assert (!deletedCalls.contains(next));
-				assert (!modifiedCalls.contains(next));
-				assert (!addedCalls.contains(next));
+				assertFalse(deletedCalls.contains(next));
+				assertFalse(modifiedCalls.contains(next));
+				assertFalse(addedCalls.contains(next));
 				addedDefinitions.remove(next);
 			} else if (!deletedCalls.isEmpty()) {
-				assert (!modifiedCalls.contains(next));
-				assert (!addedCalls.contains(next));
+				assertFalse(modifiedCalls.contains(next));
+				assertFalse(addedCalls.contains(next));
 				deletedCalls.remove(next);
 			} else if (!modifiedCalls.isEmpty()) {
-				assert (!addedCalls.contains(next));
+				assertFalse(addedCalls.contains(next));
 				modifiedCalls.remove(next);
 			} else {
 				addedCalls.remove(next);

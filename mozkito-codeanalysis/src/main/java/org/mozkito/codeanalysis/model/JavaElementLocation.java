@@ -428,6 +428,9 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 			if (getElement() instanceof JavaMethodCall) {
 				return LineCover.DEFINITION;
 			}
+			if (getStartLine() == line) {
+				return LineCover.DEFINITION;
+			}
 			if ((getBodyStartLine() < 0) || (getBodyStartLine() > line)) {
 				return LineCover.DEFINITION;
 			}

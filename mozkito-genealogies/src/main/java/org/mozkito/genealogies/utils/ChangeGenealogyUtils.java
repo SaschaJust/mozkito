@@ -344,7 +344,7 @@ public class ChangeGenealogyUtils {
 							        && op.getChangedElementLocation()
 							             .getElement()
 							             .getFullQualifiedName()
-							             .equals("de.unisaarland.cs.st.reposuite.genealogies.test.evironment.B.foo(float)")) {
+							             .equals("de.unisaarland.cs.st.reposuite.genealogies.test.evironment.A.foo(float)")) {
 								environmentOperations.put(TestEnvironmentOperation.T3F2, op);
 							}
 							break;
@@ -415,7 +415,7 @@ public class ChangeGenealogyUtils {
 							if (op.getChangedElementLocation().getFilePath()
 							      .equals("src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/B.java")
 							        && op.getChangedElementLocation().getElement().getElementType()
-							             .equals("org.mozkito.codeanalysis.model.JavaMethodeDefinition")
+							             .equals("org.mozkito.codeanalysis.model.JavaMethodDefinition")
 							        && (op.getChangedElementLocation().getPosition() == 90)
 							        && op.getChangedElementLocation()
 							             .getElement()
@@ -431,7 +431,7 @@ public class ChangeGenealogyUtils {
 							if (op.getChangedElementLocation().getFilePath()
 							      .equals("src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/B.java")
 							        && op.getChangedElementLocation().getElement().getElementType()
-							             .equals("org.mozkito.codeanalysis.model.JavaMethodeDefinition")
+							             .equals("org.mozkito.codeanalysis.model.JavaMethodDefinition")
 							        && (op.getChangedElementLocation().getPosition() == 90)
 							        && op.getChangedElementLocation()
 							             .getElement()
@@ -447,7 +447,7 @@ public class ChangeGenealogyUtils {
 							if (op.getChangedElementLocation().getFilePath()
 							      .equals("src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/B.java")
 							        && op.getChangedElementLocation().getElement().getElementType()
-							             .equals("org.mozkito.codeanalysis.model.JavaMethodeDefinition")
+							             .equals("org.mozkito.codeanalysis.model.JavaMethodDefinition")
 							        && (op.getChangedElementLocation().getPosition() == 90)
 							        && op.getChangedElementLocation()
 							             .getElement()
@@ -463,7 +463,7 @@ public class ChangeGenealogyUtils {
 							if (op.getChangedElementLocation().getFilePath()
 							      .equals("src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/A.java")
 							        && op.getChangedElementLocation().getElement().getElementType()
-							             .equals("org.mozkito.codeanalysis.model.JavaMethodeDefinition")
+							             .equals("org.mozkito.codeanalysis.model.JavaMethodDefinition")
 							        && (op.getChangedElementLocation().getPosition() == 90)
 							        && op.getChangedElementLocation()
 							             .getElement()
@@ -473,32 +473,39 @@ public class ChangeGenealogyUtils {
 							}
 							break;
 						case "5658606e2f80c30d0b835ed4216e9f8e0cc996fb":
-							// case 217:
-							// environmentOperations.put(TestEnvironmentOperation.T10F3, op);
-							// break;
 							// case 211:
 							// environmentOperations.put(TestEnvironmentOperation.T10F4, op);
 							// break;
+							// case 217:
+							// environmentOperations.put(TestEnvironmentOperation.T10F3, op);
+							// break;
+							
 							if (op.getChangedElementLocation().getFilePath()
 							      .equals("src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/D.java")
 							        && op.getChangedElementLocation().getElement().getElementType()
-							             .equals("org.mozkito.codeanalysis.model.JavaMethodeCall")
+							             .equals("org.mozkito.codeanalysis.model.JavaMethodCall")
 							        && (op.getChangedElementLocation().getPosition() == 150)
-							        && op.getChangedElementLocation()
-							             .getElement()
-							             .getFullQualifiedName()
-							             .equals("de.unisaarland.cs.st.reposuite.genealogies.test.evironment.A.foo(float)")) {
+							        && (op.getChangedElementLocation()
+							              .getElement()
+							              .getFullQualifiedName()
+							              .equals("de.unisaarland.cs.st.reposuite.genealogies.test.evironment.A.foo(float)") || op.getChangedElementLocation()
+							                                                                                                      .getElement()
+							                                                                                                      .getFullQualifiedName()
+							                                                                                                      .equals("java.Object.foo(float)"))) {
 								environmentOperations.put(TestEnvironmentOperation.T10F4, op);
 							} else if (op.getChangedElementLocation()
 							             .getFilePath()
 							             .equals("src/de/unisaarland/cs/st/reposuite/genealogies/test/evironment/C.java")
 							        && op.getChangedElementLocation().getElement().getElementType()
-							             .equals("org.mozkito.codeanalysis.model.JavaMethodeCall")
+							             .equals("org.mozkito.codeanalysis.model.JavaMethodCall")
 							        && (op.getChangedElementLocation().getPosition() == 125)
-							        && op.getChangedElementLocation()
-							             .getElement()
-							             .getFullQualifiedName()
-							             .equals("de.unisaarland.cs.st.reposuite.genealogies.test.evironment.A.foo(int)")) {
+							        && (op.getChangedElementLocation()
+							              .getElement()
+							              .getFullQualifiedName()
+							              .equals("de.unisaarland.cs.st.reposuite.genealogies.test.evironment.A.foo(float)") || op.getChangedElementLocation()
+							                                                                                                      .getElement()
+							                                                                                                      .getFullQualifiedName()
+							                                                                                                      .equals("java.Object.foo(float)"))) {
 								environmentOperations.put(TestEnvironmentOperation.T10F3, op);
 							}
 							break;
