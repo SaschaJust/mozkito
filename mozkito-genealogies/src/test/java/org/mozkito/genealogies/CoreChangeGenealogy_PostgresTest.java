@@ -80,7 +80,7 @@ public class CoreChangeGenealogy_PostgresTest extends DatabaseTest {
 		changeGenealogy.getChangeSetLayer().close();
 		changeGenealogy.close();
 		changeGenealogy = ChangeGenealogyUtils.readFromDB(tmpGraphDBFile, persistenceUtil);
-		assertEquals(41, changeGenealogy.vertexSize());
+		assertEquals(42, changeGenealogy.vertexSize());
 		assertEquals(16, changeGenealogy.edgeSize());
 		
 		assertFalse(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T1F1),
