@@ -144,6 +144,7 @@ public class ChangeCouplingRuleFactory_PostgresTest extends DatabaseTest {
 		
 		final Handle fileD = new Handle(versionArchive);
 		fileD.assignRevision(new Revision(cs1, fileD, ChangeType.Added), "D.java");
+		cs1.setBranchParent(cs0);
 		ChangeCouplingRuleFactory_PostgresTest.persistenceUtil.saveOrUpdate(cs1);
 		
 		// ### transaction 3
@@ -151,6 +152,7 @@ public class ChangeCouplingRuleFactory_PostgresTest extends DatabaseTest {
 		new Revision(cs2, fileA, ChangeType.Modified);
 		new Revision(cs2, fileC, ChangeType.Modified);
 		new Revision(cs2, fileB, ChangeType.Added);
+		cs2.setBranchParent(cs1);
 		ChangeCouplingRuleFactory_PostgresTest.persistenceUtil.saveOrUpdate(cs2);
 		
 		// ### transaction 4
@@ -158,6 +160,7 @@ public class ChangeCouplingRuleFactory_PostgresTest extends DatabaseTest {
 		new Revision(cs3, fileA, ChangeType.Modified);
 		new Revision(cs3, fileC, ChangeType.Modified);
 		new Revision(cs3, fileB, ChangeType.Modified);
+		cs3.setBranchParent(cs2);
 		ChangeCouplingRuleFactory_PostgresTest.persistenceUtil.saveOrUpdate(cs3);
 		
 		ChangeCouplingRuleFactory_PostgresTest.persistenceUtil.saveOrUpdate(versionArchive);
