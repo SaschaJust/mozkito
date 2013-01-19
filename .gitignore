@@ -33,3 +33,4 @@ mozkito-*/bin
 **/jacoco.exec
 /mozkito-untangling/src/main/java/org/mozkito/untangling/msr2013/
 .checkstyle
+persistence.xml

@@ -14,18 +14,22 @@
 package org.mozkito.mojo;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.maven.model.Dependency;
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -33,14 +37,18 @@ import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
+import org.codehaus.plexus.util.AbstractScanner;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
+import org.jdom2.Namespace;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.input.sax.XMLReaderSAX2Factory;
+import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 
 /**
@@ -53,7 +61,8 @@ import org.jdom2.output.XMLOutputter;
 @Mojo (name = "persistence",
        requiresProject = true,
        threadSafe = false,
-       defaultPhase = LifecyclePhase.GENERATE_RESOURCES)
+       defaultPhase = LifecyclePhase.GENERATE_RESOURCES,
+       requiresDependencyResolution = ResolutionScope.COMPILE)
 public class MozkitoPersistenceMojo extends AbstractMojo {
 	
 	/**
@@ -86,6 +95,10 @@ public class MozkitoPersistenceMojo extends AbstractMojo {
 	@Parameter (required = true)
 	private List<String>        includes;
 	
+	/** The base directory. */
+	@Parameter (defaultValue = "${basedir}", readonly = true, required = true)
+	private File                baseDirectory;
+	
 	/**
 	 * The exclusion pattern. This should be something like:
 	 * <p>
@@ -113,7 +126,24 @@ public class MozkitoPersistenceMojo extends AbstractMojo {
 	private Map<String, String> openJPAOptions;
 	
 	/** The Constant projectPreTag. */
-	private static final String projectPreTag = "mozkito-";
+	private static final String PROJECT_PREFIX = "mozkito-";
+	
+	/**
+	 * Adds the resources directory.
+	 * 
+	 * @param directory
+	 *            the directory
+	 */
+	private void addResourcesDirectory(final File directory) {
+		if (getLog().isInfoEnabled()) {
+			getLog().info("Adding resource to project.");
+		}
+		
+		final List<String> includes = Collections.singletonList("*");
+		final List<String> excludes = null;
+		
+		this.projectHelper.addResource(this.project, directory.getAbsolutePath(), includes, excludes);
+	}
 	
 	/**
 	 * {@inheritDoc}
@@ -125,6 +155,10 @@ public class MozkitoPersistenceMojo extends AbstractMojo {
 		// PRECONDITIONS
 		
 		try {
+			if (this.projectHelper == null) {
+				throw new MojoExecutionException("ProjectHelper is null!");
+			}
+			
 			if (this.project.getParent() == null) {
 				if (getLog().isInfoEnabled()) {
 					getLog().info("Omitting generation of persistence.xml for master module: "
@@ -133,110 +167,196 @@ public class MozkitoPersistenceMojo extends AbstractMojo {
 				return;
 			}
 			
-			final String moduleName = this.artifactId.replace(projectPreTag, "");
+			boolean foundOpenJPADependency = false;
+			@SuppressWarnings ("unchecked")
+			final Set<Artifact> artifacts = this.project.getArtifacts();
+			OPENJPA_DEPENDENCY: for (final Artifact artifact : artifacts) {
+				if (artifact.getArtifactId().startsWith("openjpa")) {
+					foundOpenJPADependency = true;
+					break OPENJPA_DEPENDENCY;
+				}
+			}
+			
+			if (!foundOpenJPADependency) {
+				getLog().info("Omitting generation of persistence.xml since no dependencies to OpenJPA have been found.");
+				return;
+			}
+			
+			final String moduleName = this.artifactId.replace(PROJECT_PREFIX, "");
+			
 			if (getLog().isInfoEnabled()) {
 				getLog().info("Gathering data to generate persistence.xml for module: " + moduleName);
 			}
 			
-			final InputStream stream = MozkitoPersistenceMojo.class.getResourceAsStream("/persistence-skeleton.xml");
-			InputStreamReader reader = null;
-			Document document = null;
+			if (getLog().isDebugEnabled()) {
+				getLog().debug("Reading skeleton file.");
+			}
+			final Document skeleton = readSkeleton();
 			
-			if (stream == null) {
-				throw new MojoExecutionException(
-				                                 "Cannot find persistence.xml skeleton file in the resources of this plugin.");
+			if (getLog().isDebugEnabled()) {
+				getLog().debug("Determining resource directory.");
+			}
+			final File directory = getResourceDirectory();
+			
+			if (getLog().isDebugEnabled()) {
+				getLog().debug("Looking up anchor element.");
+			}
+			// get anchor to add module children
+			final Element anchor = getAnchor(skeleton, moduleName);
+			
+			final Element propertiesElement = anchor.getChild("properties", anchor.getNamespace()).clone();
+			anchor.removeChild("properties", anchor.getNamespace());
+			
+			// gather inherited models
+			if (getLog().isDebugEnabled()) {
+				getLog().debug("Gathering inherited models.");
 			}
 			
+			gatherInheritedModels(anchor);
+			
+			// gather local models
+			if (getLog().isDebugEnabled()) {
+				getLog().debug("Gathering local models.");
+			}
+			
+			gatherLocalModels(anchor);
+			
+			// inject settings from configuration
+			if (getLog().isDebugEnabled()) {
+				getLog().debug("Applying settings.");
+			}
+			
+			injectSettings(anchor, propertiesElement);
+			
+			// write file
+			
+			final File f = this.outputDirectory;
+			
+			if (!f.exists()) {
+				f.mkdirs();
+			}
+			
+			final File file = new File(directory, "persistence.xml");
+			
+			FileWriter w = null;
+			
 			try {
-				reader = new InputStreamReader(stream);
+				if (getLog().isInfoEnabled()) {
+					getLog().info("Generating persistence data file...");
+				}
 				
-				final SAXBuilder saxBuilder = new SAXBuilder(
-				                                             new XMLReaderSAX2Factory(false,
-				                                                                      "org.apache.xerces.parsers.SAXParser"));
-				saxBuilder.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
-				saxBuilder.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-				document = saxBuilder.build(reader);
-				reader.close();
-			} catch (IOException | JDOMException e) {
-				throw new MojoExecutionException("Could not read persistence skeleton.", e);
+				boolean doAddResourceDir = false;
+				if (!directory.exists()) {
+					doAddResourceDir = true;
+					directory.mkdirs();
+				}
+				
+				if (file.exists()) {
+					file.delete();
+				}
+				w = new FileWriter(file);
+				
+				final XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
+				outputter.output(skeleton, w);
+				w.close();
+				
+				if (getLog().isDebugEnabled()) {
+					getLog().debug("Adding persistence.xml to module resources.");
+				}
+				
+				if (doAddResourceDir) {
+					addResourcesDirectory(directory);
+				}
+			} catch (final IOException e) {
+				throw new MojoExecutionException("Error creating file " + file, e);
 			} finally {
-				if (reader != null) {
+				if (w != null) {
 					try {
-						reader.close();
-					} catch (final IOException ignore) {
+						w.close();
+					} catch (final IOException e) {
 						// ignore
 					}
 				}
 			}
-			
-			final Element persistenceElement = document.getRootElement();
-			final Element unitElement = persistenceElement.getChild("persistence-unit",
-			                                                        persistenceElement.getNamespace());
-			
-			if (unitElement == null) {
-				throw new MojoExecutionException("[BUG] Invalid structure in skeleton file.");
-			}
-			
-			// set name of the persistence unit
-			unitElement.setAttribute("name", moduleName);
-			
-			// gather model units from dependencies
-			@SuppressWarnings ("unchecked")
-			final List<Dependency> dependencies = this.project.getDependencies();
-			final File parentBaseDir = this.project.getParent().getBasedir();
-			for (final Dependency dependency : dependencies) {
-				if (dependency.getArtifactId().startsWith(projectPreTag)) {
-					final File moduleDir = new File(parentBaseDir, dependency.getArtifactId());
-					if (!moduleDir.exists()) {
-						throw new MojoExecutionException("Cannot build persistence.xml if not all modules are present.");
-					}
-					final File targetDir = new File(moduleDir, "target");
-					final File persistenceDir = new File(targetDir, "persistence");
-					final File persistenceFile = new File(persistenceDir, "persistence.xml");
-					
-					Document depDocument = null;
-					if (persistenceFile.exists()) {
-						try {
-							reader = new FileReader(persistenceFile);
-							
-							final SAXBuilder saxBuilder = new SAXBuilder(
-							                                             new XMLReaderSAX2Factory(false,
-							                                                                      "org.apache.xerces.parsers.SAXParser"));
-							saxBuilder.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar",
-							                      false);
-							saxBuilder.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd",
-							                      false);
-							depDocument = saxBuilder.build(reader);
-							reader.close();
-						} catch (IOException | JDOMException e) {
-							throw new MojoExecutionException("Could not read persistence skeleton.", e);
-						} finally {
-							if (reader != null) {
-								try {
-									reader.close();
-								} catch (final IOException ignore) {
-									// ignore
-								}
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/**
+	 * Gather inherited models.
+	 * 
+	 * @param anchor
+	 *            the anchor
+	 * @throws MojoExecutionException
+	 *             the mojo execution exception
+	 */
+	private void gatherInheritedModels(final Element anchor) throws MojoExecutionException {
+		// gather model units from dependencies
+		@SuppressWarnings ("unchecked")
+		final Set<Artifact> artifacts = this.project.getArtifacts();
+		for (final Artifact artifact : artifacts) {
+			getLog().debug("Checking dependency artifact: " + artifact.getArtifactId());
+			if (artifact.getArtifactId().startsWith(PROJECT_PREFIX)) {
+				getLog().debug("Processing dependency artifact: " + artifact.getArtifactId());
+				
+				final File file = artifact.getFile();
+				assert file.getAbsolutePath().endsWith(".jar");
+				JarFile jFile = null;
+				try {
+					jFile = new JarFile(file);
+					final Enumeration<JarEntry> entries = jFile.entries();
+					while (entries.hasMoreElements()) {
+						final JarEntry entry = entries.nextElement();
+						boolean include = false;
+						INCLUDE: for (final String includePattern : this.includes) {
+							if (AbstractScanner.match(includePattern, entry.getName())
+							        && entry.getName().endsWith(".class") && !entry.getName().endsWith("_.class")) {
+								include = true;
+								break INCLUDE;
 							}
 						}
 						
-					} else {
-						getLog().info("No model units in " + dependency.getArtifactId());
+						if (include) {
+							final String path = FilenameUtils.removeExtension(entry.getName());
+							
+							final String fqn = path.replace(File.separator, ".");
+							
+							final Element element = new Element("class", anchor.getNamespace());
+							element.setText(fqn);
+							getLog().info("Adding dependency unit: " + element.getValue());
+							anchor.addContent(element);
+						}
 					}
 					
-					if (depDocument != null) {
-						
-						final Element root = depDocument.getRootElement();
-						final Element e1 = root.getChild("persistence-unit", root.getNamespace());
-						final List<Element> children = e1.getChildren("class", root.getNamespace());
-						for (final Element child : children) {
-							getLog().info("Adding dependency unit: " + child.getValue());
-							unitElement.addContent(child.clone());
+					jFile.close();
+					jFile = null;
+				} catch (final IOException e) {
+					throw new MojoExecutionException("Could not open dependency: " + file.getAbsolutePath(), e);
+				} finally {
+					if (jFile != null) {
+						try {
+							jFile.close();
+						} catch (final IOException ignore) {
+							// ignore
 						}
 					}
 				}
 			}
-			
+		}
+		
+	}
+	
+	/**
+	 * Gather local models.
+	 * 
+	 * @param anchor
+	 *            the anchor
+	 */
+	private void gatherLocalModels(final Element anchor) {
+		// PRECONDITIONS
+		
+		try {
 			final DirectoryScanner scanner = new DirectoryScanner();
 			scanner.setIncludes(this.includes.toArray(new String[0]));
 			if (this.excludes != null) {
@@ -253,14 +373,95 @@ public class MozkitoPersistenceMojo extends AbstractMojo {
 				final String canonicalClassName = FilenameUtils.removeExtension(filePath)
 				                                               .replace(System.getProperty("file.separator"), ".");
 				getLog().info("adding compilation unit: " + canonicalClassName);
-				final Element classElement = new Element("class", persistenceElement.getNamespace());
+				final Element classElement = new Element("class", anchor.getNamespace());
 				classElement.addContent(canonicalClassName);
-				unitElement.addContent(classElement);
+				anchor.addContent(classElement);
+			}
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/**
+	 * Gets the anchor.
+	 * 
+	 * @param skeleton
+	 *            the skeleton
+	 * @param moduleName
+	 *            the module name
+	 * @return the anchor
+	 * @throws MojoExecutionException
+	 *             the mojo execution exception
+	 */
+	private Element getAnchor(final Document skeleton,
+	                          final String moduleName) throws MojoExecutionException {
+		// PRECONDITIONS
+		
+		try {
+			final Element persistenceElement = skeleton.getRootElement();
+			final Element unitElement = persistenceElement.getChild("persistence-unit",
+			                                                        persistenceElement.getNamespace());
+			
+			if (unitElement == null) {
+				throw new MojoExecutionException("Invalid structure in skeleton file.");
 			}
 			
-			final Element propertiesElement = unitElement.getChild("properties", persistenceElement.getNamespace());
+			// set name of the persistence unit
+			unitElement.setAttribute("name", moduleName);
 			
-			Element property = new Element("property", persistenceElement.getNamespace());
+			return unitElement;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/**
+	 * Gets the resource directory.
+	 * 
+	 * @return the resource directory
+	 */
+	private File getResourceDirectory() {
+		final List<Resource> resources = this.project.getResources();
+		
+		if (resources.isEmpty()) {
+			final File srcDir = new File(this.baseDirectory, "src");
+			if (!srcDir.exists()) {
+				srcDir.mkdir();
+			}
+			
+			final File mainDir = new File(srcDir, "main");
+			if (!mainDir.exists()) {
+				mainDir.mkdir();
+			}
+			
+			final File resourcesDir = new File(mainDir, "resources");
+			if (!resourcesDir.exists()) {
+				resourcesDir.mkdir();
+			}
+			return resourcesDir;
+		} else {
+			final Resource resource = resources.iterator().next();
+			final String directoryString = resource.getDirectory();
+			final File directory = new File(directoryString);
+			assert directory.exists();
+			assert directory.isDirectory();
+			return directory;
+		}
+	}
+	
+	/**
+	 * Inject settings.
+	 * 
+	 * @param anchor
+	 *            the anchor
+	 */
+	private void injectSettings(final Element anchor,
+	                            final Element propertiesElement) {
+		// PRECONDITIONS
+		
+		try {
+			final Namespace ns = anchor.getNamespace();
+			Element property = new Element("property", ns);
 			property.setAttribute("name", "openjpa.ConnectionURL");
 			property.setAttribute("value", this.connectionURL);
 			propertiesElement.addContent(property);
@@ -268,68 +469,59 @@ public class MozkitoPersistenceMojo extends AbstractMojo {
 			if (this.openJPAOptions != null) {
 				for (final Entry<String, String> entry : this.openJPAOptions.entrySet()) {
 					
-					property = new Element("property", persistenceElement.getNamespace());
+					property = new Element("property", ns);
 					property.setAttribute("name", entry.getKey());
 					property.setAttribute("value", entry.getValue());
 					propertiesElement.addContent(property);
 				}
 			}
 			
-			// write file
-			
-			final File f = this.outputDirectory;
-			
-			if (!f.exists()) {
-				f.mkdirs();
-			}
-			
-			final File directory = new File(f, "persistence");
-			final File file = new File(directory, "persistence.xml");
-			
-			FileWriter w = null;
-			
-			try {
-				if (getLog().isInfoEnabled()) {
-					getLog().info("Generating persistence data file...");
-				}
-				if (!directory.exists()) {
-					directory.mkdirs();
-				}
-				
-				if (file.exists()) {
-					file.delete();
-				}
-				w = new FileWriter(file);
-				
-				final XMLOutputter outputter = new XMLOutputter();
-				outputter.output(document, w);
-				w.close();
-				
-				final List<String> includes = Collections.singletonList("*");
-				final List<String> excludes = null;
-				
-				if (this.projectHelper == null) {
-					throw new MojoExecutionException("ProjectHelper is null!");
-				}
-				if (getLog().isInfoEnabled()) {
-					getLog().info("Adding resource to project.");
-				}
-				
-				this.projectHelper.addResource(this.project, directory.getAbsolutePath(), includes, excludes);
-			} catch (final IOException e) {
-				throw new MojoExecutionException("Error creating file " + file, e);
-			} finally {
-				if (w != null) {
-					try {
-						w.close();
-					} catch (final IOException e) {
-						// ignore
-					}
-				}
-			}
+			anchor.addContent(propertiesElement);
 		} finally {
 			// POSTCONDITIONS
 		}
+	}
+	
+	/**
+	 * Read skeleton.
+	 * 
+	 * @return the document
+	 * @throws MojoExecutionException
+	 *             the mojo execution exception
+	 */
+	private Document readSkeleton() throws MojoExecutionException {
+		final InputStream stream = MozkitoPersistenceMojo.class.getResourceAsStream("/persistence-skeleton.xml");
+		InputStreamReader reader = null;
+		Document document = null;
+		
+		if (stream == null) {
+			throw new MojoExecutionException(
+			                                 "Cannot find 'persistence-skeleton.xml' skeleton file in the resources of this plugin.");
+		}
+		
+		try {
+			reader = new InputStreamReader(stream);
+			
+			final SAXBuilder saxBuilder = new SAXBuilder(
+			                                             new XMLReaderSAX2Factory(false,
+			                                                                      "org.apache.xerces.parsers.SAXParser"));
+			saxBuilder.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
+			saxBuilder.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+			document = saxBuilder.build(reader);
+			reader.close();
+		} catch (IOException | JDOMException e) {
+			throw new MojoExecutionException("Could not read persistence skeleton.", e);
+		} finally {
+			if (reader != null) {
+				try {
+					reader.close();
+				} catch (final IOException ignore) {
+					// ignore
+				}
+			}
+		}
+		
+		return document;
 	}
 	
 }
