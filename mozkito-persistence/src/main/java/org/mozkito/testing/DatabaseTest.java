@@ -23,6 +23,7 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.junit.After;
 import org.junit.Before;
+
 import org.mozkito.exceptions.TestSetupException;
 import org.mozkito.persistence.DatabaseEnvironment;
 import org.mozkito.persistence.PersistenceUtil;
@@ -39,6 +40,9 @@ public class DatabaseTest {
 	
 	static {
 		KanuniAgent.initialize();
+		if (Logger.logDebug()) {
+			Logger.debug("Loaded DatabaseTest super.");
+		}
 	}
 	
 	/** The util. */
