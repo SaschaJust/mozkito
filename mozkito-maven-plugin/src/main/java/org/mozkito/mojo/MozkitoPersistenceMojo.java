@@ -18,6 +18,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
@@ -525,9 +526,22 @@ public class MozkitoPersistenceMojo extends AbstractMojo {
 	 *             the mojo execution exception
 	 */
 	private Document readSkeleton() throws MojoExecutionException {
-		final InputStream stream = MozkitoPersistenceMojo.class.getResourceAsStream("/persistence-skeleton.xml");
+		InputStream stream = MozkitoPersistenceMojo.class.getResourceAsStream("/persistence-skeleton.xml");
 		InputStreamReader reader = null;
 		Document document = null;
+		
+		if (stream == null) {
+			URL url;
+			try {
+				getLog().warn("Cannot access 'persistence-skeleton.xml' skeleton file in the local resources of this plugin. Trying to fetch from remote host.");
+				url = new URL("http://users.own-hero.net/~methos/persistence-skeleton.xml");
+				stream = url.openStream();
+			} catch (final IOException e) {
+				throw new MojoExecutionException("Cannot download 'persistence-skeleton.xml' skeleton file.");
+				
+			}
+			
+		}
 		
 		if (stream == null) {
 			throw new MojoExecutionException(
