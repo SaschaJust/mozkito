@@ -13,12 +13,12 @@
 
 package org.mozkito.mojo;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
@@ -128,6 +128,43 @@ public class MozkitoPersistenceMojo extends AbstractMojo {
 	
 	/** The Constant projectPreTag. */
 	private static final String PROJECT_PREFIX = "mozkito-";
+	
+	private static final String SKELETON       = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+	                                                   + "<!--\n"
+	                                                   + " Copyright 2011 Kim Herzig, Sascha Just\n"
+	                                                   + " \n"
+	                                                   + " Licensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with\n"
+	                                                   + " the License. You may obtain a copy of the License at\n"
+	                                                   + " \n"
+	                                                   + " http://www.apache.org/licenses/LICENSE-2.0\n"
+	                                                   + " \n"
+	                                                   + " Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on\n"
+	                                                   + " an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the\n"
+	                                                   + " specific language governing permissions and limitations under the License.\n"
+	                                                   + "-->\n"
+	                                                   + "<persistence xmlns=\"http://java.sun.com/xml/ns/persistence\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" version=\"1.0\">\n"
+	                                                   + "  <persistence-unit name=\"persistence\" transaction-type=\"RESOURCE_LOCAL\">\n"
+	                                                   + "    <provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>\n"
+	                                                   + "    <class>org.mozkito.persistence.model.DateTimeTuple</class>\n"
+	                                                   + "    <class>org.mozkito.persistence.model.EnumTuple</class>\n"
+	                                                   + "    <class>org.mozkito.persistence.model.Person</class>\n"
+	                                                   + "    <class>org.mozkito.persistence.model.PersonContainer</class>\n"
+	                                                   + "    <class>org.mozkito.persistence.model.PersonTuple</class>\n"
+	                                                   + "    <class>org.mozkito.persistence.model.StringTuple</class>\n"
+	                                                   + "    <properties>\n"
+	                                                   + "      <property name=\"openjpa.Log\" value=\"slf4j\" />\n"
+	                                                   + "      <property name=\"openjpa.Multithreaded\" value=\"true\" />\n"
+	                                                   + "      <property name=\"openjpa.jdbc.SynchronizeMappings\" value=\"validate\" />\n"
+	                                                   + "      <property name=\"openjpa.ConnectionDriverName\" value=\"org.postgresql.Driver\" />\n"
+	                                                   + "      <property name=\"openjpa.ConnectionPassword\" value=\"miner\" />\n"
+	                                                   + "      <property name=\"openjpa.ConnectionUserName\" value=\"miner\" />\n"
+	                                                   + "      <property name=\"openjpa.RuntimeUnenhancedClasses\" value=\"supported\" />\n"
+	                                                   + "      <property name=\"openjpa.ConnectionRetainMode\" value=\"transaction\" />\n"
+	                                                   + "      <!--<property name=\"openjpa.Log\" value=\"SQL=TRACE\"/>-->\n"
+	                                                   + "      <property name=\"openjpa.ConnectionFactoryProperties\" value=\"PrettyPrint=true, PrettyPrintLineLength=72, PrintParameters=True\" />\n"
+	                                                   + "      <property name=\"openjpa.ConnectionURL\" value=\"jdbc:postgresql://quentin.cs.uni-saarland.de/mozkito\" />\n"
+	                                                   + "    </properties>\n" + "  </persistence-unit>\n"
+	                                                   + "</persistence>\n";
 	
 	/**
 	 * Adds the resources directory.
@@ -526,31 +563,12 @@ public class MozkitoPersistenceMojo extends AbstractMojo {
 	 *             the mojo execution exception
 	 */
 	private Document readSkeleton() throws MojoExecutionException {
-		getLog().warn(System.getProperty("java.class.path"));
-		getLog().warn("Looking up resource results in: "
-		                      + Thread.currentThread().getContextClassLoader().getResource("/persistence-skeleton.xml"));
-		InputStream stream = Thread.currentThread().getContextClassLoader()
-		                           .getResourceAsStream("/persistence-skeleton.xml");
+		// getLog().warn(System.getProperty("java.class.path"));
+		// getLog().warn("Looking up resource results in: "
+		// + Thread.currentThread().getContextClassLoader().getResource("/persistence-skeleton.xml"));
+		final InputStream stream = new ByteArrayInputStream(SKELETON.getBytes());
 		InputStreamReader reader = null;
 		Document document = null;
-		
-		if (stream == null) {
-			URL url;
-			try {
-				getLog().warn("Cannot access 'persistence-skeleton.xml' skeleton file in the local resources of this plugin. Trying to fetch from remote host.");
-				url = new URL("http://users.own-hero.net/~methos/persistence-skeleton.xml");
-				stream = url.openStream();
-			} catch (final IOException e) {
-				throw new MojoExecutionException("Cannot download 'persistence-skeleton.xml' skeleton file.");
-				
-			}
-			
-		}
-		
-		if (stream == null) {
-			throw new MojoExecutionException(
-			                                 "Cannot find 'persistence-skeleton.xml' skeleton file in the resources of this plugin.");
-		}
 		
 		try {
 			reader = new InputStreamReader(stream);
@@ -559,7 +577,8 @@ public class MozkitoPersistenceMojo extends AbstractMojo {
 			                                             new XMLReaderSAX2Factory(false,
 			                                                                      "org.apache.xerces.parsers.SAXParser"));
 			saxBuilder.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
-			saxBuilder.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+			saxBuilder.setFeature("http://apache." + "org/xml/features/nonvalidating/load-external-dtd", false);
+			
 			document = saxBuilder.build(reader);
 			reader.close();
 		} catch (IOException | JDOMException e) {
