@@ -250,6 +250,7 @@
 						<param>**/model/*_.*</param>
 					</excludes>
 					<openJPAOptions>
+						<Log>DefaultLevel=WARN, Runtime=INFO, Tool=INFO</Log>
 						<!-- <Log>slf4j</Log> -->
 					</openJPAOptions>
 				</configuration>
