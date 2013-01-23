@@ -506,7 +506,7 @@ public class MozkitoPersistenceMojo extends AbstractMojo {
 				for (final Entry<String, String> entry : this.openJPAOptions.entrySet()) {
 					
 					property = new Element("property", ns);
-					property.setAttribute("name", entry.getKey());
+					property.setAttribute("name", "openjpa." + entry.getKey());
 					property.setAttribute("value", entry.getValue());
 					propertiesElement.addContent(property);
 				}
@@ -526,7 +526,11 @@ public class MozkitoPersistenceMojo extends AbstractMojo {
 	 *             the mojo execution exception
 	 */
 	private Document readSkeleton() throws MojoExecutionException {
-		InputStream stream = MozkitoPersistenceMojo.class.getResourceAsStream("/persistence-skeleton.xml");
+		getLog().warn(System.getProperty("java.class.path"));
+		getLog().warn("Looking up resource results in: "
+		                      + Thread.currentThread().getContextClassLoader().getResource("/persistence-skeleton.xml"));
+		InputStream stream = Thread.currentThread().getContextClassLoader()
+		                           .getResourceAsStream("/persistence-skeleton.xml");
 		InputStreamReader reader = null;
 		Document document = null;
 		
