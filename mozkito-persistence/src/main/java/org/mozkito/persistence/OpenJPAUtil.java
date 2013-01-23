@@ -35,6 +35,7 @@ import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.ClassFinder;
 import net.ownhero.dev.ioda.FileUtils;
+import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
 
@@ -222,9 +223,13 @@ public class OpenJPAUtil implements PersistenceUtil {
 					Logger.debug(property + ": " + properties.getProperty((String) property)); //$NON-NLS-1$
 				}
 			}
+			
 			this.factory = OpenJPAPersistence.createEntityManagerFactory(unit, null, properties);
 			
 			if (this.factory == null) {
+				if (Logger.logError()) {
+					Logger.error("Cannot create persistence-unit using: " + JavaUtils.mapToString(properties));
+				}
 				throw new Shutdown("Could not initialize persistence-unit: " + unit);
 			}
 		} else {
