@@ -237,7 +237,7 @@
 						<param>**/model/*</param>
 					</includes>
 					<excludes>
-						<param>**/model/*_.java</param>
+						<param>**/model/*_.*</param>
 					</excludes>
 					<openJPAOptions>
 						<!-- <Log>slf4j</Log> -->
@@ -259,6 +259,7 @@
 				<version>2.12</version>
 				<configuration>
 					<enableAssertions>true</enableAssertions>
+					<trimStackTrace>false</trimStackTrace>
 					<forkMode>perTest</forkMode>
 					<argLine>-javaagent:${basedir}/target/kanuni-agent-0.2.jar -Dlog.console.level=ERROR</argLine>
 					<workingDirectory>${basedir}/target</workingDirectory>

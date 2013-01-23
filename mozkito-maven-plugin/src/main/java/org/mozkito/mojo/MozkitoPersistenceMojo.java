@@ -301,46 +301,80 @@ public class MozkitoPersistenceMojo extends AbstractMojo {
 				getLog().debug("Processing dependency artifact: " + artifact.getArtifactId());
 				
 				final File file = artifact.getFile();
-				assert file.getAbsolutePath().endsWith(".jar");
-				JarFile jFile = null;
-				try {
-					jFile = new JarFile(file);
-					final Enumeration<JarEntry> entries = jFile.entries();
-					while (entries.hasMoreElements()) {
-						final JarEntry entry = entries.nextElement();
-						boolean include = false;
-						INCLUDE: for (final String includePattern : this.includes) {
-							if (AbstractScanner.match(includePattern, entry.getName())
-							        && entry.getName().endsWith(".class") && !entry.getName().endsWith("_.class")) {
-								include = true;
-								break INCLUDE;
+				
+				if (file.isFile() && file.getAbsolutePath().toLowerCase().endsWith(".jar")) {
+					assert file.getAbsolutePath().endsWith(".jar");
+					JarFile jFile = null;
+					try {
+						jFile = new JarFile(file);
+						final Enumeration<JarEntry> entries = jFile.entries();
+						while (entries.hasMoreElements()) {
+							final JarEntry entry = entries.nextElement();
+							boolean include = false;
+							INCLUDE: for (final String includePattern : this.includes) {
+								if (AbstractScanner.match(includePattern, entry.getName())
+								        && entry.getName().endsWith(".class") && !entry.getName().endsWith("_.class")) {
+									if (this.excludes != null) {
+										for (final String excludePattern : this.excludes) {
+											if (AbstractScanner.match(excludePattern, entry.getName())) {
+												break INCLUDE;
+											}
+										}
+										include = true;
+										break INCLUDE;
+									}
+								}
+							}
+							
+							if (include) {
+								final String path = FilenameUtils.removeExtension(entry.getName());
+								
+								final String fqn = path.replace(File.separator, ".");
+								
+								final Element element = new Element("class", anchor.getNamespace());
+								element.setText(fqn);
+								getLog().info("Adding dependency unit: " + element.getValue());
+								anchor.addContent(element);
 							}
 						}
 						
-						if (include) {
-							final String path = FilenameUtils.removeExtension(entry.getName());
-							
-							final String fqn = path.replace(File.separator, ".");
-							
-							final Element element = new Element("class", anchor.getNamespace());
-							element.setText(fqn);
-							getLog().info("Adding dependency unit: " + element.getValue());
-							anchor.addContent(element);
+						jFile.close();
+						jFile = null;
+					} catch (final IOException e) {
+						throw new MojoExecutionException("Could not open dependency: " + file.getAbsolutePath(), e);
+					} finally {
+						if (jFile != null) {
+							try {
+								jFile.close();
+							} catch (final IOException ignore) {
+								// ignore
+							}
 						}
+					}
+				} else if (file.isDirectory()) {
+					// process directory
+					final DirectoryScanner scanner = new DirectoryScanner();
+					scanner.setIncludes(this.includes.toArray(new String[0]));
+					if (this.excludes != null) {
+						scanner.setExcludes(this.excludes.toArray(new String[0]));
 					}
 					
-					jFile.close();
-					jFile = null;
-				} catch (final IOException e) {
-					throw new MojoExecutionException("Could not open dependency: " + file.getAbsolutePath(), e);
-				} finally {
-					if (jFile != null) {
-						try {
-							jFile.close();
-						} catch (final IOException ignore) {
-							// ignore
-						}
+					scanner.setBasedir(file);
+					scanner.setCaseSensitive(false);
+					scanner.scan();
+					final String[] files = scanner.getIncludedFiles();
+					for (final String entry : files) {
+						final String path = FilenameUtils.removeExtension(entry);
+						
+						final String fqn = path.replace(File.separator, ".");
+						
+						final Element element = new Element("class", anchor.getNamespace());
+						element.setText(fqn);
+						getLog().info("Adding dependency unit: " + element.getValue());
+						anchor.addContent(element);
 					}
+				} else {
+					getLog().warn("Skipping unsupported dependency resource: " + file.getAbsolutePath());
 				}
 			}
 		}
@@ -421,6 +455,7 @@ public class MozkitoPersistenceMojo extends AbstractMojo {
 	 * @return the resource directory
 	 */
 	private File getResourceDirectory() {
+		@SuppressWarnings ("unchecked")
 		final List<Resource> resources = this.project.getResources();
 		
 		if (resources.isEmpty()) {
