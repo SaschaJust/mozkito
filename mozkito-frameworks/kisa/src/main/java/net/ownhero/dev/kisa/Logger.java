@@ -1274,6 +1274,10 @@ public class Logger {
 	 * Read configuration.
 	 */
 	public static void readConfiguration() {
+		
+		// remove all appenders stemming from different systems (e.g. maven-surefire)
+		// org.apache.log4j.Logger.getRootLogger().removeAllAppenders();
+		
 		updateConsoleLevel();
 		updateFileLevel();
 		updateClassLevels();
@@ -1292,6 +1296,9 @@ public class Logger {
 	 *            full path to the configuration file
 	 */
 	public static void readConfiguration(final String fileName) {
+		// remove all appenders stemming from different systems (e.g. maven-surefire)
+		// org.apache.log4j.Logger.getRootLogger().removeAllAppenders();
+		
 		PropertyConfigurator.configure(fileName);
 	}
 	
@@ -1302,6 +1309,9 @@ public class Logger {
 	 *            url to the configuration file
 	 */
 	public static void readConfiguration(final URL url) {
+		// remove all appenders stemming from different systems (e.g. maven-surefire)
+		// org.apache.log4j.Logger.getRootLogger().removeAllAppenders();
+		
 		PropertyConfigurator.configure(url);
 	}
 	
