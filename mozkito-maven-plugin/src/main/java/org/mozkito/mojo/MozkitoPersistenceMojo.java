@@ -351,9 +351,11 @@ public class MozkitoPersistenceMojo extends AbstractMojo {
 							boolean include = false;
 							INCLUDE: for (final String includePattern : this.includes) {
 								if (AbstractScanner.match(includePattern, entry.getName())
-								        && entry.getName().endsWith(".class") && !entry.getName().endsWith("_.class")) {
+								        && entry.getName().endsWith(".class")) {
 									if (this.excludes != null) {
 										for (final String excludePattern : this.excludes) {
+											getLog().info("Probing exclusion pattern " + excludePattern
+											                      + " against candidate " + entry.getName());
 											if (AbstractScanner.match(excludePattern, entry.getName())) {
 												break INCLUDE;
 											}

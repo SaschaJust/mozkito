@@ -15,6 +15,10 @@
  */
 package org.mozkito.persistence;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -228,7 +232,23 @@ public class OpenJPAUtil implements PersistenceUtil {
 			
 			if (this.factory == null) {
 				if (Logger.logError()) {
-					Logger.error("Cannot create persistence-unit using: " + JavaUtils.mapToString(properties));
+					final InputStream stream = getClass().getResourceAsStream("/persistence.xml");
+					final BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+					String line = null;
+					final StringBuilder builder = new StringBuilder();
+					
+					try {
+						while ((line = reader.readLine()) != null) {
+							builder.append(line).append(FileUtils.lineSeparator);
+						}
+					} catch (final IOException e) {
+						if (Logger.logError()) {
+							Logger.error(e);
+						}
+					}
+					
+					Logger.error("Cannot create persistence-unit using: " + JavaUtils.mapToString(properties)
+					        + " and persistence.xml content: " + builder.toString());
 				}
 				throw new Shutdown("Could not initialize persistence-unit: " + unit);
 			}

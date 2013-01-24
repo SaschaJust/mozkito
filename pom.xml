@@ -127,7 +127,7 @@
 			</snapshots>
 			<id>own-hero.net-public</id>
 			<name>own-hero.net Public Repositories</name>
-			<url>https://nexus.own-hero.net/content/groups/public</url>
+			<url>https://mozkito.org:8080/nexus/content/groups/public</url>
 			<layout>default</layout>
 		</repository>
 		<repository>
@@ -141,7 +141,7 @@
 			</snapshots>
 			<id>own-hero.net-snapshots</id>
 			<name>own-hero.net snapshots</name>
-			<url>https://nexus.own-hero.net/content/groups/snapshots</url>
+			<url>https://mozkito.org:8080/nexus/content/groups/snapshots</url>
 			<layout>default</layout>
 		</repository>
 		<repository>
@@ -155,7 +155,7 @@
 			</snapshots>
 			<id>own-hero.net-releases</id>
 			<name>own-hero.net releases</name>
-			<url>https://nexus.own-hero.net/content/groups/releases</url>
+			<url>https://mozkito.org:8080/nexus/content/groups/releases</url>
 			<layout>default</layout>
 		</repository>
 		<repository>
@@ -169,7 +169,7 @@
 			</snapshots>
 			<id>own-hero.net-dev</id>
 			<name>own-hero.net dev</name>
-			<url>https://nexus.own-hero.net/content/repositories/dev.own-hero.net</url>
+			<url>https://mozkito.org:8080/nexus/content/repositories/dev.own-hero.net</url>
 			<layout>default</layout>
 		</repository>
 	</repositories>
@@ -177,7 +177,7 @@
 		<pluginRepository>
 			<id>own-hero.net-external</id>
 			<name>own-hero</name>
-			<url>https://nexus.own-hero.net/content/repositories/external/</url>
+			<url>https://mozkito.org:8080/nexus/content/repositories/external/</url>
 		</pluginRepository>
 		<pluginRepository>
 			<id>codehaus-m2-repository</id>
@@ -195,7 +195,7 @@
 			</snapshots>
 			<id>own-hero.net-snapshots</id>
 			<name>own-hero.net snapshots</name>
-			<url>https://nexus.own-hero.net/content/groups/snapshots</url>
+			<url>https://mozkito.org:8080/nexus/content/groups/snapshots</url>
 			<layout>default</layout>
 		</pluginRepository>
 		<pluginRepository>
@@ -209,7 +209,7 @@
 			</snapshots>
 			<id>own-hero.net-releases</id>
 			<name>own-hero.net releases</name>
-			<url>https://nexus.own-hero.net/content/groups/releases</url>
+			<url>https://mozkito.org:8080/nexus/content/groups/releases</url>
 			<layout>default</layout>
 		</pluginRepository>
 	</pluginRepositories>
@@ -221,7 +221,7 @@
 			</releases>
 			<id>st.cs.uni-saarland.de</id>
 			<name>st.cs.uni-saarland.de</name>
-			<url>https://nexus.own-hero.net/content/repositories/st.cs.uni-saarland.de</url>
+			<url>https://mozkito.org:8080/nexus/content/repositories/st.cs.uni-saarland.de</url>
 			<layout>default</layout>
 		</snapshotRepository>
 		<repository>
@@ -231,7 +231,7 @@
 			</releases>
 			<id>own-hero.net-external</id>
 			<name>own-hero.net external</name>
-			<url>https://nexus.own-hero.net/content/repositories/external/</url>
+			<url>https://mozkito.org:8080/nexus/content/repositories/external/</url>
 			<layout>default</layout>
 		</repository>
 	</distributionManagement>
@@ -248,6 +248,7 @@
 					</includes>
 					<excludes>
 						<param>**/model/*_.*</param>
+						<param>**/*__*</param>
 					</excludes>
 					<openJPAOptions>
 						<!-- <Log>DefaultLevel=WARN, Runtime=INFO, Tool=INFO</Log> -->
