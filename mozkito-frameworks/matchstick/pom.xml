@@ -5,10 +5,10 @@
 		<maven>2.2.1</maven>
 	</prerequisites>
 	<groupId>net.ownhero.dev</groupId>
-	<artifactId>moreregex</artifactId>
-	<name>moreregex</name>
+	<artifactId>matchstick</artifactId>
+	<name>matchstick</name>
 	<version>0.2-SNAPSHOT</version>
-	<description>moreregex is a library that provides support to create documents that can be rendered to plain-text, html, terminal, xml</description>
+	<description>matchstick is a wrapper library around JRegex to allow using regular expressions with ease</description>
 	<url>http://www.st.cs.uni-saarland.de/</url>
 	<inceptionYear>2010</inceptionYear>
 	<developers>
@@ -25,9 +25,9 @@
 	</developers>
 	<licenses>
 		<license>
-			<name>Eclipse Public License (EPL)</name>
-			<url>http://www.opensource.org/licenses/eclipse-1.0.txt</url>
-			<distribution>manual</distribution>
+			<name>Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+			<distribution>repo</distribution>
 		</license>
 	</licenses>
 	<organization>
@@ -35,20 +35,14 @@
 		<url>http://dev.own-hero.net/</url>
 	</organization>
 	<distributionManagement>
-		<repository>
-			<releases>
-				<enabled>true</enabled>
-				<checksumPolicy>warn</checksumPolicy>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-				<checksumPolicy>warn</checksumPolicy>
-			</snapshots>
-			<id>dev.own-hero.net</id>
-			<name>Dev//own-hero.net</name>
-			<url>https://nexus.own-hero.net/content/repositories/dev.own-hero.net</url>
-			<layout>default</layout>
-		</repository>
+	    <repository>
+	      <id>releases</id>
+	      <url>http://mozkito.org:8080/nexus/content/repositories/releases</url>
+	    </repository>
+	    <snapshotRepository>
+	      <id>snapshots</id>
+	      <url>http://mozkito.org:8080/nexus/content/repositories/snapshots</url>
+	    </snapshotRepository>
 	</distributionManagement>
 	<build>
 		<plugins>
@@ -56,12 +50,6 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.12</version>
-				<configuration>
-					<systemPropertyVariables>
-						<key/>
-					</systemPropertyVariables>
-					<skip>false</skip>
-				</configuration>
 			</plugin>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -128,39 +116,36 @@
 	</build>
 	<repositories>
 		<repository>
-			<releases>
-				<enabled>true</enabled>
-				<checksumPolicy>warn</checksumPolicy>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-				<checksumPolicy>warn</checksumPolicy>
-			</snapshots>
 			<id>own-hero.net-public</id>
 			<name>own-hero.net Public Repositories</name>
-			<url>https://nexus.own-hero.net/content/groups/public</url>
-			<layout>default</layout>
+			<url>https://mozkito.org:8080/nexus/content/groups/public</url>
 		</repository>
 		<repository>
-			<releases>
-				<enabled>false</enabled>
-				<checksumPolicy>warn</checksumPolicy>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-				<checksumPolicy>warn</checksumPolicy>
-			</snapshots>
-			<id>dev.own-hero.net</id>
-			<name>Dev//own-hero.net</name>
-			<url>https://nexus.own-hero.net/content/repositories/dev.own-hero.net</url>
-			<layout>default</layout>
+			<id>own-hero.net-private</id>
+			<name>own-hero.net Private Repositories</name>
+			<url>https://mozkito.org:8080/nexus/content/groups/private</url>
+		</repository>
+		<repository>
+			<id>own-hero.net-proxy</id>
+			<name>own-hero.net Proxy Repositories</name>
+			<url>https://mozkito.org:8080/nexus/content/groups/proxy</url>
 		</repository>
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
-			<id>codehaus-m2-repository</id>
-			<name>Codehaus Maven 2.x Repository</name>
-			<url>http://repository.codehaus.org</url>
+			<id>own-hero.net-public</id>
+			<name>own-hero.net Public Repositories</name>
+			<url>https://mozkito.org:8080/nexus/content/groups/public</url>
+		</pluginRepository>
+			<pluginRepository>
+			<id>own-hero.net-private</id>
+			<name>own-hero.net Private Repositories</name>
+			<url>https://mozkito.org:8080/nexus/content/groups/private</url>
+		</pluginRepository>
+		<pluginRepository>
+			<id>own-hero.net-proxy</id>
+			<name>own-hero.net Proxy Repositories</name>
+			<url>https://mozkito.org:8080/nexus/content/groups/proxy</url>
 		</pluginRepository>
 	</pluginRepositories>
 	<dependencies>
