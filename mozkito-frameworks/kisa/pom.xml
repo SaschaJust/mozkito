@@ -7,7 +7,7 @@
 	<groupId>net.ownhero.dev</groupId>
 	<artifactId>kisa</artifactId>
 	<name>kisa</name>
-	<version>0.2-SNAPSHOT</version>
+	<version>0.3-SNAPSHOT</version>
 	<description>kisa is a library that provides support to create documents that can be rendered to plain-text, html, terminal, xml</description>
 	<url>http://www.st.cs.uni-saarland.de/</url>
 	<inceptionYear>2010</inceptionYear>
