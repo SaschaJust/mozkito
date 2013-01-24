@@ -14,7 +14,10 @@
 package net.ownhero.dev.ioda;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
@@ -29,13 +32,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.jar.JarInputStream;
 
+import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import net.ownhero.dev.ioda.exceptions.WrongClassSearchMethodException;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
 
+import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.lang.StringEscapeUtils;
 
@@ -375,19 +381,23 @@ public class ClassFinder {
 		final Collection<Class<?>> classes = new HashSet<Class<?>>();
 		JarInputStream inputStream = null;
 		
-		final String path = packageName.replaceAll("\\.", FileUtils.fileSeparator) + FileUtils.fileSeparator;
+		final String path = packageName.replace(".", FileUtils.fileSeparator) + FileUtils.fileSeparator;
 		
 		try {
 			inputStream = new JarInputStream(resource.openStream());
 			JarEntry current = null;
+			boolean retryFromFile = false;
 			
-			while ((current = inputStream.getNextJarEntry()) != null) {
+			JARENTRIES: while ((current = inputStream.getNextJarEntry()) != null) {
 				final String currentName = current.getName();
 				if (!current.isDirectory()) {
+					
 					if (currentName.toLowerCase().endsWith(".jar")) {
 						if (Logger.logError()) {
 							Logger.error("JAR in JAR is not supported yet. Found archive: " + currentName);
 						}
+						retryFromFile = true;
+						break JARENTRIES;
 					} else if ((current.getName().length() > path.length())
 					        && current.getName().substring(0, path.length()).equals(path)
 					        && current.getName().endsWith(".class")) {
@@ -404,9 +414,49 @@ public class ClassFinder {
 					}
 				}
 			}
+			
+			if (retryFromFile) {
+				final File randomFile = FileUtils.createRandomFile(FileShutdownAction.DELETE);
+				final OutputStream outputStream = new FileOutputStream(randomFile);
+				IOUtils.copy(resource.openStream(), outputStream);
+				
+				outputStream.close();
+				final JarFile jFile = new JarFile(randomFile);
+				final Enumeration<JarEntry> entries = jFile.entries();
+				while (entries.hasMoreElements()) {
+					final JarEntry element = entries.nextElement();
+					
+					if (!element.isDirectory()) {
+						final String currentName = element.getName();
+						
+						if (currentName.toLowerCase().endsWith(".jar")) {
+							final InputStream inputStream2 = jFile.getInputStream(element);
+							final File randomFile2 = FileUtils.createRandomFile(FileShutdownAction.DELETE);
+							final OutputStream outputStream2 = new FileOutputStream(randomFile2);
+							IOUtils.copy(inputStream2, outputStream2);
+							
+							classes.addAll(getClassesFromJarFile(packageName, randomFile2.getAbsolutePath(), modifiers));
+							randomFile2.delete();
+						} else if ((element.getName().length() > path.length())
+						        && element.getName().substring(0, path.length()).equals(path)
+						        && element.getName().endsWith(".class")) {
+							final Class<?> class1 = Class.forName(element.getName()
+							                                             .replaceAll(StringEscapeUtils.escapeJava(FileUtils.fileSeparator),
+							                                                         ".").replace(".class", ""));
+							if (modifiers != null) {
+								if ((class1.getModifiers() & modifiers) == 0) {
+									classes.add(class1);
+								}
+							} else {
+								classes.add(class1);
+							}
+						}
+					}
+				}
+			}
 		} catch (final IOException e) {
 			if (Logger.logWarn()) {
-				Logger.warn("Skipping invalid JAR file `" + resource.toString() + "`: " + e.getMessage());
+				Logger.warn("Skipping invalid JAR resource `" + resource.toString() + "`: " + e.getMessage());
 			}
 		} finally {
 			if (inputStream != null) {

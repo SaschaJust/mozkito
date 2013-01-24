@@ -22,13 +22,13 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import net.ownhero.dev.ioda.exceptions.ExternalExecutableException;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
-import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.lang.StringEscapeUtils;
@@ -68,11 +68,11 @@ public class CommandExecutor extends Thread {
 	 *            the environment
 	 * @return the tuple
 	 */
-	public static Tuple<Integer, List<String>> execute(final String command,
-	                                                   final String[] arguments,
+	public static Tuple<Integer, List<String>> execute(@NotNull final String command,
+	                                                   @NotNull final String[] arguments,
 	                                                   final File dir,
 	                                                   final InputStream input,
-	                                                   final Map<String, String> environment) {
+	                                                   @NotNull final Map<String, String> environment) {
 		return execute(command, arguments, dir, input, environment, Charset.defaultCharset());
 	}
 	
@@ -95,21 +95,20 @@ public class CommandExecutor extends Thread {
 	 * @return a tuple with the program's exit code and a list of lines representing the output of the program
 	 */
 	public static Tuple<Integer, List<String>> execute(@NotNull final String command,
-	                                                   final String[] arguments,
+	                                                   @NotNull final String[] arguments,
 	                                                   final File dir,
 	                                                   final InputStream input,
 	                                                   final Map<String, String> environment,
-	                                                   final Charset charset) {
-		Condition.check((arguments == null) || (arguments.length > 0),
-		                "The specified arguments have to be either null or have to contain at least 1 argument.");
-		
+	                                                   @NotNull final Charset charset) {
 		// merge command and arguments to one list
 		final List<String> lineElements = new LinkedList<String>();
 		String localCommand = command;
 		lineElements.add(localCommand);
-		if (arguments != null) {
-			lineElements.addAll(Arrays.asList(arguments));
-		}
+		lineElements.addAll(Arrays.asList(arguments));
+		
+		final Map<String, String> environment2 = environment != null
+		                                                            ? environment
+		                                                            : new HashMap<String, String>();
 		
 		try {
 			localCommand = FileUtils.checkExecutable(localCommand);
@@ -133,10 +132,8 @@ public class CommandExecutor extends Thread {
 		 * If a environment map has been supplied, manipulate the subprocesses environment with the corresponding
 		 * mappings.
 		 */
-		if ((environment != null) && (environment.keySet().size() > 0)) {
-			for (final String environmentVariable : environment.keySet()) {
-				processBuilder.environment().put(environmentVariable, environment.get(environmentVariable));
-			}
+		for (final String environmentVariable : environment2.keySet()) {
+			processBuilder.environment().put(environmentVariable, environment2.get(environmentVariable));
 		}
 		
 		if (Logger.logDebug()) {
@@ -148,6 +145,19 @@ public class CommandExecutor extends Thread {
 			                                                               ? "present"
 			                                                               : "omitted") + "][environment:"
 			        + StringEscapeUtils.escapeJava(JavaUtils.mapToString(processBuilder.environment())) + "]");
+		} else if (Logger.logInfo()) {
+			final StringBuilder builder = new StringBuilder();
+			
+			builder.append("Executing (").append(dir != null
+			                                                ? dir.getAbsolutePath()
+			                                                : new File(".").getAbsolutePath()).append("): ")
+			       .append(localCommand);
+			
+			for (final String argument : arguments) {
+				builder.append(" ").append(argument);
+			}
+			
+			Logger.info(builder.toString());
 		}
 		
 		// Merge stdout and stderr to one stream

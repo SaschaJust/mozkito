@@ -8,7 +8,7 @@
 	<groupId>net.ownhero.dev</groupId>
 	<artifactId>ioda</artifactId>
 	<name>ioda</name>
-	<version>0.1-SNAPSHOT</version>
+	<version>0.2-SNAPSHOT</version>
 	<description>ioda is a library that provides support to create documents that can be rendered to plain-text, html, terminal, xml</description>
 	<url>http://www.st.cs.uni-saarland.de/</url>
 	<inceptionYear>2010</inceptionYear>
@@ -36,20 +36,14 @@
 		<url>http://dev.own-hero.net/</url>
 	</organization>
 	<distributionManagement>
-		<repository>
-			<releases>
-				<enabled>true</enabled>
-				<checksumPolicy>warn</checksumPolicy>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-				<checksumPolicy>warn</checksumPolicy>
-			</snapshots>
-			<id>dev.own-hero.net</id>
-			<name>Dev//own-hero.net</name>
-			<url>https://nexus.own-hero.net/content/repositories/dev.own-hero.net</url>
-			<layout>default</layout>
-		</repository>
+	    <repository>
+	      <id>releases</id>
+	      <url>http://mozkito.org:8080/nexus/content/repositories/releases</url>
+	    </repository>
+	    <snapshotRepository>
+	      <id>snapshots</id>
+	      <url>http://mozkito.org:8080/nexus/content/repositories/snapshots</url>
+	    </snapshotRepository>
 	</distributionManagement>
 	<build>
 		<plugins>
@@ -126,67 +120,36 @@
 	</build>
 	<repositories>
 		<repository>
-			<releases>
-				<enabled>true</enabled>
-				<checksumPolicy>warn</checksumPolicy>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-				<checksumPolicy>fail</checksumPolicy>
-			</snapshots>
 			<id>own-hero.net-public</id>
 			<name>own-hero.net Public Repositories</name>
-			<url>https://nexus.own-hero.net/content/groups/public</url>
-			<layout>default</layout>
+			<url>https://mozkito.org:8080/nexus/content/groups/public</url>
 		</repository>
 		<repository>
-			<releases>
-				<enabled>false</enabled>
-				<checksumPolicy>warn</checksumPolicy>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-				<checksumPolicy>fail</checksumPolicy>
-			</snapshots>
-			<id>own-hero.net-snapshots</id>
-			<name>own-hero.net snapshots</name>
-			<url>https://nexus.own-hero.net/content/groups/snapshots</url>
-			<layout>default</layout>
+			<id>own-hero.net-private</id>
+			<name>own-hero.net Private Repositories</name>
+			<url>https://mozkito.org:8080/nexus/content/groups/private</url>
 		</repository>
 		<repository>
-			<releases>
-				<enabled>true</enabled>
-				<checksumPolicy>warn</checksumPolicy>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-				<checksumPolicy>fail</checksumPolicy>
-			</snapshots>
-			<id>own-hero.net-releases</id>
-			<name>own-hero.net releases</name>
-			<url>https://nexus.own-hero.net/content/groups/releases</url>
-			<layout>default</layout>
-		</repository>
-		<repository>
-			<releases>
-				<enabled>false</enabled>
-				<checksumPolicy>warn</checksumPolicy>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-				<checksumPolicy>fail</checksumPolicy>
-			</snapshots>
-			<id>own-hero.net-dev</id>
-			<name>own-hero.net dev</name>
-			<url>https://nexus.own-hero.net/content/repositories/dev.own-hero.net</url>
-			<layout>default</layout>
+			<id>own-hero.net-proxy</id>
+			<name>own-hero.net Proxy Repositories</name>
+			<url>https://mozkito.org:8080/nexus/content/groups/proxy</url>
 		</repository>
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
-			<id>codehaus-m2-repository</id>
-			<name>Codehaus Maven 2.x Repository</name>
-			<url>http://repository.codehaus.org</url>
+			<id>own-hero.net-public</id>
+			<name>own-hero.net Public Repositories</name>
+			<url>https://mozkito.org:8080/nexus/content/groups/public</url>
+		</pluginRepository>
+			<pluginRepository>
+			<id>own-hero.net-private</id>
+			<name>own-hero.net Private Repositories</name>
+			<url>https://mozkito.org:8080/nexus/content/groups/private</url>
+		</pluginRepository>
+		<pluginRepository>
+			<id>own-hero.net-proxy</id>
+			<name>own-hero.net Proxy Repositories</name>
+			<url>https://mozkito.org:8080/nexus/content/groups/proxy</url>
 		</pluginRepository>
 	</pluginRepositories>
 	<dependencies>
