@@ -39,32 +39,14 @@
 		<module>andama-cli</module>
 	</modules>
 	<distributionManagement>
-		<repository>
-			<releases>
-				<enabled>false</enabled>
-				<checksumPolicy>warn</checksumPolicy>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-				<checksumPolicy>warn</checksumPolicy>
-			</snapshots>
-			<id>dev.own-hero.net</id>
-			<name>Dev//own-hero.net</name>
-			<url>https://nexus.own-hero.net/content/repositories/dev.own-hero.net</url>
-			<layout>default</layout>
-		</repository>
-		<!-- <repository>
-					<releases>
-						<enabled>true</enabled>
-						<checksumPolicy>warn</checksumPolicy>
-					</releases>
-					<snapshots>
-						<enabled>false</enabled>
-						<checksumPolicy>warn</checksumPolicy>
-					</snapshots>
-					<id>oh-releases</id>
-					<url>https://nexus.own-hero.net/content/repositories/oh-releases</url>
-				</repository> -->
+	    <repository>
+	      <id>releases</id>
+	      <url>http://mozkito.org:8080/nexus/content/repositories/releases</url>
+	    </repository>
+	    <snapshotRepository>
+	      <id>snapshots</id>
+	      <url>http://mozkito.org:8080/nexus/content/repositories/snapshots</url>
+	    </snapshotRepository>
 	</distributionManagement>
 	<build>
 		<plugins>
@@ -146,41 +128,34 @@
 		<repository>
 			<id>own-hero.net-public</id>
 			<name>own-hero.net Public Repositories</name>
-			<url>https://nexus.own-hero.net/content/groups/public</url>
-			<layout>default</layout>
+			<url>https://mozkito.org:8080/nexus/content/groups/public</url>
 		</repository>
 		<repository>
-			<id>dev.own-hero.net</id>
-			<name>Dev//own-hero.net</name>
-			<url>https://nexus.own-hero.net/content/repositories/dev.own-hero.net</url>
-			<layout>default</layout>
+			<id>own-hero.net-private</id>
+			<name>own-hero.net Private Repositories</name>
+			<url>https://mozkito.org:8080/nexus/content/groups/private</url>
 		</repository>
 		<repository>
-			<releases>
-				<enabled>false</enabled>
-				<checksumPolicy>warn</checksumPolicy>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-				<checksumPolicy>fail</checksumPolicy>
-			</snapshots>
-			<id>own-hero.net-snapshots</id>
-			<name>own-hero.net snapshots</name>
-			<url>https://nexus.own-hero.net/content/groups/snapshots</url>
-			<layout>default</layout>
-		</repository>
-		<repository>
-			<id>own-hero.net</id>
-			<name>own-hero.net local Repositories</name>
-			<url>https://nexus.own-hero.net/content/groups/own-hero.net</url>
-			<layout>default</layout>
+			<id>own-hero.net-proxy</id>
+			<name>own-hero.net Proxy Repositories</name>
+			<url>https://mozkito.org:8080/nexus/content/groups/proxy</url>
 		</repository>
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
-			<id>codehaus-m2-repository</id>
-			<name>Codehaus Maven 2.x Repository</name>
-			<url>http://repository.codehaus.org</url>
+			<id>own-hero.net-public</id>
+			<name>own-hero.net Public Repositories</name>
+			<url>https://mozkito.org:8080/nexus/content/groups/public</url>
+		</pluginRepository>
+			<pluginRepository>
+			<id>own-hero.net-private</id>
+			<name>own-hero.net Private Repositories</name>
+			<url>https://mozkito.org:8080/nexus/content/groups/private</url>
+		</pluginRepository>
+		<pluginRepository>
+			<id>own-hero.net-proxy</id>
+			<name>own-hero.net Proxy Repositories</name>
+			<url>https://mozkito.org:8080/nexus/content/groups/proxy</url>
 		</pluginRepository>
 	</pluginRepositories>
 	<dependencies>
@@ -194,21 +169,6 @@
 			<artifactId>kanuni</artifactId>
 			<version>0.2-SNAPSHOT</version>
 		</dependency>
-		<!-- <dependency>
-			<groupId>net.ownhero.dev</groupId>
-			<artifactId>moreregex</artifactId>
-			<version>0.2-SNAPSHOT</version>
-		</dependency> -->
-		<!-- <dependency>
-			<groupId>dom4j</groupId>
-			<artifactId>dom4j</artifactId>
-			<version>1.6.1</version>
-		</dependency> -->
-		<!-- <dependency>
-			<groupId>commons-collections</groupId>
-			<artifactId>commons-collections</artifactId>
-			<version>3.2.1</version>
-		</dependency> -->
 	</dependencies>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
