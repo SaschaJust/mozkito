@@ -31,7 +31,7 @@ public class DiffUtils {
 	public static HashSet<Integer> getLineNumbers(final Chunk chunk) {
 		final HashSet<Integer> result = new HashSet<Integer>();
 		final int startPos = chunk.getPosition();
-		for (int i = 0; i < chunk.getSize(); ++i) {
+		for (int i = 0; i < chunk.size(); ++i) {
 			result.add(startPos + i + 1);
 		}
 		return result;
