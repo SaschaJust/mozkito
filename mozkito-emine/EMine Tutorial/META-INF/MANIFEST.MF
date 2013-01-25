@@ -1,8 +1,0 @@
-Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: EMine_Tutorial
-Bundle-SymbolicName: EMine_Tutorial;singleton:=true
-Bundle-Version: 1.0.0.qualifier
-Bundle-Vendor: eMine Team
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Require-Bundle: org.se2010.emine
