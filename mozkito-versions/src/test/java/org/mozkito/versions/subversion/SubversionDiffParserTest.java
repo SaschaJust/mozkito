@@ -40,7 +40,7 @@ public class SubversionDiffParserTest {
 		lines.add("a");
 		lines.add("b");
 		lines.add("c");
-		final Chunk chunk = new Chunk(10, 3, lines);
+		final Chunk chunk = new Chunk(10, lines);
 		final HashSet<Integer> lineNumbers = SubversionDiffParser.getLineNumbers(chunk);
 		assertNotNull(lineNumbers);
 		assertEquals(3, lineNumbers.size());

@@ -30,9 +30,6 @@ import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 
 import org.junit.Before;
 import org.junit.Test;
-
-import difflib.Delta;
-
 import org.mozkito.testing.VersionsTest;
 import org.mozkito.testing.annotation.RepositorySetting;
 import org.mozkito.testing.annotation.RepositorySettings;
@@ -43,6 +40,8 @@ import org.mozkito.versions.elements.LogEntry;
 import org.mozkito.versions.elements.RevDependencyGraph;
 import org.mozkito.versions.exceptions.RepositoryOperationException;
 import org.mozkito.versions.model.Branch;
+
+import difflib.Delta;
 
 /**
  * The Class MercurialRepositoryTest.
@@ -114,8 +113,9 @@ public class MercurialRepositoryTest extends VersionsTest {
 	
 	/**
 	 * Test annotate.
-	 *
-	 * @throws RepositoryOperationException the repository operation exception
+	 * 
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
 	 */
 	@Test
 	public void testAnnotate() throws RepositoryOperationException {
@@ -171,8 +171,9 @@ public class MercurialRepositoryTest extends VersionsTest {
 	
 	/**
 	 * Test checkout path fail.
-	 *
-	 * @throws RepositoryOperationException the repository operation exception
+	 * 
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
 	 */
 	@Test (expected = RepositoryOperationException.class)
 	public void testCheckoutPathFail() throws RepositoryOperationException {
@@ -181,8 +182,9 @@ public class MercurialRepositoryTest extends VersionsTest {
 	
 	/**
 	 * Test checkout path success.
-	 *
-	 * @throws RepositoryOperationException the repository operation exception
+	 * 
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
 	 */
 	@Test
 	public void testCheckoutPathSuccess() throws RepositoryOperationException {
@@ -194,8 +196,9 @@ public class MercurialRepositoryTest extends VersionsTest {
 	
 	/**
 	 * Test diff.
-	 *
-	 * @throws RepositoryOperationException the repository operation exception
+	 * 
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
 	 */
 	@Test
 	public void testDiff() throws RepositoryOperationException {
@@ -204,17 +207,29 @@ public class MercurialRepositoryTest extends VersionsTest {
 		                                              MercurialRepositoryTest.T_9BE561B3657E2B1DA2B09D675DDDD5F45C47F57C);
 		assertEquals(1, diff.size());
 		final Delta delta = diff.iterator().next();
-		assertEquals(0, delta.getOriginal().getSize());
-		assertEquals(3, delta.getRevised().getSize());
+		assertEquals(0, delta.getOriginal().size());
+		assertEquals(3, delta.getRevised().size());
 		for (final Object line : delta.getRevised().getLines()) {
 			assertEquals("changing 3", line.toString());
 		}
 	}
 	
 	/**
+	 * Test get transaction id.
+	 */
+	@Test
+	public void testGetChangeSetId() {
+		assertEquals(MercurialRepositoryTest.T_E52DEF97EBC1F78C9286B1E7C36783AA67604439, this.repo.getChangeSetId(0));
+		assertEquals(MercurialRepositoryTest.T_CBCC33D919A27B9450D117F211A5F4F45615CAB9, this.repo.getChangeSetId(6));
+		assertEquals(MercurialRepositoryTest.T_67635FE9EFEB2FD3751DF9EA67650C71E59E3DF1, this.repo.getChangeSetId(18));
+		assertEquals(MercurialRepositoryTest.T_96A9F105774B50F1FA3361212C4D12AE057A4285, this.repo.getChangeSetId(19));
+	}
+	
+	/**
 	 * Test get changes paths.
-	 *
-	 * @throws RepositoryOperationException the repository operation exception
+	 * 
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
 	 */
 	@Test
 	public void testGetChangesPaths() throws RepositoryOperationException {
@@ -255,8 +270,9 @@ public class MercurialRepositoryTest extends VersionsTest {
 	
 	/**
 	 * Test get log.
-	 *
-	 * @throws RepositoryOperationException the repository operation exception
+	 * 
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
 	 */
 	@Test
 	public void testGetLog() throws RepositoryOperationException {
@@ -302,8 +318,9 @@ public class MercurialRepositoryTest extends VersionsTest {
 	
 	/**
 	 * Test get rev dependency graph.
-	 *
-	 * @throws RepositoryOperationException the repository operation exception
+	 * 
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
 	 */
 	@Test
 	public void testGetRevDependencyGraph() throws RepositoryOperationException {
@@ -399,8 +416,9 @@ public class MercurialRepositoryTest extends VersionsTest {
 	
 	/**
 	 * Test get transaction count.
-	 *
-	 * @throws RepositoryOperationException the repository operation exception
+	 * 
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
 	 */
 	@Test
 	public void testGetTransactionCount() throws RepositoryOperationException {
@@ -408,25 +426,14 @@ public class MercurialRepositoryTest extends VersionsTest {
 	}
 	
 	/**
-	 * Test get transaction id.
-	 */
-	@Test
-	public void testGetChangeSetId() {
-		assertEquals(MercurialRepositoryTest.T_E52DEF97EBC1F78C9286B1E7C36783AA67604439, this.repo.getChangeSetId(0));
-		assertEquals(MercurialRepositoryTest.T_CBCC33D919A27B9450D117F211A5F4F45615CAB9, this.repo.getChangeSetId(6));
-		assertEquals(MercurialRepositoryTest.T_67635FE9EFEB2FD3751DF9EA67650C71E59E3DF1, this.repo.getChangeSetId(18));
-		assertEquals(MercurialRepositoryTest.T_96A9F105774B50F1FA3361212C4D12AE057A4285, this.repo.getChangeSetId(19));
-	}
-	
-	/**
 	 * Test get transaction index.
-	 *
-	 * @throws RepositoryOperationException the repository operation exception
+	 * 
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
 	 */
 	@Test
 	public void testGetTransactionIndex() throws RepositoryOperationException {
 		assertEquals(21, this.repo.getChangeSetIndex("HEAD"));
-		assertEquals(6,
-		             this.repo.getChangeSetIndex(MercurialRepositoryTest.T_CBCC33D919A27B9450D117F211A5F4F45615CAB9));
+		assertEquals(6, this.repo.getChangeSetIndex(MercurialRepositoryTest.T_CBCC33D919A27B9450D117F211A5F4F45615CAB9));
 	}
 }

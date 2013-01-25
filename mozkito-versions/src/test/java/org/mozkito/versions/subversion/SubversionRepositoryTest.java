@@ -32,9 +32,6 @@ import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
-
-import difflib.Delta;
-
 import org.mozkito.testing.VersionsTest;
 import org.mozkito.testing.annotation.RepositorySetting;
 import org.mozkito.versions.RepositoryType;
@@ -44,6 +41,8 @@ import org.mozkito.versions.elements.LogEntry;
 import org.mozkito.versions.elements.RevDependencyGraph;
 import org.mozkito.versions.exceptions.RepositoryOperationException;
 import org.mozkito.versions.model.Branch;
+
+import difflib.Delta;
 
 /**
  * The Class SubversionRepositoryTest.
@@ -148,12 +147,24 @@ public class SubversionRepositoryTest extends VersionsTest {
 		final Collection<Delta> diff = this.repo.diff("file_1", "9", "11");
 		assertEquals(1, diff.size());
 		final Delta delta = diff.iterator().next();
-		assertEquals(0, delta.getOriginal().getSize());
-		assertEquals(2, delta.getRevised().getSize());
+		assertEquals(0, delta.getOriginal().size());
+		assertEquals(2, delta.getRevised().size());
 		@SuppressWarnings ("unchecked")
 		final List<String> lines = (List<String>) delta.getRevised().getLines();
 		assertEquals("Adding test change 4 to file_1", lines.get(0));
 		assertEquals("Adding test change 5 to file_1", lines.get(1));
+	}
+	
+	/**
+	 * Test get transaction id.
+	 */
+	@Test
+	public void testGetChangeSetId() {
+		assertEquals("1", this.repo.getChangeSetId(0));
+		assertEquals("7", this.repo.getChangeSetId(6));
+		assertEquals("12", this.repo.getChangeSetId(11));
+		assertEquals("17", this.repo.getChangeSetId(16));
+		assertTrue(this.repo.getChangeSetId(18) == null);
 	}
 	
 	/**
@@ -337,18 +348,6 @@ public class SubversionRepositoryTest extends VersionsTest {
 	@Test
 	public void testGetTransactionCount() {
 		assertEquals(18, this.repo.getChangeSetCount());
-	}
-	
-	/**
-	 * Test get transaction id.
-	 */
-	@Test
-	public void testGetChangeSetId() {
-		assertEquals("1", this.repo.getChangeSetId(0));
-		assertEquals("7", this.repo.getChangeSetId(6));
-		assertEquals("12", this.repo.getChangeSetId(11));
-		assertEquals("17", this.repo.getChangeSetId(16));
-		assertTrue(this.repo.getChangeSetId(18) == null);
 	}
 	
 	/**

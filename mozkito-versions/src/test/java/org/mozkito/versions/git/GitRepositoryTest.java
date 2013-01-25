@@ -135,8 +135,8 @@ public class GitRepositoryTest extends VersionsTest {
 		                                              "9be561b3657e2b1da2b09d675dddd5f45c47f57c");
 		assertEquals(1, diff.size());
 		final Delta delta = diff.iterator().next();
-		assertEquals(0, delta.getOriginal().getSize());
-		assertEquals(3, delta.getRevised().getSize());
+		assertEquals(0, delta.getOriginal().size());
+		assertEquals(3, delta.getRevised().size());
 		for (final Object line : delta.getRevised().getLines()) {
 			assertEquals("changing 3", line.toString());
 		}
@@ -197,8 +197,9 @@ public class GitRepositoryTest extends VersionsTest {
 	
 	/**
 	 * Test get log.
-	 *
-	 * @throws RepositoryOperationException the repository operation exception
+	 * 
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
 	 */
 	@Test
 	public void testGetLog() throws RepositoryOperationException {
