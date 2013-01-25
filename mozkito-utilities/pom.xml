@@ -27,14 +27,14 @@
 			<version>0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>commons.math</groupId>
-			<artifactId>commons.math</artifactId>
-			<version>2.1</version>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-math</artifactId>
+			<version>2.2</version>
 		</dependency>
 		<dependency>
-			<groupId>java-diff-utils</groupId>
-			<artifactId>difflib</artifactId>
-			<version>1.1</version>
+			<groupId>com.googlecode.java-diff-utils</groupId>
+			<artifactId>diffutils</artifactId>
+			<version>1.2.1</version>
 		</dependency>
 	</dependencies>
 	<properties>

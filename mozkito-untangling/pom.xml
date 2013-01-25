@@ -47,14 +47,14 @@
 		<dependency>
 			<groupId>org.uncommons.maths</groupId>
 			<artifactId>uncommons-maths</artifactId>
-			<version>1.2.2a</version>
+			<version>1.2.2</version>
 		</dependency>
 		<dependency>
-			<groupId>commons.math</groupId>
-			<artifactId>commons.math</artifactId>
-			<version>2.1</version>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-math</artifactId>
+			<version>2.2</version>
 		</dependency>
-		<dependency>
+        <dependency>
 			<groupId>weka</groupId>
 			<artifactId>weka</artifactId>
 			<version>3.7.1</version>
