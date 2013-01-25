@@ -41,7 +41,7 @@
 	<scm>
 		<connection>scm:git:https://git.own-hero.net/mozkito</connection>
 		<developerConnection>scm:git:https://git.own-hero.net/mozkito</developerConnection>
-		<url>https://mozkito.org</url>
+		<url>http://mozkito.org</url>
 	</scm>
 	<organization>
 		<name>Software Engineering Group at Saarland University</name>
@@ -114,125 +114,56 @@
 			<artifactId>slf4j-api</artifactId>
 			<version>1.7.2</version>
 		</dependency>
+		<dependency>
+			<groupId>com.atlassian.maven.plugins</groupId>
+			<artifactId>maven-clover2-plugin</artifactId>
+			<version>3.1.8</version>
+		</dependency>
 	</dependencies>
 	<repositories>
 		<repository>
-			<releases>
-				<enabled>true</enabled>
-				<checksumPolicy>warn</checksumPolicy>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-				<checksumPolicy>fail</checksumPolicy>
-			</snapshots>
 			<id>own-hero.net-public</id>
 			<name>own-hero.net Public Repositories</name>
-			<url>https://mozkito.org:8080/nexus/content/groups/public</url>
-			<layout>default</layout>
+			<url>http://mozkito.org:8080/nexus/content/groups/public</url>
 		</repository>
 		<repository>
-			<releases>
-				<enabled>false</enabled>
-				<checksumPolicy>warn</checksumPolicy>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-				<checksumPolicy>fail</checksumPolicy>
-			</snapshots>
-			<id>own-hero.net-snapshots</id>
-			<name>own-hero.net snapshots</name>
-			<url>https://mozkito.org:8080/nexus/content/groups/snapshots</url>
-			<layout>default</layout>
+			<id>own-hero.net-private</id>
+			<name>own-hero.net Private Repositories</name>
+			<url>http://mozkito.org:8080/nexus/content/groups/private</url>
 		</repository>
 		<repository>
-			<releases>
-				<enabled>true</enabled>
-				<checksumPolicy>warn</checksumPolicy>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-				<checksumPolicy>fail</checksumPolicy>
-			</snapshots>
-			<id>own-hero.net-releases</id>
-			<name>own-hero.net releases</name>
-			<url>https://mozkito.org:8080/nexus/content/groups/releases</url>
-			<layout>default</layout>
-		</repository>
-		<repository>
-			<releases>
-				<enabled>false</enabled>
-				<checksumPolicy>warn</checksumPolicy>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-				<checksumPolicy>fail</checksumPolicy>
-			</snapshots>
-			<id>own-hero.net-dev</id>
-			<name>own-hero.net dev</name>
-			<url>https://mozkito.org:8080/nexus/content/repositories/dev.own-hero.net</url>
-			<layout>default</layout>
+			<id>own-hero.net-proxy</id>
+			<name>own-hero.net Proxy Repositories</name>
+			<url>http://mozkito.org:8080/nexus/content/groups/proxy</url>
 		</repository>
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
-			<id>own-hero.net-external</id>
-			<name>own-hero</name>
-			<url>https://mozkito.org:8080/nexus/content/repositories/external/</url>
+			<id>own-hero.net-public</id>
+			<name>own-hero.net Public Repositories</name>
+			<url>http://mozkito.org:8080/nexus/content/groups/public</url>
+		</pluginRepository>
+			<pluginRepository>
+			<id>own-hero.net-private</id>
+			<name>own-hero.net Private Repositories</name>
+			<url>http://mozkito.org:8080/nexus/content/groups/private</url>
 		</pluginRepository>
 		<pluginRepository>
-			<id>codehaus-m2-repository</id>
-			<name>Codehaus Maven 2.x Repository</name>
-			<url>http://repository.codehaus.org</url>
-		</pluginRepository>
-		<pluginRepository>
-			<releases>
-				<enabled>false</enabled>
-				<checksumPolicy>warn</checksumPolicy>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-				<checksumPolicy>fail</checksumPolicy>
-			</snapshots>
-			<id>own-hero.net-snapshots</id>
-			<name>own-hero.net snapshots</name>
-			<url>https://mozkito.org:8080/nexus/content/groups/snapshots</url>
-			<layout>default</layout>
-		</pluginRepository>
-		<pluginRepository>
-			<releases>
-				<enabled>true</enabled>
-				<checksumPolicy>warn</checksumPolicy>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-				<checksumPolicy>fail</checksumPolicy>
-			</snapshots>
-			<id>own-hero.net-releases</id>
-			<name>own-hero.net releases</name>
-			<url>https://mozkito.org:8080/nexus/content/groups/releases</url>
-			<layout>default</layout>
+			<id>own-hero.net-proxy</id>
+			<name>own-hero.net Proxy Repositories</name>
+			<url>http://mozkito.org:8080/nexus/content/groups/proxy</url>
 		</pluginRepository>
 	</pluginRepositories>
 	<distributionManagement>
 		<snapshotRepository>
-			<releases>
-				<enabled>false</enabled>
-				<checksumPolicy>warn</checksumPolicy>
-			</releases>
 			<id>st.cs.uni-saarland.de</id>
 			<name>st.cs.uni-saarland.de</name>
-			<url>https://mozkito.org:8080/nexus/content/repositories/st.cs.uni-saarland.de</url>
-			<layout>default</layout>
+			<url>http://mozkito.org:8080/nexus/content/repositories/mozkito-dev</url>
 		</snapshotRepository>
 		<repository>
-			<releases>
-				<enabled>true</enabled>
-				<checksumPolicy>warn</checksumPolicy>
-			</releases>
 			<id>own-hero.net-external</id>
 			<name>own-hero.net external</name>
-			<url>https://mozkito.org:8080/nexus/content/repositories/external/</url>
-			<layout>default</layout>
+			<url>http://mozkito.org:8080/nexus/content/repositories/mozkito/</url>
 		</repository>
 	</distributionManagement>
 	<build>
