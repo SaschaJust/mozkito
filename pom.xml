@@ -64,7 +64,7 @@
 		<module>mozkito-codeanalysis</module>
 		<module>mozkito-callgraph</module>
 		<module>mozkito-atomicchanges</module>
-		<module>mozkito-maven-plugin</module>
+		<module>mozkito-maven-plugins</module>
 	</modules>
 	<dependencyManagement/>
 	<dependencies>
