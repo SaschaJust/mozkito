@@ -40,23 +40,6 @@
 			<artifactId>tagsoup</artifactId>
 			<version>1.2.1</version>
 		</dependency>
-		<!-- <dependency><groupId>javax.servlet</groupId><artifactId>servlet-api</artifactId><version>3.0-alpha-1</version></dependency>-->
-		<dependency>
-			<groupId>com.google.gdata</groupId>
-			<artifactId>gdata-projecthosting-2.1</artifactId>
-			<version>1.41.5.guava</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.gdata</groupId>
-			<artifactId>gdata-core-1.0</artifactId>
-			<version>1.41.5.guava</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>11.0.2-mozkito</version>
-		</dependency>
-		<!-- <dependency><groupId>rome</groupId><artifactId>rome-fetcher</artifactId><version>1.0</version></dependency>-->
 		<dependency>
 			<groupId>xerces</groupId>
 			<artifactId>xercesImpl</artifactId>

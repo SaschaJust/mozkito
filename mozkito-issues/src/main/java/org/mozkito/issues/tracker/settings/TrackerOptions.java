@@ -52,9 +52,6 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 	/** The bugzilla options. */
 	private BugzillaOptions                   bugzillaOptions;
 	
-	/** The google options. */
-	private GoogleOptions                     googleOptions;
-	
 	/** The jira options. */
 	private JiraOptions                       jiraOptions;
 	
@@ -142,10 +139,6 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 					tracker = getSettings().getArgumentSet(this.sourceforgeOptions).getValue();
 					this.sourceforgeOptions.setup(trackerUri, trackerUser, trackerPassword);
 					break;
-				case GOOGLE:
-					tracker = getSettings().getArgumentSet(this.googleOptions).getValue();
-					this.googleOptions.setup(trackerUri, trackerUser, trackerPassword);
-					break;
 				default:
 					throw new UnrecoverableError(String.format("Could not handle %s: %s", trackerTypeArgument.getTag(), //$NON-NLS-1$
 					                                           trackerTypeArgument.getValue()));
@@ -212,11 +205,6 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 			                                                                    TrackerType.BUGZILLA));
 			if (this.bugzillaOptions.required()) {
 				req(this.bugzillaOptions, map);
-			}
-			
-			this.googleOptions = new GoogleOptions(this, Requirement.equals(this.trackerTypeArg, TrackerType.GOOGLE));
-			if (this.googleOptions.required()) {
-				req(this.googleOptions, map);
 			}
 			
 			this.jiraOptions = new JiraOptions(this, Requirement.equals(this.trackerTypeArg, TrackerType.JIRA));
