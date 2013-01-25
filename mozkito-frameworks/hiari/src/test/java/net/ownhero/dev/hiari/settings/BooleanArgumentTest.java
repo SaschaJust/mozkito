@@ -21,8 +21,14 @@ import net.ownhero.dev.hiari.settings.requirements.Requirement;
 
 import org.junit.Test;
 
+/**
+ * The Class BooleanArgumentTest.
+ */
 public class BooleanArgumentTest {
 	
+	/**
+	 * Test get value_ default false_ not required.
+	 */
 	@Test
 	public void testGetValue_DefaultFalse_NotRequired() {
 		try {
@@ -48,6 +54,9 @@ public class BooleanArgumentTest {
 		}
 	}
 	
+	/**
+	 * Test get value_ default false_ required.
+	 */
 	@Test
 	public void testGetValue_DefaultFalse_Required() {
 		
@@ -73,6 +82,9 @@ public class BooleanArgumentTest {
 		}
 	}
 	
+	/**
+	 * Test get value_ default true_ not required.
+	 */
 	@Test
 	public void testGetValue_DefaultTrue_NotRequired() {
 		try {
@@ -97,6 +109,9 @@ public class BooleanArgumentTest {
 		}
 	}
 	
+	/**
+	 * Test get value_ default true_ required.
+	 */
 	@Test
 	public void testGetValue_DefaultTrue_Required() {
 		try {
@@ -121,6 +136,9 @@ public class BooleanArgumentTest {
 		}
 	}
 	
+	/**
+	 * Test get value_ no default_ not required.
+	 */
 	@Test
 	public void testGetValue_NoDefault_NotRequired() {
 		try {
@@ -145,6 +163,9 @@ public class BooleanArgumentTest {
 		}
 	}
 	
+	/**
+	 * Test get value_ no default_ required.
+	 */
 	@Test
 	public void testGetValue_NoDefault_Required() {
 		
@@ -169,6 +190,9 @@ public class BooleanArgumentTest {
 		}
 	}
 	
+	/**
+	 * Test set value.
+	 */
 	@Test
 	public void testSetValue() {
 		try {

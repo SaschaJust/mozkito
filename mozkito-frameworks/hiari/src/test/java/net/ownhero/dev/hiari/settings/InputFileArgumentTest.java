@@ -30,15 +30,29 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * The Class InputFileArgumentTest.
+ */
 public class InputFileArgumentTest {
 	
+	/** The file. */
 	private File file;
 	
+	/**
+	 * Sets the up.
+	 *
+	 * @throws Exception the exception
+	 */
 	@Before
 	public void setUp() throws Exception {
 		this.file = FileUtils.createRandomFile(FileShutdownAction.DELETE);
 	}
 	
+	/**
+	 * Tear down.
+	 *
+	 * @throws Exception the exception
+	 */
 	@After
 	public void tearDown() throws Exception {
 		if (this.file.exists()) {
@@ -46,6 +60,9 @@ public class InputFileArgumentTest {
 		}
 	}
 	
+	/**
+	 * Test not required exists.
+	 */
 	@Test
 	public void testNotRequiredExists() {
 		try {
@@ -71,6 +88,9 @@ public class InputFileArgumentTest {
 		}
 	}
 	
+	/**
+	 * Test not required not exists default available.
+	 */
 	@Test
 	public void testNotRequiredNotExistsDefaultAvailable() {
 		try {
@@ -96,6 +116,9 @@ public class InputFileArgumentTest {
 		}
 	}
 	
+	/**
+	 * Test not required not given.
+	 */
 	@Test
 	public void testNotRequiredNotGiven() {
 		try {
@@ -119,6 +142,9 @@ public class InputFileArgumentTest {
 		}
 	}
 	
+	/**
+	 * Test required exists.
+	 */
 	@Test
 	public void testRequiredExists() {
 		try {
@@ -144,6 +170,9 @@ public class InputFileArgumentTest {
 		}
 	}
 	
+	/**
+	 * Test required given not exists.
+	 */
 	@Test
 	public void testRequiredGivenNotExists() {
 		try {
@@ -165,6 +194,9 @@ public class InputFileArgumentTest {
 		}
 	}
 	
+	/**
+	 * Test required not exists default available.
+	 */
 	@Test
 	public void testRequiredNotExistsDefaultAvailable() {
 		try {
@@ -190,6 +222,9 @@ public class InputFileArgumentTest {
 		}
 	}
 	
+	/**
+	 * Test required not given.
+	 */
 	@Test
 	public void testRequiredNotGiven() {
 		try {

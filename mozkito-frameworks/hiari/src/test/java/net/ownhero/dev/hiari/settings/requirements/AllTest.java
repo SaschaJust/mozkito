@@ -1,5 +1,5 @@
-/*******************************************************************************
- * Copyright 2012 Kim Herzig, Sascha Just
+/***********************************************************************************************************************
+ * Copyright 2011 Kim Herzig, Sascha Just
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -9,7 +9,7 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ **********************************************************************************************************************/
 package net.ownhero.dev.hiari.settings.requirements;
 
 import static org.junit.Assert.fail;
@@ -31,11 +31,15 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
+ * The Class AllTest.
+ *
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
- * 
  */
 public class AllTest {
 	
+	/**
+	 * Before class.
+	 */
 	@BeforeClass
 	public static void beforeClass() {
 		assert (System.getProperty("AllTest") == null);
@@ -44,6 +48,9 @@ public class AllTest {
 		assert (System.getProperty("AllTest4") == null);
 	}
 	
+	/**
+	 * After.
+	 */
 	@After
 	public void after() {
 		System.clearProperty("AllTest");
@@ -52,6 +59,9 @@ public class AllTest {
 		System.clearProperty("AllTest4");
 	}
 	
+	/**
+	 * Before.
+	 */
 	@Before
 	public void before() {
 		System.clearProperty("AllTest");
@@ -60,6 +70,9 @@ public class AllTest {
 		System.clearProperty("AllTest4");
 	}
 	
+	/**
+	 * Onetest.
+	 */
 	@Test
 	public void onetest() {
 		try {
@@ -99,6 +112,9 @@ public class AllTest {
 		}
 	}
 	
+	/**
+	 * Twotest.
+	 */
 	@Test
 	public void twotest() {
 		try {

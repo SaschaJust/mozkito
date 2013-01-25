@@ -18,6 +18,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.io.IOException;
 
 import net.ownhero.dev.hiari.settings.OutputFileArgument.Options;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
@@ -29,10 +30,19 @@ import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 
 import org.junit.Test;
 
+/**
+ * The Class OutputFileArgumentTest.
+ */
 public class OutputFileArgumentTest {
 	
+	/**
+	 * Test not required exists no overwrite.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	@Test
-	public void testNotRequiredExistsNoOverwrite() {
+	public void testNotRequiredExistsNoOverwrite() throws IOException {
 		try {
 			final File file = FileUtils.createRandomFile(FileShutdownAction.DELETE);
 			System.setProperty("testNotRequiredExistsNoOverwrite", file.getAbsolutePath());
@@ -55,8 +65,14 @@ public class OutputFileArgumentTest {
 		}
 	}
 	
+	/**
+	 * Test not required exists overwrite.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	@Test
-	public void testNotRequiredExistsOverwrite() {
+	public void testNotRequiredExistsOverwrite() throws IOException {
 		try {
 			final File file = FileUtils.createRandomFile(FileShutdownAction.DELETE);
 			final long lastModified = file.lastModified();
@@ -86,8 +102,14 @@ public class OutputFileArgumentTest {
 		}
 	}
 	
+	/**
+	 * Test not required not exists no overwrite.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	@Test
-	public void testNotRequiredNotExistsNoOverwrite() {
+	public void testNotRequiredNotExistsNoOverwrite() throws IOException {
 		try {
 			final File file = FileUtils.createRandomFile(FileShutdownAction.DELETE);
 			final long lastModified = file.lastModified();
@@ -121,8 +143,14 @@ public class OutputFileArgumentTest {
 		}
 	}
 	
+	/**
+	 * Test not required not exists no overwrite required.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	@Test
-	public void testNotRequiredNotExistsNoOverwriteREQUIRED() {
+	public void testNotRequiredNotExistsNoOverwriteREQUIRED() throws IOException {
 		try {
 			final File file = FileUtils.createRandomFile(FileShutdownAction.DELETE);
 			final long lastModified = file.lastModified();
@@ -156,8 +184,14 @@ public class OutputFileArgumentTest {
 		}
 	}
 	
+	/**
+	 * Test not required not exists overwrite.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	@Test
-	public void testNotRequiredNotExistsOverwrite() {
+	public void testNotRequiredNotExistsOverwrite() throws IOException {
 		try {
 			final File file = FileUtils.createRandomFile(FileShutdownAction.DELETE);
 			final long lastModified = file.lastModified();
@@ -190,8 +224,14 @@ public class OutputFileArgumentTest {
 		}
 	}
 	
+	/**
+	 * Test required exists no overwrite.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	@Test
-	public void testRequiredExistsNoOverwrite() {
+	public void testRequiredExistsNoOverwrite() throws IOException {
 		try {
 			final File file = FileUtils.createRandomFile(FileShutdownAction.DELETE);
 			
@@ -211,8 +251,14 @@ public class OutputFileArgumentTest {
 		}
 	}
 	
+	/**
+	 * Test required exists overwrite.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	@Test
-	public void testRequiredExistsOverwrite() {
+	public void testRequiredExistsOverwrite() throws IOException {
 		try {
 			final File file = FileUtils.createRandomFile(FileShutdownAction.DELETE);
 			final long lastModified = file.lastModified();

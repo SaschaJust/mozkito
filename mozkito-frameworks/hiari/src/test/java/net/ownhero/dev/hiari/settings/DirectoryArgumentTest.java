@@ -26,21 +26,40 @@ import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
+import net.ownhero.dev.ioda.exceptions.FilePermissionException;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * The Class DirectoryArgumentTest.
+ */
 public class DirectoryArgumentTest {
 	
+	/** The tmp dir. */
 	private static File tmpDir = new File(System.getProperty("java.io.tmpdir"));
+	
+	/** The dir. */
 	private File        dir;
 	
+	/**
+	 * Sets the up.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Before
 	public void setUp() throws Exception {
 		//
 	}
 	
+	/**
+	 * Tear down.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@After
 	public void tearDown() throws Exception {
 		if (this.dir != null) {
@@ -48,8 +67,14 @@ public class DirectoryArgumentTest {
 		}
 	}
 	
+	/**
+	 * Test required exists create.
+	 * 
+	 * @throws FilePermissionException
+	 *             the file permission exception
+	 */
 	@Test
-	public void testRequiredExistsCreate() {
+	public void testRequiredExistsCreate() throws FilePermissionException {
 		try {
 			final Settings settings = new Settings();
 			this.dir = FileUtils.createDir(tmpDir, "directoryargumenttestdir", FileShutdownAction.DELETE);
@@ -83,8 +108,14 @@ public class DirectoryArgumentTest {
 		
 	}
 	
+	/**
+	 * Test required exists no create.
+	 * 
+	 * @throws FilePermissionException
+	 *             the file permission exception
+	 */
 	@Test
-	public void testRequiredExistsNoCreate() {
+	public void testRequiredExistsNoCreate() throws FilePermissionException {
 		try {
 			final Settings settings = new Settings();
 			this.dir = FileUtils.createDir(tmpDir, "directoryargumenttestdir", FileShutdownAction.DELETE);
@@ -118,8 +149,14 @@ public class DirectoryArgumentTest {
 		
 	}
 	
+	/**
+	 * Test required not exists create.
+	 * 
+	 * @throws FilePermissionException
+	 *             the file permission exception
+	 */
 	@Test
-	public void testRequiredNotExistsCreate() {
+	public void testRequiredNotExistsCreate() throws FilePermissionException {
 		
 		try {
 			this.dir = FileUtils.createDir(tmpDir, "directoryargumenttestdir", FileShutdownAction.DELETE);
@@ -159,6 +196,9 @@ public class DirectoryArgumentTest {
 		}
 	}
 	
+	/**
+	 * Test required not exists no create.
+	 */
 	@Test
 	public void testRequiredNotExistsNoCreate() {
 		try {

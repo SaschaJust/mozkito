@@ -123,6 +123,11 @@ public class EnumArgument<T extends Enum<?>> extends Argument<T, EnumArgument.Op
 		 * (non-Javadoc)
 		 * @see net.ownhero.dev.andama.settings.ArgumentOptions#getAdditionalHelpString()
 		 */
+		/**
+		 * {@inheritDoc}
+		 * 
+		 * @see net.ownhero.dev.hiari.settings.ArgumentOptions#getAdditionalHelpString()
+		 */
 		@Override
 		public String getAdditionalHelpString() {
 			// PRECONDITIONS
@@ -192,6 +197,11 @@ public class EnumArgument<T extends Enum<?>> extends Argument<T, EnumArgument.Op
 	/*
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument#getValue()
+	 */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see net.ownhero.dev.hiari.settings.Argument#init()
 	 */
 	@Override
 	protected final boolean init() {
