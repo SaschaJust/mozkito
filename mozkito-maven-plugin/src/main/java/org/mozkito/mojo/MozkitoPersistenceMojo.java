@@ -43,6 +43,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.util.AbstractScanner;
 import org.codehaus.plexus.util.DirectoryScanner;
+import org.jdom2.Attribute;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -489,6 +490,27 @@ public class MozkitoPersistenceMojo extends AbstractMojo {
 		}
 	}
 	
+	private Element getPropertyElement(final Element propertiesElement,
+	                                   final String name) {
+		final Namespace ns = propertiesElement.getNamespace();
+		final List<Element> children = propertiesElement.getChildren("property", ns);
+		Element property = null;
+		EXISTING_CHILDREN: for (final Element existing : children) {
+			final Attribute attribute = existing.getAttribute("name");
+			if ((attribute != null) && name.equals(attribute.getValue())) {
+				property = existing;
+				break EXISTING_CHILDREN;
+			}
+		}
+		
+		if (property == null) {
+			property = new Element("property", ns);
+			propertiesElement.addContent(property);
+		}
+		
+		return property;
+	}
+	
 	/**
 	 * Gets the resource directory.
 	 * 
@@ -535,17 +557,16 @@ public class MozkitoPersistenceMojo extends AbstractMojo {
 		// PRECONDITIONS
 		
 		try {
-			final Namespace ns = anchor.getNamespace();
-			Element property = new Element("property", ns);
+			
+			Element property = getPropertyElement(propertiesElement, "openjpa.ConnectionURL");
+			
 			property.setAttribute("name", "openjpa.ConnectionURL");
 			property.setAttribute("value", this.connectionURL);
-			propertiesElement.addContent(property);
 			
 			if (this.openJPAOptions != null) {
 				for (final Entry<String, String> entry : this.openJPAOptions.entrySet()) {
 					
-					property = new Element("property", ns);
-					property.setAttribute("name", "openjpa." + entry.getKey());
+					property = getPropertyElement(propertiesElement, "openjpa." + entry.getKey());
 					property.setAttribute("value", entry.getValue());
 					propertiesElement.addContent(property);
 				}
