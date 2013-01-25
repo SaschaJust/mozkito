@@ -156,13 +156,13 @@
 	</pluginRepositories>
 	<distributionManagement>
 		<snapshotRepository>
-			<id>st.cs.uni-saarland.de</id>
-			<name>st.cs.uni-saarland.de</name>
+			<id>mozkito-dev</id>
+			<name>mozkito-dev</name>
 			<url>http://mozkito.org:8080/nexus/content/repositories/mozkito-dev</url>
 		</snapshotRepository>
 		<repository>
-			<id>own-hero.net-external</id>
-			<name>own-hero.net external</name>
+			<id>mozkito</id>
+			<name>mozkito</name>
 			<url>http://mozkito.org:8080/nexus/content/repositories/mozkito/</url>
 		</repository>
 	</distributionManagement>
