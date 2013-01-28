@@ -8,12 +8,8 @@
 	</parent>
 	<artifactId>mozkito-versions</artifactId>
 	<packaging>jar</packaging>
-	<name>The mozkito versions module (mozkito-versions)</name>
+	<name>mozkito:module versions</name>
 	<description>TODO</description>
-	<properties>
-		<moduleName>versions</moduleName>
-		<enhance>true</enhance>
-	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.mozkito</groupId>

@@ -8,12 +8,8 @@
 	</parent>
 	<artifactId>mozkito-infozilla</artifactId>
 	<packaging>jar</packaging>
-	<name>The mozkito infozilla module (mozkito-infozilla)</name>
+	<name>mozkito:module infozilla</name>
 	<description>TODO</description>
-	<properties>
-		<moduleName>infozilla</moduleName>
-		<enhance>true</enhance>
-	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.mozkito</groupId>

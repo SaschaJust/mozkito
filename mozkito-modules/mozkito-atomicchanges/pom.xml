@@ -9,12 +9,8 @@
 	</parent>
 	<artifactId>mozkito-atomicchanges</artifactId>
 	<packaging>jar</packaging>
-	<name>The atomic changes module (mozkito-atomicchanges)</name>
+	<name>mozkito:module atomicchanges</name>
 	<description>TODO</description>
-	<properties>
-		<moduleName>atomicchanges</moduleName>
-		<enhance>true</enhance>
-	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.mozkito</groupId>

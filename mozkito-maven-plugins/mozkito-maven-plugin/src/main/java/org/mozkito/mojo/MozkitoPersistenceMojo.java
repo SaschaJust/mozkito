@@ -454,7 +454,7 @@ public class MozkitoPersistenceMojo extends AbstractMojo {
 			for (final String filePath : files) {
 				final String canonicalClassName = FilenameUtils.removeExtension(filePath)
 				                                               .replace(System.getProperty("file.separator"), ".");
-				getLog().info("adding compilation unit: " + canonicalClassName);
+				getLog().info("Adding compilation unit: " + canonicalClassName);
 				final Element classElement = new Element("class", anchor.getNamespace());
 				classElement.addContent(canonicalClassName);
 				anchor.addContent(classElement);

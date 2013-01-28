@@ -9,12 +9,8 @@
 	</parent>
 	<artifactId>mozkito-callgraph</artifactId>
 	<packaging>jar</packaging>
-	<name>The callgraph module (mozkito-callgraph)</name>
+	<name>mozkito:module callgraph</name>
 	<description>TODO</description>
-	<properties>
-		<moduleName>callgraph</moduleName>
-		<enhance>true</enhance>
-	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.mozkito</groupId>

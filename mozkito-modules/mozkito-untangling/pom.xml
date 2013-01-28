@@ -9,12 +9,8 @@
 	</parent>
 	<artifactId>mozkito-untangling</artifactId>
 	<packaging>jar</packaging>
-	<name>The mozkito untangling module (mozkito-untangling)</name>
+	<name>mozkito:module untangling</name>
 	<description>TODO</description>
-	<properties>
-		<moduleName>untangling</moduleName>
-		<enhance>true</enhance>
-	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.mozkito</groupId>
@@ -56,15 +52,15 @@
 			<artifactId>commons-math</artifactId>
 			<version>2.2</version>
 		</dependency>
-        <dependency>
-			<groupId>weka</groupId>
-			<artifactId>weka</artifactId>
-			<version>3.7.1</version>
+		<dependency>
+			<groupId>nz.ac.waikato.cms.weka</groupId>
+			<artifactId>weka-dev</artifactId>
+			<version>3.7.7</version>
 		</dependency>
 		<dependency>
 			<groupId>libsvm</groupId>
 			<artifactId>libsvm</artifactId>
-			<version>3.1</version>
+			<version>3.16</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.jung</groupId>

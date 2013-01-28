@@ -10,7 +10,7 @@
 	<artifactId>mozkito-maven-plugins</artifactId>
 	<version>0.4-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<name>The mozkito Maven Plugins</name>
+	<name>(meta) mozkito maven plugins</name>
 	<!-- FIXME change it to the project's website -->
 	<url>http://maven.apache.org</url>
 	<properties>

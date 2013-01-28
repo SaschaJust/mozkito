@@ -28,12 +28,11 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
 
-import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.params.HttpMethodParams;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.jdom2.Attribute;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -270,25 +269,19 @@ public class Correction {
 	}
 	
 	public static void main2(final String[] args) throws IOException, JDOMException {
-		final HttpClient client = new HttpClient();
-		final HttpMethod method = new GetMethod("http://en.wikipedia.org/wiki/Wikipedia:AWB/Typos");
+		final HttpClient client = new DefaultHttpClient();
+		final HttpGet method = new HttpGet("http://en.wikipedia.org/wiki/Wikipedia:AWB/Typos");
 		
-		client.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
+		final ResponseHandler<String> responseHandler = new BasicResponseHandler();
+		final String responseBody = client.execute(method, responseHandler);
 		
-		final int statusCode = client.executeMethod(method);
-		
-		if (statusCode != HttpStatus.SC_OK) {
-			System.err.println("Method failed: " + method.getStatusLine());
-		}
-		
-		final byte[] responseBody = method.getResponseBody();
 		method.releaseConnection();
 		
 		final SAXBuilder saxBuilder = new SAXBuilder(new XMLReaderSAX2Factory(false,
 		                                                                      "org.apache.xerces.parsers.SAXParser"));
 		saxBuilder.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
 		saxBuilder.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-		final ByteArrayInputStream stream = new ByteArrayInputStream(responseBody);
+		final ByteArrayInputStream stream = new ByteArrayInputStream(responseBody.getBytes());
 		final InputStreamReader reader = new InputStreamReader(stream);
 		final Document document = saxBuilder.build(reader);
 		

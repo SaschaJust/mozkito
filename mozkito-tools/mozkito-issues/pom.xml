@@ -8,7 +8,7 @@
 	</parent>
 	<artifactId>mozkito-issues-tool</artifactId>
 	<packaging>jar</packaging>
-	<name>The mozkito issues command line tool</name>
+	<name>mozkito:tool issues</name>
 	<description>TODO</description>
 	<properties>
 		<mainClass>issues.Main</mainClass>
@@ -17,6 +17,7 @@
 		<dependency>
 			<groupId>org.mozkito</groupId>
 			<artifactId>mozkito-issues</artifactId>
+			<version>0.4-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 </project>

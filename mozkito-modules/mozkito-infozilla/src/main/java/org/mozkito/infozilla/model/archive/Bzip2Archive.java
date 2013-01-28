@@ -49,9 +49,10 @@ public class Bzip2Archive extends Archive {
 	public File extract() throws IOException, FilePermissionException {
 		final File file = FileUtils.createRandomFile(FileShutdownAction.DELETE);
 		FileUtils.dump(getAttachment().getData(), file);
-		final File dir = FileUtils.createRandomDir("test", "bleh", FileShutdownAction.DELETE);
-		FileUtils.bunzip2(file, dir);
-		return dir;
+		FileUtils.createRandomDir("test", "bleh", FileShutdownAction.DELETE);
+		// FileUtils.bunzip2(file, dir);
+		throw new UnsupportedOperationException("not yet implemented");
+		// return dir;
 	}
 	
 }

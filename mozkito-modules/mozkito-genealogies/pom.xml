@@ -8,12 +8,8 @@
 	</parent>
 	<artifactId>mozkito-genealogies</artifactId>
 	<packaging>jar</packaging>
-	<name>The mozkito genealogies module (mozkito-genealogies)</name>
+	<name>mozkito:module genealogies</name>
 	<description>TODO</description>
-	<properties>
-		<moduleName>genealogies</moduleName>
-		<enhance>true</enhance>
-	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.mozkito</groupId>

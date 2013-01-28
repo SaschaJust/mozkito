@@ -9,12 +9,8 @@
 	</parent>
 	<artifactId>mozkito-causeeffect</artifactId>
 	<packaging>jar</packaging>
-	<name>The cause-effect chain module (mozkito-causeeffect)</name>
+	<name>mozkito:module causeeffect</name>
 	<description>TODO</description>
-	<properties>
-		<moduleName>causeeffect</moduleName>
-		<enhance>true</enhance>
-	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.mozkito</groupId>

@@ -8,7 +8,7 @@
 	</parent>
 	<artifactId>mozkito-mappings-tool</artifactId>
 	<packaging>jar</packaging>
-	<name>The mozkito mappings command line tool</name>
+	<name>mozkito:tool mappings</name>
 	<description>TODO</description>
 	<properties>
 		<mainClass>mappings.Main</mainClass>
@@ -17,6 +17,7 @@
 		<dependency>
 			<groupId>org.mozkito</groupId>
 			<artifactId>mozkito-mappings</artifactId>
+			<version>0.4-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 </project>

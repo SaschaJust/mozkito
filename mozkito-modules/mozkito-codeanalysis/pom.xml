@@ -8,12 +8,8 @@
 	</parent>
 	<artifactId>mozkito-codeanalysis</artifactId>
 	<packaging>jar</packaging>
-	<name>The code analysis module (PPA) (mozkito-codeanalysis)</name>
+	<name>mozkito:module codeanalysis</name>
 	<description>TODO</description>
-	<properties>
-		<moduleName>codeanalysis</moduleName>
-		<enhance>true</enhance>
-	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.mozkito</groupId>
@@ -80,6 +76,12 @@
 			<groupId>org.jdom</groupId>
 			<artifactId>jdom2</artifactId>
 			<version>2.0.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.derby</groupId>
+			<artifactId>derby</artifactId>
+			<version>10.9.1.0</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

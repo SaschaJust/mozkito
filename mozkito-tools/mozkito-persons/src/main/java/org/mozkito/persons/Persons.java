@@ -29,7 +29,6 @@ import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kisa.Logger;
 
-import org.mozkito.RepositoryToolchain;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.persons.engine.MergingEngine;
 import org.mozkito.persons.messages.Messages;
@@ -57,18 +56,22 @@ public class Persons extends Chain<Settings> {
 	
 	/**
 	 * Instantiates a new persons.
-	 *
-	 * @param util the util
-	 * @throws SettingsParseError the settings parse error
-	 * @throws ArgumentRegistrationException the argument registration exception
-	 * @throws ArgumentSetRegistrationException the argument set registration exception
+	 * 
+	 * @param util
+	 *            the util
+	 * @throws SettingsParseError
+	 *             the settings parse error
+	 * @throws ArgumentRegistrationException
+	 *             the argument registration exception
+	 * @throws ArgumentSetRegistrationException
+	 *             the argument set registration exception
 	 * @deprecated only to be used in tests
 	 */
 	@Deprecated
 	Persons(final PersistenceUtil util) throws SettingsParseError, ArgumentRegistrationException,
 	        ArgumentSetRegistrationException {
 		super(new Settings());
-		this.threadPool = new Pool(RepositoryToolchain.class.getSimpleName(), this);
+		this.threadPool = new Pool(Persons.class.getSimpleName(), this);
 		final Settings settings = getSettings();
 		this.persistenceUtil = util;
 		this.enginesSet = ArgumentSetFactory.create(new MergingEngine.Options(getSettings().getRoot(),
@@ -91,7 +94,7 @@ public class Persons extends Chain<Settings> {
 		super(settings);
 		
 		try {
-			this.threadPool = new Pool(RepositoryToolchain.class.getSimpleName(), this);
+			this.threadPool = new Pool(Persons.class.getSimpleName(), this);
 			
 			final DatabaseOptions databaseOptions = new DatabaseOptions(settings.getRoot(), Requirement.required,
 			                                                            "persistence"); //$NON-NLS-1$

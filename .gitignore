@@ -4,11 +4,11 @@ mozkito-modules/**/.project
 mozkito-modules/**/.settings
 mozkito-modules/**/eclipse
 mozkito-modules/**/bin
-mozkito-libraries/**/.classpath
-mozkito-libraries/**/.project
-mozkito-libraries/**/.settings
-mozkito-libraries/**/eclipse
-mozkito-libraries/**/bin
+mozkito-tools/**/.classpath
+mozkito-tools/**/.project
+mozkito-tools/**/.settings
+mozkito-tools/**/eclipse
+mozkito-tools/**/bin
 mozkito-maven-plugins/**/.classpath
 mozkito-maven-plugins/**/.project
 mozkito-maven-plugins/**/.settings
@@ -36,3 +36,5 @@ mozkito-*/bin
 **/jacoco.exec
 .checkstyle
 persistence.xml
+*-persistence.xml
+mozkito-modules/**/eclipse

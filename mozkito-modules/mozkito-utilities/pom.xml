@@ -8,10 +8,7 @@
 	</parent>
 	<artifactId>mozkito-utilities</artifactId>
 	<packaging>jar</packaging>
-	<name>The mozkito utilities package (mozkito-utilities)</name>
-	<properties>
-		<moduleName>utils</moduleName>
-	</properties>
+	<name>mozkito:module utilities</name>
 	<dependencies>
 		<dependency>
 			<groupId>commons-lang</groupId>
@@ -26,7 +23,7 @@
 		<dependency>
 			<groupId>net.ownhero.dev</groupId>
 			<artifactId>ioda</artifactId>
-			<version>0.1-SNAPSHOT</version>
+			<version>0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>

@@ -25,12 +25,8 @@
 	</parent>
 	<artifactId>mozkito-mappings</artifactId>
 	<packaging>jar</packaging>
-	<name>The mozkito mappings module (mozkito-mappings)</name>
+	<name>mozkito:module mappings</name>
 	<description>TODO</description>
-	<properties>
-		<moduleName>mappings</moduleName>
-		<enhance>true</enhance>
-	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.mozkito</groupId>
@@ -70,7 +66,7 @@
 		<dependency>
 			<groupId>libsvm</groupId>
 			<artifactId>libsvm</artifactId>
-			<version>3.1</version>
+			<version>3.16</version>
 		</dependency>
 		<dependency>
 			<groupId>lingpipe</groupId>
@@ -88,19 +84,9 @@
 			<version>2.0.7</version>
 		</dependency>
 		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>1.2.17</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<version>1.7.2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>1.7.2</version>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.2.2</version>
 		</dependency>
 	</dependencies>
 </project>

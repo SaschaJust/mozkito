@@ -9,12 +9,8 @@
 	</parent>
 	<artifactId>mozkito-persons</artifactId>
 	<packaging>jar</packaging>
-	<name>The mozkito persons module (mozkito-persons)</name>
+	<name>mozkito:module persons</name>
 	<description>TODO</description>
-	<properties>
-		<moduleName>persons</moduleName>
-		<enhance>true</enhance>
-	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.mozkito</groupId>

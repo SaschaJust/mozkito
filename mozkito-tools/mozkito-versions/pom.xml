@@ -8,7 +8,7 @@
 	</parent>
 	<artifactId>mozkito-versions-tool</artifactId>
 	<packaging>jar</packaging>
-	<name>The mozkito versions command line tool</name>
+	<name>mozkito:tool versions</name>
 	<description>TODO</description>
 	<properties>
 		<mainClass>versions.Main</mainClass>
@@ -17,6 +17,7 @@
 		<dependency>
 			<groupId>org.mozkito</groupId>
 			<artifactId>mozkito-versions</artifactId>
+			<version>0.4-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 </project>

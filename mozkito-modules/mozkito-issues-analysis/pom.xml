@@ -9,12 +9,8 @@
 	</parent>
 	<artifactId>mozkito-issues-analysis</artifactId>
 	<packaging>jar</packaging>
-	<name>The analysis package for the issues module (mozkito-issues-analysis)</name>
+	<name>mozkito:module issues-analysis</name>
 	<description>TODO</description>
-	<properties>
-		<moduleName>issues-issues-analysis</moduleName>
-		<enhance>true</enhance>
-	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.mozkito</groupId>

@@ -9,12 +9,8 @@
 	</parent>
 	<artifactId>mozkito-genealogies-metrics</artifactId>
 	<packaging>jar</packaging>
-	<name>The metrics package for genealogies (mozkito-genealogies-metrics)</name>
+	<name>mozkito:module genealogies-metrics</name>
 	<description>TODO</description>
-	<properties>
-		<moduleName>genealogies-metrics</moduleName>
-		<enhance>true</enhance>
-	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.mozkito</groupId>

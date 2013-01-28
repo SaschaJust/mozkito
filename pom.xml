@@ -6,7 +6,7 @@
 	</prerequisites>
 	<groupId>org.mozkito</groupId>
 	<artifactId>mozkito</artifactId>
-	<name>The mozkito data mining collection</name>
+	<name>(project) The mozkito data mining collection</name>
 	<description>Data mining and analyzation for various types of software repositories</description>
 	<version>0.4-SNAPSHOT</version>
 	<packaging>pom</packaging>
@@ -48,7 +48,7 @@
 		<url>http://www.st.cs.uni-saarland.de/</url>
 	</organization>
 	<modules>
-		<!-- <module>mozkito-tools</module> -->
+		<module>mozkito-tools</module>
 		<module>mozkito-modules</module>
 		<module>mozkito-maven-plugins</module>
 	</modules>
@@ -135,42 +135,6 @@
 	<build>
 		<plugins>
 			<plugin>
-<<<<<<< HEAD
-				<!-- activate kanuni annotation processing -->
-=======
-				<groupId>org.mozkito</groupId>
-				<artifactId>mozkito-maven-plugin</artifactId>
-				<version>0.4-SNAPSHOT</version>
-				<configuration>
-					<connectionURL>jdbc:postgresql://quentin.cs.uni-saarland.de/mozkito</connectionURL>
-					<includes>
-						<param>**/model/*</param>
-					</includes>
-					<excludes>
-						<param>**/model/*_.*</param>
-						<param>**/*__*</param>
-						<param>**/ChangeOperations.*</param>
-						<param>**/JavaElementFactory.*</param>
-						<param>**/JavaElementLocationSet.*</param>
-						<param>**/Messages.*</param>
-					</excludes>
-					<openJPAOptions>
-						<!-- <Log>DefaultLevel=WARN, Runtime=INFO, Tool=INFO</Log> -->
-						<!-- <Log>slf4j</Log> -->
-					</openJPAOptions>
-				</configuration>
-				<executions>
-					<execution>
-						<phase>generate-resources</phase>
-						<goals>
-							<goal>meta</goal>
-							<goal>persistence</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
->>>>>>> 55d7ff03f2439816e8fb177fcf40741d02e5f6ea
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.12</version>
@@ -236,20 +200,6 @@
 					<encoding>${project.build.sourceEncoding}</encoding>
 					<overwrite>true</overwrite>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<version>2.1.2</version>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<phase>package</phase>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
 	</build>
@@ -422,10 +372,10 @@
 			</build>
 		</profile>
 		<profile>
-			<id>javadocs</id>
+			<id>deploy</id>
 			<activation>
 				<property>
-					<name>javadocs</name>
+					<name>deploy</name>
 					<value>true</value>
 				</property>
 			</activation>
@@ -447,6 +397,20 @@
 						<configuration>
 							<aggregate>true</aggregate>
 						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-source-plugin</artifactId>
+						<version>2.1.2</version>
+						<executions>
+							<execution>
+								<id>attach-sources</id>
+								<phase>package</phase>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
 					</plugin>
 				</plugins>
 			</build>

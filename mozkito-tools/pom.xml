@@ -7,14 +7,13 @@
 		<version>0.4-SNAPSHOT</version>
 	</parent>
 	<artifactId>mozkito-tools</artifactId>
-	<name>The mozkito tools</name>
+	<name>(meta) mozkito tools</name>
 	<description>Data Mining and Analyzation for Various Repositories</description>
 	<packaging>pom</packaging>
 	<modules>
 		<module>mozkito-issues</module>
 		<module>mozkito-mappings</module>
 		<module>mozkito-persons</module>
-		<module>mozkito-utilities</module>
 		<module>mozkito-versions</module>
 	</modules>
 	<dependencies>
@@ -26,6 +25,38 @@
 	</dependencies>
 	<build>
 		<plugins>
+			<plugin>
+				<!-- activate kanuni annotation processing -->
+				<groupId>org.mozkito</groupId>
+				<artifactId>mozkito-maven-plugin</artifactId>
+				<version>0.4-SNAPSHOT</version>
+				<configuration>
+					<connectionURL>jdbc:postgresql://quentin.cs.uni-saarland.de/mozkito</connectionURL>
+					<includes>
+						<param>**/model/*</param>
+					</includes>
+					<excludes>
+						<param>**/model/*_.*</param>
+						<param>**/*__*</param>
+						<param>**/ChangeOperations.*</param>
+						<param>**/JavaElementFactory.*</param>
+						<param>**/JavaElementLocationSet.*</param>
+						<param>**/Messages.*</param>
+					</excludes>
+					<openJPAOptions>
+						<!-- <Log>DefaultLevel=WARN, Runtime=INFO, Tool=INFO</Log> -->
+						<!-- <Log>slf4j</Log> -->
+					</openJPAOptions>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>meta</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>

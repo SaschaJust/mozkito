@@ -8,12 +8,8 @@
 	</parent>
 	<artifactId>mozkito-issues</artifactId>
 	<packaging>jar</packaging>
-	<name>The mozkito issues module (mozkito-issues)</name>
+	<name>mozkito:module issues</name>
 	<description>TODO</description>
-	<properties>
-		<moduleName>issues</moduleName>
-		<enhance>true</enhance>
-	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.mozkito</groupId>
