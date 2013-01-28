@@ -180,6 +180,10 @@
 					<excludes>
 						<param>**/model/*_.*</param>
 						<param>**/*__*</param>
+						<param>**/ChangeOperations.*</param>
+						<param>**/JavaElementFactory.*</param>
+						<param>**/JavaElementLocationSet.*</param>
+						<param>**/Messages.*</param>
 					</excludes>
 					<openJPAOptions>
 						<!-- <Log>DefaultLevel=WARN, Runtime=INFO, Tool=INFO</Log> -->
