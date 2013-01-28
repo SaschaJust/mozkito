@@ -215,13 +215,14 @@ public class OpenJPAUtil implements PersistenceUtil {
 				}
 			}
 			
-			properties.remove("openjpa.persistence-unit"); //$NON-NLS-1$
+			//			properties.remove("openjpa.persistence-unit"); //$NON-NLS-1$
 			
 			if (Logger.logInfo()) {
 				Logger.info("Requesting persistence-unit: " + unit);
 			}
 			
 			if (Logger.logDebug()) {
+				properties.put("openjpa.Log", "DefaultLevel=TRACE, Runtime=TRACE, Tool=TRACE");
 				Logger.debug("Using options: ");
 				for (final Object property : properties.keySet()) {
 					Logger.debug(property + ": " + properties.getProperty((String) property)); //$NON-NLS-1$
