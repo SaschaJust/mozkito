@@ -7,24 +7,39 @@
 		<version>0.4-SNAPSHOT</version>
 	</parent>
 	<artifactId>mozkito-modules</artifactId>
-	<name>Mozkito modules with integrated toolchain</name>
+	<name>The mozkito modules</name>
 	<description>Data Mining and Analyzation for Various Repositories</description>
 	<packaging>pom</packaging>
 	<modules>
-		<module>mozkito-versions</module>
-		<module>mozkito-issues</module>
-		<module>mozkito-persons</module>
-		<module>mozkito-mappings</module>
-		<module>mozkito-infozilla</module>
-		<module>mozkito-genealogies</module>
+		<module>mozkito-atomicchanges</module>
+		<module>mozkito-callgraph</module>
 		<module>mozkito-causeeffect</module>
-		<module>mozkito-untangling</module>
 		<module>mozkito-changecouplings</module>
 		<module>mozkito-codeanalysis</module>
-		<module>mozkito-callgraph</module>
-		<module>mozkito-atomicchanges</module>
+		<module>mozkito-genealogies</module>
+		<module>mozkito-genealogies-metrics</module>
+		<module>mozkito-infozilla</module>
+		<module>mozkito-issues</module>
+		<module>mozkito-issues-analysis</module>
+		<module>mozkito-mappings</module>
+		<module>mozkito-persistence</module>
+		<module>mozkito-persons</module>
+		<module>mozkito-untangling</module>
+		<module>mozkito-utilities</module>
+		<module>mozkito-versions</module>
 	</modules>
 	<dependencies>
+		<dependency>
+			<groupId>com.atlassian.maven.plugins</groupId>
+			<artifactId>maven-clover2-plugin</artifactId>
+			<version>3.1.8</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.ownhero.dev</groupId>
+			<artifactId>kisa</artifactId>
+			<version>0.2-SNAPSHOT</version>
+		</dependency>
 		<dependency>
 			<groupId>net.ownhero.dev</groupId>
 			<artifactId>hiari</artifactId>
@@ -34,17 +49,6 @@
 			<groupId>net.ownhero.dev</groupId>
 			<artifactId>andama-core</artifactId>
 			<version>0.4-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>net.ownhero.dev</groupId>
-			<artifactId>andama-eventhandler-irc</artifactId>
-			<version>0.4-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>com.atlassian.maven.plugins</groupId>
-			<artifactId>maven-clover2-plugin</artifactId>
-			<version>3.1.8</version>
-			<scope>test</scope>
 		</dependency>
 	</dependencies>
 	<build>
@@ -73,33 +77,6 @@
 						<goals>
 							<goal>meta</goal>
 							<goal>persistence</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.3</version>
-				<configuration>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-					<archive>
-						<manifest>
-							<mainClass>${moduleName}.Main</mainClass>
-						</manifest>
-					</archive>
-				</configuration>
-				<executions>
-					<execution>
-						<id>make-assembly</id>
-						<!-- this is used for inheritance merges -->
-						<phase>package</phase>
-						<!-- append to the packaging phase. -->
-						<goals>
-							<goal>single</goal>
-							<!-- goals == mojos -->
 						</goals>
 					</execution>
 				</executions>
@@ -494,6 +471,66 @@
 							<argLine>-javaagent:${sonar.jacoco.agent.path}=destfile=${sonar.jacoco.reportPath}</argLine>
 							<forkMode>perTest</forkMode>
 						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>enhance</id>
+			<activation>
+				<file>
+					<exists>${basedir}/src/main/resources/enhance</exists>
+				</file>
+			</activation>
+			<build>
+				<resources>
+					<resource>
+						<directory>src/main/resources</directory>
+						<targetPath>META-INF</targetPath>
+					</resource>
+				</resources>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>openjpa-maven-plugin</artifactId>
+						<version>1.2</version>
+						<configuration>
+							<includes>**/model/*.class</includes>
+							<addDefaultConstructor>true</addDefaultConstructor>
+							<enforcePropertyRestrictions>true</enforcePropertyRestrictions>
+						</configuration>
+						<executions>
+							<execution>
+								<id>enhancer</id>
+								<phase>process-classes</phase>
+								<goals>
+									<goal>enhance</goal>
+								</goals>
+							</execution>
+						</executions>
+						<dependencies>
+							<dependency>
+								<groupId>org.apache.openjpa</groupId>
+								<artifactId>openjpa</artifactId>
+								<!-- set the version to be the same as the level in your runtime -->
+								<version>2.2.1.1</version>
+							</dependency>
+							<dependency>
+								<groupId>log4j</groupId>
+								<artifactId>log4j</artifactId>
+								<version>1.2.17</version>
+							</dependency>
+							<dependency>
+								<groupId>org.slf4j</groupId>
+								<artifactId>slf4j-log4j12</artifactId>
+								<version>1.6.4</version>
+							</dependency>
+							<dependency>
+								<groupId>org.slf4j</groupId>
+								<artifactId>slf4j-api</artifactId>
+								<version>1.6.4</version>
+							</dependency>
+						</dependencies>
 					</plugin>
 				</plugins>
 			</build>

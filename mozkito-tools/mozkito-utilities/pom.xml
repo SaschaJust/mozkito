@@ -3,22 +3,20 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.mozkito</groupId>
-		<artifactId>mozkito-modules</artifactId>
+		<artifactId>mozkito-tools</artifactId>
 		<version>0.4-SNAPSHOT</version>
 	</parent>
-	<artifactId>mozkito-changecouplings</artifactId>
+	<artifactId>mozkito-utilities-tool</artifactId>
 	<packaging>jar</packaging>
-	<name>The change couplings module (mozkito-changecouplings)</name>
+	<name>The mozkito utilities command line tool</name>
 	<description>TODO</description>
 	<properties>
-		<moduleName>changecouplings</moduleName>
-		<enhance>true</enhance>
+		<mainClass>utilities.Main</mainClass>
 	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.mozkito</groupId>
-			<artifactId>mozkito-codeanalysis</artifactId>
-			<version>0.4-SNAPSHOT</version>
+			<artifactId>mozkito-utilities</artifactId>
 		</dependency>
 	</dependencies>
 </project>

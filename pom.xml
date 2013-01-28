@@ -6,7 +6,7 @@
 	</prerequisites>
 	<groupId>org.mozkito</groupId>
 	<artifactId>mozkito</artifactId>
-	<name>mozkito data mining collection</name>
+	<name>The mozkito data mining collection</name>
 	<description>Data mining and analyzation for various types of software repositories</description>
 	<version>0.4-SNAPSHOT</version>
 	<packaging>pom</packaging>
@@ -48,7 +48,7 @@
 		<url>http://www.st.cs.uni-saarland.de/</url>
 	</organization>
 	<modules>
-		<module>mozkito-libraries</module>
+		<!-- <module>mozkito-tools</module> -->
 		<module>mozkito-modules</module>
 		<module>mozkito-maven-plugins</module>
 	</modules>
@@ -67,11 +67,6 @@
 		<dependency>
 			<groupId>net.ownhero.dev</groupId>
 			<artifactId>kanuni</artifactId>
-			<version>0.2-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>net.ownhero.dev</groupId>
-			<artifactId>hiari</artifactId>
 			<version>0.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
@@ -114,7 +109,7 @@
 			<name>own-hero.net Public Repositories</name>
 			<url>http://mozkito.org:8080/nexus/content/groups/public</url>
 		</pluginRepository>
-			<pluginRepository>
+		<pluginRepository>
 			<id>own-hero.net-private</id>
 			<name>own-hero.net Private Repositories</name>
 			<url>http://mozkito.org:8080/nexus/content/groups/private</url>
@@ -140,6 +135,7 @@
 	<build>
 		<plugins>
 			<plugin>
+				<!-- activate kanuni annotation processing -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.12</version>
@@ -152,6 +148,7 @@
 				</configuration>
 			</plugin>
 			<plugin>
+				<!-- get the kanuni agent on the classpath -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
 				<executions>
@@ -244,7 +241,6 @@
 						<artifactId>doclet</artifactId>
 						<version>5.3</version>
 					</docletArtifact>
-					<!-- <useStandardDocletOptions>true</useStandardDocletOptions>-->
 					<minmemory>64m</minmemory>
 					<maxmemory>512m</maxmemory>
 					<show>private</show>
@@ -260,30 +256,6 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<profiles>
-		<profile>
-			<id>mozkitoTest</id>
-			<activation>
-				<property>
-					<name>mozkitoTest</name>
-					<value>true</value>
-				</property>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-surefire-plugin</artifactId>
-						<version>2.12</version>
-						<configuration>
-							<excludes>
-								<exclude>**/**/*NetTest.java</exclude>
-								<exclude>**/**/*LongTest.java</exclude>
-							</excludes>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
 		<profile>
 			<id>localTest</id>
 			<activation>
@@ -301,8 +273,6 @@
 						<configuration>
 							<excludes>
 								<exclude>**/**/*NetTest.java</exclude>
-								<exclude>**/**/*MozkitoTest.java</exclude>
-								<exclude>**/**/*LongTest.java</exclude>
 							</excludes>
 						</configuration>
 					</plugin>
@@ -413,23 +383,6 @@
 						<version>2.3</version>
 						<inherited>false</inherited>
 					</plugin>
-					<!-- <plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-javadoc-plugin</artifactId>
-						<version>2.7</version>
-						<executions>
-							<execution>
-								<id>attach-javadocs</id>
-								<goals>
-									<goal>jar</goal>
-								</goals>
-								<phase>package</phase>
-							</execution>
-						</executions>
-						<configuration>
-							<aggregate>true</aggregate>
-						</configuration>
-					</plugin> -->
 				</plugins>
 			</build>
 		</profile>
@@ -457,7 +410,6 @@
 							</execution>
 						</executions>
 						<configuration>
-							<!-- <doclet>org.umlgraph.doclet.UmlGraphDoc</doclet><docletArtifact><groupId>org.umlgraph</groupId><artifactId>doclet</artifactId><version>5.3</version></docletArtifact><useStandardDocletOptions>true</useStandardDocletOptions><minmemory>64m</minmemory><maxmemory>512m</maxmemory><show>private</show><linksource>true</linksource><quiet>true</quiet><source>1.7</source>-->
 							<aggregate>true</aggregate>
 						</configuration>
 					</plugin>

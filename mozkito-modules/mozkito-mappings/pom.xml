@@ -17,25 +17,24 @@
    ******************************************************************************/
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.mozkito</groupId>
 		<artifactId>mozkito-modules</artifactId>
 		<version>0.4-SNAPSHOT</version>
 	</parent>
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.mozkito</groupId>
 	<artifactId>mozkito-mappings</artifactId>
 	<packaging>jar</packaging>
-	<name>mozkito-mappings</name>
+	<name>The mozkito mappings module (mozkito-mappings)</name>
+	<description>TODO</description>
+	<properties>
+		<moduleName>mappings</moduleName>
+		<enhance>true</enhance>
+	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.mozkito</groupId>
 			<artifactId>mozkito-versions</artifactId>
-			<version>0.4-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>org.mozkito</groupId>
-			<artifactId>mozkito-persistence</artifactId>
 			<version>0.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
@@ -52,11 +51,6 @@
 			<groupId>org.mozkito</groupId>
 			<artifactId>mozkito-codeanalysis</artifactId>
 			<version>0.4-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>net.ownhero.dev</groupId>
-			<artifactId>kisa</artifactId>
-			<version>0.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.opencsv</groupId>
@@ -109,79 +103,4 @@
 			<version>1.7.2</version>
 		</dependency>
 	</dependencies>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>openjpa-maven-plugin</artifactId>
-				<version>1.2</version>
-				<configuration>
-					<includes>**/model/*.class</includes>
-					<addDefaultConstructor>true</addDefaultConstructor>
-					<enforcePropertyRestrictions>true</enforcePropertyRestrictions>
-				</configuration>
-				<executions>
-					<execution>
-						<id>enhancer</id>
-						<phase>process-classes</phase>
-						<goals>
-							<goal>enhance</goal>
-						</goals>
-					</execution>
-				</executions>
-				<dependencies>
-					<dependency>
-						<groupId>org.apache.openjpa</groupId>
-						<artifactId>openjpa</artifactId>
-						<!-- set the version to be the same as the level in your runtime -->
-						<version>2.2.1.1</version>
-					</dependency>
-					<dependency>
-						<groupId>log4j</groupId>
-						<artifactId>log4j</artifactId>
-						<version>1.2.17</version>
-					</dependency>
-					<dependency>
-						<groupId>org.slf4j</groupId>
-						<artifactId>slf4j-log4j12</artifactId>
-						<version>1.7.2</version>
-					</dependency>
-					<dependency>
-						<groupId>org.slf4j</groupId>
-						<artifactId>slf4j-api</artifactId>
-						<version>1.7.2</version>
-					</dependency>
-				</dependencies>
-			</plugin>
-	        <plugin>
-	          <groupId>org.apache.maven.plugins</groupId>
-	          <artifactId>maven-surefire-plugin</artifactId>
-	          <version>2.12.3</version>
-	          <configuration>
-	            <skipTests>true</skipTests>
-	          </configuration>
-	        </plugin>
-	        <plugin>
-	          <groupId>org.apache.maven.plugins</groupId>
-	          <artifactId>maven-checkstyle-plugin</artifactId>
-	          <version>2.9.1</version>
-	            <!-- <enableRulesSummary>true</enableRulesSummary> -->
-		        <configuration>
-		          <configLocation>../project_settings/checkstyle.xml</configLocation>
-	          </configuration>
-	        </plugin>
-		</plugins>
-	</build>
-    <reporting>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-checkstyle-plugin</artifactId>
-          <version>2.9.1</version>
-        </plugin>
-      </plugins>
-    </reporting>
-	<properties>
-		<moduleName>mappings</moduleName>
-	</properties>
 </project>
