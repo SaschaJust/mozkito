@@ -222,18 +222,24 @@ public class OpenJPAUtil implements PersistenceUtil {
 			}
 			
 			if (Logger.logDebug()) {
-				properties.put("openjpa.Log", "DefaultLevel=TRACE, Runtime=TRACE, Tool=TRACE");
 				Logger.debug("Using options: ");
 				for (final Object property : properties.keySet()) {
 					Logger.debug(property + ": " + properties.getProperty((String) property)); //$NON-NLS-1$
 				}
 			}
+			if (Logger.logTrace()) {
+				properties.put("openjpa.Log", "DefaultLevel=TRACE,Tool=TRACE");
+			}
 			
-			this.factory = OpenJPAPersistence.createEntityManagerFactory(unit, null, properties);
+			final StringBuilder sb = new StringBuilder();
+			sb.append(unit);
+			sb.append("-persistence.xml");
+			
+			this.factory = OpenJPAPersistence.createEntityManagerFactory("persistence", sb.toString(), properties);
 			
 			if (this.factory == null) {
 				if (Logger.logError()) {
-					final InputStream stream = getClass().getResourceAsStream("/persistence.xml");
+					final InputStream stream = getClass().getResourceAsStream("/" + sb.toString());
 					final BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
 					String line = null;
 					final StringBuilder builder = new StringBuilder();
