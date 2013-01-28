@@ -189,15 +189,15 @@
 			<artifactId>commons-lang</artifactId>
 			<version>2.6</version>
 		</dependency>
-		<dependency>
+		<!-- <dependency>
 			<groupId>edu.ucar</groupId>
 			<artifactId>netcdf</artifactId>
 			<version>4.2.20</version>
-		</dependency>
+		</dependency> -->
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
-			<version>4.2-beta1</version>
+			<version>4.2.2</version>
 		</dependency>
 		<dependency>
 			<groupId>joda-time</groupId>

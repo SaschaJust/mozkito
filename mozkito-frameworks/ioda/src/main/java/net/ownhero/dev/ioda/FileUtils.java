@@ -48,7 +48,7 @@ import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 
-import ucar.unidata.io.bzip2.CBZip2InputStream;
+// import ucar.unidata.io.bzip2.CBZip2InputStream;
 
 /**
  * The Class FileUtils.
@@ -235,68 +235,68 @@ public class FileUtils {
 		fileManager.get(shutdownAction).add(file);
 	}
 	
-	/**
-	 * Bunzip2.
-	 * 
-	 * @param bzip2File
-	 *            the bzip2 file
-	 * @param directory
-	 *            the directory
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
-	 * @throws FilePermissionException
-	 *             the file permission exception
-	 */
-	public static void bunzip2(final File bzip2File,
-	                           final File directory) throws IOException, FilePermissionException {
-		ensureFilePermissions(bzip2File, READABLE_FILE);
-		ensureFilePermissions(directory, WRITABLE_DIR);
-		FileInputStream fis = null;
-		CBZip2InputStream zis = null;
-		try {
-			fis = new FileInputStream(bzip2File);
-			zis = new CBZip2InputStream(fis);
-			
-			final int BUFFER = 2048;
-			final byte[] buffer = new byte[BUFFER];
-			String path = bzip2File.getName();
-			final int i = path.lastIndexOf("."); //$NON-NLS-1$
-			if (i > 0) {
-				path = directory.getAbsolutePath() + FileUtils.fileSeparator + path.substring(0, i - 1);
-			} else {
-				throw new IOException("Compressed file does not contain a file extension like `.zip`.");
-				
-			}
-			
-			final File outputFile = new File(path);
-			ensureFilePermissions(outputFile, WRITABLE_FILE);
-			final BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(outputFile));
-			
-			while ((zis.read(buffer)) != -1) {
-				stream.write(buffer);
-			}
-			
-			stream.flush();
-			stream.close();
-			zis.close();
-		} finally {
-			try {
-				if (fis != null) {
-					fis.close();
-				}
-			} catch (final IOException ignore) {
-				// ignore
-			}
-			
-			try {
-				if (zis != null) {
-					zis.close();
-				}
-			} catch (final IOException ignore) {
-				// ignore
-			}
-		}
-	}
+	// /**
+	// * Bunzip2.
+	// *
+	// * @param bzip2File
+	// * the bzip2 file
+	// * @param directory
+	// * the directory
+	// * @throws IOException
+	// * Signals that an I/O exception has occurred.
+	// * @throws FilePermissionException
+	// * the file permission exception
+	// */
+	// public static void bunzip2(final File bzip2File,
+	// final File directory) throws IOException, FilePermissionException {
+	// ensureFilePermissions(bzip2File, READABLE_FILE);
+	// ensureFilePermissions(directory, WRITABLE_DIR);
+	// FileInputStream fis = null;
+	// CBZip2InputStream zis = null;
+	// try {
+	// fis = new FileInputStream(bzip2File);
+	// zis = new CBZip2InputStream(fis);
+	//
+	// final int BUFFER = 2048;
+	// final byte[] buffer = new byte[BUFFER];
+	// String path = bzip2File.getName();
+	//			final int i = path.lastIndexOf("."); //$NON-NLS-1$
+	// if (i > 0) {
+	// path = directory.getAbsolutePath() + FileUtils.fileSeparator + path.substring(0, i - 1);
+	// } else {
+	// throw new IOException("Compressed file does not contain a file extension like `.zip`.");
+	//
+	// }
+	//
+	// final File outputFile = new File(path);
+	// ensureFilePermissions(outputFile, WRITABLE_FILE);
+	// final BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(outputFile));
+	//
+	// while ((zis.read(buffer)) != -1) {
+	// stream.write(buffer);
+	// }
+	//
+	// stream.flush();
+	// stream.close();
+	// zis.close();
+	// } finally {
+	// try {
+	// if (fis != null) {
+	// fis.close();
+	// }
+	// } catch (final IOException ignore) {
+	// // ignore
+	// }
+	//
+	// try {
+	// if (zis != null) {
+	// zis.close();
+	// }
+	// } catch (final IOException ignore) {
+	// // ignore
+	// }
+	// }
+	// }
 	
 	/**
 	 * Checks if the command maps to a valid accessible, executable file. If the command is not absolute, a PATH
@@ -1082,7 +1082,7 @@ public class FileUtils {
 			}
 		} else if (format.equalsIgnoreCase("BZ") || format.equalsIgnoreCase("BZIP") || format.equalsIgnoreCase("BZIP2")
 		        || format.equalsIgnoreCase("BZ2")) {
-			bunzip2(packedFile, directory);
+			// bunzip2(packedFile, directory);
 			if (split.length > 1) {
 				format = split[split.length - 2];
 				if (format.equalsIgnoreCase("TAR")) {
