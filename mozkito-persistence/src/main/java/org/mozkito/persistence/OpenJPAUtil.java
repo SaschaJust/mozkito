@@ -234,11 +234,12 @@ public class OpenJPAUtil implements PersistenceUtil {
 			final StringBuilder sb = new StringBuilder();
 			sb.append(unit);
 			sb.append("-persistence.xml");
+			
 			this.factory = OpenJPAPersistence.createEntityManagerFactory("persistence", sb.toString(), properties);
 			
 			if (this.factory == null) {
 				if (Logger.logError()) {
-					final InputStream stream = getClass().getResourceAsStream("/persistence.xml");
+					final InputStream stream = getClass().getResourceAsStream("/" + sb.toString());
 					final BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
 					String line = null;
 					final StringBuilder builder = new StringBuilder();
