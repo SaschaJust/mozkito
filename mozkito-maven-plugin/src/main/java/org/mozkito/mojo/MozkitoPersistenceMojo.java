@@ -28,6 +28,7 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Resource;
@@ -298,6 +299,9 @@ public class MozkitoPersistenceMojo extends AbstractMojo {
 				final XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
 				outputter.output(skeleton, w);
 				w.close();
+				
+				final File shadowFile = new File(directory, "persistence.xml");
+				FileUtils.copyFile(file, shadowFile);
 				
 				if (getLog().isDebugEnabled()) {
 					getLog().debug("Adding " + fileName + " to module resources.");
