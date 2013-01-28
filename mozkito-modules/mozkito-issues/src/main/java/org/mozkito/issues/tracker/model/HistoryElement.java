@@ -41,6 +41,8 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
 
 import org.joda.time.DateTime;
+
+import org.mozkito.issues.tracker.elements.TextElement;
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persistence.model.DateTimeTuple;
 import org.mozkito.persistence.model.EnumTuple;

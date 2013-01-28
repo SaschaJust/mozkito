@@ -135,7 +135,42 @@
 	<build>
 		<plugins>
 			<plugin>
+<<<<<<< HEAD
 				<!-- activate kanuni annotation processing -->
+=======
+				<groupId>org.mozkito</groupId>
+				<artifactId>mozkito-maven-plugin</artifactId>
+				<version>0.4-SNAPSHOT</version>
+				<configuration>
+					<connectionURL>jdbc:postgresql://quentin.cs.uni-saarland.de/mozkito</connectionURL>
+					<includes>
+						<param>**/model/*</param>
+					</includes>
+					<excludes>
+						<param>**/model/*_.*</param>
+						<param>**/*__*</param>
+						<param>**/ChangeOperations.*</param>
+						<param>**/JavaElementFactory.*</param>
+						<param>**/JavaElementLocationSet.*</param>
+						<param>**/Messages.*</param>
+					</excludes>
+					<openJPAOptions>
+						<!-- <Log>DefaultLevel=WARN, Runtime=INFO, Tool=INFO</Log> -->
+						<!-- <Log>slf4j</Log> -->
+					</openJPAOptions>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>meta</goal>
+							<goal>persistence</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+>>>>>>> 55d7ff03f2439816e8fb177fcf40741d02e5f6ea
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.12</version>

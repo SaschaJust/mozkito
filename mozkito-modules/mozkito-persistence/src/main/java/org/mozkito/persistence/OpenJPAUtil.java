@@ -215,7 +215,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 				}
 			}
 			
-			properties.remove("openjpa.persistence-unit"); //$NON-NLS-1$
+			//			properties.remove("openjpa.persistence-unit"); //$NON-NLS-1$
 			
 			if (Logger.logInfo()) {
 				Logger.info("Requesting persistence-unit: " + unit);
@@ -227,12 +227,19 @@ public class OpenJPAUtil implements PersistenceUtil {
 					Logger.debug(property + ": " + properties.getProperty((String) property)); //$NON-NLS-1$
 				}
 			}
+			if (Logger.logTrace()) {
+				properties.put("openjpa.Log", "DefaultLevel=TRACE,Tool=TRACE");
+			}
 			
-			this.factory = OpenJPAPersistence.createEntityManagerFactory(unit, null, properties);
+			final StringBuilder sb = new StringBuilder();
+			sb.append(unit);
+			sb.append("-persistence.xml");
+			
+			this.factory = OpenJPAPersistence.createEntityManagerFactory(unit, sb.toString(), properties);
 			
 			if (this.factory == null) {
 				if (Logger.logError()) {
-					final InputStream stream = getClass().getResourceAsStream("/persistence.xml");
+					final InputStream stream = getClass().getResourceAsStream("/" + sb.toString());
 					final BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
 					String line = null;
 					final StringBuilder builder = new StringBuilder();
