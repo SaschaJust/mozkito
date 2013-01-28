@@ -24,9 +24,7 @@ de.unisaarland.cs.st.moskito.callgraph.eclipse/lib
 /eclipse-apps/
 /DiffCompare/*
 /ca.mcgill.*
-ArtificialBlobTest.java
 ~$*
-.gradle
 __MACOSX
 *.class
 *-e
