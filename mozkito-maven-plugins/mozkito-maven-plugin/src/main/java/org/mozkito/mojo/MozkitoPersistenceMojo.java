@@ -68,7 +68,7 @@ import org.jdom2.output.XMLOutputter;
 public class MozkitoPersistenceMojo extends AbstractMojo {
 	
 	/**
-	 * Project instance, needed for attaching the buildinfo file. Used to add new source directory to the build.
+	 * Project instance, needed for attaching the build info file. Used to add new source directory to the build.
 	 */
 	@Parameter (defaultValue = "${project}", readonly = true, required = true)
 	private MavenProject        project;

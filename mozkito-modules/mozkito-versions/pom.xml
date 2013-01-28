@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<groupId>org.mozkito</groupId>
-		<artifactId>mozkito</artifactId>
+		<artifactId>mozkito-modules</artifactId>
 		<version>0.4-SNAPSHOT</version>
 	</parent>
 	<groupId>org.mozkito</groupId>
@@ -32,60 +32,55 @@
 			<version>1.0.13</version>
 		</dependency>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.11</version>
+			<groupId>net.sf.jung</groupId>
+			<artifactId>jung-graph-impl</artifactId>
+			<version>2.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.jung</groupId>
-				<artifactId>jung-graph-impl</artifactId>
-				<version>2.0.1</version>
-			</dependency>
-			<dependency>
-				<groupId>net.sf.jung</groupId>
-				<artifactId>jung-algorithms</artifactId>
-				<version>2.0.1</version>
-			</dependency>
-			<dependency>
-				<groupId>net.sf.jung</groupId>
-				<artifactId>jung-io</artifactId>
-				<version>2.0.1</version>
-			</dependency>
-			<dependency>
-				<groupId>net.sf.jung</groupId>
-				<artifactId>jung-visualization</artifactId>
-				<version>2.0.1</version>
-			</dependency>
-			<dependency>
-				<groupId>net.sf.jung</groupId>
-				<artifactId>jung-samples</artifactId>
-				<version>2.0.1</version>
-			</dependency>
-			<dependency>
-				<groupId>net.sf.jung</groupId>
-				<artifactId>jung-jai</artifactId>
-				<version>2.0.1</version>
-			</dependency>
-			<dependency>
-				<groupId>net.sf.jung</groupId>
-				<artifactId>jung-jai-samples</artifactId>
-				<version>2.0.1</version>
-			</dependency>
-			<dependency>
-				<groupId>net.sf.jung</groupId>
-				<artifactId>jung-3d</artifactId>
-				<version>2.0.1</version>
-			</dependency>
-			<dependency>
-				<groupId>net.sf.jung</groupId>
-				<artifactId>jung-3d-demos</artifactId>
-				<version>2.0.1</version>
-			</dependency>
-			<dependency>
-				<groupId>net.sf.jung</groupId>
-				<artifactId>jung-api</artifactId>
-				<version>2.0.1</version>
-			</dependency>
+			<artifactId>jung-algorithms</artifactId>
+			<version>2.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.jung</groupId>
+			<artifactId>jung-io</artifactId>
+			<version>2.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.jung</groupId>
+			<artifactId>jung-visualization</artifactId>
+			<version>2.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.jung</groupId>
+			<artifactId>jung-samples</artifactId>
+			<version>2.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.jung</groupId>
+			<artifactId>jung-jai</artifactId>
+			<version>2.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.jung</groupId>
+			<artifactId>jung-jai-samples</artifactId>
+			<version>2.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.jung</groupId>
+			<artifactId>jung-3d</artifactId>
+			<version>2.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.jung</groupId>
+			<artifactId>jung-3d-demos</artifactId>
+			<version>2.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.jung</groupId>
+			<artifactId>jung-api</artifactId>
+			<version>2.0.1</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<resources>

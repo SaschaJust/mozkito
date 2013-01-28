@@ -1,225 +1,157 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<prerequisites>
-		<maven>3.0</maven>
-	</prerequisites>
-	<groupId>org.mozkito</groupId>
-	<artifactId>mozkito</artifactId>
-	<name>mozkito data mining collection</name>
-	<description>Data mining and analyzation for various types of software repositories</description>
-	<version>0.4-SNAPSHOT</version>
+	<parent>
+		<groupId>org.mozkito</groupId>
+		<artifactId>mozkito</artifactId>
+		<version>0.4-SNAPSHOT</version>
+	</parent>
+	<artifactId>mozkito-modules</artifactId>
+	<name>Mozkito modules with integrated toolchain</name>
+	<description>Data Mining and Analyzation for Various Repositories</description>
 	<packaging>pom</packaging>
-	<url>http://mozkito.org</url>
-	<inceptionYear>2010</inceptionYear>
-	<developers>
-		<developer>
-			<id>kim</id>
-			<name>Kim Herzig</name>
-			<email>kim@mozkito.org</email>
-			<url>http://www.st.cs.uni-saarland.de/~kim/</url>
-			<organization>Software Engineering Group at Saarland University</organization>
-			<organizationUrl>http://www.st.cs.uni-saarland.de/</organizationUrl>
-			<timezone>2</timezone>
-			<roles>
-				<role>Developer</role>
-			</roles>
-		</developer>
-		<developer>
-			<id>just</id>
-			<name>Sascha Just</name>
-			<email>sascha.just@mozkito.org</email>
-			<url>http://www.st.cs.uni-saarland.de/~just</url>
-			<organization>Software Engineering Group at Saarland University</organization>
-			<organizationUrl>http://www.st.cs.uni-saarland.de/</organizationUrl>
-			<roles>
-				<role>Developer</role>
-			</roles>
-			<timezone>2</timezone>
-		</developer>
-	</developers>
-	<scm>
-		<connection>scm:git:http://mozkito.org:7990/scm/MOZKITO/mozkito.git</connection>
-		<developerConnection>scm:git:http://mozkito.org:7990/scm/MOZKITO/mozkito.git</developerConnection>
-		<url>http://mozkito.org</url>
-	</scm>
-	<organization>
-		<name>Software Engineering Group at Saarland University</name>
-		<url>http://www.st.cs.uni-saarland.de/</url>
-	</organization>
 	<modules>
-		<module>mozkito-libraries</module>
-		<module>mozkito-modules</module>
-		<module>mozkito-maven-plugins</module>
+		<module>mozkito-versions</module>
+		<module>mozkito-issues</module>
+		<module>mozkito-persons</module>
+		<module>mozkito-mappings</module>
+		<module>mozkito-infozilla</module>
+		<module>mozkito-genealogies</module>
+		<module>mozkito-causeeffect</module>
+		<module>mozkito-untangling</module>
+		<module>mozkito-changecouplings</module>
+		<module>mozkito-codeanalysis</module>
+		<module>mozkito-callgraph</module>
+		<module>mozkito-atomicchanges</module>
 	</modules>
 	<dependencies>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.11</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>1.2.17</version>
-		</dependency>
-		<dependency>
-			<groupId>net.ownhero.dev</groupId>
-			<artifactId>kanuni</artifactId>
-			<version>0.2-SNAPSHOT</version>
-		</dependency>
 		<dependency>
 			<groupId>net.ownhero.dev</groupId>
 			<artifactId>hiari</artifactId>
 			<version>0.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.maven.surefire</groupId>
-			<artifactId>surefire-junit4</artifactId>
-			<version>2.12</version>
+			<groupId>net.ownhero.dev</groupId>
+			<artifactId>andama-core</artifactId>
+			<version>0.4-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>net.ownhero.dev</groupId>
+			<artifactId>andama-eventhandler-irc</artifactId>
+			<version>0.4-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.atlassian.maven.plugins</groupId>
+			<artifactId>maven-clover2-plugin</artifactId>
+			<version>3.1.8</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<version>1.7.2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>1.7.2</version>
-		</dependency>
 	</dependencies>
-	<repositories>
-		<repository>
-			<id>own-hero.net-public</id>
-			<name>own-hero.net Public Repositories</name>
-			<url>http://mozkito.org:8080/nexus/content/groups/public</url>
-		</repository>
-		<repository>
-			<id>own-hero.net-private</id>
-			<name>own-hero.net Private Repositories</name>
-			<url>http://mozkito.org:8080/nexus/content/groups/private</url>
-		</repository>
-		<repository>
-			<id>own-hero.net-proxy</id>
-			<name>own-hero.net Proxy Repositories</name>
-			<url>http://mozkito.org:8080/nexus/content/groups/proxy</url>
-		</repository>
-	</repositories>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>own-hero.net-public</id>
-			<name>own-hero.net Public Repositories</name>
-			<url>http://mozkito.org:8080/nexus/content/groups/public</url>
-		</pluginRepository>
-			<pluginRepository>
-			<id>own-hero.net-private</id>
-			<name>own-hero.net Private Repositories</name>
-			<url>http://mozkito.org:8080/nexus/content/groups/private</url>
-		</pluginRepository>
-		<pluginRepository>
-			<id>own-hero.net-proxy</id>
-			<name>own-hero.net Proxy Repositories</name>
-			<url>http://mozkito.org:8080/nexus/content/groups/proxy</url>
-		</pluginRepository>
-	</pluginRepositories>
-	<distributionManagement>
-		<snapshotRepository>
-			<id>mozkito-dev</id>
-			<name>mozkito-dev</name>
-			<url>http://mozkito.org:8080/nexus/content/repositories/mozkito-dev</url>
-		</snapshotRepository>
-		<repository>
-			<id>mozkito</id>
-			<name>mozkito</name>
-			<url>http://mozkito.org:8080/nexus/content/repositories/mozkito/</url>
-		</repository>
-	</distributionManagement>
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.12</version>
+				<groupId>org.mozkito</groupId>
+				<artifactId>mozkito-maven-plugin</artifactId>
+				<version>0.4-SNAPSHOT</version>
 				<configuration>
-					<enableAssertions>true</enableAssertions>
-					<trimStackTrace>false</trimStackTrace>
-					<forkMode>perTest</forkMode>
-					<argLine>-javaagent:${basedir}/target/kanuni-agent-0.2.jar -Dlog.console.level=ERROR</argLine>
-					<workingDirectory>${basedir}/target</workingDirectory>
+					<connectionURL>jdbc:postgresql://quentin.cs.uni-saarland.de/mozkito</connectionURL>
+					<includes>
+						<param>**/model/*</param>
+					</includes>
+					<excludes>
+						<param>**/model/*_.*</param>
+						<param>**/*__*</param>
+					</excludes>
+					<openJPAOptions>
+						<!-- <Log>DefaultLevel=WARN, Runtime=INFO, Tool=INFO</Log> -->
+						<!-- <Log>slf4j</Log> -->
+					</openJPAOptions>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>copy</id>
-						<phase>process-resources</phase>
+						<phase>generate-resources</phase>
 						<goals>
-							<goal>copy</goal>
+							<goal>meta</goal>
+							<goal>persistence</goal>
 						</goals>
-						<configuration>
-							<artifactItems>
-								<artifactItem>
-									<groupId>net.ownhero.dev</groupId>
-									<artifactId>kanuni-agent</artifactId>
-									<version>0.2</version>
-									<outputDirectory>${project.build.directory}</outputDirectory>
-								</artifactItem>
-							</artifactItems>
-						</configuration>
 					</execution>
 				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-eclipse-plugin</artifactId>
-				<version>2.8</version>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.3</version>
 				<configuration>
-					<downloadSources>true</downloadSources>
-					<downloadJavadocs>true</downloadJavadocs>
-					<workspace>${basedir}</workspace>
-					<buildOutputDirectory>${basedir}/eclipse/</buildOutputDirectory>
-					<workspaceCodeStylesURL>file://${basedir}/settings/mozkito-style.xml</workspaceCodeStylesURL>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+					<archive>
+						<manifest>
+							<mainClass>${moduleName}.Main</mainClass>
+						</manifest>
+					</archive>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
-				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
-					<encoding>${project.build.sourceEncoding}</encoding>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>2.5</version>
-				<configuration>
-					<encoding>${project.build.sourceEncoding}</encoding>
-					<overwrite>true</overwrite>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<version>2.1.2</version>
 				<executions>
 					<execution>
-						<id>attach-sources</id>
+						<id>make-assembly</id>
+						<!-- this is used for inheritance merges -->
 						<phase>package</phase>
+						<!-- append to the packaging phase. -->
 						<goals>
-							<goal>jar</goal>
+							<goal>single</goal>
+							<!-- goals == mojos -->
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>sonar-maven-plugin</artifactId>
+				<version>2.0</version>
+			</plugin>
+			<plugin>
+				<groupId>com.atlassian.maven.plugins</groupId>
+				<artifactId>maven-clover2-plugin</artifactId>
+				<version>3.1.8</version>
+				<executions>
+					<execution>
+						<id>main</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>instrument</goal>
+							<goal>aggregate</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>site</id>
+						<phase>pre-site</phase>
+						<goals>
+							<goal>instrument</goal>
+							<goal>aggregate</goal>
 						</goals>
 					</execution>
 				</executions>
 			</plugin>
 		</plugins>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-site-plugin</artifactId>
+					<version>3.0-beta-3</version>
+				</plugin>
+				<plugin>
+					<groupId>org.jacoco</groupId>
+					<artifactId>jacoco-maven-plugin</artifactId>
+					<version>0.6.0.201210061924</version>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>sonar-maven-plugin</artifactId>
+					<version>2.0</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 	<reporting>
 		<plugins>
@@ -234,30 +166,20 @@
 				<version>2.1.1</version>
 			</plugin>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.7</version>
-				<configuration>
-					<doclet>org.umlgraph.doclet.UmlGraphDoc</doclet>
-					<docletArtifact>
-						<groupId>org.umlgraph</groupId>
-						<artifactId>doclet</artifactId>
-						<version>5.3</version>
-					</docletArtifact>
-					<!-- <useStandardDocletOptions>true</useStandardDocletOptions>-->
-					<minmemory>64m</minmemory>
-					<maxmemory>512m</maxmemory>
-					<show>private</show>
-					<linksource>true</linksource>
-					<quiet>true</quiet>
-					<source>1.7</source>
-					<stylesheetfile>javadoc.css</stylesheetfile>
-				</configuration>
+				<groupId>com.atlassian.maven.plugins</groupId>
+				<artifactId>maven-clover2-plugin</artifactId>
+				<version>3.1.8</version>
 			</plugin>
 		</plugins>
 	</reporting>
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
+		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+		<coverage.reports.dir>${basedir}/target/coverage-reports</coverage.reports.dir>
+		<sonar.jacoco.reportPath>${coverage.reports.dir}/jacoco-unit.exec</sonar.jacoco.reportPath>
+		<sonar.jacoco.itReportPath>${coverage.reports.dir}/jacoco-unit.exec</sonar.jacoco.itReportPath>
+		<sonar.jacoco.agent.path>${basedir}/target/org.jacoco.agent-0.6.0.201210061924-runtime.jar</sonar.jacoco.agent.path>
+		<sonar.language>java</sonar.language>
 	</properties>
 	<profiles>
 		<profile>
