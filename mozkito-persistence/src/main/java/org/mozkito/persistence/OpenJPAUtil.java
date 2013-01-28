@@ -235,7 +235,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 			sb.append(unit);
 			sb.append("-persistence.xml");
 			
-			this.factory = OpenJPAPersistence.createEntityManagerFactory("persistence", sb.toString(), properties);
+			this.factory = OpenJPAPersistence.createEntityManagerFactory(unit, sb.toString(), properties);
 			
 			if (this.factory == null) {
 				if (Logger.logError()) {
