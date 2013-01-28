@@ -20,7 +20,7 @@ moskito-ppa-0.2-SNAPSHOT-jar-with-dependencies.jar
 .gradle
 moskito-utils/build
 de.unisaarland.cs.st.moskito.callgraph.eclipse/lib
-
+*-persistence.xml
 
 *.class
 moskito-genealogies-metrics/ppa_new.log
