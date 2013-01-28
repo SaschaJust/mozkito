@@ -62,7 +62,7 @@
 		<dependency>
 			<groupId>libsvm</groupId>
 			<artifactId>libsvm</artifactId>
-			<version>3.1</version>
+			<version>3.16</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.jung</groupId>
