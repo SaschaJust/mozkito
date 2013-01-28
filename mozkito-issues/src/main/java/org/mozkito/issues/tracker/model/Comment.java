@@ -37,6 +37,8 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.Positive;
 
 import org.joda.time.DateTime;
+
+import org.mozkito.issues.tracker.elements.TextElement;
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persistence.model.Person;
 import org.mozkito.persistence.model.PersonContainer;
