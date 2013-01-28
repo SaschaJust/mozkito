@@ -53,7 +53,7 @@ import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 
 /**
- * Goal that generates a persistence.xml file specific for the module that is currently build. You have to specify an
+ * Goal that generates a persistence xml file specific for the module that is currently build. You have to specify an
  * inclusion pattern matching all compilation units that shall be added as persistent classes.
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
@@ -67,7 +67,7 @@ import org.jdom2.output.XMLOutputter;
 public class MozkitoPersistenceMojo extends AbstractMojo {
 	
 	/**
-	 * Project instance, needed for attaching the buildinfo file. Used to add new source directory to the build.
+	 * Project instance, needed for attaching the build info file. Used to add new source directory to the build.
 	 */
 	@Parameter (defaultValue = "${project}", readonly = true, required = true)
 	private MavenProject        project;
@@ -79,7 +79,7 @@ public class MozkitoPersistenceMojo extends AbstractMojo {
 	@Component
 	private MavenProjectHelper  projectHelper;
 	
-	/** The connection URL used in the persistence.xml as default setting. */
+	/** The connection URL used in the persistence xml as default setting. */
 	@Parameter (required = true)
 	private String              connectionURL;
 	
@@ -221,9 +221,10 @@ public class MozkitoPersistenceMojo extends AbstractMojo {
 			}
 			
 			final String moduleName = this.artifactId.replace(PROJECT_PREFIX, "");
+			final String fileName = moduleName + "-persistence.xml";
 			
 			if (getLog().isInfoEnabled()) {
-				getLog().info("Gathering data to generate persistence.xml for module: " + moduleName);
+				getLog().info("Gathering data to generate " + fileName + " for module: " + moduleName);
 			}
 			
 			if (getLog().isDebugEnabled()) {
@@ -274,13 +275,13 @@ public class MozkitoPersistenceMojo extends AbstractMojo {
 				f.mkdirs();
 			}
 			
-			final File file = new File(directory, moduleName + "-persistence.xml");
+			final File file = new File(directory, fileName);
 			
 			FileWriter w = null;
 			
 			try {
 				if (getLog().isInfoEnabled()) {
-					getLog().info("Generating persistence data file...");
+					getLog().info("Generating persistence data file " + file.getName());
 				}
 				
 				boolean doAddResourceDir = false;
@@ -299,7 +300,7 @@ public class MozkitoPersistenceMojo extends AbstractMojo {
 				w.close();
 				
 				if (getLog().isDebugEnabled()) {
-					getLog().debug("Adding persistence.xml to module resources.");
+					getLog().debug("Adding " + fileName + " to module resources.");
 				}
 				
 				if (doAddResourceDir) {
