@@ -274,7 +274,7 @@ public class MozkitoPersistenceMojo extends AbstractMojo {
 				f.mkdirs();
 			}
 			
-			final File file = new File(directory, "persistence.xml");
+			final File file = new File(directory, moduleName + "-persistence.xml");
 			
 			FileWriter w = null;
 			
@@ -354,8 +354,10 @@ public class MozkitoPersistenceMojo extends AbstractMojo {
 								        && entry.getName().endsWith(".class")) {
 									if (this.excludes != null) {
 										for (final String excludePattern : this.excludes) {
-											getLog().info("Probing exclusion pattern " + excludePattern
-											                      + " against candidate " + entry.getName());
+											if (getLog().isDebugEnabled()) {
+												getLog().debug("Probing exclusion pattern " + excludePattern
+												                       + " against candidate " + entry.getName());
+											}
 											if (AbstractScanner.match(excludePattern, entry.getName())) {
 												break INCLUDE;
 											}
@@ -499,6 +501,9 @@ public class MozkitoPersistenceMojo extends AbstractMojo {
 		final List<Resource> resources = this.project.getResources();
 		
 		if (resources.isEmpty()) {
+			if (getLog().isInfoEnabled()) {
+				getLog().info("Creating new resource directory.");
+			}
 			final File srcDir = new File(this.baseDirectory, "src");
 			if (!srcDir.exists()) {
 				srcDir.mkdir();
