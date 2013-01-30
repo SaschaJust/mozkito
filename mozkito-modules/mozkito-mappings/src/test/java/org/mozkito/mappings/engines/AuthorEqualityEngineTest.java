@@ -23,6 +23,7 @@ import net.ownhero.dev.ioda.JavaUtils;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import org.mozkito.issues.tracker.model.Report;
@@ -48,6 +49,7 @@ import org.mozkito.versions.model.ChangeSet;
                    password = "miner",
                    username = "miner",
                    type = DatabaseType.POSTGRESQL)
+@Ignore
 public class AuthorEqualityEngineTest extends DatabaseTest {
 	
 	/** The engines. */

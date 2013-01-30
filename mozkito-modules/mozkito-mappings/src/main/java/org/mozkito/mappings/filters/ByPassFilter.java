@@ -22,7 +22,7 @@ import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 
-import org.mozkito.issues.tracker.settings.Messages;
+import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Mapping;
 import org.mozkito.mappings.requirements.ByPass;
 import org.mozkito.mappings.requirements.Expression;

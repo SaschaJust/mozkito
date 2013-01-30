@@ -25,8 +25,8 @@ import net.ownhero.dev.hiari.settings.requirements.Requirement;
 
 import org.mozkito.issues.tracker.elements.Type;
 import org.mozkito.issues.tracker.model.EnhancedReport;
-import org.mozkito.issues.tracker.settings.Messages;
 import org.mozkito.mappings.mappable.FieldKey;
+import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Mapping;
 import org.mozkito.mappings.requirements.Atom;
 import org.mozkito.mappings.requirements.Expression;

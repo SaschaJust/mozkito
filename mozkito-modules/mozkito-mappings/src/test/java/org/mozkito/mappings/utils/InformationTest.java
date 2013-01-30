@@ -24,6 +24,7 @@ import net.ownhero.dev.kisa.Logger;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -31,6 +32,7 @@ import org.junit.Test;
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
+@Ignore
 public class InformationTest {
 	
 	static {

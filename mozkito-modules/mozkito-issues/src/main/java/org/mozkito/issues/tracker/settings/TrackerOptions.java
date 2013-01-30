@@ -30,6 +30,7 @@ import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
+import org.mozkito.issues.messages.Messages;
 import org.mozkito.issues.tracker.Tracker;
 import org.mozkito.issues.tracker.TrackerType;
 

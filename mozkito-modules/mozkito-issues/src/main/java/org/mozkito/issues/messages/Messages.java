@@ -10,12 +10,13 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  **********************************************************************************************************************/
-package org.mozkito.issues.tracker.settings;
+package org.mozkito.issues.messages;
 
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.kisa.Logger;
 
 /**
@@ -26,8 +27,8 @@ import net.ownhero.dev.kisa.Logger;
 public class Messages {
 	
 	/** The Constant BUNDLE_NAME. */
-	private static final String         BUNDLE_NAME     = "org.mozkito.issues.tracker.settings.messages"; //$NON-NLS-1$
-	                                                                                                      
+	private static final String         BUNDLE_NAME     = "org.mozkito.issues.messages"; //$NON-NLS-1$
+	                                                                                     
 	/** The Constant RESOURCE_BUNDLE. */
 	private static final ResourceBundle RESOURCE_BUNDLE = loadBundle();
 	
@@ -36,11 +37,23 @@ public class Messages {
 	 * 
 	 * @param key
 	 *            the key
+	 * @param arguments
+	 *            the arguments
 	 * @return the string
 	 */
-	public static String getString(final String key) {
+	public static String getString(final String key,
+	                               final Object... arguments) {
 		try {
-			return Messages.RESOURCE_BUNDLE.getString(key);
+			final String resource = Messages.RESOURCE_BUNDLE.getString(key);
+			final String[] split = resource.split("^%s|[^%]%s"); //$NON-NLS-1$
+			
+			assert (arguments.length + 1) == split.length : "Given number of %s in the resource differs from the actual arguments: " + (split.length - 1) + " vs " + arguments.length; //$NON-NLS-1$ //$NON-NLS-2$
+			
+			if (split.length > 1) {
+				return String.format(resource, arguments);
+			} else {
+				return resource;
+			}
 		} catch (final MissingResourceException e) {
 			return '!' + key + '!';
 		}
@@ -57,11 +70,14 @@ public class Messages {
 			return ResourceBundle.getBundle(Messages.BUNDLE_NAME, locale);
 		} catch (final MissingResourceException e) {
 			if (Logger.logWarn()) {
-				Logger.warn(String.format("Couldn't find property file for locale '%s'. Falling back to default.",
+				Logger.warn(String.format("Couldn't find property file for locale '%s'. Falling back to default.", //$NON-NLS-1$
 				                          locale));
 			}
-			
-			return ResourceBundle.getBundle(Messages.BUNDLE_NAME, Locale.US);
+			try {
+				return ResourceBundle.getBundle(Messages.BUNDLE_NAME, Locale.US);
+			} catch (final MissingResourceException ex) {
+				throw new UnrecoverableError("Could not load string table.", ex); //$NON-NLS-1$
+			}
 		}
 	}
 	

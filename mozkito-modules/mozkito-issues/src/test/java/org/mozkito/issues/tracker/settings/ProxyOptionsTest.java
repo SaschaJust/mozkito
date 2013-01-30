@@ -39,7 +39,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-// TODO: Auto-generated Javadoc
+import org.mozkito.issues.messages.Messages;
+
 /**
  * The Class ProxyOptionsTest.
  * 
@@ -56,8 +57,9 @@ public class ProxyOptionsTest {
 	
 	/**
 	 * Before class.
-	 *
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@BeforeClass
 	public static void beforeClass() throws IOException {
