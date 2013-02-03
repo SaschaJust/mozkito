@@ -50,6 +50,6 @@ regexp=^Downloaded: ([^:]+://[^ ]+)
 colours=unchanged,underline
 count=once
 ======
-regexp=^\tat (net\.ownhero[^(]+|org\.mozkito[^(]+)\(([^:]+):([0-9+])\)
+regexp=^\tat (net\.ownhero[^(]+|org\.mozkito[^(]+)\(([^:]+):([0-9]+)\)
 colours=unchanged,underline,cyan bold,default bold
 count=once
