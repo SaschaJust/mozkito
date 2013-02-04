@@ -1,55 +1,114 @@
+# skipp the silly "skip" info messages
 regexp=^\[INFO\]\s+.+already added, skipping$
 skip=yes
 count=once
 ======
+# mark maven warnings yellow
 regexp=^\[WARN\]\s+
 colours=yellow
 count=once
 ======
+# mark maven errors red
 regexp=^\[ERROR\]\s+
 colours=red bold 
 count=once
 ======
-regexp=^\[INFO\] Building.+
+# dim maven debug messages
+regexp=^\[DEBUG\]\s+.*
+colours=dark 
+count=once
+======
+# mark build success green
+regexp=^\[INFO\]\s+BUILD SUCCESS
+colours=green
+count=once
+======
+# invert "module build start" colors
+regexp=^\[INFO\] Building (?!jar: ).*
 colours=black on_white
 count=once
 ======
+# dim maven info tags
+regexp=^\[INFO\]\s+
+colours=dark 
+count=once
+======
+# colorize surefire test results
 regexp=^Tests run: ([1-9][0-9]*), Failures: (([1-9][0-9]*)|(0)), Errors: (([1-9][0-9]*)|(0)), Skipped: (([1-9][0-9]*)|(0))
 colours=unchanged,cyan,unchanged,red,unchanged,unchanged,red,unchanged,unchanged,yellow,unchanged
 count=once
 ======
+# these are kisa errors, mark them red
 regexp=^[0-9]{4}-[0-9]{2}-[0-9]{2}\s+[0-9]{2}:[0-9]{2}:[0-9]{2},[0-9]{3}\s+\(\s+[0-9]+\)\s+\[[^\]]+\]\s+(ERROR)\s
 colours=unchanged,red
 count=once
 ======
+# these are kisa warnings, mark them yellow
 regexp=^[0-9]{4}-[0-9]{2}-[0-9]{2}\s+[0-9]{2}:[0-9]{2}:[0-9]{2},[0-9]{3}\s+\(\s+[0-9]+\)\s+\[[^\]]+\]\s+(WARN)\s
 colours=unchanged,yellow
 count=once
 ======
+# module build success is green
 regexp=^\[INFO\]\s+.*\. (SUCCESS) \[([0-9]+:)?[0-9]{1,2}\.[0-9]{3}s\]$
 colours=unchanged,green
 count=once
 ======
+# module build failure is red
 regexp=^\[INFO\]\s+.*\. (FAILURE) \[([0-9]+:)?[0-9]{1,2}\.[0-9]{3}s\]$
 colours=unchanged,red
 count=once
 ======
+# module build skipped is yellow
 regexp=^\[INFO\]\s+.*\. (SKIPPED)$
 colours=unchanged,yellow
 count=once
 ======
+# failure messages are red and blink
 regexp=<<<\sFAILURE!$
 colours=red bold blink
 count=once
 ======
+# highlight missing maven artifacts in magenta and underline download URL
 regexp=(Could not find artifact|Failure to find) ([^ ]+) in ([^ ]+)
 colours=unchanged,unchanged,magenta bold,underline
 count=once
 ======
+# underline the actual download and
 regexp=^Downloaded: ([^:]+://[^ ]+)
 colours=unchanged,underline
-count=once
+count=net
 ======
-regexp=^\tat (net\.ownhero[^(]+|org\.mozkito[^(]+)\(([^:]+):([0-9]+)\)
-colours=unchanged,underline,cyan bold,default bold
-count=once
+# dim the attempts
+regexp=^Downloading: ([^:]+://.+)
+colours=unchanged,dark
+count=next
+======
+# mozkito/own-hero stacktrace element
+regexp=^(\t| {4})at (net\.ownhero|org\.mozkito)\.([\w.\$]*?)(\w+|<init>)\(([^:]+):([0-9]+)\)
+colours=unchanged,unchanged,unchanged,unchanged,underline,cyan bold,default bold
+count=stop
+======
+# other stacktrace elements
+regexp=^(\t| {4})at (?!net\.ownhero\.|org\.mozkito\.)[^.]+\.([\w.\$]*?)(\w+|<init>)\([^)]+\)
+colours=dark
+count=next
+======
+# stacktrace exception/cause
+regexp=^(Caused by: )?\w+\.\w+\.([\w.]*?)(\w+)(:\s(.+))?$
+colours=unchanged, blue bold, default, red bold, unchanged, italic
+count=next
+======
+# ... more on stacktraces
+regexp=^(\t| {4})\.{3} [0-9]+ more$
+colours=dark
+count=next
+======
+# silly debug output
+regexp=^\[debug\] .*
+colours=dark
+count=next
+======
+# Running surefire test
+regexp=^Running (\w+\.[\w.\$]*?)(\w+)$
+colours=unchanged,dark,yellow bold
+count=next
