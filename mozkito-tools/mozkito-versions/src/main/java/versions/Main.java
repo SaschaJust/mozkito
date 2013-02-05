@@ -18,6 +18,7 @@ package versions;
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 import net.ownhero.dev.kisa.Logger;
 
@@ -82,9 +83,11 @@ public class Main {
 			if (Logger.logInfo()) {
 				Logger.info("%s: All done. Cerio!", MODULE_NAME);
 			}
-		} catch (final Shutdown | InterruptedException | SettingsParseError | RepositoryOperationException e) {
+		} catch (InterruptedException | SettingsParseError | RepositoryOperationException | UnrecoverableError e) {
 			System.err.println(e.getMessage());
 			e.printStackTrace();
+		} catch (final Shutdown shutdown) {
+			System.err.println("Shutdown requested.");
 		}
 	}
 	
