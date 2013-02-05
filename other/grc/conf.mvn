@@ -4,7 +4,7 @@ skip=yes
 count=once
 ======
 # mark maven warnings yellow
-regexp=^\[WARN\]\s+
+regexp=^\[WARN(ING)?\]\s+
 colours=yellow
 count=once
 ======
