@@ -104,11 +104,6 @@
 					<version>3.0-beta-3</version>
 				</plugin>
 				<plugin>
-					<groupId>org.jacoco</groupId>
-					<artifactId>jacoco-maven-plugin</artifactId>
-					<version>0.6.0.201210061924</version>
-				</plugin>
-				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>sonar-maven-plugin</artifactId>
 					<version>2.0</version>
@@ -131,12 +126,12 @@
 		</plugins>
 	</reporting>
 	<properties>
-		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
+		<!-- <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin> -->
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<coverage.reports.dir>${basedir}/target/coverage-reports</coverage.reports.dir>
-		<sonar.jacoco.reportPath>${coverage.reports.dir}/jacoco-unit.exec</sonar.jacoco.reportPath>
+		<!-- <sonar.jacoco.reportPath>${coverage.reports.dir}/jacoco-unit.exec</sonar.jacoco.reportPath>
 		<sonar.jacoco.itReportPath>${coverage.reports.dir}/jacoco-unit.exec</sonar.jacoco.itReportPath>
-		<sonar.jacoco.agent.path>${basedir}/target/org.jacoco.agent-0.6.0.201210061924-runtime.jar</sonar.jacoco.agent.path>
+		<sonar.jacoco.agent.path>${basedir}/target/org.jacoco.agent-0.6.0.201210061924-runtime.jar</sonar.jacoco.agent.path> -->
 		<sonar.language>java</sonar.language>
 	</properties>
 	<profiles>
@@ -221,32 +216,6 @@
 			<build>
 				<plugins>
 					<plugin>
-						<groupId>org.jacoco</groupId>
-						<artifactId>jacoco-maven-plugin</artifactId>
-						<configuration>
-							<destFile>${project.basedir}/target/jacoco-ut.exec</destFile>
-							<excludes>
-								<exclude>**/*_.java</exclude>
-								<exclude>**/*_.class</exclude>
-							</excludes>
-						</configuration>
-						<executions>
-							<execution>
-								<id>pre-test</id>
-								<goals>
-									<goal>prepare-agent</goal>
-								</goals>
-							</execution>
-							<execution>
-								<id>post-test</id>
-								<phase>test</phase>
-								<goals>
-									<goal>report</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-dependency-plugin</artifactId>
 						<executions>
@@ -264,13 +233,6 @@
 											<version>0.2</version>
 											<outputDirectory>${project.build.directory}</outputDirectory>
 										</artifactItem>
-										<artifactItem>
-											<groupId>org.jacoco</groupId>
-											<artifactId>org.jacoco.agent</artifactId>
-											<version>0.6.0.201210061924</version>
-											<classifier>runtime</classifier>
-											<outputDirectory>${project.build.directory}</outputDirectory>
-										</artifactItem>
 									</artifactItems>
 								</configuration>
 							</execution>
@@ -281,7 +243,7 @@
 						<artifactId>maven-surefire-plugin</artifactId>
 						<version>2.12</version>
 						<configuration>
-							<argLine>-javaagent:${sonar.jacoco.agent.path}=destfile=${sonar.jacoco.reportPath} -Ddatabase.host=localhost</argLine>
+							<argLine>-Ddatabase.host=localhost</argLine>
 							<excludes>
 								<exclude>**/**/IGNORE_OWNHERO_*Test.java</exclude>
 							</excludes>
@@ -392,29 +354,6 @@
 			<build>
 				<plugins>
 					<plugin>
-						<groupId>org.jacoco</groupId>
-						<artifactId>jacoco-maven-plugin</artifactId>
-						<configuration>
-							<destFile>${project.basedir}/target/jacoco-ut.exec</destFile>
-							<!-- <includes>org.mozkito.*</includes> -->
-						</configuration>
-						<executions>
-							<execution>
-								<id>pre-test</id>
-								<goals>
-									<goal>prepare-agent</goal>
-								</goals>
-							</execution>
-							<execution>
-								<id>post-test</id>
-								<phase>test</phase>
-								<goals>
-									<goal>report</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-dependency-plugin</artifactId>
 						<executions>
@@ -432,13 +371,6 @@
 											<version>0.2</version>
 											<outputDirectory>${project.build.directory}</outputDirectory>
 										</artifactItem>
-										<artifactItem>
-											<groupId>org.jacoco</groupId>
-											<artifactId>org.jacoco.agent</artifactId>
-											<version>0.6.0.201210061924</version>
-											<classifier>runtime</classifier>
-											<outputDirectory>${project.build.directory}</outputDirectory>
-										</artifactItem>
 									</artifactItems>
 								</configuration>
 							</execution>
@@ -449,7 +381,6 @@
 						<artifactId>maven-surefire-plugin</artifactId>
 						<version>2.12</version>
 						<configuration>
-							<argLine>-javaagent:${sonar.jacoco.agent.path}=destfile=${sonar.jacoco.reportPath}</argLine>
 							<forkMode>perTest</forkMode>
 						</configuration>
 					</plugin>
