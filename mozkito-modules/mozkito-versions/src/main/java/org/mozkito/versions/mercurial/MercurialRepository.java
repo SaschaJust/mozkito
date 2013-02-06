@@ -90,7 +90,7 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	/** The Constant HG_ANNOTATE_DATE_FORMAT. */
 	protected static final DateTimeFormatter HG_ANNOTATE_DATE_FORMAT      = DateTimeFormat.forPattern("EEE MMM dd HH:mm:ss yyyy Z");
 	protected static final Regex             DATE_FORMAT_REGEX            = new Regex(
-	                                                                                  "{EEE}[A-Za-z]{3})\\s+({MMM}[A-Za-z]{3})\\s+({d}\\d{1,2})\\s+({HH}[0-2]\\d):({mm}[0-5]\\d):({ss}[0-5]\\d)\\s+({yyyy}\\d{4})\\s+({Z}[+-]\\d{4})");
+	                                                                                  "({EEE}[A-Za-z]{3})\\s+({MMM}[A-Za-z]{3})\\s+({d}\\d{1,2})\\s+({HH}[0-2]\\d):({mm}[0-5]\\d):({ss}[0-5]\\d)\\s+({yyyy}\\d{4})\\s+({Z}[+-]\\d{4})");
 	// protected static DateTimeFormatter hgLogDateFormat =
 	// DateTimeFormat.forPattern("yyyy-MM-dd HH:mm Z");
 	
