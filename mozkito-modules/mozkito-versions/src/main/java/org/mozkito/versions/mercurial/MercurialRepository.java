@@ -50,6 +50,11 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+
+import difflib.Delta;
+import difflib.DiffUtils;
+import difflib.Patch;
+
 import org.mozkito.versions.DistributedCommandLineRepository;
 import org.mozkito.versions.LogParser;
 import org.mozkito.versions.elements.AnnotationEntry;
@@ -58,10 +63,6 @@ import org.mozkito.versions.elements.RevDependencyGraph;
 import org.mozkito.versions.elements.RevDependencyGraph.EdgeType;
 import org.mozkito.versions.exceptions.RepositoryOperationException;
 import org.mozkito.versions.model.Branch;
-
-import difflib.Delta;
-import difflib.DiffUtils;
-import difflib.Patch;
 
 /**
  * The Class MercurialRepository.
@@ -88,6 +89,8 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	
 	/** The Constant HG_ANNOTATE_DATE_FORMAT. */
 	protected static final DateTimeFormatter HG_ANNOTATE_DATE_FORMAT      = DateTimeFormat.forPattern("EEE MMM dd HH:mm:ss yyyy Z");
+	protected static final Regex             DATE_FORMAT_REGEX            = new Regex(
+	                                                                                  "{EEE}[A-Za-z]{3})\\s+({MMM}[A-Za-z]{3})\\s+({d}\\d{1,2})\\s+({HH}[0-2]\\d):({mm}[0-5]\\d):({ss}[0-5]\\d)\\s+({yyyy}\\d{4})\\s+({Z}[+-]\\d{4})");
 	// protected static DateTimeFormatter hgLogDateFormat =
 	// DateTimeFormat.forPattern("yyyy-MM-dd HH:mm Z");
 	
@@ -183,7 +186,7 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 			final String date = MercurialRepository.REGEX.getGroup("date");
 			
 			DateTime timestamp;
-			timestamp = MercurialRepository.HG_ANNOTATE_DATE_FORMAT.parseDateTime(date);
+			timestamp = net.ownhero.dev.ioda.DateTimeUtils.parseDate(date, DATE_FORMAT_REGEX);
 			
 			final String file = MercurialRepository.REGEX.getGroup("file");
 			final String codeLine = MercurialRepository.REGEX.getGroup("codeline");

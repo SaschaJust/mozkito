@@ -282,7 +282,7 @@
 							<enableAssertions>true</enableAssertions>
 							<trimStackTrace>false</trimStackTrace>
 							<forkMode>perTest</forkMode>
-							<argLine>-javaagent:${basedir}/target/kanuni-agent-0.2.jar -Dlog.console.level=TRACE -Ddatabase.host=localhost</argLine>
+							<argLine>-javaagent:${basedir}/target/kanuni-agent-0.2.jar -Dlog.console.level=ERROR -Ddatabase.host=localhost</argLine>
 							<workingDirectory>${basedir}/target</workingDirectory>
 							<excludes>
 								<exclude>**/**/IGNORE_OWNHERO_*Test.java</exclude>
