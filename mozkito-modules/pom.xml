@@ -118,15 +118,6 @@
 			</plugins>
 		</pluginManagement>
 	</build>
-	<reporting>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-project-info-reports-plugin</artifactId>
-				<version>2.6</version>
-			</plugin>
-		</plugins>
-	</reporting>
 	<properties>
 		<!-- <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin> -->
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
@@ -238,6 +229,11 @@
 							</execution>
 						</executions>
 					</plugin>
+			        <plugin>
+			          <groupId>org.apache.maven.plugins</groupId>
+			          <artifactId>maven-checkstyle-plugin</artifactId>
+			          <version>2.9.1</version>
+			        </plugin>
 				</plugins>
 			</build>
 			<reporting>
@@ -247,7 +243,7 @@
 						<artifactId>maven-checkstyle-plugin</artifactId>
 						<version>2.9.1</version>
 						<configuration>
-							<enableRulesSummary>false</enableRulesSummary>
+							<enableRulesSummary>true</enableRulesSummary>
 							<configLocation>https://users.own-hero.net/~methos/dropbox/checkstyle.xml</configLocation>
 						</configuration>
 					</plugin>
