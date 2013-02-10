@@ -90,11 +90,11 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
+			<!-- <plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>sonar-maven-plugin</artifactId>
 				<version>2.0</version>
-			</plugin>
+			</plugin> -->
 		</plugins>
 		<pluginManagement>
 			<plugins>
@@ -103,11 +103,11 @@
 					<artifactId>maven-site-plugin</artifactId>
 					<version>3.0-beta-3</version>
 				</plugin>
-				<plugin>
+				<!-- <plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>sonar-maven-plugin</artifactId>
 					<version>2.0</version>
-				</plugin>
+				</plugin> -->
 			</plugins>
 		</pluginManagement>
 	</build>
@@ -132,7 +132,7 @@
 		<!-- <sonar.jacoco.reportPath>${coverage.reports.dir}/jacoco-unit.exec</sonar.jacoco.reportPath>
 		<sonar.jacoco.itReportPath>${coverage.reports.dir}/jacoco-unit.exec</sonar.jacoco.itReportPath>
 		<sonar.jacoco.agent.path>${basedir}/target/org.jacoco.agent-0.6.0.201210061924-runtime.jar</sonar.jacoco.agent.path> -->
-		<sonar.language>java</sonar.language>
+		<!-- <sonar.language>java</sonar.language> -->
 	</properties>
 	<profiles>
 		<profile>
