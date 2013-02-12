@@ -188,7 +188,7 @@
 				<configuration>
 					<enableAssertions>true</enableAssertions>
 					<trimStackTrace>false</trimStackTrace>
-					<!-- <forkMode>perTest</forkMode> -->
+					<forkMode>perTest</forkMode>
 					<argLine>-javaagent:${basedir}/target/kanuni-agent-0.2.jar -Dlog.console.level=ERROR</argLine>
 					<workingDirectory>${basedir}/target</workingDirectory>
 				</configuration>

@@ -25,12 +25,22 @@ count=once
 ======
 # invert "module build start" colors
 regexp=^\[INFO\] Building (?!jar: ).*
-colours=black on_white
+colours=underline
+count=once
+======
+# invert "module build start" colors
+regexp=^\[INFO\]\s-{72}.*
+colours=dark bold
+count=once
+======
+# Highlight plugin executions
+regexp=^\[INFO\]\s+(---|<<<|>>>)\s(maven-[^-]+|[^-]+-maven)-plugin:([^:]+):([^\s]+)\s[^@]+@\s([^\s]+)\s(---|<<<|>>>).*
+colours=dark,dark bold,cyan,bold,magenta bold,bold,dark bold
 count=once
 ======
 # dim maven info tags
 regexp=^\[INFO\]\s+
-colours=dark 
+colours=black 
 count=once
 ======
 # colorize surefire test results
@@ -142,3 +152,7 @@ count=next
 regexp=^Running (\w+\.[\w.\$]*?)(\w+)$
 colours=unchanged,dark,yellow bold
 count=next
+======
+regexp=Reactor Summary:
+colours=underline
+count=once
