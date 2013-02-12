@@ -29,7 +29,6 @@
 				<!-- activate kanuni annotation processing -->
 				<groupId>org.mozkito</groupId>
 				<artifactId>mozkito-maven-plugin</artifactId>
-				<version>0.4-SNAPSHOT</version>
 				<configuration>
 					<connectionURL>jdbc:postgresql://quentin.cs.uni-saarland.de/mozkito</connectionURL>
 					<includes>
@@ -67,7 +66,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.3</version>
 				<configuration>
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
@@ -94,7 +92,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-deploy-plugin</artifactId>
-				<version>2.7</version>
 				<configuration>
 					<skip>true</skip>
 				</configuration>
@@ -114,7 +111,6 @@
 					<plugin>
 						<groupId>com.atlassian.maven.plugins</groupId>
 						<artifactId>maven-clover2-plugin</artifactId>
-						<version>3.1.10</version>
 						<executions>
 							<execution>
 								<id>site</id>
@@ -129,7 +125,6 @@
 			        <plugin>
 			          <groupId>org.apache.maven.plugins</groupId>
 			          <artifactId>maven-checkstyle-plugin</artifactId>
-			          <version>2.10-SNAPSHOT</version>
 			        </plugin>
 				</plugins>
 			</build>
@@ -147,7 +142,7 @@
 					<plugin>
 						<groupId>com.atlassian.maven.plugins</groupId>
 						<artifactId>maven-clover2-plugin</artifactId>
-						<version>3.1.10</version>
+						<version>3.1.10.1</version>
 						<configuration>
 							<generateHtml>true</generateHtml>
 							<generateXml>true</generateXml>

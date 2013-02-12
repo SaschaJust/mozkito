@@ -140,22 +140,28 @@
 		</pluginRepository>
 	</pluginRepositories>
 	<distributionManagement>
+		<!-- deploy snapshots to this repository -->
 		<snapshotRepository>
 			<id>mozkito-dev</id>
 			<name>mozkito-dev</name>
 			<url>http://mozkito.org:8080/nexus/content/repositories/mozkito-dev</url>
 		</snapshotRepository>
+		<!-- deploy releases to this repository -->
 		<repository>
 			<id>mozkito</id>
 			<name>mozkito</name>
 			<url>http://mozkito.org:8080/nexus/content/repositories/mozkito/</url>
 		</repository>
+		<!-- configure upload of maven site -->
+		<site>
+			<id>mozkito.org</id>
+			<url>scp://mozkito.org/home/mozkito/public_html/maven</url>
+		</site>				
 	</distributionManagement>
 	<build>
 		<plugins>
 			<plugin>
 				<!-- get the kanuni agent on the classpath -->
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
 				<executions>
 					<execution>
@@ -178,21 +184,17 @@
 				</executions>
 			</plugin>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.12</version>
 				<configuration>
 					<enableAssertions>true</enableAssertions>
 					<trimStackTrace>false</trimStackTrace>
-					<forkMode>perTest</forkMode>
+					<!-- <forkMode>perTest</forkMode> -->
 					<argLine>-javaagent:${basedir}/target/kanuni-agent-0.2.jar -Dlog.console.level=ERROR</argLine>
 					<workingDirectory>${basedir}/target</workingDirectory>
 				</configuration>
 			</plugin>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-eclipse-plugin</artifactId>
-				<version>2.9</version>
 				<configuration>
 					<downloadSources>true</downloadSources>
 					<downloadJavadocs>true</downloadJavadocs>
@@ -202,9 +204,7 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
 				<configuration>
 					<source>1.7</source>
 					<target>1.7</target>
@@ -212,15 +212,112 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
-				<version>2.5</version>
 				<configuration>
 					<encoding>${project.build.sourceEncoding}</encoding>
 					<overwrite>true</overwrite>
 				</configuration>
 			</plugin>
 		</plugins>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.0</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-eclipse-plugin</artifactId>
+					<version>2.9</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-site-plugin</artifactId>
+					<version>3.2</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-clean-plugin</artifactId>
+					<version>2.5</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-dependency-plugin</artifactId>
+					<version>2.6</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-install-plugin</artifactId>
+					<version>2.4</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-jar-plugin</artifactId>
+					<version>2.4</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-assembly-plugin</artifactId>
+					<version>2.4</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-resources-plugin</artifactId>
+					<version>2.6</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-source-plugin</artifactId>
+					<version>2.2.1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>2.13</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<version>2.9</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-invoker-plugin</artifactId>
+					<version>1.8</version>
+				</plugin>
+				<plugin>
+					<groupId>com.atlassian.maven.plugins</groupId>
+					<artifactId>maven-clover2-plugin</artifactId>
+					<version>3.1.10.1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>sonar-maven-plugin</artifactId>
+					<version>2.0</version>
+				</plugin>
+		        <plugin>
+		          <groupId>org.apache.maven.plugins</groupId>
+		          <artifactId>maven-checkstyle-plugin</artifactId>
+		          <version>2.10-SNAPSHOT</version>
+		        </plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>openjpa-maven-plugin</artifactId>
+					<version>1.2</version>
+				</plugin>
+				<plugin>
+					<groupId>org.mozkito</groupId>
+					<artifactId>mozkito-maven-plugin</artifactId>
+					<version>0.4-SNAPSHOT</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-deploy-plugin</artifactId>
+					<version>2.7</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 	<reporting>
 		<plugins>
@@ -228,11 +325,6 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-project-info-reports-plugin</artifactId>
 				<version>2.6</version>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.7</version>
 			</plugin>
 		</plugins>
 	</reporting>
@@ -251,7 +343,6 @@
 			<build>
 				<plugins>
 					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-dependency-plugin</artifactId>
 						<executions>
 							<execution>
@@ -274,14 +365,12 @@
 						</executions>
 					</plugin>
 					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-surefire-plugin</artifactId>
-						<version>2.12</version>
 						<configuration>
 							<enableAssertions>true</enableAssertions>
 							<trimStackTrace>false</trimStackTrace>
 							<forkMode>perTest</forkMode>
-							<argLine>-javaagent:${basedir}/target/kanuni-agent-0.2.jar -Dlog.console.level=ERROR -Ddatabase.host=localhost</argLine>
+							<argLine>-Xmx1024m -Xms1024m -javaagent:${basedir}/target/kanuni-agent-0.2.jar -Dlog.console.level=ERROR -Ddatabase.host=localhost</argLine>
 							<workingDirectory>${basedir}/target</workingDirectory>
 							<excludes>
 								<exclude>**/**/IGNORE_OWNHERO_*Test.java</exclude>
@@ -289,9 +378,7 @@
 						</configuration>
 					</plugin>
 					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-assembly-plugin</artifactId>
-						<version>2.3</version>
 						<inherited>false</inherited>
 					</plugin>
 				</plugins>
@@ -308,9 +395,7 @@
 			<build>
 				<plugins>
 					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-javadoc-plugin</artifactId>
-						<version>2.7</version>
 						<executions>
 							<execution>
 								<id>attach-javadocs</id>
@@ -325,9 +410,7 @@
 						</configuration>
 					</plugin>
 					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-source-plugin</artifactId>
-						<version>2.1.2</version>
 						<executions>
 							<execution>
 								<id>attach-sources</id>

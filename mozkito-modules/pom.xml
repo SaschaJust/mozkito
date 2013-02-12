@@ -56,7 +56,6 @@
 			<plugin>
 				<groupId>org.mozkito</groupId>
 				<artifactId>mozkito-maven-plugin</artifactId>
-				<version>0.4-SNAPSHOT</version>
 				<configuration>
 					<connectionURL>jdbc:postgresql://quentin.cs.uni-saarland.de/mozkito</connectionURL>
 					<includes>
@@ -103,20 +102,6 @@
 				<version>2.0</version>
 			</plugin> -->
 		</plugins>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-site-plugin</artifactId>
-					<version>3.0-beta-3</version>
-				</plugin>
-				<!-- <plugin>
-					<groupId>org.codehaus.mojo</groupId>
-					<artifactId>sonar-maven-plugin</artifactId>
-					<version>2.0</version>
-				</plugin> -->
-			</plugins>
-		</pluginManagement>
 	</build>
 	<properties>
 		<!-- <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin> -->
@@ -217,7 +202,6 @@
 					<plugin>
 						<groupId>com.atlassian.maven.plugins</groupId>
 						<artifactId>maven-clover2-plugin</artifactId>
-						<version>3.1.10</version>
 						<executions>
 							<execution>
 								<id>site</id>
@@ -232,7 +216,6 @@
 			        <plugin>
 			          <groupId>org.apache.maven.plugins</groupId>
 			          <artifactId>maven-checkstyle-plugin</artifactId>
-			          <version>2.10-SNAPSHOT</version>
 			        </plugin>
 				</plugins>
 			</build>
@@ -250,12 +233,14 @@
 					<plugin>
 						<groupId>com.atlassian.maven.plugins</groupId>
 						<artifactId>maven-clover2-plugin</artifactId>
-						<version>3.1.10</version>
+						<version>3.1.10.1</version>
 						<configuration>
 							<generateHtml>true</generateHtml>
 							<generateXml>true</generateXml>
 							<targetPercentage>75%</targetPercentage>
 							<generateHistorical>true</generateHistorical>
+							<jdk>1.7</jdk>
+							<historyDir>${basedir}/history/${project.artifact}</historyDir>
 						</configuration>
 					</plugin>
 				</plugins>
