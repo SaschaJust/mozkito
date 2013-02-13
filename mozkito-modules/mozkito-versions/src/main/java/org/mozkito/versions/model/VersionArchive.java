@@ -119,7 +119,7 @@ public class VersionArchive implements Annotated {
 	 */
 	@Transient
 	protected void addChangeSet(final ChangeSet changeSet) {
-		this.changeSets.put(changeSet.getId(), changeSet);
+		getChangeSets().put(changeSet.getId(), changeSet);
 	}
 	
 	/**
@@ -157,15 +157,15 @@ public class VersionArchive implements Annotated {
 	 */
 	@Transient
 	public synchronized Branch getBranch(@NotNull final String name) {
-		if (!this.branches.containsKey(name)) {
+		if (!getBranches().containsKey(name)) {
 			
 			final Branch newBranch = new Branch(this, name);
 			if (Logger.logDebug()) {
 				Logger.debug("Creating new Branch " + newBranch.toString());
 			}
-			this.branches.put(newBranch.getName(), newBranch);
+			getBranches().put(newBranch.getName(), newBranch);
 		}
-		return this.branches.get(name);
+		return getBranches().get(name);
 	}
 	
 	/**
@@ -187,7 +187,7 @@ public class VersionArchive implements Annotated {
 	 */
 	@Transient
 	public ChangeSet getChangeSetById(final String id) {
-		return this.changeSets.get(id);
+		return getChangeSets().get(id);
 	}
 	
 	/**
