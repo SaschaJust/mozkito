@@ -10,7 +10,7 @@ function mvn() {
 			print "[#"line"]"$0 >>"maven.err";
 		}
 
-		/^\[WARN\]/ {
+		/^\[WARNING\]/ {
 			print "[#"line"]"$0 >>"maven.warn";
 		}
 		
@@ -23,5 +23,5 @@ function mvn() {
 }
 
 function mcat() {
-	cat $@ | grcat conf.mvn
+	cut -d] -f 2- $@ | grcat conf.mvn
 }
