@@ -536,6 +536,7 @@
 			</activation>
 			<build>
 				<plugins>
+					<plugin>
 					<artifactId>maven-dependency-plugin</artifactId>
 						<executions>
 							<execution>
@@ -556,6 +557,7 @@
 								</configuration>
 							</execution>
 						</executions>
+					</plugin>
 					<plugin>
 						<groupId>com.atlassian.maven.plugins</groupId>
 						<artifactId>maven-clover2-plugin</artifactId>
