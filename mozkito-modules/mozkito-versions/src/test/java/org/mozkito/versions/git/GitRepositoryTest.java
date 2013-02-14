@@ -113,9 +113,9 @@ public class GitRepositoryTest extends VersionsTest {
 	 * 
 	 * @throws RepositoryOperationException
 	 */
-	@Test
+	@Test (expected = RepositoryOperationException.class)
 	public void testCheckoutPathFail() throws RepositoryOperationException {
-		assertTrue(this.repo.checkoutPath("3.txt", "96a9f105774b50f1fa3361212c4d12ae057a4285") == null);
+		this.repo.checkoutPath("3.txt", "96a9f105774b50f1fa3361212c4d12ae057a4285");
 	}
 	
 	/**
