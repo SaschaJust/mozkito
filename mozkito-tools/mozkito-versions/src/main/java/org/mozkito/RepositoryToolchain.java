@@ -187,11 +187,11 @@ public class RepositoryToolchain extends Chain<Settings> {
 			new RepositoryReader(this.threadPool.getThreadGroup(), getSettings(), this.repository);
 			new RepositoryParser(this.threadPool.getThreadGroup(), getSettings(), this.repository, this.versionArchive);
 			
-			if (this.persistenceUtil != null) {
-				new RepositoryPersister(this.threadPool.getThreadGroup(), getSettings(), this.persistenceUtil);
-			} else {
-				new RepositoryVoidSink(this.threadPool.getThreadGroup(), getSettings());
-			}
+			// if (this.persistenceUtil != null) {
+			// new RepositoryPersister(this.threadPool.getThreadGroup(), getSettings(), this.persistenceUtil);
+			// } else {
+			// new RepositoryVoidSink(this.threadPool.getThreadGroup(), getSettings());
+			// }
 			this.persistenceUtil.beginTransaction();
 			this.persistenceUtil.saveOrUpdate(this.versionArchive);
 			this.persistenceUtil.commitTransaction();

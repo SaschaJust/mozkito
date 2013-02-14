@@ -27,8 +27,7 @@ import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.model.ChangeSet;
 
 /**
- * The {@link RepositoryPersister} taks {@link ChangeSet} from the previous node and dumps the data to the
- * database.
+ * The {@link RepositoryPersister} taks {@link ChangeSet} from the previous node and dumps the data to the database.
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  * 

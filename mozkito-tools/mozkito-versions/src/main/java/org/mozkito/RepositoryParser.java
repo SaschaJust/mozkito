@@ -22,7 +22,7 @@ import java.util.Set;
 
 import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.ProcessHook;
-import net.ownhero.dev.andama.threads.Transformer;
+import net.ownhero.dev.andama.threads.Sink;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.kisa.Logger;
@@ -43,7 +43,7 @@ import org.mozkito.versions.model.VersionArchive;
  * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
-public class RepositoryParser extends Transformer<LogEntry, ChangeSet> {
+public class RepositoryParser extends Sink<LogEntry> {
 	
 	/** The Constant TRANSACTION_IDS. */
 	private static final Set<String>         TRANSACTION_IDS = new HashSet<String>();
@@ -158,13 +158,13 @@ public class RepositoryParser extends Transformer<LogEntry, ChangeSet> {
 	        final VersionArchive archive) {
 		super(threadGroup, settings, false);
 		
-		new ProcessHook<LogEntry, ChangeSet>(this) {
+		new ProcessHook<LogEntry, LogEntry>(this) {
 			
 			@Override
 			public void process() {
 				final LogEntry data = getInputData();
 				final ChangeSet changeSet = parseLogEntry(repository, archive, data);
-				provideOutputData(changeSet);
+				// provideOutputData(changeSet);
 			}
 		};
 	}
