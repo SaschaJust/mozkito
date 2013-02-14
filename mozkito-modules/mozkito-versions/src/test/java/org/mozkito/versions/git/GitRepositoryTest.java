@@ -110,17 +110,21 @@ public class GitRepositoryTest extends VersionsTest {
 	
 	/**
 	 * Test checkout path fail.
+	 * 
+	 * @throws RepositoryOperationException
 	 */
 	@Test
-	public void testCheckoutPathFail() {
+	public void testCheckoutPathFail() throws RepositoryOperationException {
 		assertTrue(this.repo.checkoutPath("3.txt", "96a9f105774b50f1fa3361212c4d12ae057a4285") == null);
 	}
 	
 	/**
 	 * Test checkout path success.
+	 * 
+	 * @throws RepositoryOperationException
 	 */
 	@Test
-	public void testCheckoutPathSuccess() {
+	public void testCheckoutPathSuccess() throws RepositoryOperationException {
 		final File file = this.repo.checkoutPath("3.txt", "637acf68104e7bdff8235fb2e1a254300ffea3cb");
 		assertNotNull(file);
 		assertTrue(file.exists());
@@ -166,9 +170,11 @@ public class GitRepositoryTest extends VersionsTest {
 	
 	/**
 	 * Test get changes paths.
+	 * 
+	 * @throws RepositoryOperationException
 	 */
 	@Test
-	public void testGetChangesPaths() {
+	public void testGetChangesPaths() throws RepositoryOperationException {
 		Map<String, ChangeType> changedPaths = this.repo.getChangedPaths("376adc0f9371129a76766f8030f2e576165358c1");
 		assertEquals(1, changedPaths.size());
 		assertTrue(changedPaths.containsKey("/1.txt"));

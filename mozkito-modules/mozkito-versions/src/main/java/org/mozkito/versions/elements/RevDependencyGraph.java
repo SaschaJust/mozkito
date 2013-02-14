@@ -231,6 +231,12 @@ public class RevDependencyGraph {
 	 *            the edge type
 	 * @return true, if successful
 	 */
+	/**
+	 * @param parent
+	 * @param child
+	 * @param edgeType
+	 * @return true if edge could be added; false otherwise
+	 */
 	@NoneNull
 	public boolean addEdge(@NotEmptyString final String parent,
 	                       @NotEmptyString final String child,
@@ -246,8 +252,8 @@ public class RevDependencyGraph {
 			}
 			
 			if (containsEdge(child, parent)) {
-				if (Logger.logError()) {
-					Logger.error("An edge between " + child + " <-- " + parent + " already exists.");
+				if (Logger.logWarn()) {
+					Logger.warn("An edge between " + child + " <-- " + parent + " already exists.");
 				}
 				return false;
 			}
@@ -255,8 +261,8 @@ public class RevDependencyGraph {
 			final RevDepEdge edge = new RevDepEdge(parent, child, edgeType);
 			if (!this.graph.addEdge(edge, new Pair<String>(parent, child),
 			                        edu.uci.ics.jung.graph.util.EdgeType.DIRECTED)) {
-				if (Logger.logError()) {
-					Logger.error("An edge between " + child + " <-- " + parent + " could not be added.");
+				if (Logger.logWarn()) {
+					Logger.warn("An edge between " + child + " <-- " + parent + " could not be added.");
 				}
 				return false;
 			}

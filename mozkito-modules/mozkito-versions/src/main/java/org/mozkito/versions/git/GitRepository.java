@@ -180,7 +180,7 @@ public class GitRepository extends DistributedCommandLineRepository {
 	 */
 	@Override
 	public File checkoutPath(final String relativeRepoPath,
-	                         final String revision) {
+	                         final String revision) throws RepositoryOperationException {
 		Condition.notNull(relativeRepoPath, "Cannot check out NULL path");
 		Condition.notNull(revision, "Checking ut requries revision");
 		
@@ -194,10 +194,9 @@ public class GitRepository extends DistributedCommandLineRepository {
 		}
 		final File result = new File(this.cloneDir, relativeRepoPath);
 		if (!result.exists()) {
-			if (Logger.logError()) {
-				Logger.error("Could not get requested path using command `git checkout %s`. Abort.", revision);
-			}
-			return null;
+			throw new RepositoryOperationException(
+			                                       String.format("Could not get requested path using command `git checkout %s`. Abort.",
+			                                                     revision));
 		}
 		return result;
 	}
@@ -367,7 +366,7 @@ public class GitRepository extends DistributedCommandLineRepository {
 	 * @see org.mozkito.versions.Repository#getChangedPaths()
 	 */
 	@Override
-	public Map<String, ChangeType> getChangedPaths(final String revision) {
+	public Map<String, ChangeType> getChangedPaths(final String revision) throws RepositoryOperationException {
 		Condition.notNull(revision, "Cannot get changed paths for null revision");
 		
 		final Tuple<Integer, List<String>> response = CommandExecutor.execute("git",
@@ -393,11 +392,9 @@ public class GitRepository extends DistributedCommandLineRepository {
 		}
 		final String removed = lines.remove(0);
 		if ((!"HEAD".equals(revision.toUpperCase())) && (!removed.trim().equals(revision))) {
-			if (Logger.logError()) {
-				Logger.error("Error while parsing GIT log to unveil changed paths for revision `%s`: wrong revision outputed. Abort parsing.",
-				             revision);
-			}
-			return null;
+			throw new RepositoryOperationException(
+			                                       String.format("Error while parsing GIT log to unveil changed paths for revision `%s`: wrong revision outputed. Abort parsing.",
+			                                                     revision));
 		}
 		final Map<String, ChangeType> result = new HashMap<String, ChangeType>();
 		for (String line : lines) {
@@ -408,12 +405,11 @@ public class GitRepository extends DistributedCommandLineRepository {
 			line = line.replaceAll("\\s+", " ");
 			final String[] lineParts = line.split(" ");
 			if (lineParts.length < 2) {
-				if (Logger.logError()) {
-					Logger.error("Error while parsing GIT log to unveil changed paths for revision `" + revision
-					        + "`: wrong line format detected. Abort parsing." + FileUtils.lineSeparator + "Line:"
-					        + line);
-				}
-				return null;
+				throw new RepositoryOperationException(
+				                                       String.format("Error while parsing GIT log to unveil changed paths for revision `"
+				                                               + revision
+				                                               + "`: wrong line format detected. Abort parsing."
+				                                               + FileUtils.lineSeparator + "Line:" + line));
 			}
 			final String type = lineParts[0];
 			final String path = "/" + lineParts[1];
@@ -648,8 +644,8 @@ public class GitRepository extends DistributedCommandLineRepository {
 						final String child = lineParts[0];
 						if (!this.revDepGraph.existsVertex(child)) {
 							if (!this.revDepGraph.addChangeSet(child)) {
-								if (Logger.logDebug()) {
-									Logger.error("Could not add change set %s.", child);
+								if (Logger.logWarn()) {
+									Logger.warn("Could not add change set %s.", child);
 								}
 							}
 						}
@@ -657,16 +653,16 @@ public class GitRepository extends DistributedCommandLineRepository {
 						if (lineParts.length > 1) {
 							final String branchParent = lineParts[1];
 							if (!this.revDepGraph.addEdge(branchParent, child, EdgeType.BRANCH_EDGE)) {
-								if (Logger.logError()) {
-									Logger.error("Could not add edge between %s -> %s. This might lead to inconsistent data. Please check earlier warnings and errors.",
-									             branchParent, child);
+								if (Logger.logWarn()) {
+									Logger.warn("Could not add edge between %s -> %s. This might lead to inconsistent data. Please check earlier warnings and errors.",
+									            branchParent, child);
 								}
 							}
 							for (int i = 2; i < lineParts.length; ++i) {
 								if (!this.revDepGraph.addEdge(lineParts[i], child, EdgeType.MERGE_EDGE)) {
-									if (Logger.logError()) {
-										Logger.error("Could not add edge between %s -> %s. This might lead to inconsistent data. Please check earlier warnings and errors.",
-										             branchParent, child);
+									if (Logger.logWarn()) {
+										Logger.warn("Could not add edge between %s -> %s. This might lead to inconsistent data. Please check earlier warnings and errors.",
+										            branchParent, child);
 									}
 								}
 							}
