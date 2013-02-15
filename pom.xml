@@ -531,7 +531,7 @@
 							<generateHistorical>true</generateHistorical>
 							<cloverMergeDatabase>${user.home}/clover/current/mozkito</cloverMergeDatabase>
 							<jdk>1.7</jdk>
-							<historyDir>${user.home}/clover/history/mozkito/${project.artifact}</historyDir>
+							<historyDir>${user.home}/clover/history/mozkito/${project.artifactId}</historyDir>
 						</configuration>
 					</plugin>
 				</plugins>
@@ -589,6 +589,19 @@
 		                        </goals>
 		                    </execution>
 						</executions>
+						<configuration>
+							<generateHtml>true</generateHtml>
+							<generateXml>true</generateXml>
+							<generatePdf>true</generatePdf>
+							<targetPercentage>75%</targetPercentage>
+							<generateHistorical>true</generateHistorical>
+							<cloverMergeDatabase>${user.home}/clover/current/mozkito</cloverMergeDatabase>
+							<jdk>1.7</jdk>
+							<!-- set the clover history report directory to an external one -->
+							<historyDir>${user.home}/clover/history/mozkito/${project.artifactId}</historyDir>
+							<!-- avoid test instrumentation -->
+							<includesTestSourceRoots>false</includesTestSourceRoots>
+						</configuration>
 					</plugin>
 			        <plugin>
 			          <groupId>org.apache.maven.plugins</groupId>
@@ -664,7 +677,7 @@
 							<cloverMergeDatabase>${user.home}/clover/current/mozkito</cloverMergeDatabase>
 							<jdk>1.7</jdk>
 							<!-- set the clover history report directory to an external one -->
-							<historyDir>${user.home}/clover/history/mozkito/${project.artifact}</historyDir>
+							<historyDir>${user.home}/clover/history/mozkito/${project.artifactId}</historyDir>
 							<!-- avoid test instrumentation -->
 							<includesTestSourceRoots>false</includesTestSourceRoots>
 						</configuration>
