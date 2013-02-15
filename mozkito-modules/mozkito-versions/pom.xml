@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>	
+	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.mozkito</groupId>
 		<artifactId>mozkito-modules</artifactId>
@@ -9,7 +9,7 @@
 	<artifactId>mozkito-versions</artifactId>
 	<packaging>jar</packaging>
 	<name>(module) versions</name>
-	<description>TODO</description>
+	<description>The mozkito-versions module is one of the most basic core modules of the entire Mozkito framework. It contains code that allows the user to read, mine, and analyze version archives. Version archive artifacts like transaction, source files, branches are extracted from the corresponding repository (e.g. a Git repository) and uniformly persisted in a relational database. The persistence layer of Mozkito allows the usage of Java objects while the actual data is stored in a database. Storing the data in a database allows the miner and user to conduct analysis directly on the raw data on the data base (see moskito-persistence module).</description>
 	<dependencies>
 		<dependency>
 			<groupId>org.mozkito</groupId>

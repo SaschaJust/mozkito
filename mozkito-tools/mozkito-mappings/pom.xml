@@ -8,7 +8,7 @@
 	</parent>
 	<artifactId>mozkito-mappings-tool</artifactId>
 	<packaging>jar</packaging>
-	<name>(tool) mappings</name>
+	<name>(tool)   mappings</name>
 	<description>TODO</description>
 	<properties>
 		<mainClass>mappings.Main</mainClass>
