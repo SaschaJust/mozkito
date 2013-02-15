@@ -8,7 +8,7 @@
 	</parent>
 	<artifactId>mozkito-genealogies</artifactId>
 	<packaging>jar</packaging>
-	<name>mozkito:module genealogies</name>
+	<name>(module) genealogies</name>
 	<description>TODO</description>
 	<dependencies>
 		<dependency>

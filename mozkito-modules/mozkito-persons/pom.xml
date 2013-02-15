@@ -9,7 +9,7 @@
 	</parent>
 	<artifactId>mozkito-persons</artifactId>
 	<packaging>jar</packaging>
-	<name>mozkito:module persons</name>
+	<name>(module) persons</name>
 	<description>TODO</description>
 	<dependencies>
 		<dependency>

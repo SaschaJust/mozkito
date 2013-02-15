@@ -8,7 +8,7 @@
 	</parent>
 	<artifactId>mozkito-infozilla</artifactId>
 	<packaging>jar</packaging>
-	<name>mozkito:module infozilla</name>
+	<name>(module) infozilla</name>
 	<description>TODO</description>
 	<dependencies>
 		<dependency>

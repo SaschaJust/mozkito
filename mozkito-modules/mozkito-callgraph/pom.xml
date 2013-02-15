@@ -9,7 +9,7 @@
 	</parent>
 	<artifactId>mozkito-callgraph</artifactId>
 	<packaging>jar</packaging>
-	<name>mozkito:module callgraph</name>
+	<name>(module) callgraph</name>
 	<description>TODO</description>
 	<dependencies>
 		<dependency>

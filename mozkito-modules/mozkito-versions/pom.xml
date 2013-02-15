@@ -8,7 +8,7 @@
 	</parent>
 	<artifactId>mozkito-versions</artifactId>
 	<packaging>jar</packaging>
-	<name>mozkito:module versions</name>
+	<name>(module) versions</name>
 	<description>TODO</description>
 	<dependencies>
 		<dependency>

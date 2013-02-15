@@ -9,7 +9,7 @@
 	</parent>
 	<artifactId>mozkito-issues-analysis</artifactId>
 	<packaging>jar</packaging>
-	<name>mozkito:module issues-analysis</name>
+	<name>(module) issues-analysis</name>
 	<description>TODO</description>
 	<dependencies>
 		<dependency>
