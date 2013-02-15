@@ -521,7 +521,7 @@
 							<targetPercentage>75%</targetPercentage>
 							<generateHistorical>true</generateHistorical>
 							<jdk>1.7</jdk>
-							<historyDir>${basedir}/history/${project.artifact}</historyDir>
+							<historyDir>${user.home}/clover/history/mozkito/${project.artifact}</historyDir>
 						</configuration>
 					</plugin>
 				</plugins>
@@ -616,7 +616,7 @@
 							<targetPercentage>75%</targetPercentage>
 							<generateHistorical>true</generateHistorical>
 							<jdk>1.7</jdk>
-							<historyDir>${user.home}/clover/history/mozkito/${project.name}</historyDir>
+							<historyDir>${user.home}/clover/history/mozkito/${project.artifact}</historyDir>
 						</configuration>
 					</plugin>
 				</plugins>
