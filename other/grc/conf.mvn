@@ -124,12 +124,12 @@ colours=unchanged,unchanged,magenta bold,underline
 count=once
 ======
 # underline the actual download and
-regexp=^(Down|Up)loaded:\s+([^:]+://.+nexus.+)
-colours=unchanged,unchanged,default underline
+regexp=(Down|Up)loaded: ([^:]+://.*\/nexus\/.*)
+colours=unchanged,unchanged,underline
 count=next
 ======
 # dim the attempts
-regexp=^(Down|Up)loading: ([^:]+://.+nexus.+)
+regexp=(Down|Up)loading: ([^:]+://.*\/nexus\/.*)
 colours=dark,dark,dark
 count=next
 ======
