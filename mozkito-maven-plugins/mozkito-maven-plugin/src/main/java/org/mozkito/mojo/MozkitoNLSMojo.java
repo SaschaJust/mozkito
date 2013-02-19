@@ -39,10 +39,10 @@ import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.util.DirectoryScanner;
 
 /**
- * Goal that collects meta information such as module version and version archive hash and injects it into the project
- * resources. The generated resource "metadata.properties" can be accessed at runtime to access this information.
+ * Goal that checks if calls to NLS are valid, i.e. the key class is the same as the simple classname and the key exists
+ * in every localized messages.properties file.
  */
-@Mojo (name = "nls", defaultPhase = LifecyclePhase.GENERATE_RESOURCES)
+@Mojo (name = "nls", defaultPhase = LifecyclePhase.COMPILE)
 public class MozkitoNLSMojo extends AbstractMojo {
 	
 	/** The base dir. */
@@ -52,7 +52,7 @@ public class MozkitoNLSMojo extends AbstractMojo {
 	/**
 	 * The inclusion pattern. This should be something like:
 	 * <p>
-	 * **\/model\/*
+	 * &#42;&#42;/&#42;.java
 	 * </p>
 	 */
 	@Parameter (required = true, defaultValue = "**/*.java")
@@ -63,9 +63,9 @@ public class MozkitoNLSMojo extends AbstractMojo {
 	private File                          baseDirectory;
 	
 	/**
-	 * The exclusion pattern. This should be something like:
+	 * The exclusion pattern. This can be empty or should be something like:
 	 * <p>
-	 * **\/model\/*_.java
+	 * &#42;&#42;/Messages_Is_No_NLS_Class/&#42;_.java
 	 * </p>
 	 */
 	@Parameter
@@ -88,8 +88,12 @@ public class MozkitoNLSMojo extends AbstractMojo {
 	@Component
 	private MavenProjectHelper            projectHelper;
 	
+	/** The messages. */
 	private final Map<String, Properties> messages = new HashMap<>();
 	
+	/**
+	 * Check nls access.
+	 */
 	private void checkNLSAccess() {
 		// PRECONDITIONS
 		
