@@ -261,7 +261,7 @@ public class File2Bugs implements Annotated {
 	@Override
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
-		builder.append("Handle2Bugs [file="); //$NON-NLS-1$
+		builder.append("File2Bugs [file="); //$NON-NLS-1$
 		builder.append(getFile().getGeneratedId());
 		builder.append(", reports="); //$NON-NLS-1$
 		final StringBuilder b = new StringBuilder();
