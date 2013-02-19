@@ -222,9 +222,19 @@ public class Correction {
 	 * The Class Rule.
 	 */
 	public static class Rule {
-		
+		// stub
 	}
 	
+	/**
+	 * Gets the data elements.
+	 * 
+	 * @param root
+	 *            the root
+	 * @param name
+	 *            the name
+	 * @param elements
+	 *            the elements
+	 */
 	private static final void getDataElements(final Element root,
 	                                          final String name,
 	                                          final List<Element> elements) {
@@ -264,10 +274,26 @@ public class Correction {
 		}
 	}
 	
+	/**
+	 * The main method.
+	 * 
+	 * @param args
+	 *            the arguments
+	 */
 	public static void main(final String[] args) {
 		retf("Sclupture");
 	}
 	
+	/**
+	 * Main2.
+	 * 
+	 * @param args
+	 *            the args
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 * @throws JDOMException
+	 *             the jDOM exception
+	 */
 	public static void main2(final String[] args) throws IOException, JDOMException {
 		final HttpClient client = new DefaultHttpClient();
 		final HttpGet method = new HttpGet("http://en.wikipedia.org/wiki/Wikipedia:AWB/Typos");
