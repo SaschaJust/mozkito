@@ -3,6 +3,16 @@ regexp=^\[INFO\]\s+.+already added, skipping$
 skip=yes
 count=once
 ======
+# Highlight mozkito NLS warnings
+regexp=^\[WARNING\]\s+Missing key '([^']+)' in NLS resource: .*?(messages[^./\\]*.properties)\s\(from .*?([^./\\]+\.java).*
+colours=unchanged,underline ,magenta ,cyan bold
+count=once
+======
+# Highlight mozkito NLS warnings
+regexp=^\[WARNING\]\s+Potential wrong NLS access at line ([0-9]+) in .*?([^./\\]+\.java).*?(Expecting key class qualifier to be:) (.*)
+colours=unchanged,bold,cyan bold,bold,underline
+count=once
+======
 # mark maven warnings yellow
 regexp=^\[WARN(ING)?\]\s+
 colours=yellow

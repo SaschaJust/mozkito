@@ -49,9 +49,17 @@
 				</configuration>
 				<executions>
 					<execution>
+						<id>resources</id>
 						<phase>generate-resources</phase>
 						<goals>
 							<goal>meta</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>compile</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>nls</goal>
 						</goals>
 					</execution>
 				</executions>

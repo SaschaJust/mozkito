@@ -94,47 +94,63 @@ public class MozkitoNLSMojo extends AbstractMojo {
 		// PRECONDITIONS
 		
 		try {
-			final DirectoryScanner scanner = new DirectoryScanner();
-			scanner.setIncludes(this.includes.toArray(new String[0]));
-			if (this.excludes != null) {
-				scanner.setExcludes(this.excludes.toArray(new String[0]));
-			}
-			
-			scanner.setBasedir(this.sourceDirectory);
-			scanner.setCaseSensitive(false);
-			scanner.scan();
-			final String[] files = scanner.getIncludedFiles();
-			
-			for (final String filePath : files) {
-				final String simpleClassName = FilenameUtils.removeExtension(FilenameUtils.getBaseName(filePath));
-				final Regex xenoRegex = new Regex(".*Messages.getString\\(\"(!?" + simpleClassName + "\\.).*");
-				final Regex keyRegex = new Regex("Messages.getString\\(\"({KEY}[^\"])\"");
-				List<String> lines;
-				try {
-					lines = FileUtils.fileToLines(new File(filePath));
-					int lineNumber = 0;
-					for (final String line : lines) {
-						++lineNumber;
-						MultiMatch multiMatch = null;
-						if ((multiMatch = keyRegex.findAll(line)) != null) {
-							for (final Match match : multiMatch) {
-								final String key = match.getGroup("KEY").getMatch();
-								for (final Entry<String, Properties> entry : this.messages.entrySet()) {
-									if (!entry.getValue().containsKey(key)) {
-										getLog().warn("Missing key '" + key + "' in NLS resource: " + entry.getKey()
-										                      + " (from " + filePath + "line " + lineNumber + ")");
+			if (this.sourceDirectory.exists() && this.sourceDirectory.isDirectory()) {
+				final DirectoryScanner scanner = new DirectoryScanner();
+				scanner.setIncludes(this.includes.toArray(new String[0]));
+				if (this.excludes != null) {
+					scanner.setExcludes(this.excludes.toArray(new String[0]));
+				}
+				
+				scanner.setBasedir(this.sourceDirectory);
+				scanner.setCaseSensitive(false);
+				scanner.scan();
+				final String[] files = scanner.getIncludedFiles();
+				
+				for (final String filePath : files) {
+					final String simpleClassName = FilenameUtils.removeExtension(FilenameUtils.getBaseName(filePath));
+					final Regex xenoRegex = new Regex("Messages\\.getString\\(\"(?!" + simpleClassName + ")");
+					final Regex keyRegex = new Regex("Messages\\.getString\\(\"({KEY}[^\"]+)\"");
+					List<String> lines;
+					
+					final File sourceFile = new File(this.sourceDirectory, filePath);
+					
+					getLog().debug("Parsing source file " + sourceFile.getAbsolutePath());
+					getLog().debug("Using xeno access regex /" + xenoRegex.getPattern() + "/.");
+					getLog().debug("Using key regex /" + keyRegex.getPattern() + "/.");
+					
+					try {
+						lines = FileUtils.fileToLines(sourceFile);
+						int lineNumber = 0;
+						for (final String line : lines) {
+							++lineNumber;
+							
+							if (line.contains("Messages.getString")) {
+								getLog().debug("Found NLS access: " + line);
+							}
+							
+							MultiMatch multiMatch = null;
+							if ((multiMatch = keyRegex.findAll(line)) != null) {
+								for (final Match match : multiMatch) {
+									final String key = match.getGroup("KEY").getMatch();
+									for (final Entry<String, Properties> entry : this.messages.entrySet()) {
+										if (!entry.getValue().containsKey(key)) {
+											getLog().warn("Missing key '" + key + "' in NLS resource: "
+											                      + entry.getKey() + " (from " + filePath + ", line "
+											                      + lineNumber + ")");
+										}
 									}
 								}
 							}
+							
+							if (xenoRegex.find(line) != null) {
+								getLog().warn("Potential wrong NLS access at line " + lineNumber + " in " + filePath
+								                      + ": " + line.trim() + ". Expecting key class qualifier to be: "
+								                      + simpleClassName);
+							}
 						}
-						
-						if (xenoRegex.matches(line)) {
-							getLog().warn("Potential wrong NLS access at line " + lineNumber + " in " + filePath + ": "
-							                      + line);
-						}
+					} catch (final IOException e) {
+						getLog().error("Could not read source file: " + filePath, e);
 					}
-				} catch (final IOException e) {
-					getLog().error("Could not read source file: " + filePath, e);
 				}
 			}
 		} finally {
@@ -152,22 +168,25 @@ public class MozkitoNLSMojo extends AbstractMojo {
 		final List<Resource> resources = this.project.getResources();
 		for (final Resource resource : resources) {
 			final String directory = resource.getDirectory();
-			final DirectoryScanner scanner = new DirectoryScanner();
-			scanner.setIncludes(new String[] { "**/messages.properties", "**/messages_*_*.properties" });
-			scanner.setBasedir(directory);
-			scanner.setCaseSensitive(false);
-			scanner.scan();
-			final String[] files = scanner.getIncludedFiles();
-			
-			for (final String filePath : files) {
-				final Properties properties = new Properties();
-				FileReader reader;
-				try {
-					reader = new FileReader(new File(filePath));
-					properties.load(reader);
-					this.messages.put(filePath, properties);
-				} catch (final IOException e) {
-					getLog().error("Cannot read NLS file: " + filePath, e);
+			final File dir = new File(directory);
+			if (dir.exists() && dir.isDirectory()) {
+				final DirectoryScanner scanner = new DirectoryScanner();
+				scanner.setIncludes(new String[] { "**/messages.properties", "**/messages_*_*.properties" });
+				scanner.setBasedir(directory);
+				scanner.setCaseSensitive(false);
+				scanner.scan();
+				final String[] files = scanner.getIncludedFiles();
+				
+				for (final String filePath : files) {
+					final Properties properties = new Properties();
+					FileReader reader;
+					try {
+						reader = new FileReader(new File(dir, filePath));
+						properties.load(reader);
+						this.messages.put(filePath, properties);
+					} catch (final IOException e) {
+						getLog().error("Cannot read NLS file: " + filePath, e);
+					}
 				}
 			}
 		}
