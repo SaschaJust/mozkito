@@ -39,7 +39,6 @@ import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.input.sax.XMLReaderSAX2Factory;
 import org.joda.time.DateTime;
-
 import org.mozkito.issues.tracker.Parser;
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.issues.tracker.Tracker;
@@ -48,6 +47,8 @@ import org.mozkito.issues.tracker.elements.Priority;
 import org.mozkito.issues.tracker.elements.Resolution;
 import org.mozkito.issues.tracker.elements.Severity;
 import org.mozkito.issues.tracker.elements.Status;
+import org.mozkito.issues.tracker.model.IssueTracker;
+import org.mozkito.issues.tracker.model.Report;
 
 /**
  * The Class BugzillaParser.
@@ -215,6 +216,9 @@ public abstract class BugzillaParser implements Parser {
 	/** The md5. */
 	private byte[]            md5;
 	
+	/** The report. */
+	private Report            report;
+	
 	/**
 	 * Instantiates a new bugzilla parser.
 	 * 
@@ -322,6 +326,11 @@ public abstract class BugzillaParser implements Parser {
 	 * (non-Javadoc)
 	 * @see org.mozkito.bugs.tracker.Parser#getFetchTime()
 	 */
+	/**
+	 * Gets the fetch time.
+	 * 
+	 * @return the fetch time
+	 */
 	@Override
 	public final DateTime getFetchTime() {
 		// PRECONDITIONS
@@ -344,9 +353,23 @@ public abstract class BugzillaParser implements Parser {
 	 * (non-Javadoc)
 	 * @see org.mozkito.issues.tracker.Parser#getMd5()
 	 */
+	/**
+	 * Gets the md5.
+	 * 
+	 * @return the md5
+	 */
 	@Override
 	public final byte[] getMd5() {
 		return this.md5;
+	}
+	
+	/**
+	 * Gets the report.
+	 * 
+	 * @return the report
+	 */
+	public Report getReport() {
+		return this.report;
 	}
 	
 	/**
@@ -376,27 +399,18 @@ public abstract class BugzillaParser implements Parser {
 		return this.xmlReport;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#setTracker(org.mozkito.bugs.tracker.Tracker)
+	/**
+	 * Sets the context.
+	 * 
+	 * @param issueTracker
+	 *            the issue tracker
+	 * @param reportLink
+	 *            the report link
+	 * @return the report
 	 */
 	@Override
-	@NoneNull
-	public final void setTracker(final Tracker tracker) {
-		// PRECONDITIONS
-		try {
-			this.tracker = tracker;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#setURI(org.mozkito.bugs.tracker.ReportLink)
-	 */
-	@Override
-	public final boolean setURI(final ReportLink reportLink) {
+	public final Report setContext(final IssueTracker issueTracker,
+	                               final ReportLink reportLink) {
 		this.historyParser = null;
 		try {
 			final URI uri = reportLink.getUri();
@@ -404,7 +418,7 @@ public abstract class BugzillaParser implements Parser {
 				if (Logger.logError()) {
 					Logger.error("Got URI from reportLink that is NULL!");
 				}
-				return false;
+				return null;
 			}
 			RawContent rawContent = null;
 			
@@ -414,7 +428,7 @@ public abstract class BugzillaParser implements Parser {
 				if (Logger.logError()) {
 					Logger.error("Failed to parse report " + uri.toASCIIString() + ": RAW check failed.");
 				}
-				return false;
+				return null;
 			}
 			this.md5 = DigestUtils.md5(rawContent.getContent());
 			this.xmlReport = createDocument(rawContent);
@@ -428,7 +442,7 @@ public abstract class BugzillaParser implements Parser {
 				if (Logger.logError()) {
 					Logger.error("Failed to parse report %s: XML check failed.", uri.toASCIIString());
 				}
-				return false;
+				return null;
 			}
 			
 			final BugzillaDocument document = BugzillaDocument.Factory.parse(rawContent.getContent());
@@ -440,24 +454,50 @@ public abstract class BugzillaParser implements Parser {
 					Logger.warn("XML document contains no bugzilla bug reports.");
 				}
 				this.xmlBug = null;
-				return false;
+				return null;
 			} else if (bugArray.length > 1) {
 				if (Logger.logWarn()) {
 					Logger.warn("XML document contains multiple bugzilla bug reports. This is unexpected. Parsing only first report.");
 				}
 			}
 			this.xmlBug = bugArray[0];
-			return true;
+			this.report = new Report(issueTracker, getId());
+			return this.report;
 		} catch (final XmlException e) {
 			if (Logger.logError()) {
 				Logger.error(e);
 			}
-			return false;
+			return null;
 		} catch (final Exception e) {
 			if (Logger.logError()) {
 				Logger.error(e);
 			}
-			return false;
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.bugs.tracker.Parser#setURI(org.mozkito.bugs.tracker.ReportLink)
+	 */
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.bugs.tracker.Parser#setTracker(org.mozkito.bugs.tracker.Tracker)
+	 */
+	/**
+	 * Sets the tracker.
+	 * 
+	 * @param tracker
+	 *            the new tracker
+	 */
+	@Override
+	@NoneNull
+	public final void setTracker(final Tracker tracker) {
+		// PRECONDITIONS
+		try {
+			this.tracker = tracker;
 		} finally {
 			// POSTCONDITIONS
 		}

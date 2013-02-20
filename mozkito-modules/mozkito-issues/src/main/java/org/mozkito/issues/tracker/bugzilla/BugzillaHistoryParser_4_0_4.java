@@ -30,9 +30,9 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-
 import org.mozkito.issues.tracker.Tracker;
 import org.mozkito.issues.tracker.elements.Resolution;
+import org.mozkito.issues.tracker.model.History;
 import org.mozkito.issues.tracker.model.HistoryElement;
 import org.mozkito.persistence.model.Person;
 
@@ -134,7 +134,7 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 	 */
 	@Override
 	@NoneNull
-	public boolean parse() {
+	public boolean parse(final History history) {
 		
 		if (this.parsed) {
 			return true;
@@ -215,7 +215,7 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 					
 					// get when
 					final DateTime when = DateTimeUtils.parseDate(tds.get(1).text().trim());
-					hElement = new HistoryElement(this.reportId, who, when);
+					hElement = new HistoryElement(history, who, when);
 					this.history.add(hElement);
 				}
 				if (hElement == null) {

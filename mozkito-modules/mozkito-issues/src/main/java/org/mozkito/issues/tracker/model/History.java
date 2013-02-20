@@ -23,8 +23,6 @@ import java.util.TreeSet;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OrderBy;
@@ -32,9 +30,7 @@ import javax.persistence.Transient;
 
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
-import net.ownhero.dev.kanuni.annotations.simple.NotNegative;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
-import net.ownhero.dev.kanuni.conditions.CompareCondition;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
@@ -56,11 +52,8 @@ public class History implements Annotated {
 	/** The Constant serialVersionUID. */
 	private static final long         serialVersionUID = 1720480073428317973L;
 	
-	/** The id. */
-	private long                      id;
-	
 	/** The bug id. */
-	private String                    bugId;
+	private Report                    report;
 	
 	/** The elements. */
 	private SortedSet<HistoryElement> elements         = new TreeSet<HistoryElement>(new HistoryElementComparator());
@@ -75,11 +68,11 @@ public class History implements Annotated {
 	/**
 	 * Instantiates a new history.
 	 * 
-	 * @param bugId
-	 *            the bug id
+	 * @param report
+	 *            the report
 	 */
-	public History(@NotNegative final String bugId) {
-		setBugId(bugId);
+	public History(@NotNull final Report report) {
+		setReport(report);
 	}
 	
 	/**
@@ -90,10 +83,7 @@ public class History implements Annotated {
 	 * @return true, if successful
 	 */
 	@Transient
-	public boolean add(@NotNull final HistoryElement element) {
-		CompareCondition.equals(getBugId(), element.getBugId(),
-		                        "HistoryElements may never be added to the History of a different report: %s -> %s",
-		                        element, this);
+	protected boolean add(@NotNull final HistoryElement element) {
 		boolean ret = false;
 		final SortedSet<HistoryElement> elements = getElements();
 		ret = elements.add(element);
@@ -110,7 +100,7 @@ public class History implements Annotated {
 	 */
 	@Transient
 	public History after(@NotNull final DateTime dateTime) {
-		final History history = new History(getBugId());
+		final History history = new History(getReport());
 		final Iterator<HistoryElement> iterator = getElements().iterator();
 		while (iterator.hasNext()) {
 			final HistoryElement element = iterator.next();
@@ -130,7 +120,7 @@ public class History implements Annotated {
 	 */
 	@Transient
 	public History before(@NotNull final DateTime dateTime) {
-		final History history = new History(getBugId());
+		final History history = new History(getReport());
 		final Iterator<HistoryElement> iterator = getElements().iterator();
 		while (iterator.hasNext()) {
 			final HistoryElement element = iterator.next();
@@ -164,7 +154,7 @@ public class History implements Annotated {
 	@NoneNull
 	public History get(final DateTime from,
 	                   final DateTime to) {
-		final History history = new History(getBugId());
+		final History history = new History(getReport());
 		final Iterator<HistoryElement> iterator = getElements().iterator();
 		while (iterator.hasNext()) {
 			final HistoryElement element = iterator.next();
@@ -184,7 +174,7 @@ public class History implements Annotated {
 	 */
 	@Transient
 	public History get(final Person author) {
-		final History history = new History(getBugId());
+		final History history = new History(getReport());
 		final Iterator<HistoryElement> iterator = getElements().iterator();
 		while (iterator.hasNext()) {
 			final HistoryElement element = iterator.next();
@@ -226,7 +216,7 @@ public class History implements Annotated {
 	 */
 	@Transient
 	public History get(final String field) {
-		final History history = new History(getBugId());
+		final History history = new History(getReport());
 		final Iterator<HistoryElement> iterator = getElements().iterator();
 		while (iterator.hasNext()) {
 			final HistoryElement element = iterator.next();
@@ -239,15 +229,6 @@ public class History implements Annotated {
 	}
 	
 	/**
-	 * Gets the bug id.
-	 * 
-	 * @return the bugId
-	 */
-	public String getBugId() {
-		return this.bugId;
-	}
-	
-	/**
 	 * Gets the by bug id.
 	 * 
 	 * @param bugId
@@ -256,7 +237,7 @@ public class History implements Annotated {
 	 */
 	@Transient
 	public History getByBugId(final String bugId) {
-		final History history = new History(getBugId());
+		final History history = new History(getReport());
 		final Iterator<HistoryElement> iterator = getElements().iterator();
 		while (iterator.hasNext()) {
 			final HistoryElement element = iterator.next();
@@ -288,17 +269,6 @@ public class History implements Annotated {
 	}
 	
 	/**
-	 * Gets the id.
-	 * 
-	 * @return the id
-	 */
-	@Id
-	@GeneratedValue (strategy = GenerationType.SEQUENCE)
-	public long getId() {
-		return this.id;
-	}
-	
-	/**
 	 * Gets the old value.
 	 * 
 	 * @param fieldName
@@ -323,6 +293,16 @@ public class History implements Annotated {
 		}
 		
 		return object;
+	}
+	
+	/**
+	 * Gets the bug id.
+	 * 
+	 * @return the bugId
+	 */
+	@Id
+	public Report getReport() {
+		return this.report;
 	}
 	
 	/**
@@ -418,16 +398,6 @@ public class History implements Annotated {
 	}
 	
 	/**
-	 * Sets the bug id.
-	 * 
-	 * @param bugId
-	 *            the bugId to set
-	 */
-	private void setBugId(final String bugId) {
-		this.bugId = bugId;
-	}
-	
-	/**
 	 * Sets the elements.
 	 * 
 	 * @param elements
@@ -438,14 +408,13 @@ public class History implements Annotated {
 	}
 	
 	/**
-	 * Sets the id.
+	 * Sets the bug id.
 	 * 
-	 * @param id
-	 *            the id to set
+	 * @param report
+	 *            the new report
 	 */
-	@SuppressWarnings ("unused")
-	private void setId(final long id) {
-		this.id = id;
+	private void setReport(final Report report) {
+		this.report = report;
 	}
 	
 	/**
@@ -466,7 +435,7 @@ public class History implements Annotated {
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
 		builder.append("History [bugId=");
-		builder.append(getBugId());
+		builder.append(getReport());
 		builder.append(", elements=");
 		builder.append(JavaUtils.collectionToString(getElements()));
 		builder.append("]");
@@ -481,7 +450,7 @@ public class History implements Annotated {
 	 * @return the history
 	 */
 	public History whithin(final Interval interval) {
-		final History history = new History(getBugId());
+		final History history = new History(getReport());
 		for (final HistoryElement element : getElements()) {
 			if (interval.contains(element.getTimestamp())) {
 				history.add(element);

@@ -25,6 +25,7 @@ import org.mozkito.issues.exceptions.InvalidParameterException;
 import org.mozkito.issues.tracker.Parser;
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.issues.tracker.Tracker;
+import org.mozkito.issues.tracker.model.IssueTracker;
 
 /**
  * The Class MantisTracker.
@@ -37,6 +38,16 @@ public class MantisTracker extends Tracker {
 	
 	/** The bug ids. */
 	private Collection<String> bugIds = null;
+	
+	/**
+	 * Instantiates a new mantis tracker.
+	 * 
+	 * @param issueTracker
+	 *            the issue tracker
+	 */
+	public MantisTracker(final IssueTracker issueTracker) {
+		super(issueTracker);
+	}
 	
 	/*
 	 * (non-Javadoc)

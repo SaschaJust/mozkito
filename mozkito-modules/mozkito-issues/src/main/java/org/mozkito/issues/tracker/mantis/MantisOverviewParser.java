@@ -33,9 +33,9 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-
 import org.mozkito.issues.tracker.OverviewParser;
 import org.mozkito.issues.tracker.ReportLink;
+import org.mozkito.issues.tracker.model.IssueTracker;
 
 /**
  * The Class MantisOverviewParser.
@@ -104,11 +104,11 @@ public class MantisOverviewParser implements OverviewParser {
 	 * @param uri
 	 *            the uri
 	 */
-	protected MantisOverviewParser(final URI uri) {
+	protected MantisOverviewParser(final URI uri, final IssueTracker issueTracker) {
 		// PRECONDITIONS
 		
 		try {
-			this.tracker = new MantisTracker();
+			this.tracker = new MantisTracker(issueTracker);
 			this.tracker.setUri(uri);
 			
 		} finally {

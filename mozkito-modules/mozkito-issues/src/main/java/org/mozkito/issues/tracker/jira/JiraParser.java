@@ -47,12 +47,6 @@ import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.input.sax.XMLReaderSAX2Factory;
 import org.joda.time.DateTime;
-import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
 import org.mozkito.issues.tracker.Parser;
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.issues.tracker.Tracker;
@@ -64,8 +58,16 @@ import org.mozkito.issues.tracker.elements.Status;
 import org.mozkito.issues.tracker.elements.Type;
 import org.mozkito.issues.tracker.model.AttachmentEntry;
 import org.mozkito.issues.tracker.model.Comment;
+import org.mozkito.issues.tracker.model.History;
 import org.mozkito.issues.tracker.model.HistoryElement;
+import org.mozkito.issues.tracker.model.IssueTracker;
+import org.mozkito.issues.tracker.model.Report;
 import org.mozkito.persistence.model.Person;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  * The Class JiraParser.
@@ -189,38 +191,40 @@ public class JiraParser implements Parser {
 	}
 	
 	/** The fetch time. */
-	private DateTime                        fetchTime;
+	private DateTime                  fetchTime;
 	
 	/** The tracker. */
 	@SuppressWarnings ("unused")
-	private Tracker                         tracker;
+	private Tracker                   tracker;
 	
 	/** The history. */
-	private final SortedSet<HistoryElement> history           = null;
+	private SortedSet<HistoryElement> historyElements   = null;
 	
 	/** The resolver. */
-	private Person                          resolver;
+	private Person                    resolver;
 	
 	/** The md5. */
-	private byte[]                          md5;
+	private byte[]                    md5;
 	
 	/** The proxy config. */
-	private ProxyConfig                     proxyConfig       = null;
+	private ProxyConfig               proxyConfig       = null;
 	
 	/** The report. */
-	private XmlReport                       report;
+	private XmlReport                 xmlReport;
 	
 	/** The document. */
-	private Document                        document;
+	private Document                  document;
 	
 	/** The base uri. */
-	private String                          baseUri;
+	private String                    baseUri;
 	
 	/** The issue id. */
-	private String                          issueId;
+	private String                    issueId;
+	
+	private Report                    report;
 	
 	/** The Constant DATE_TIME_PATTERN. */
-	public static final String              DATE_TIME_PATTERN = "({E}[A-Za-z]{3}),\\s+({dd}[0-3]?\\d)\\s+({MMM}[A-Za-z]{3,})\\s+({yyyy}\\d{4})\\s+({HH}[0-2]\\d):({mm}[0-5]\\d):({ss}[0-5]\\d)({Z}\\s[+-]\\d{4})";
+	public static final String        DATE_TIME_PATTERN = "({E}[A-Za-z]{3}),\\s+({dd}[0-3]?\\d)\\s+({MMM}[A-Za-z]{3,})\\s+({yyyy}\\d{4})\\s+({HH}[0-2]\\d):({mm}[0-5]\\d):({ss}[0-5]\\d)({Z}\\s[+-]\\d{4})";
 	
 	/*
 	 * (non-Javadoc)
@@ -546,42 +550,6 @@ public class JiraParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#getId()
-	 */
-	@Override
-	public SortedSet<HistoryElement> getHistoryElements() {
-		// PRECONDITIONS
-		
-		try {
-			// https://issues.apache.org/jira/browse/LUCENE-2222?page=com.atlassian.jira.plugin.system.issuetabpanels:changehistory-tabpanel#issue-tabs
-			if (this.history == null) {
-				final StringBuilder sb = new StringBuilder();
-				sb.append("https://issues.apache.org/jira/browse/");
-				sb.append(getId());
-				sb.append("?page=com.atlassian.jira.plugin.system.issuetabpanels:changehistory-tabpanel#issue-tabs");
-				if (Logger.logDebug()) {
-					Logger.debug("Fetching issue report history from %s", sb.toString());
-				}
-				final JiraHistoryParser historyParser = new JiraHistoryParser(getId(), new URI(sb.toString()));
-				if (historyParser.parse()) {
-					this.resolver = historyParser.getResolver();
-					return historyParser.getHistory();
-				}
-				return new TreeSet<HistoryElement>();
-			}
-			return this.history;
-		} catch (final URISyntaxException e) {
-			if (Logger.logError()) {
-				Logger.error(e);
-			}
-			return new TreeSet<HistoryElement>();
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
 	 * @see org.mozkito.bugs.tracker.Parser#getNumberOfComments()
 	 */
 	@Override
@@ -700,11 +668,6 @@ public class JiraParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#setTracker(org.mozkito.bugs.tracker.Tracker)
-	 */
-	
-	/*
-	 * (non-Javadoc)
 	 * @see org.mozkito.bugs.tracker.Parser#getSubject()
 	 */
 	@Override
@@ -728,6 +691,11 @@ public class JiraParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see org.mozkito.bugs.tracker.Parser#setTracker(org.mozkito.bugs.tracker.Tracker)
+	 */
+	
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.bugs.tracker.Parser#getSubmitter()
 	 */
 	@Override
@@ -735,17 +703,12 @@ public class JiraParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			getHistoryElements();
+			parseHistoryElements(this.report.getHistory());
 			return this.resolver;
 		} finally {
 			// POSTCONDITIONS
 		}
 	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#setXMLReport(org.mozkito.bugs.tracker.XmlReport )
-	 */
 	
 	/*
 	 * (non-Javadoc)
@@ -761,6 +724,11 @@ public class JiraParser implements Parser {
 			// POSTCONDITIONS
 		}
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.bugs.tracker.Parser#setXMLReport(org.mozkito.bugs.tracker.XmlReport )
+	 */
 	
 	/*
 	 * (non-Javadoc)
@@ -914,6 +882,93 @@ public class JiraParser implements Parser {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.bugs.tracker.Parser#getId()
+	 */
+	@Override
+	public void parseHistoryElements(final History history) {
+		// PRECONDITIONS
+		
+		try {
+			// https://issues.apache.org/jira/browse/LUCENE-2222?page=com.atlassian.jira.plugin.system.issuetabpanels:changehistory-tabpanel#issue-tabs
+			if (this.historyElements == null) {
+				final StringBuilder sb = new StringBuilder();
+				sb.append("https://issues.apache.org/jira/browse/");
+				sb.append(getId());
+				sb.append("?page=com.atlassian.jira.plugin.system.issuetabpanels:changehistory-tabpanel#issue-tabs");
+				if (Logger.logDebug()) {
+					Logger.debug("Fetching issue report history from %s", sb.toString());
+				}
+				final JiraHistoryParser historyParser = new JiraHistoryParser(getId(), new URI(sb.toString()));
+				if (historyParser.parse(history)) {
+					this.resolver = historyParser.getResolver();
+					this.historyElements = historyParser.getHistory();
+				}
+			}
+		} catch (final URISyntaxException e) {
+			if (Logger.logError()) {
+				Logger.error(e);
+			}
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.issues.tracker.Parser#setURI(org.mozkito.issues.tracker.ReportLink)
+	 */
+	@Override
+	public Report setContext(final IssueTracker issueTracker,
+	                         final ReportLink reportLink) {
+		// PRECONDITIONS
+		
+		try {
+			
+			final URI uri = reportLink.getUri();
+			this.issueId = reportLink.getBugId();
+			RawContent rawContent = null;
+			if (this.proxyConfig == null) {
+				rawContent = IOUtils.fetch(uri);
+			} else {
+				rawContent = IOUtils.fetch(uri, this.proxyConfig);
+			}
+			
+			if (rawContent.getContent().trim().isEmpty()) {
+				return null;
+			}
+			
+			this.fetchTime = new DateTime();
+			if (!checkRAW(rawContent)) {
+				if (Logger.logWarn()) {
+					Logger.warn("Could not parse report " + uri + ". RAW check failed!");
+				}
+				return null;
+			}
+			
+			this.md5 = DigestUtils.md5(rawContent.getContent());
+			
+			this.xmlReport = createDocument(rawContent);
+			
+			final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			final DocumentBuilder docBuilder = factory.newDocumentBuilder();
+			this.document = docBuilder.parse(new ByteArrayInputStream(this.xmlReport.getContent().getBytes()));
+			this.baseUri = this.document.getElementsByTagName("link").item(0).getTextContent();
+			this.report = new Report(issueTracker, getId());
+			return this.report;
+			
+		} catch (final UnsupportedProtocolException | FetchException | ParserConfigurationException | SAXException
+		        | IOException e) {
+			if (Logger.logError()) {
+				Logger.error(e);
+			}
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
 	/**
 	 * Sets the proxy config.
 	 * 
@@ -944,59 +999,6 @@ public class JiraParser implements Parser {
 		
 		try {
 			this.tracker = tracker;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.issues.tracker.Parser#setURI(org.mozkito.issues.tracker.ReportLink)
-	 */
-	@Override
-	public boolean setURI(final ReportLink reportLink) {
-		// PRECONDITIONS
-		
-		try {
-			
-			final URI uri = reportLink.getUri();
-			this.issueId = reportLink.getBugId();
-			RawContent rawContent = null;
-			if (this.proxyConfig == null) {
-				rawContent = IOUtils.fetch(uri);
-			} else {
-				rawContent = IOUtils.fetch(uri, this.proxyConfig);
-			}
-			
-			if (rawContent.getContent().trim().isEmpty()) {
-				return false;
-			}
-			
-			this.fetchTime = new DateTime();
-			if (!checkRAW(rawContent)) {
-				if (Logger.logWarn()) {
-					Logger.warn("Could not parse report " + uri + ". RAW check failed!");
-				}
-				return false;
-			}
-			
-			this.md5 = DigestUtils.md5(rawContent.getContent());
-			
-			this.report = createDocument(rawContent);
-			
-			final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			final DocumentBuilder docBuilder = factory.newDocumentBuilder();
-			this.document = docBuilder.parse(new ByteArrayInputStream(this.report.getContent().getBytes()));
-			this.baseUri = this.document.getElementsByTagName("link").item(0).getTextContent();
-			
-			return true;
-			
-		} catch (final UnsupportedProtocolException | FetchException | ParserConfigurationException | SAXException
-		        | IOException e) {
-			if (Logger.logError()) {
-				Logger.error(e);
-			}
-			return false;
 		} finally {
 			// POSTCONDITIONS
 		}

@@ -38,6 +38,7 @@ import net.ownhero.dev.ioda.container.RawContent;
 import net.ownhero.dev.ioda.exceptions.FetchException;
 import net.ownhero.dev.ioda.exceptions.MIMETypeDeterminationException;
 import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Match;
@@ -54,7 +55,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-
 import org.mozkito.issues.tracker.Parser;
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.issues.tracker.Tracker;
@@ -66,7 +66,10 @@ import org.mozkito.issues.tracker.elements.Status;
 import org.mozkito.issues.tracker.elements.Type;
 import org.mozkito.issues.tracker.model.AttachmentEntry;
 import org.mozkito.issues.tracker.model.Comment;
+import org.mozkito.issues.tracker.model.History;
 import org.mozkito.issues.tracker.model.HistoryElement;
+import org.mozkito.issues.tracker.model.IssueTracker;
+import org.mozkito.issues.tracker.model.Report;
 import org.mozkito.persistence.model.Person;
 
 /**
@@ -268,13 +271,16 @@ public class MantisParser implements Parser {
 	private final Map<String, Person>       attachters        = new HashMap<String, Person>();
 	
 	/** The report. */
-	private XmlReport                       report;
+	private XmlReport                       xmlReport;
 	
 	/** The fetch time. */
 	private DateTime                        fetchTime;
 	
 	/** The md5. */
 	private byte[]                          md5;
+	
+	/** The report. */
+	private Report                          report;
 	
 	/**
 	 * Adds the change field.
@@ -468,7 +474,7 @@ public class MantisParser implements Parser {
 		final List<AttachmentEntry> result = new LinkedList<AttachmentEntry>();
 		try {
 			
-			getHistoryElements();
+			parseHistoryElements(this.report.getHistory());
 			
 			final Element cell = getMainTableCell("Attached Files", 1);
 			if (cell == null) {
@@ -480,7 +486,7 @@ public class MantisParser implements Parser {
 			for (final Element aTag : aTags) {
 				String link = aTag.attr("href");
 				
-				final String reportLink = this.report.getUri().toASCIIString();
+				final String reportLink = this.xmlReport.getUri().toASCIIString();
 				final int index = reportLink.lastIndexOf("/");
 				link = reportLink.substring(0, index + 1) + link;
 				if ((attachmentEntry == null) || (!attachmentEntry.getLink().equals(link))) {
@@ -776,78 +782,6 @@ public class MantisParser implements Parser {
 	 * @see org.mozkito.bugs.tracker.Parser#getHistoryElements()
 	 */
 	@Override
-	public SortedSet<HistoryElement> getHistoryElements() {
-		// PRECONDITIONS
-		
-		try {
-			if (this.historyElements != null) {
-				return this.historyElements;
-			}
-			final SortedSet<HistoryElement> result = new TreeSet<HistoryElement>();
-			final Element elementById = this.document.getElementById("history_open");
-			final Elements trTags = elementById.getElementsByTag("tr");
-			if (trTags.isEmpty()) {
-				throw new UnrecoverableError("Could not find Issue History header row. Table is empty.");
-			}
-			
-			final Element historyHeader = trTags.get(0);
-			if (!historyHeader.text().trim().contains("Issue History")) {
-				throw new UnrecoverableError("Could not find Issue History header row. Found: `"
-				        + historyHeader.text().trim() + "`");
-			}
-			Element historyEntry = historyHeader.nextElementSibling();
-			if (historyEntry == null) {
-				throw new UnrecoverableError(
-				                             "Issue history structure unknown. Expected to table header after issue history header.");
-			}
-			historyEntry = historyEntry.nextElementSibling();
-			
-			while (historyEntry != null) {
-				
-				final Element dateChild = historyEntry.child(0);
-				if (dateChild == null) {
-					throw new UnrecoverableError("Could not find history entry date column");
-				}
-				final DateTime timestamp = DateTimeUtils.parseDate(dateChild.text().trim());
-				final Element authorChild = historyEntry.child(1);
-				if (authorChild == null) {
-					throw new UnrecoverableError("Could not find history entry author column");
-				}
-				
-				if ((result.isEmpty()) || (!result.last().getTimestamp().isEqual(timestamp))) {
-					final String authorString = authorChild.text().trim();
-					Person author = new Person(authorString, null, null);
-					if ((authorString == null) || authorString.isEmpty()) {
-						author = Tracker.UNKNOWN_PERSON;
-					}
-					result.add(new HistoryElement(getId(), author, timestamp));
-				}
-				
-				final Element fieldChild = historyEntry.child(2);
-				if (fieldChild == null) {
-					throw new UnrecoverableError("Could not find history entry field column");
-				}
-				final Element changeChild = historyEntry.child(3);
-				if (changeChild == null) {
-					throw new UnrecoverableError("Could not find history entry change column");
-				}
-				final String change = changeChild.text().trim();
-				addChangeField(result.last(), fieldChild.text().trim(), change);
-				
-				historyEntry = historyEntry.nextElementSibling();
-			}
-			return result;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#getResolver()
-	 */
-	
-	@Override
 	public String getId() {
 		// PRECONDITIONS
 		
@@ -858,6 +792,11 @@ public class MantisParser implements Parser {
 			// POSTCONDITIONS
 		}
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.bugs.tracker.Parser#getResolver()
+	 */
 	
 	/*
 	 * (non-Javadoc)
@@ -885,9 +824,8 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#getSeverity()
+	 * @see org.mozkito.issues.tracker.Parser#getLastUpdateTimestamp()
 	 */
-	
 	@Override
 	public DateTime getLastUpdateTimestamp() {
 		// PRECONDITIONS
@@ -902,7 +840,7 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#getSiblings()
+	 * @see org.mozkito.bugs.tracker.Parser#getSeverity()
 	 */
 	
 	/**
@@ -931,7 +869,7 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#getStatus()
+	 * @see org.mozkito.bugs.tracker.Parser#getSiblings()
 	 */
 	
 	/**
@@ -966,7 +904,7 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#getSubmitter()
+	 * @see org.mozkito.bugs.tracker.Parser#getStatus()
 	 */
 	
 	@Override
@@ -976,7 +914,7 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#getSummary()
+	 * @see org.mozkito.bugs.tracker.Parser#getSubmitter()
 	 */
 	
 	/*
@@ -997,7 +935,7 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#getType()
+	 * @see org.mozkito.bugs.tracker.Parser#getSummary()
 	 */
 	
 	@Override
@@ -1021,6 +959,11 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see org.mozkito.bugs.tracker.Parser#getType()
+	 */
+	
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.issues.tracker.Parser#getResolution()
 	 */
 	@Override
@@ -1037,11 +980,6 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#getVersion()
-	 */
-	
-	/*
-	 * (non-Javadoc)
 	 * @see org.mozkito.bugs.tracker.Parser#getResolutionTimestamp()
 	 */
 	@Override
@@ -1049,7 +987,7 @@ public class MantisParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			getHistoryElements();
+			parseHistoryElements(this.report.getHistory());
 			return this.resolutionTimestamp;
 		} finally {
 			// POSTCONDITIONS
@@ -1058,7 +996,7 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#setTracker(org.mozkito.bugs.tracker.Tracker)
+	 * @see org.mozkito.bugs.tracker.Parser#getVersion()
 	 */
 	
 	@Override
@@ -1066,7 +1004,7 @@ public class MantisParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			getHistoryElements();
+			parseHistoryElements(this.report.getHistory());
 			return this.resolver;
 		} finally {
 			// POSTCONDITIONS
@@ -1075,7 +1013,7 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#setXMLReport(org.mozkito.bugs.tracker.XmlReport )
+	 * @see org.mozkito.bugs.tracker.Parser#setTracker(org.mozkito.bugs.tracker.Tracker)
 	 */
 	
 	@Override
@@ -1093,6 +1031,11 @@ public class MantisParser implements Parser {
 			// POSTCONDITIONS
 		}
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.bugs.tracker.Parser#setXMLReport(org.mozkito.bugs.tracker.XmlReport )
+	 */
 	
 	/*
 	 * (non-Javadoc)
@@ -1287,14 +1230,69 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#setTracker(org.mozkito.bugs.tracker.Tracker)
+	 * @see org.mozkito.issues.tracker.Parser#parseHistoryElements(org.mozkito.issues.tracker.model.History)
 	 */
 	@Override
-	public void setTracker(final Tracker tracker) {
+	public void parseHistoryElements(final History history) {
 		// PRECONDITIONS
 		
 		try {
-			this.tracker = tracker;
+			if (this.historyElements != null) {
+				return;
+			}
+			final SortedSet<HistoryElement> result = new TreeSet<HistoryElement>();
+			final Element elementById = this.document.getElementById("history_open");
+			final Elements trTags = elementById.getElementsByTag("tr");
+			if (trTags.isEmpty()) {
+				throw new UnrecoverableError("Could not find Issue History header row. Table is empty.");
+			}
+			
+			final Element historyHeader = trTags.get(0);
+			if (!historyHeader.text().trim().contains("Issue History")) {
+				throw new UnrecoverableError("Could not find Issue History header row. Found: `"
+				        + historyHeader.text().trim() + "`");
+			}
+			Element historyEntry = historyHeader.nextElementSibling();
+			if (historyEntry == null) {
+				throw new UnrecoverableError(
+				                             "Issue history structure unknown. Expected to table header after issue history header.");
+			}
+			historyEntry = historyEntry.nextElementSibling();
+			
+			while (historyEntry != null) {
+				
+				final Element dateChild = historyEntry.child(0);
+				if (dateChild == null) {
+					throw new UnrecoverableError("Could not find history entry date column");
+				}
+				final DateTime timestamp = DateTimeUtils.parseDate(dateChild.text().trim());
+				final Element authorChild = historyEntry.child(1);
+				if (authorChild == null) {
+					throw new UnrecoverableError("Could not find history entry author column");
+				}
+				
+				if ((result.isEmpty()) || (!result.last().getTimestamp().isEqual(timestamp))) {
+					final String authorString = authorChild.text().trim();
+					Person author = new Person(authorString, null, null);
+					if ((authorString == null) || authorString.isEmpty()) {
+						author = Tracker.UNKNOWN_PERSON;
+					}
+					result.add(new HistoryElement(this.report.getHistory(), author, timestamp));
+				}
+				
+				final Element fieldChild = historyEntry.child(2);
+				if (fieldChild == null) {
+					throw new UnrecoverableError("Could not find history entry field column");
+				}
+				final Element changeChild = historyEntry.child(3);
+				if (changeChild == null) {
+					throw new UnrecoverableError("Could not find history entry change column");
+				}
+				final String change = changeChild.text().trim();
+				addChangeField(result.last(), fieldChild.text().trim(), change);
+				
+				historyEntry = historyEntry.nextElementSibling();
+			}
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -1305,7 +1303,9 @@ public class MantisParser implements Parser {
 	 * @see org.mozkito.bugs.tracker.Parser#setURI(org.mozkito.bugs.tracker.ReportLink)
 	 */
 	@Override
-	public boolean setURI(final ReportLink reportLink) {
+	@NoneNull
+	public Report setContext(final IssueTracker issueTracker,
+	                         final ReportLink reportLink) {
 		// PRECONDITIONS
 		
 		Elements tables = null;
@@ -1320,38 +1320,54 @@ public class MantisParser implements Parser {
 				if (Logger.logWarn()) {
 					Logger.warn("Could not parse report " + uri + ". RAW check failed!");
 				}
-				return false;
+				return null;
 			}
 			
 			this.md5 = DigestUtils.md5(rawContent.getContent());
 			
-			this.report = createDocument(rawContent);
-			if (this.report == null) {
-				return false;
+			this.xmlReport = createDocument(rawContent);
+			if (this.xmlReport == null) {
+				return null;
 			}
-			this.document = Jsoup.parse(this.report.getContent());
+			this.document = Jsoup.parse(this.xmlReport.getContent());
 			tables = this.document.getElementsByClass("width100");
 			if ((tables == null) || (tables.isEmpty())) {
 				throw new UnrecoverableError("Could not find main table tag for report with id "
-				        + this.report.getUri().toASCIIString());
+				        + this.xmlReport.getUri().toASCIIString());
 			}
 			this.mainContentTable = tables.get(0);
-			return true;
+			this.report = new Report(issueTracker, getId());
+			return this.report;
 		} catch (final UnsupportedProtocolException e) {
 			if (Logger.logError()) {
 				Logger.error(e);
 			}
-			return false;
+			return null;
 		} catch (final FetchException e) {
 			if (Logger.logError()) {
 				Logger.error(e);
 			}
-			return false;
+			return null;
 		} finally {
 			// POSTCONDITIONS
 			Condition.check((tables != null) && (tables.size() > 1), "There must be two tables within bug report.");
 			Condition.notNull(this.document, "The document must not be null");
 			Condition.notNull(this.mainContentTable, "The mainContentTable must not be null");
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.bugs.tracker.Parser#setTracker(org.mozkito.bugs.tracker.Tracker)
+	 */
+	@Override
+	public void setTracker(final Tracker tracker) {
+		// PRECONDITIONS
+		
+		try {
+			this.tracker = tracker;
+		} finally {
+			// POSTCONDITIONS
 		}
 	}
 }

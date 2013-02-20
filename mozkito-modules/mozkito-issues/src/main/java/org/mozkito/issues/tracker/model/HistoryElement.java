@@ -41,7 +41,6 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
 
 import org.joda.time.DateTime;
-
 import org.mozkito.issues.tracker.elements.TextElement;
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persistence.model.DateTimeTuple;
@@ -81,11 +80,11 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	/** The timestamp. */
 	private DateTime                   timestamp;
 	
-	/** The bug id. */
-	private String                     bugId;
-	
 	/** The person container. */
 	private PersonContainer            personContainer     = new PersonContainer();
+	
+	/** The history. */
+	private History                    history;
 	
 	/**
 	 * used by PersistenceUtil.
@@ -97,18 +96,19 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	/**
 	 * Instantiates a new history element.
 	 * 
-	 * @param bugId
-	 *            the bug id
+	 * @param history
+	 *            the history
 	 * @param author
 	 *            the author
 	 * @param timestamp
 	 *            the timestamp
 	 */
 	@NoneNull
-	public HistoryElement(final String bugId, final Person author, final DateTime timestamp) {
-		setBugId(bugId);
+	public HistoryElement(final History history, final Person author, final DateTime timestamp) {
 		setAuthor(author);
 		setTimestamp(timestamp);
+		setHistory(history);
+		history.add(this);
 	}
 	
 	/**
@@ -395,8 +395,9 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	 * 
 	 * @return the bugId
 	 */
+	@Transient
 	public String getBugId() {
-		return this.bugId;
+		return getHistory().getReport().getId();
 	}
 	
 	/**
@@ -492,9 +493,17 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 			element.getChangedDateValues().put(lowerFieldName, getChangedDateValues().get(lowerFieldName));
 		}
 		element.setTimestamp(getTimestamp());
-		element.setBugId(getBugId());
 		element.setAuthor(getAuthor());
 		return element;
+	}
+	
+	/**
+	 * Gets the history.
+	 * 
+	 * @return the history
+	 */
+	public History getHistory() {
+		return this.history;
 	}
 	
 	/**
@@ -587,16 +596,6 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	}
 	
 	/**
-	 * Sets the bug id.
-	 * 
-	 * @param bugId
-	 *            the bugId to set
-	 */
-	public void setBugId(final String bugId) {
-		this.bugId = bugId;
-	}
-	
-	/**
 	 * Sets the changed date values.
 	 * 
 	 * @param changedDateValues
@@ -634,6 +633,16 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	 */
 	private void setChangedStringValues(final Map<String, StringTuple> changedStringValues) {
 		this.changedStringValues = changedStringValues;
+	}
+	
+	/**
+	 * Sets the history.
+	 * 
+	 * @param history
+	 *            the new history
+	 */
+	protected void setHistory(final History history) {
+		this.history = history;
 	}
 	
 	/**

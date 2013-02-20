@@ -31,8 +31,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-
 import org.mozkito.issues.tracker.elements.Resolution;
+import org.mozkito.issues.tracker.model.History;
 import org.mozkito.issues.tracker.model.HistoryElement;
 import org.mozkito.persistence.model.Person;
 
@@ -102,9 +102,11 @@ public class JiraHistoryParser {
 	/**
 	 * Parses the.
 	 * 
+	 * @param history
+	 *            the history
 	 * @return true, if successful
 	 */
-	public boolean parse() {
+	public boolean parse(final History history) {
 		// PRECONDITIONS
 		
 		try {
@@ -180,7 +182,7 @@ public class JiraHistoryParser {
 						                               new Regex(JiraHistoryParser.HISTORY_DATE_TIME_PATTERN));
 					}
 					if ((who != null) && (when != null)) {
-						final HistoryElement historyElement = new HistoryElement(this.reportId, who, when);
+						final HistoryElement historyElement = new HistoryElement(history, who, when);
 						
 						final Elements tbodys = body.getElementsByTag("tbody");
 						if (tbodys.isEmpty()) {
