@@ -13,6 +13,7 @@
 package org.mozkito.issues.tracker.jira;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -38,9 +39,10 @@ import org.mozkito.issues.tracker.elements.Status;
 import org.mozkito.issues.tracker.elements.Type;
 import org.mozkito.issues.tracker.model.AttachmentEntry;
 import org.mozkito.issues.tracker.model.Comment;
+import org.mozkito.issues.tracker.model.IssueTracker;
+import org.mozkito.issues.tracker.model.Report;
 import org.mozkito.persistence.model.Person;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class JiraParserLUCENE2222Test.
  * 
@@ -60,7 +62,9 @@ public class JiraParserLUCENE2222Test {
 			final URI uri = JiraParserLUCENE2222Test.class.getResource(FileUtils.fileSeparator + "LUCENE-2222.xml")
 			                                              .toURI();
 			parser = new JiraParser();
-			assertTrue(parser.setURI(new ReportLink(uri, "LUCENE-2222")));
+			final IssueTracker issueTracker = new IssueTracker();
+			final Report report = parser.setContext(issueTracker, new ReportLink(uri, "LUCENE-2222"));
+			assertNotNull(report);
 		} catch (final URISyntaxException e) {
 			if (Logger.logError()) {
 				Logger.error(e);

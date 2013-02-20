@@ -13,13 +13,13 @@
 package org.mozkito.issues.tracker.jira;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
-import java.util.SortedSet;
 
 import net.ownhero.dev.ioda.DateTimeUtils;
 import net.ownhero.dev.ioda.FileUtils;
@@ -28,13 +28,14 @@ import net.ownhero.dev.regex.Regex;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.issues.tracker.elements.Resolution;
 import org.mozkito.issues.tracker.elements.Severity;
 import org.mozkito.issues.tracker.elements.Status;
 import org.mozkito.issues.tracker.model.AttachmentEntry;
 import org.mozkito.issues.tracker.model.HistoryElement;
+import org.mozkito.issues.tracker.model.IssueTracker;
+import org.mozkito.issues.tracker.model.Report;
 import org.mozkito.persistence.model.EnumTuple;
 import org.mozkito.persistence.model.Person;
 import org.mozkito.persistence.model.StringTuple;
@@ -47,7 +48,9 @@ import org.mozkito.persistence.model.StringTuple;
 public class JiraParserLUCENE2222_NetTest {
 	
 	/** The parser. */
-	private static JiraParser parser;
+	private static JiraParser   parser;
+	private static IssueTracker issueTracker;
+	private static Report       report;
 	
 	/**
 	 * Before class.
@@ -58,7 +61,9 @@ public class JiraParserLUCENE2222_NetTest {
 			final URI uri = JiraParserLUCENE2222_NetTest.class.getResource(FileUtils.fileSeparator + "LUCENE-2222.xml")
 			                                                  .toURI();
 			JiraParserLUCENE2222_NetTest.parser = new JiraParser();
-			assert (JiraParserLUCENE2222_NetTest.parser.setURI(new ReportLink(uri, "LUCENE-2222")));
+			issueTracker = new IssueTracker();
+			report = JiraParserLUCENE2222_NetTest.parser.setContext(issueTracker, new ReportLink(uri, "LUCENE-2222"));
+			assertNotNull(report);
 		} catch (final URISyntaxException e) {
 			if (Logger.logError()) {
 				Logger.error(e);
@@ -124,11 +129,11 @@ public class JiraParserLUCENE2222_NetTest {
 	 */
 	@Test
 	public void testGetHistoryElements() {
-		final SortedSet<HistoryElement> historyElements = JiraParserLUCENE2222_NetTest.parser.getHistoryElements();
-		assertEquals(3, historyElements.size());
+		JiraParserLUCENE2222_NetTest.parser.parseHistoryElements(report.getHistory());
+		assertEquals(3, report.getHistory().size());
 		
 		int counter = 0;
-		for (final HistoryElement hElem : historyElements) {
+		for (final HistoryElement hElem : report.getHistory()) {
 			switch (counter) {
 				case 0:
 					final Person author = hElem.getAuthor();

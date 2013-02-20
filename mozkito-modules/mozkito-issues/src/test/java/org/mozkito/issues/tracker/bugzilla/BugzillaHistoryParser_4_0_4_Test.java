@@ -27,10 +27,10 @@ import net.ownhero.dev.kisa.Logger;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.mozkito.issues.tracker.elements.Priority;
-import org.mozkito.issues.tracker.model.History;
 import org.mozkito.issues.tracker.model.HistoryElement;
+import org.mozkito.issues.tracker.model.IssueTracker;
+import org.mozkito.issues.tracker.model.Report;
 import org.mozkito.persistence.model.Person;
 
 // TODO: Auto-generated Javadoc
@@ -74,17 +74,14 @@ public class BugzillaHistoryParser_4_0_4_Test {
 			
 			final BugzillaHistoryParser_4_0_4 historyParser = new BugzillaHistoryParser_4_0_4(this.uri642368history,
 			                                                                                  "642368");
-			
-			if (!historyParser.parse()) {
+			final Report report = new Report(new IssueTracker(), "642368");
+			if (!historyParser.parse(report.getHistory())) {
 				fail();
 			}
 			final SortedSet<HistoryElement> historyElements = historyParser.getHistory();
-			final History history = new History("642368");
-			for (final HistoryElement hElem : historyElements) {
-				history.add(hElem);
-			}
-			assertEquals(1, history.size());
-			final Iterator<HistoryElement> hElemIter = history.iterator();
+			assertEquals(1, historyElements.size());
+			assertEquals(report.getHistory().size(), historyElements.size());
+			final Iterator<HistoryElement> hElemIter = report.getHistory().iterator();
 			final HistoryElement hElem = hElemIter.next();
 			assertEquals(3, hElem.size());
 			assertEquals("rhino", hElem.getAuthor().getUsernames().iterator().next());
@@ -120,32 +117,30 @@ public class BugzillaHistoryParser_4_0_4_Test {
 		                                                                                  "114562");
 		
 		try {
-			if (!historyParser.parse()) {
+			
+			final Report report = new Report(new IssueTracker(), "114562");
+			if (!historyParser.parse(report.getHistory())) {
 				fail();
 			}
-			final SortedSet<HistoryElement> historyElements = historyParser.getHistory();
-			final History history = new History("114562");
-			for (final HistoryElement hElem : historyElements) {
-				history.add(hElem);
-			}
+			
 			final DateTime resolutionTimestamp = historyParser.getResolutionTimestamp();
 			final Person resolver = historyParser.getResolver();
 			
-			assertEquals(3, history.size());
-			final Iterator<HistoryElement> hElemIter = history.iterator();
+			assertEquals(3, report.getHistory().size());
+			final Iterator<HistoryElement> hElemIter = report.getHistory().iterator();
 			HistoryElement hElem = hElemIter.next();
 			assertEquals(1, hElem.size());
 			assertEquals("mik.kersten", hElem.getAuthor().getUsernames().iterator().next());
 			assertEquals(DateTimeUtils.parseDate("2005-11-01 11:43:19 EST"), hElem.getTimestamp());
 			assertTrue(hElem.contains("priority"));
-			assertEquals(Priority.NORMAL, history.getOldValue("priority", hElem));
+			assertEquals(Priority.NORMAL, report.getHistory().getOldValue("priority", hElem));
 			assertEquals(BugzillaParser.getPriority("P1"), hElem.get("priority").getSecond());
 			hElem = hElemIter.next();
 			assertEquals(1, hElem.size());
 			assertEquals("mik.kersten", hElem.getAuthor().getUsernames().iterator().next());
 			assertEquals(DateTimeUtils.parseDate("2005-11-01 11:52:13 EST"), hElem.getTimestamp());
 			assertTrue(hElem.contains("summary"));
-			assertEquals("add support for Bugzilla 2.20", history.getOldValue("summary", hElem));
+			assertEquals("add support for Bugzilla 2.20", report.getHistory().getOldValue("summary", hElem));
 			assertEquals("add support for Bugzilla 2 20", hElem.get("summary").getSecond());
 			hElem = hElemIter.next();
 			assertEquals(3, hElem.size());
@@ -154,11 +149,11 @@ public class BugzillaHistoryParser_4_0_4_Test {
 			assertTrue(hElem.contains("status"));
 			assertTrue(hElem.contains("resolution"));
 			assertTrue(hElem.contains("summary"));
-			assertEquals(BugzillaParser.getStatus("NEW"), history.getOldValue("status", hElem));
+			assertEquals(BugzillaParser.getStatus("NEW"), report.getHistory().getOldValue("status", hElem));
 			assertEquals(BugzillaParser.getStatus("RESOLVED"), hElem.get("status").getSecond());
-			assertEquals(BugzillaParser.getResolution("---"), history.getOldValue("resolution", hElem));
+			assertEquals(BugzillaParser.getResolution("---"), report.getHistory().getOldValue("resolution", hElem));
 			assertEquals(BugzillaParser.getResolution("FIXED"), hElem.get("resolution").getSecond());
-			assertEquals("add support for Bugzilla 2 20", history.getOldValue("summary", hElem));
+			assertEquals("add support for Bugzilla 2 20", report.getHistory().getOldValue("summary", hElem));
 			assertEquals("add basic support for Bugzilla 2.20", hElem.get("summary").getSecond());
 			assertEquals("mik.kersten", resolver.getUsernames().iterator().next());
 			assertEquals(DateTimeUtils.parseDate("2005-11-03 23:17:37 EST"), resolutionTimestamp);

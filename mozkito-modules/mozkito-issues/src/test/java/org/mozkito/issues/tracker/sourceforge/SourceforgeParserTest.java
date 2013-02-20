@@ -21,7 +21,6 @@ import static org.junit.Assert.fail;
 import java.net.URISyntaxException;
 import java.util.Iterator;
 import java.util.List;
-import java.util.SortedSet;
 import java.util.regex.Pattern;
 
 import net.ownhero.dev.ioda.DateTimeUtils;
@@ -32,7 +31,6 @@ import net.ownhero.dev.regex.Regex;
 import org.joda.time.DateTime;
 import org.junit.Ignore;
 import org.junit.Test;
-
 import org.mozkito.issues.exceptions.InvalidParameterException;
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.issues.tracker.elements.Priority;
@@ -42,9 +40,10 @@ import org.mozkito.issues.tracker.elements.Type;
 import org.mozkito.issues.tracker.model.AttachmentEntry;
 import org.mozkito.issues.tracker.model.Comment;
 import org.mozkito.issues.tracker.model.HistoryElement;
+import org.mozkito.issues.tracker.model.IssueTracker;
+import org.mozkito.issues.tracker.model.Report;
 import org.mozkito.persistence.model.Person;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class SourceforgeParserTest.
  * 
@@ -90,16 +89,19 @@ public class SourceforgeParserTest {
 	public void testIssueHistory() throws InvalidParameterException {
 		
 		try {
-			
+			final IssueTracker issueTracker = new IssueTracker();
+			final Report report = new Report(issueTracker, "0");
 			final SourceforgeParser parser = new SourceforgeParser(Type.BUG);
-			parser.setURI(new ReportLink(getClass().getResource(FileUtils.fileSeparator
-			                                                            + "sourceforge_issue_3107411.html").toURI(),
-			                             "3107411"));
+			parser.setContext(issueTracker,
+			                  new ReportLink(
+			                                 getClass().getResource(FileUtils.fileSeparator
+			                                                                + "sourceforge_issue_3107411.html").toURI(),
+			                                 "3107411"));
 			
-			final SortedSet<HistoryElement> history = parser.getHistoryElements();
-			assertEquals(9, history.size());
+			parser.parseHistoryElements(report.getHistory());
+			assertEquals(9, report.getHistory().size());
 			
-			final Iterator<HistoryElement> hElemIter = history.iterator();
+			final Iterator<HistoryElement> hElemIter = report.getHistory().iterator();
 			
 			assertTrue(hElemIter.hasNext());
 			HistoryElement hElem = hElemIter.next();
@@ -264,15 +266,17 @@ public class SourceforgeParserTest {
 	@Ignore
 	public void testIssueParser() throws InvalidParameterException {
 		try {
-			
-			final SourceforgeTracker tracker = new SourceforgeTracker();
+			final IssueTracker issueTracker = new IssueTracker();
+			final SourceforgeTracker tracker = new SourceforgeTracker(issueTracker);
 			tracker.setUri(getClass().getResource(FileUtils.fileSeparator).toURI());
 			
 			final SourceforgeParser parser = new SourceforgeParser(Type.BUG);
 			parser.setTracker(tracker);
-			parser.setURI(new ReportLink(getClass().getResource(FileUtils.fileSeparator
-			                                                            + "sourceforge_issue_1887104.html").toURI(),
-			                             "1887104"));
+			parser.setContext(issueTracker,
+			                  new ReportLink(
+			                                 getClass().getResource(FileUtils.fileSeparator
+			                                                                + "sourceforge_issue_1887104.html").toURI(),
+			                                 "1887104"));
 			
 			assertTrue(parser.getAssignedTo() != null);
 			assertTrue(parser.getAssignedTo().getFullnames().contains("Nobody/Anonymous"));
