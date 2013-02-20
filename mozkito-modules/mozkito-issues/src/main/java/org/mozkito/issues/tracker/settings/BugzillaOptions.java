@@ -27,18 +27,20 @@ import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.mozkito.issues.exceptions.InvalidParameterException;
 import org.mozkito.issues.tracker.Tracker;
 import org.mozkito.issues.tracker.bugzilla.BugzillaTracker;
+import org.mozkito.issues.tracker.model.IssueTracker;
 
 /**
  * The Class BugzillaOptions.
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class BugzillaOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tracker, BugzillaOptions>> implements
+public class BugzillaOptions extends ArgumentSetOptions<Boolean, ArgumentSet<Boolean, BugzillaOptions>> implements
         ITrackerOptions {
 	
 	/** The overview uri arg. */
@@ -49,9 +51,6 @@ public class BugzillaOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tra
 	
 	/** The tracker uri options. */
 	private Options                trackerURIOptions;
-	
-	/** The tracker. */
-	private BugzillaTracker        tracker;
 	
 	/** The overview argument. */
 	private URIArgument            overviewArgument;
@@ -121,15 +120,14 @@ public class BugzillaOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tra
 	 */
 	@Override
 	@NoneNull
-	public Tracker init() {
+	public Boolean init() {
 		// PRECONDITIONS
 		
 		try {
-			
 			this.overviewArgument = getSettings().getArgument(getOverviewURI());
 			this.bugzillaVersionArgument = getSettings().getArgument(getBugzillaVersion());
-			this.tracker = new BugzillaTracker();
-			return this.tracker;
+			
+			return true;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -148,14 +146,14 @@ public class BugzillaOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tra
 		map.put(option.getName(), option);
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
 	 */
 	@Override
-	@NoneNull
-	public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> set) throws ArgumentRegistrationException,
-	                                                                            SettingsParseError {
+	public Map<String, IOptions<?, ?>> requirements(@NotNull final ArgumentSet<?, ?> set) throws ArgumentRegistrationException,
+	                                                                                     SettingsParseError {
 		// PRECONDITIONS
 		
 		try {
@@ -179,20 +177,25 @@ public class BugzillaOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tra
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.settings.ITrackerOptions#setup(java.net.URI, java.lang.String, java.lang.String,
-	 * net.ownhero.dev.ioda.ProxyConfig)
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.issues.tracker.settings.ITrackerOptions#setup(org.mozkito.issues.tracker.model.IssueTracker,
+	 *      java.net.URI, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void setup(final URI trackerUri,
-	                  final String trackerUser,
-	                  final String trackerPassword) {
+	public Tracker setup(final IssueTracker issueTracker,
+	                     final URI trackerUri,
+	                     final String trackerUser,
+	                     final String trackerPassword) {
 		// PRECONDITIONS
 		
 		try {
-			this.tracker.setup(trackerUri, trackerUser, trackerPassword, this.overviewArgument.getValue(),
-			                   this.bugzillaVersionArgument.getValue());
+			getSettings().getArgumentSet(this).getValue();
+			final BugzillaTracker bugzillaTracker = new BugzillaTracker(issueTracker);
+			bugzillaTracker.setup(trackerUri, trackerUser, trackerPassword, this.overviewArgument.getValue(),
+			                      this.bugzillaVersionArgument.getValue());
+			return bugzillaTracker;
 			
 		} catch (final InvalidParameterException e) {
 			throw new UnrecoverableError(e);

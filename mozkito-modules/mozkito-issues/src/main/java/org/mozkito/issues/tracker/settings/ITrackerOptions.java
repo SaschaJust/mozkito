@@ -14,6 +14,9 @@ package org.mozkito.issues.tracker.settings;
 
 import java.net.URI;
 
+import org.mozkito.issues.tracker.Tracker;
+import org.mozkito.issues.tracker.model.IssueTracker;
+
 /**
  * The Interface ITrackerOptions.
  * 
@@ -23,13 +26,20 @@ public interface ITrackerOptions {
 	
 	/**
 	 * Setup.
-	 *
-	 * @param trackerUri the tracker uri
-	 * @param trackerUser the tracker user
-	 * @param trackerPassword the tracker password
+	 * 
+	 * @param issueTracker
+	 *            the issue tracker
+	 * @param trackerUri
+	 *            the tracker uri
+	 * @param trackerUser
+	 *            the tracker user
+	 * @param trackerPassword
+	 *            the tracker password
+	 * @return the tracker
 	 */
-	void setup(URI trackerUri,
-	           String trackerUser,
-	           String trackerPassword);
+	Tracker setup(IssueTracker issueTracker,
+	              URI trackerUri,
+	              String trackerUser,
+	              String trackerPassword);
 	
 }

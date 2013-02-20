@@ -15,6 +15,7 @@ package org.mozkito.issues.tracker.settings;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
@@ -33,6 +34,9 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 import org.mozkito.issues.messages.Messages;
 import org.mozkito.issues.tracker.Tracker;
 import org.mozkito.issues.tracker.TrackerType;
+import org.mozkito.issues.tracker.model.IssueTracker;
+import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.settings.DatabaseOptions;
 
 /**
  * The Class TrackerOptions.
@@ -65,21 +69,26 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 	/** The tracker uri options. */
 	private Options                           trackerURIOptions;
 	
+	private final DatabaseOptions             databaseOptions;
+	
 	/**
 	 * Instantiates a new tracker options.
 	 * 
 	 * @param argumentSet
 	 *            the argument set
+	 * @param databaseOptions
+	 *            the database options
 	 * @param requirement
 	 *            the requirement
 	 * @throws ArgumentRegistrationException
 	 *             the argument registration exception
 	 */
 	@NoneNull
-	public TrackerOptions(final ArgumentSet<?, ?> argumentSet, final Requirement requirement)
-	        throws ArgumentRegistrationException {
+	public TrackerOptions(final ArgumentSet<?, ?> argumentSet, final DatabaseOptions databaseOptions,
+	        final Requirement requirement) throws ArgumentRegistrationException {
 		super(argumentSet, "tracker", "Tracker settings.", requirement); //$NON-NLS-1$ //$NON-NLS-2$
 		argumentSet.getSettings();
+		this.databaseOptions = databaseOptions;
 	}
 	
 	/**
@@ -123,22 +132,29 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 			final String trackerUser = getSettings().getArgument(getTrackerUser()).getValue();
 			final String trackerPassword = getSettings().getArgument(getTrackerPassword()).getValue();
 			
+			final ArgumentSet<PersistenceUtil, DatabaseOptions> databaseArguments = getSettings().getArgumentSet(this.databaseOptions);
+			final PersistenceUtil util = databaseArguments.getValue();
+			IssueTracker issueTracker = null;
+			
+			try {
+				issueTracker = IssueTracker.loadIssueTracker(util);
+			} catch (final NoSuchElementException e) {
+				issueTracker = new IssueTracker();
+			}
+			
 			switch (trackerTypeArgument.getValue()) {
 				case BUGZILLA:
-					tracker = getSettings().getArgumentSet(this.bugzillaOptions).getValue();
-					this.bugzillaOptions.setup(trackerUri, trackerUser, trackerPassword);
+					getSettings().getArgumentSet(this.bugzillaOptions).getValue();
+					tracker = this.bugzillaOptions.setup(issueTracker, trackerUri, trackerUser, trackerPassword);
 					break;
 				case JIRA:
-					tracker = getSettings().getArgumentSet(this.jiraOptions).getValue();
-					this.jiraOptions.setup(trackerUri, trackerUser, trackerPassword);
+					tracker = this.jiraOptions.setup(issueTracker, trackerUri, trackerUser, trackerPassword);
 					break;
 				case MANTIS:
-					tracker = getSettings().getArgumentSet(this.mantisOptions).getValue();
-					this.mantisOptions.setup(trackerUri, trackerUser, trackerPassword);
+					tracker = this.mantisOptions.setup(issueTracker, trackerUri, trackerUser, trackerPassword);
 					break;
 				case SOURCEFORGE:
-					tracker = getSettings().getArgumentSet(this.sourceforgeOptions).getValue();
-					this.sourceforgeOptions.setup(trackerUri, trackerUser, trackerPassword);
+					tracker = this.sourceforgeOptions.setup(issueTracker, trackerUri, trackerUser, trackerPassword);
 					break;
 				default:
 					throw new UnrecoverableError(String.format("Could not handle %s: %s", trackerTypeArgument.getTag(), //$NON-NLS-1$
@@ -223,6 +239,8 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 			if (this.sourceforgeOptions.required()) {
 				req(this.sourceforgeOptions, map);
 			}
+			
+			req(this.databaseOptions, map);
 			
 			return map;
 		} finally {

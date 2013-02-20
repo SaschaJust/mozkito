@@ -30,23 +30,21 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import org.mozkito.issues.exceptions.InvalidParameterException;
 import org.mozkito.issues.tracker.Tracker;
 import org.mozkito.issues.tracker.jira.JiraTracker;
+import org.mozkito.issues.tracker.model.IssueTracker;
 
 /**
  * The Class JiraOptions.
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class JiraOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tracker, JiraOptions>> implements
+public class JiraOptions extends ArgumentSetOptions<Boolean, ArgumentSet<Boolean, JiraOptions>> implements
         ITrackerOptions {
 	
 	/** The project key arg. */
-	private Options     projectKeyOptions;
+	private Options projectKeyOptions;
 	
 	/** The project name. */
-	private String      projectName;
-	
-	/** The tracker. */
-	private JiraTracker tracker;
+	private String  projectName;
 	
 	/**
 	 * Instantiates a new jira options.
@@ -77,14 +75,13 @@ public class JiraOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tracker
 	 */
 	@Override
 	@NoneNull
-	public Tracker init() {
+	public Boolean init() {
 		// PRECONDITIONS
 		
 		try {
 			
 			this.projectName = getSettings().getArgument(getProjectKey()).getValue();
-			this.tracker = new JiraTracker();
-			return this.tracker;
+			return true;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -135,13 +132,16 @@ public class JiraOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tracker
 	 * net.ownhero.dev.ioda.ProxyConfig)
 	 */
 	@Override
-	public void setup(final URI trackerUri,
-	                  final String trackerUser,
-	                  final String trackerPassword) {
+	public Tracker setup(final IssueTracker issueTracker,
+	                     final URI trackerUri,
+	                     final String trackerUser,
+	                     final String trackerPassword) {
 		// PRECONDITIONS
 		
 		try {
-			this.tracker.setup(trackerUri, trackerUser, trackerPassword, this.projectName);
+			getSettings().getArgumentSet(this).getValue();
+			final JiraTracker tracker = new JiraTracker(issueTracker);
+			tracker.setup(trackerUri, trackerUser, trackerPassword, this.projectName);
 		} catch (final InvalidParameterException e) {
 			throw new UnrecoverableError(e);
 		} finally {

@@ -36,20 +36,19 @@ import net.ownhero.dev.kisa.Logger;
 import org.mozkito.issues.exceptions.InvalidParameterException;
 import org.mozkito.issues.tracker.Tracker;
 import org.mozkito.issues.tracker.mantis.MantisTracker;
+import org.mozkito.issues.tracker.model.IssueTracker;
 
 /**
  * The Class MantisOptions.
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class MantisOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tracker, MantisOptions>> implements
+public class MantisOptions extends ArgumentSetOptions<Boolean, ArgumentSet<Boolean, MantisOptions>> implements
         ITrackerOptions {
-	
-	/** The tracker. */
-	private MantisTracker                                            tracker;
 	
 	/** The csv options. */
 	private net.ownhero.dev.hiari.settings.InputFileArgument.Options csvOptions;
+	private Collection<String>                                       links = null;
 	
 	/**
 	 * Instantiates a new mantis options.
@@ -71,12 +70,12 @@ public class MantisOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Track
 	 */
 	@Override
 	@NoneNull
-	public Tracker init() {
+	public Boolean init() {
 		// PRECONDITIONS
 		
 		try {
 			final File csvFile = getSettings().getArgument(this.csvOptions).getValue();
-			this.tracker = new MantisTracker();
+			
 			if (csvFile.exists()) {
 				final Collection<String> links = new HashSet<>();
 				try (final BufferedReader reader = new BufferedReader(new FileReader(csvFile))) {
@@ -116,9 +115,10 @@ public class MantisOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Track
 					Logger.info("Added %s bug IDs from overview CSV file %s.", String.valueOf(links.size()),
 					            csvFile.getAbsolutePath());
 				}
-				this.tracker.setReportIds(links);
+				
+				this.links = links;
 			}
-			return this.tracker;
+			return true;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -157,13 +157,20 @@ public class MantisOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Track
 	 * net.ownhero.dev.ioda.ProxyConfig)
 	 */
 	@Override
-	public void setup(final URI trackerUri,
-	                  final String trackerUser,
-	                  final String trackerPassword) {
+	public Tracker setup(final IssueTracker issueTracker,
+	                     final URI trackerUri,
+	                     final String trackerUser,
+	                     final String trackerPassword) {
 		// PRECONDITIONS
 		
 		try {
-			this.tracker.setup(trackerUri, trackerUser, trackerPassword);
+			getSettings().getArgumentSet(this).getValue();
+			final MantisTracker tracker = new MantisTracker(issueTracker);
+			if (this.links != null) {
+				tracker.setReportIds(this.links);
+			}
+			tracker.setup(trackerUri, trackerUser, trackerPassword);
+			return tracker;
 		} catch (final InvalidParameterException e) {
 			throw new UnrecoverableError(e);
 			

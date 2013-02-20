@@ -30,6 +30,7 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import org.mozkito.issues.exceptions.InvalidParameterException;
 import org.mozkito.issues.tracker.Tracker;
 import org.mozkito.issues.tracker.elements.Type;
+import org.mozkito.issues.tracker.model.IssueTracker;
 import org.mozkito.issues.tracker.sourceforge.SourceforgeTracker;
 
 /**
@@ -37,7 +38,7 @@ import org.mozkito.issues.tracker.sourceforge.SourceforgeTracker;
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class SourceforgeOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tracker, SourceforgeOptions>> implements
+public class SourceforgeOptions extends ArgumentSetOptions<Boolean, ArgumentSet<Boolean, SourceforgeOptions>> implements
         ITrackerOptions {
 	
 	/** The at id arg. */
@@ -57,9 +58,6 @@ public class SourceforgeOptions extends ArgumentSetOptions<Tracker, ArgumentSet<
 	
 	/** The bug type argument. */
 	private EnumArgument<Type>         bugTypeArgument;
-	
-	/** The tracker. */
-	private SourceforgeTracker         tracker;
 	
 	/**
 	 * Instantiates a new sourceforge options.
@@ -126,7 +124,7 @@ public class SourceforgeOptions extends ArgumentSetOptions<Tracker, ArgumentSet<
 	 */
 	@Override
 	@NoneNull
-	public Tracker init() {
+	public Boolean init() {
 		// PRECONDITIONS
 		
 		try {
@@ -134,8 +132,7 @@ public class SourceforgeOptions extends ArgumentSetOptions<Tracker, ArgumentSet<
 			this.groupIdArgument = getSettings().getArgument(getGroupIdArg());
 			this.atIdArgument = getSettings().getArgument(getAtIdArg());
 			this.bugTypeArgument = getSettings().getArgument(getBugTypeArg());
-			this.tracker = new SourceforgeTracker();
-			return this.tracker;
+			return true;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -195,14 +192,18 @@ public class SourceforgeOptions extends ArgumentSetOptions<Tracker, ArgumentSet<
 	 * net.ownhero.dev.ioda.ProxyConfig)
 	 */
 	@Override
-	public void setup(final URI trackerUri,
-	                  final String trackerUser,
-	                  final String trackerPassword) {
+	public Tracker setup(final IssueTracker issueTracker,
+	                     final URI trackerUri,
+	                     final String trackerUser,
+	                     final String trackerPassword) {
 		// PRECONDITIONS
 		
 		try {
-			this.tracker.setup(trackerUri, trackerUser, trackerPassword, this.groupIdArgument.getValue(),
-			                   this.atIdArgument.getValue(), this.bugTypeArgument.getValue());
+			getSettings().getArgumentSet(this).getValue();
+			final SourceforgeTracker tracker = new SourceforgeTracker(issueTracker);
+			tracker.setup(trackerUri, trackerUser, trackerPassword, this.groupIdArgument.getValue(),
+			              this.atIdArgument.getValue(), this.bugTypeArgument.getValue());
+			return tracker;
 		} catch (final InvalidParameterException e) {
 			throw new UnrecoverableError(e);
 			
