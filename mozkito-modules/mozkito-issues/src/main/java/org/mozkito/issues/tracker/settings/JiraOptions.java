@@ -142,6 +142,7 @@ public class JiraOptions extends ArgumentSetOptions<Boolean, ArgumentSet<Boolean
 			getSettings().getArgumentSet(this).getValue();
 			final JiraTracker tracker = new JiraTracker(issueTracker);
 			tracker.setup(trackerUri, trackerUser, trackerPassword, this.projectName);
+			return tracker;
 		} catch (final InvalidParameterException e) {
 			throw new UnrecoverableError(e);
 		} finally {
