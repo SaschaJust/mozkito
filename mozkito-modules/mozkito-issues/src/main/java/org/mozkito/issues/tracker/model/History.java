@@ -25,6 +25,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Transient;
 
@@ -300,6 +301,7 @@ public class History implements Annotated, Iterable<HistoryElement> {
 	 * @return the bugId
 	 */
 	@Id
+	@OneToOne (fetch = FetchType.EAGER, cascade = {})
 	public Report getReport() {
 		return this.report;
 	}
