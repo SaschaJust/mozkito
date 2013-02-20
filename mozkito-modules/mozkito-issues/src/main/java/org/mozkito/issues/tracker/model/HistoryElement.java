@@ -128,13 +128,13 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 		for (final String fieldName : values.keySet()) {
 			final String lowerFieldName = fieldName.toLowerCase();
 			
-			final Report report = new Report("<unknown>");
 			Class<?> type = null;
 			
 			if (values.get(fieldName).getFirst() == null) {
 				if (values.get(fieldName).getSecond() == null) {
-					if (report.getField(lowerFieldName) != null) {
-						type = report.getField(lowerFieldName).getClass();
+					final Object defaultFieldValue = Report.getDefaultField(lowerFieldName);
+					if (defaultFieldValue != null) {
+						type = defaultFieldValue.getClass();
 					} else {
 						final Tuple<?, ?> object = get(lowerFieldName);
 						
