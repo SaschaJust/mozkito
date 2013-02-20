@@ -153,6 +153,9 @@ public class Report implements Annotated, Comparable<Report> {
 	/** The keywords. */
 	private Set<String>           keywords          = new HashSet<String>();
 	
+	/** The tracker. */
+	private IssueTracker          tracker;
+	
 	/**
 	 * Instantiates a new report.
 	 * 
@@ -166,13 +169,16 @@ public class Report implements Annotated, Comparable<Report> {
 	/**
 	 * Instantiates a new report.
 	 * 
+	 * @param tracker
+	 *            the tracker
 	 * @param id
 	 *            the id
 	 */
-	public Report(final String id) {
-		this();
+	public Report(final IssueTracker tracker, final String id) {
 		setId(id);
-		setHistory(new History(getId()));
+		setHistory(new History(this));
+		setTracker(tracker);
+		tracker.addReport(this);
 	}
 	
 	/**
@@ -206,23 +212,6 @@ public class Report implements Annotated, Comparable<Report> {
 		setComments(comments);
 		comment.setBugReport(this);
 		Condition.check(ret, "Could not add comment with id %s (already existing).", comment.getId());
-		return ret;
-	}
-	
-	/**
-	 * Adds the history element.
-	 * 
-	 * @param historyElement
-	 *            the history element
-	 * @return true, if successful
-	 */
-	@Transient
-	public boolean addHistoryElement(@NotNull final HistoryElement historyElement) {
-		Condition.notNull(getHistory(), "The history handler must not be null when adding a history element.");
-		final History history = getHistory();
-		final boolean ret = history.add(historyElement);
-		setHistory(history);
-		historyElement.setBugId(getId());
 		return ret;
 	}
 	
@@ -718,6 +707,15 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Gets the tracker.
+	 * 
+	 * @return the tracker
+	 */
+	public IssueTracker getTracker() {
+		return this.tracker;
+	}
+	
+	/**
 	 * Gets the type.
 	 * 
 	 * @return the type
@@ -1120,6 +1118,16 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Sets the tracker.
+	 * 
+	 * @param tracker
+	 *            the new tracker
+	 */
+	public void setTracker(final IssueTracker tracker) {
+		this.tracker = tracker;
+	}
+	
+	/**
 	 * Sets the type.
 	 * 
 	 * @param type
@@ -1171,7 +1179,7 @@ public class Report implements Annotated, Comparable<Report> {
 		while (iterator.hasPrevious()) {
 			final HistoryElement element = iterator.previous();
 			if (interval.contains(element.getTimestamp())) {
-				final History historyPatch = new History(getId());
+				final History historyPatch = new History(this);
 				historyPatch.add(element);
 				reports.add(report = historyPatch.rollback(report, element.getTimestamp()));
 			} else {
