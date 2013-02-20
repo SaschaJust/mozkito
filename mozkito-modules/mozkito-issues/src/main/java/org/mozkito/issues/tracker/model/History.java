@@ -301,7 +301,7 @@ public class History implements Annotated, Iterable<HistoryElement> {
 	 * @return the bugId
 	 */
 	@Id
-	@OneToOne (fetch = FetchType.EAGER, cascade = {})
+	@OneToOne (fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
 	public Report getReport() {
 		return this.report;
 	}

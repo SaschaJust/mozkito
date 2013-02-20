@@ -293,6 +293,7 @@ public class IssueTracker implements Annotated {
 	 * @param reports
 	 *            the reports
 	 */
+	@OneToMany (cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
 	public void setReports(final Map<String, Report> reports) {
 		this.reports = reports;
 	}
