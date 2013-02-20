@@ -52,6 +52,7 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
+
 import org.mozkito.issues.tracker.elements.Priority;
 import org.mozkito.issues.tracker.elements.Resolution;
 import org.mozkito.issues.tracker.elements.Severity;
@@ -70,6 +71,8 @@ import org.mozkito.persistence.model.PersonContainer;
 @Entity
 @Table (name = "report")
 public class Report implements Annotated, Comparable<Report> {
+	
+	private static final Report   DEFAULT_REPORT    = new Report();
 	
 	/** The Constant HASH_SIZE. */
 	private static final int      HASH_SIZE         = 33;
@@ -156,11 +159,20 @@ public class Report implements Annotated, Comparable<Report> {
 	/**
 	 * Instantiates a new report.
 	 * 
-	 * @deprecated Should never be used. Exists to fulfill OpenJPA requirements.
 	 */
-	@Deprecated
-	public Report() {
+	private Report() {
 		super();
+	}
+	
+	/**
+	 * Instantiates a new report.
+	 * 
+	 * @param tracker
+	 *            the tracker
+	 */
+	public Report(final Object tracker) {
+		this();
+		// stub
 	}
 	
 	/**
@@ -417,6 +429,19 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Gets the default field.
+	 * 
+	 * @param lowerFieldName
+	 *            the lower field name
+	 * @return the default field
+	 * @throws IllegalArgumentException
+	 *             the illegal argument exception
+	 */
+	public Object getDefaultField(@NotNull final String lowerFieldName) throws IllegalArgumentException {
+		return DEFAULT_REPORT.getField(lowerFieldName);
+	}
+	
+	/**
 	 * Gets the description.
 	 * 
 	 * @return the description
@@ -434,8 +459,9 @@ public class Report implements Annotated, Comparable<Report> {
 	 * @param lowerFieldName
 	 *            the lower field name
 	 * @return the field
+	 * @throws IllegalArgumentException
 	 */
-	public Object getField(final String lowerFieldName) {
+	public Object getField(@NotNull final String lowerFieldName) throws IllegalArgumentException {
 		final Method[] methods = this.getClass().getDeclaredMethods();
 		final String getter = "get" + lowerFieldName;
 		
@@ -443,27 +469,13 @@ public class Report implements Annotated, Comparable<Report> {
 			if (method.getName().equalsIgnoreCase(getter)) {
 				try {
 					return method.invoke(this);
-				} catch (final IllegalArgumentException e) {
-					if (Logger.logError()) {
-						Logger.error(e);
-					}
-				} catch (final IllegalAccessException e) {
-					if (Logger.logError()) {
-						Logger.error(e);
-					}
-				} catch (final InvocationTargetException e) {
-					if (Logger.logError()) {
-						Logger.error(e);
-					}
+				} catch (final IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
+					throw new IllegalArgumentException("Did not find a matching field for: " + lowerFieldName, e);
 				}
 			}
 		}
 		
-		if (Logger.logWarn()) {
-			Logger.warn("Did not find a matching field for: " + lowerFieldName);
-		}
-		
-		return null;
+		throw new IllegalArgumentException("Did not find a matching field for: " + lowerFieldName);
 	}
 	
 	/**
