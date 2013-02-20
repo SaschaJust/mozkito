@@ -28,7 +28,8 @@ import net.ownhero.dev.kisa.Logger;
 import org.mozkito.issues.exceptions.InvalidParameterException;
 import org.mozkito.issues.messages.Messages;
 import org.mozkito.issues.tracker.model.Comment;
-import org.mozkito.issues.tracker.model.HistoryElement;
+import org.mozkito.issues.tracker.model.History;
+import org.mozkito.issues.tracker.model.IssueTracker;
 import org.mozkito.issues.tracker.model.Report;
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
@@ -66,14 +67,20 @@ public abstract class Tracker {
 	/** The report links. */
 	private BlockingQueue<ReportLink> reportLinks    = new LinkedBlockingQueue<ReportLink>();
 	
+	private final IssueTracker        issueTracker;
+	
 	/** The Constant unknownPerson. */
 	public static final Person        UNKNOWN_PERSON = new Person("<unknown>", null, null);    //$NON-NLS-1$
 	                                                                                            
 	/**
 	 * Instantiates a new tracker.
+	 * 
+	 * @param issueTracker
+	 *            the issue tracker
 	 */
-	public Tracker() {
+	public Tracker(final IssueTracker issueTracker) {
 		Condition.notNull(this.reportLinks, Messages.getString("Tracker.reportLinks_null")); //$NON-NLS-1$
+		this.issueTracker = issueTracker;
 	}
 	
 	/**
@@ -208,7 +215,7 @@ public abstract class Tracker {
 		final String id = parser.getId();
 		Condition.notNull(id, Messages.getString("Tracker.bugid_null")); //$NON-NLS-1$
 		
-		final Report report = new Report(id);
+		final Report report = new Report(this.issueTracker, id);
 		report.setAttachmentEntries(parser.getAttachmentEntries());
 		if (parser.getAssignedTo() != null) {
 			report.setAssignedTo(parser.getAssignedTo());
@@ -245,11 +252,8 @@ public abstract class Tracker {
 		if (parser.getScmFixVersion() != null) {
 			report.setScmFixVersion(parser.getScmFixVersion());
 		}
-		
-		for (final HistoryElement helement : parser.getHistoryElements()) {
-			report.addHistoryElement(helement);
-		}
-		
+		final History history = new History(report);
+		parser.parseHistoryElements(history);
 		return report;
 	}
 	

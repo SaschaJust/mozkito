@@ -43,7 +43,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-
 import org.mozkito.issues.tracker.Parser;
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.issues.tracker.Tracker;
@@ -575,10 +574,10 @@ public class SourceforgeParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#getId()
+	 * @see org.mozkito.bugs.tracker.Parser#getHistoryElements()
 	 */
 	@Override
-	public SortedSet<HistoryElement> getHistoryElements() {
+	public void parseHistoryElements(History history) {
 		// PRECONDITIONS
 		
 		try {

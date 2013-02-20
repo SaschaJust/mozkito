@@ -17,7 +17,6 @@ import java.util.Set;
 import java.util.SortedSet;
 
 import org.joda.time.DateTime;
-
 import org.mozkito.issues.tracker.elements.Priority;
 import org.mozkito.issues.tracker.elements.Resolution;
 import org.mozkito.issues.tracker.elements.Severity;
@@ -25,7 +24,7 @@ import org.mozkito.issues.tracker.elements.Status;
 import org.mozkito.issues.tracker.elements.Type;
 import org.mozkito.issues.tracker.model.AttachmentEntry;
 import org.mozkito.issues.tracker.model.Comment;
-import org.mozkito.issues.tracker.model.HistoryElement;
+import org.mozkito.issues.tracker.model.History;
 import org.mozkito.persistence.model.Person;
 
 /**
@@ -90,13 +89,6 @@ public interface Parser {
 	 * @return the fetch time
 	 */
 	DateTime getFetchTime();
-	
-	/**
-	 * Gets the history elements.
-	 * 
-	 * @return the history elements
-	 */
-	SortedSet<HistoryElement> getHistoryElements();
 	
 	/**
 	 * Gets the id.
@@ -223,6 +215,15 @@ public interface Parser {
 	 * @return the version
 	 */
 	String getVersion();
+	
+	/**
+	 * Gets the history elements.
+	 * 
+	 * @param history
+	 *            the history
+	 * @return the history elements
+	 */
+	void parseHistoryElements(History history);
 	
 	/**
 	 * Sets the tracker.
