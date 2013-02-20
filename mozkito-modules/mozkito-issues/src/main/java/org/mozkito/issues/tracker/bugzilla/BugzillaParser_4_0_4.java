@@ -39,7 +39,6 @@ import noNamespace.WhoDocument.Who;
 
 import org.jdom2.Element;
 import org.joda.time.DateTime;
-
 import org.mozkito.issues.tracker.Tracker;
 import org.mozkito.issues.tracker.XmlReport;
 import org.mozkito.issues.tracker.elements.Priority;
@@ -120,8 +119,8 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 				try {
 					attachmentEntry.setLink(new URL(uri));
 				} catch (final MalformedURLException e1) {
-					if (Logger.logError()) {
-						Logger.error("Could not interpret generated attachment uri as URL: " + uri + ". Ignoring link.");
+					if (Logger.logWarn()) {
+						Logger.warn("Could not interpret generated attachment uri as URL: " + uri + ". Ignoring link.");
 					}
 				}
 				
@@ -129,8 +128,8 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 				try {
 					attachmentEntry.setSize(Long.valueOf(attachment.getSize()));
 				} catch (final NumberFormatException e) {
-					if (Logger.logError()) {
-						Logger.error("Could not interpret attachment size as long: " + attachment.getSize()
+					if (Logger.logWarn()) {
+						Logger.warn("Could not interpret attachment size as long: " + attachment.getSize()
 						        + ". Ignoring field.");
 					}
 				}
@@ -196,8 +195,8 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 						Logger.debug("Created comment for bug report " + getId() + ": " + comment);
 					}
 				} catch (final NumberFormatException e) {
-					if (Logger.logError()) {
-						Logger.error("Could not interpret comment id " + longDesc.getCommentid()
+					if (Logger.logWarn()) {
+						Logger.warn("Could not interpret comment id " + longDesc.getCommentid()
 						        + " as integer. Comment got ignored.");
 					}
 					continue;

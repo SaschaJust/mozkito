@@ -72,13 +72,26 @@ import org.mozkito.persistence.model.PersonContainer;
 @Table (name = "report")
 public class Report implements Annotated, Comparable<Report> {
 	
-	private static final Report   DEFAULT_REPORT    = new Report();
+	private static final Report DEFAULT_REPORT   = new Report();
 	
 	/** The Constant HASH_SIZE. */
-	private static final int      HASH_SIZE         = 33;
+	private static final int    HASH_SIZE        = 33;
 	
 	/** The Constant serialVersionUID. */
-	private static final long     serialVersionUID  = 3241584366125944268L;
+	private static final long   serialVersionUID = 3241584366125944268L;
+	
+	/**
+	 * Gets the default field.
+	 * 
+	 * @param lowerFieldName
+	 *            the lower field name
+	 * @return the default field
+	 * @throws IllegalArgumentException
+	 *             the illegal argument exception
+	 */
+	public static Object getDefaultField(@NotNull final String lowerFieldName) throws IllegalArgumentException {
+		return DEFAULT_REPORT.getField(lowerFieldName);
+	}
 	
 	/** The attachment entries. */
 	private List<AttachmentEntry> attachmentEntries = new LinkedList<AttachmentEntry>();
@@ -109,17 +122,17 @@ public class Report implements Annotated, Comparable<Report> {
 	
 	/** The last fetch. */
 	private DateTime              lastFetch;
-	
 	/** The last update timestamp. */
 	private DateTime              lastUpdateTimestamp;
+	
 	// assignedTo
 	// submitter
 	// resolver
 	/** The person container. */
 	private PersonContainer       personContainer   = new PersonContainer();
-	
 	/** The priority. */
 	private Priority              priority          = Priority.UNKNOWN;
+	
 	/** The product. */
 	private String                product;
 	
@@ -156,6 +169,9 @@ public class Report implements Annotated, Comparable<Report> {
 	/** The keywords. */
 	private Set<String>           keywords          = new HashSet<String>();
 	
+	/** The tracker. */
+	private IssueTracker          tracker;
+	
 	/**
 	 * Instantiates a new report.
 	 * 
@@ -169,22 +185,14 @@ public class Report implements Annotated, Comparable<Report> {
 	 * 
 	 * @param tracker
 	 *            the tracker
-	 */
-	public Report(final Object tracker) {
-		this();
-		// stub
-	}
-	
-	/**
-	 * Instantiates a new report.
-	 * 
 	 * @param id
 	 *            the id
 	 */
-	public Report(final String id) {
-		this();
+	public Report(final IssueTracker tracker, final String id) {
 		setId(id);
-		setHistory(new History(getId()));
+		setHistory(new History(this));
+		setTracker(tracker);
+		tracker.addReport(this);
 	}
 	
 	/**
@@ -426,19 +434,6 @@ public class Report implements Annotated, Comparable<Report> {
 	@Transient
 	public DateTime getCreationTimestamp() {
 		return this.creationTimestamp;
-	}
-	
-	/**
-	 * Gets the default field.
-	 * 
-	 * @param lowerFieldName
-	 *            the lower field name
-	 * @return the default field
-	 * @throws IllegalArgumentException
-	 *             the illegal argument exception
-	 */
-	public Object getDefaultField(@NotNull final String lowerFieldName) throws IllegalArgumentException {
-		return DEFAULT_REPORT.getField(lowerFieldName);
 	}
 	
 	/**
@@ -727,6 +722,15 @@ public class Report implements Annotated, Comparable<Report> {
 	@Column (length = 0)
 	public String getSummary() {
 		return this.summary;
+	}
+	
+	/**
+	 * Gets the tracker.
+	 * 
+	 * @return the tracker
+	 */
+	public IssueTracker getTracker() {
+		return this.tracker;
 	}
 	
 	/**
@@ -1132,6 +1136,16 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Sets the tracker.
+	 * 
+	 * @param tracker
+	 *            the new tracker
+	 */
+	public void setTracker(final IssueTracker tracker) {
+		this.tracker = tracker;
+	}
+	
+	/**
 	 * Sets the type.
 	 * 
 	 * @param type
@@ -1183,7 +1197,7 @@ public class Report implements Annotated, Comparable<Report> {
 		while (iterator.hasPrevious()) {
 			final HistoryElement element = iterator.previous();
 			if (interval.contains(element.getTimestamp())) {
-				final History historyPatch = new History(getId());
+				final History historyPatch = new History(this);
 				historyPatch.add(element);
 				reports.add(report = historyPatch.rollback(report, element.getTimestamp()));
 			} else {

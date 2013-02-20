@@ -25,6 +25,7 @@ import org.mozkito.issues.tracker.elements.Severity;
 import org.mozkito.issues.tracker.elements.Status;
 import org.mozkito.issues.tracker.elements.Type;
 import org.mozkito.persistence.model.PersonContainer;
+import org.mozkito.versions.model.ChangeSet;
 
 /**
  * The Class Report_.
@@ -108,4 +109,7 @@ public class Report_ {
 	
 	/** The version. */
 	public static volatile SingularAttribute<Report, String>          version;
+	
+	/** The tracker. */
+	public static volatile SingularAttribute<ChangeSet, IssueTracker> tracker;
 }
