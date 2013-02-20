@@ -98,8 +98,6 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	 * 
 	 * @param history
 	 *            the history
-	 * @param bugId
-	 *            the bug id
 	 * @param author
 	 *            the author
 	 * @param timestamp

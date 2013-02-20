@@ -23,6 +23,7 @@ import org.mozkito.issues.tracker.Parser;
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.issues.tracker.Tracker;
 import org.mozkito.issues.tracker.elements.Type;
+import org.mozkito.issues.tracker.model.IssueTracker;
 
 /**
  * The Class SourceforgeTracker.
@@ -40,6 +41,16 @@ public class SourceforgeTracker extends Tracker {
 	
 	/** The bug type. */
 	private Type bugType;
+	
+	/**
+	 * Instantiates a new sourceforge tracker.
+	 * 
+	 * @param issueTracker
+	 *            the issue tracker
+	 */
+	public SourceforgeTracker(final IssueTracker issueTracker) {
+		super(issueTracker);
+	}
 	
 	/**
 	 * Gets the at id.
@@ -96,14 +107,21 @@ public class SourceforgeTracker extends Tracker {
 	
 	/**
 	 * Setup.
-	 *
-	 * @param fetchURI the fetch uri
-	 * @param username the username
-	 * @param password the password
-	 * @param groupId the group id
-	 * @param atId the at id
-	 * @param bugType the bug type
-	 * @throws InvalidParameterException the invalid parameter exception
+	 * 
+	 * @param fetchURI
+	 *            the fetch uri
+	 * @param username
+	 *            the username
+	 * @param password
+	 *            the password
+	 * @param groupId
+	 *            the group id
+	 * @param atId
+	 *            the at id
+	 * @param bugType
+	 *            the bug type
+	 * @throws InvalidParameterException
+	 *             the invalid parameter exception
 	 */
 	public void setup(@NotNull final URI fetchURI,
 	                  final String username,

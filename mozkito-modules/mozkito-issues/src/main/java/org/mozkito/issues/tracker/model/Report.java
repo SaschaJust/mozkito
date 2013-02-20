@@ -52,7 +52,6 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
-
 import org.mozkito.issues.tracker.elements.Priority;
 import org.mozkito.issues.tracker.elements.Resolution;
 import org.mozkito.issues.tracker.elements.Severity;
@@ -226,23 +225,6 @@ public class Report implements Annotated, Comparable<Report> {
 		setComments(comments);
 		comment.setBugReport(this);
 		Condition.check(ret, "Could not add comment with id %s (already existing).", comment.getId());
-		return ret;
-	}
-	
-	/**
-	 * Adds the history element.
-	 * 
-	 * @param historyElement
-	 *            the history element
-	 * @return true, if successful
-	 */
-	@Transient
-	public boolean addHistoryElement(@NotNull final HistoryElement historyElement) {
-		Condition.notNull(getHistory(), "The history handler must not be null when adding a history element.");
-		final History history = getHistory();
-		final boolean ret = history.add(historyElement);
-		setHistory(history);
-		historyElement.setBugId(getId());
 		return ret;
 	}
 	

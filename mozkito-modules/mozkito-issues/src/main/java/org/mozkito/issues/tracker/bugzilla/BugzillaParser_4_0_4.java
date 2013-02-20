@@ -48,7 +48,7 @@ import org.mozkito.issues.tracker.elements.Status;
 import org.mozkito.issues.tracker.elements.Type;
 import org.mozkito.issues.tracker.model.AttachmentEntry;
 import org.mozkito.issues.tracker.model.Comment;
-import org.mozkito.issues.tracker.model.HistoryElement;
+import org.mozkito.issues.tracker.model.History;
 import org.mozkito.persistence.model.Person;
 
 /**
@@ -265,27 +265,6 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 	 */
 	
 	@Override
-	public SortedSet<HistoryElement> getHistoryElements() {
-		// PRECONDITIONS
-		
-		try {
-			if (!getHistoryParser().parse()) {
-				if (Logger.logError()) {
-					Logger.error("Could not parse history! See earlier error messages");
-				}
-			}
-			return getHistoryParser().getHistory();
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#getResolutionTimestamp()
-	 */
-	
-	@Override
 	protected BugzillaHistoryParser getHistoryParser() {
 		// PRECONDITIONS
 		
@@ -314,7 +293,7 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#getResolver()
+	 * @see org.mozkito.bugs.tracker.Parser#getResolutionTimestamp()
 	 */
 	
 	/*
@@ -339,6 +318,11 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 			// POSTCONDITIONS
 		}
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.bugs.tracker.Parser#getResolver()
+	 */
 	
 	/*
 	 * (non-Javadoc)
@@ -367,11 +351,6 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#getSeverity()
-	 */
-	
 	@Override
 	public DateTime getLastUpdateTimestamp() {
 		// PRECONDITIONS
@@ -389,7 +368,7 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#getSiblings()
+	 * @see org.mozkito.bugs.tracker.Parser#getSeverity()
 	 */
 	
 	/*
@@ -409,7 +388,7 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#getStatus()
+	 * @see org.mozkito.bugs.tracker.Parser#getSiblings()
 	 */
 	
 	@Override
@@ -425,7 +404,7 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#getSubject()
+	 * @see org.mozkito.bugs.tracker.Parser#getStatus()
 	 */
 	
 	@Override
@@ -441,49 +420,38 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#getSubmitter()
+	 * @see org.mozkito.bugs.tracker.Parser#getSubject()
 	 */
 	
 	@Override
 	public DateTime getResolutionTimestamp() {
 		// PRECONDITIONS
-		
-		try {
-			if (!getHistoryParser().parse()) {
-				if (Logger.logError()) {
-					Logger.error("Could not parse history! See earlier error messages");
-				}
+		if (!getHistoryParser().parse(getReport().getHistory())) {
+			if (Logger.logError()) {
+				Logger.error("Could not parse history! See earlier error messages");
 			}
-			return getHistoryParser().getResolutionTimestamp();
-		} finally {
-			// POSTCONDITIONS
 		}
+		return getHistoryParser().getResolutionTimestamp();
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.bugs.tracker.Parser#getSubmitter()
+	 */
+	
+	@Override
+	public Person getResolver() {
+		if (!getHistoryParser().parse(getReport().getHistory())) {
+			if (Logger.logError()) {
+				Logger.error("Could not parse history! See earlier error messages");
+			}
+		}
+		return getHistoryParser().getResolver();
 	}
 	
 	/*
 	 * (non-Javadoc)
 	 * @see org.mozkito.bugs.tracker.Parser#getSummary()
-	 */
-	
-	@Override
-	public Person getResolver() {
-		// PRECONDITIONS
-		
-		try {
-			if (!getHistoryParser().parse()) {
-				if (Logger.logError()) {
-					Logger.error("Could not parse history! See earlier error messages");
-				}
-			}
-			return getHistoryParser().getResolver();
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#getType()
 	 */
 	
 	/**
@@ -499,7 +467,7 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#getVersion()
+	 * @see org.mozkito.bugs.tracker.Parser#getType()
 	 */
 	
 	@Override
@@ -515,7 +483,7 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#setTracker(org.mozkito.bugs.tracker.Tracker)
+	 * @see org.mozkito.bugs.tracker.Parser#getVersion()
 	 */
 	
 	@Override
@@ -531,7 +499,7 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#setXMLReport(org.mozkito.bugs.tracker.XmlReport )
+	 * @see org.mozkito.bugs.tracker.Parser#setTracker(org.mozkito.bugs.tracker.Tracker)
 	 */
 	
 	@Override
@@ -576,6 +544,11 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 			Condition.notNull(result, "You should return an empty set instead of NULL.");
 		}
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.bugs.tracker.Parser#setXMLReport(org.mozkito.bugs.tracker.XmlReport )
+	 */
 	
 	/*
 	 * (non-Javadoc)
@@ -675,6 +648,21 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 		
 		try {
 			return getXmlBug().getVersion();
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	@Override
+	public void parseHistoryElements(final History history) {
+		// PRECONDITIONS
+		
+		try {
+			if (!getHistoryParser().parse(history)) {
+				if (Logger.logError()) {
+					Logger.error("Could not parse history! See earlier error messages");
+				}
+			}
 		} finally {
 			// POSTCONDITIONS
 		}

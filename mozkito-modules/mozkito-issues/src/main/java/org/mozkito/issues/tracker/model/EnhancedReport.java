@@ -103,18 +103,6 @@ public class EnhancedReport implements Annotated, Comparable<EnhancedReport> {
 	}
 	
 	/**
-	 * Adds the history element.
-	 * 
-	 * @param historyElement
-	 *            the history element
-	 * @return true, if successful
-	 */
-	@Transient
-	public boolean addHistoryElement(final HistoryElement historyElement) {
-		return getReport().addHistoryElement(historyElement);
-	}
-	
-	/**
 	 * Adds the keyword.
 	 * 
 	 * @param keyword

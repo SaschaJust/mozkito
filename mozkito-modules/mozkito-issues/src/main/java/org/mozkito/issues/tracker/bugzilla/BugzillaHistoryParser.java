@@ -15,7 +15,7 @@ package org.mozkito.issues.tracker.bugzilla;
 import java.util.SortedSet;
 
 import org.joda.time.DateTime;
-
+import org.mozkito.issues.tracker.model.History;
 import org.mozkito.issues.tracker.model.HistoryElement;
 import org.mozkito.persistence.model.Person;
 
@@ -56,9 +56,10 @@ public interface BugzillaHistoryParser {
 	
 	/**
 	 * Parses the.
-	 * 
+	 *
+	 * @param history the history
 	 * @return true, if successful
 	 */
-	boolean parse();
+	boolean parse(History history);
 	
 }

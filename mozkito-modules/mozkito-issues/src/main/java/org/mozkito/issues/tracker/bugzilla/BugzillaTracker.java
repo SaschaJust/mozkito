@@ -26,6 +26,7 @@ import org.mozkito.issues.exceptions.InvalidParameterException;
 import org.mozkito.issues.tracker.Parser;
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.issues.tracker.Tracker;
+import org.mozkito.issues.tracker.model.IssueTracker;
 
 /**
  * The Class BugzillaTracker.
@@ -58,6 +59,16 @@ public class BugzillaTracker extends Tracker {
 	
 	/** The bugzilla version. */
 	private String bugzillaVersion;
+	
+	/**
+	 * Instantiates a new bugzilla tracker.
+	 * 
+	 * @param issueTracker
+	 *            the issue tracker
+	 */
+	public BugzillaTracker(final IssueTracker issueTracker) {
+		super(issueTracker);
+	}
 	
 	/*
 	 * (non-Javadoc)

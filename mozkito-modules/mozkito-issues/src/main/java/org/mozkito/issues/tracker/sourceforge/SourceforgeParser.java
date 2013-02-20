@@ -31,6 +31,7 @@ import net.ownhero.dev.ioda.container.RawContent;
 import net.ownhero.dev.ioda.exceptions.FetchException;
 import net.ownhero.dev.ioda.exceptions.MIMETypeDeterminationException;
 import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Group;
 import net.ownhero.dev.regex.Match;
@@ -53,7 +54,10 @@ import org.mozkito.issues.tracker.elements.Status;
 import org.mozkito.issues.tracker.elements.Type;
 import org.mozkito.issues.tracker.model.AttachmentEntry;
 import org.mozkito.issues.tracker.model.Comment;
+import org.mozkito.issues.tracker.model.History;
 import org.mozkito.issues.tracker.model.HistoryElement;
+import org.mozkito.issues.tracker.model.IssueTracker;
+import org.mozkito.issues.tracker.model.Report;
 import org.mozkito.persistence.model.Person;
 
 /**
@@ -264,7 +268,7 @@ public class SourceforgeParser implements Parser {
 	private Person                                    resolver;
 	
 	/** The history. */
-	private SortedSet<HistoryElement>                 history                = null;
+	private SortedSet<HistoryElement>                 historyElements        = null;
 	
 	/** The attachment history. */
 	private final Map<String, AttachmentHistoryEntry> attachmentHistory      = new HashMap<String, AttachmentHistoryEntry>();
@@ -287,12 +291,16 @@ public class SourceforgeParser implements Parser {
 	/** The md5. */
 	private byte[]                                    md5;
 	
+	/** The report. */
+	private Report                                    report;
+	
 	/**
 	 * Instantiates a new sourceforge parser.
 	 * 
 	 * @param bugType
 	 *            the bug type
 	 */
+	@NoneNull
 	public SourceforgeParser(final Type bugType) {
 		this.bugType = bugType;
 	}
@@ -300,6 +308,11 @@ public class SourceforgeParser implements Parser {
 	/*
 	 * (non-Javadoc)
 	 * @see org.mozkito.bugs.tracker.Parser#getAssignedTo()
+	 */
+	/**
+	 * Gets the assigned to.
+	 * 
+	 * @return the assigned to
 	 */
 	@Override
 	public Person getAssignedTo() {
@@ -322,6 +335,11 @@ public class SourceforgeParser implements Parser {
 	 * (non-Javadoc)
 	 * @see org.mozkito.bugs.tracker.Parser#getAttachmentEntries()
 	 */
+	/**
+	 * Gets the attachment entries.
+	 * 
+	 * @return the attachment entries
+	 */
 	@Override
 	public List<AttachmentEntry> getAttachmentEntries() {
 		// PRECONDITIONS
@@ -329,7 +347,7 @@ public class SourceforgeParser implements Parser {
 		try {
 			final List<AttachmentEntry> result = new LinkedList<AttachmentEntry>();
 			
-			getHistoryElements();
+			parseHistoryElements(this.report.getHistory());
 			
 			final Elements tables = this.attachmentTableContainer.getElementsByTag("table");
 			if (tables.isEmpty()) {
@@ -410,6 +428,11 @@ public class SourceforgeParser implements Parser {
 	 * (non-Javadoc)
 	 * @see org.mozkito.bugs.tracker.Parser#getCategory()
 	 */
+	/**
+	 * Gets the category.
+	 * 
+	 * @return the category
+	 */
 	@Override
 	public String getCategory() {
 		// PRECONDITIONS
@@ -429,6 +452,11 @@ public class SourceforgeParser implements Parser {
 	/*
 	 * (non-Javadoc)
 	 * @see org.mozkito.bugs.tracker.Parser#getComments()
+	 */
+	/**
+	 * Gets the comments.
+	 * 
+	 * @return the comments
 	 */
 	@Override
 	public SortedSet<Comment> getComments() {
@@ -491,6 +519,11 @@ public class SourceforgeParser implements Parser {
 	 * (non-Javadoc)
 	 * @see org.mozkito.bugs.tracker.Parser#getComponent()
 	 */
+	/**
+	 * Gets the component.
+	 * 
+	 * @return the component
+	 */
 	@Override
 	public String getComponent() {
 		// PRECONDITIONS
@@ -505,6 +538,11 @@ public class SourceforgeParser implements Parser {
 	/*
 	 * (non-Javadoc)
 	 * @see org.mozkito.bugs.tracker.Parser#getCreationTimestamp()
+	 */
+	/**
+	 * Gets the creation timestamp.
+	 * 
+	 * @return the creation timestamp
 	 */
 	@Override
 	public DateTime getCreationTimestamp() {
@@ -540,6 +578,11 @@ public class SourceforgeParser implements Parser {
 	 * (non-Javadoc)
 	 * @see org.mozkito.bugs.tracker.Parser#getDescription()
 	 */
+	/**
+	 * Gets the description.
+	 * 
+	 * @return the description
+	 */
 	@Override
 	public String getDescription() {
 		// PRECONDITIONS
@@ -561,6 +604,11 @@ public class SourceforgeParser implements Parser {
 	 * (non-Javadoc)
 	 * @see org.mozkito.bugs.tracker.Parser#getHistoryElement(int)
 	 */
+	/**
+	 * Gets the fetch time.
+	 * 
+	 * @return the fetch time
+	 */
 	@Override
 	public DateTime getFetchTime() {
 		// PRECONDITIONS
@@ -574,15 +622,433 @@ public class SourceforgeParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#getHistoryElements()
+	 * @see org.mozkito.bugs.tracker.Parser#getNumberOfComments()
+	 */
+	/**
+	 * Gets the id.
+	 * 
+	 * @return the id
 	 */
 	@Override
-	public void parseHistoryElements(History history) {
+	public String getId() {
 		// PRECONDITIONS
 		
 		try {
-			if (this.history == null) {
-				this.history = new TreeSet<HistoryElement>();
+			final MultiMatch findAll = this.subjectRegex.findAll(this.headerBox.text());
+			if (findAll != null) {
+				final Group[] groups = findAll.getGroup("bugid");
+				if (groups.length > 0) {
+					return groups[0].getMatch().trim();
+				}
+			}
+			
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.bugs.tracker.Parser#getPriority()
+	 */
+	/**
+	 * Gets the keywords.
+	 * 
+	 * @return the keywords
+	 */
+	@Override
+	public Set<String> getKeywords() {
+		// PRECONDITIONS
+		
+		try {
+			return new HashSet<String>();
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.bugs.tracker.Parser#getProduct()
+	 */
+	/**
+	 * Gets the last update timestamp.
+	 * 
+	 * @return the last update timestamp
+	 */
+	@Override
+	public DateTime getLastUpdateTimestamp() {
+		// PRECONDITIONS
+		
+		try {
+			parseHistoryElements(this.report.getHistory());
+			return this.lastUpdateTimestamp;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.issues.tracker.Parser#getMd5()
+	 */
+	/**
+	 * Gets the md5.
+	 * 
+	 * @return the md5
+	 */
+	@Override
+	public final byte[] getMd5() {
+		return this.md5;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.bugs.tracker.Parser#getResolver()
+	 */
+	/**
+	 * Gets the priority.
+	 * 
+	 * @return the priority
+	 */
+	@Override
+	public Priority getPriority() {
+		// PRECONDITIONS
+		
+		try {
+			for (final Element child : this.leftGBox.children()) {
+				if ("label".equals(child.tag().getName()) && "Priority:".equals(child.text().trim())) {
+					final String priorityStr = child.nextElementSibling().text();
+					return resolvePriority(priorityStr);
+				}
+			}
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.bugs.tracker.Parser#getSeverity()
+	 */
+	/**
+	 * Gets the product.
+	 * 
+	 * @return the product
+	 */
+	@Override
+	public String getProduct() {
+		// PRECONDITIONS
+		
+		try {
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.bugs.tracker.Parser#getSiblings()
+	 */
+	/**
+	 * Gets the resolution.
+	 * 
+	 * @return the resolution
+	 */
+	@Override
+	public Resolution getResolution() {
+		// PRECONDITIONS
+		
+		try {
+			for (final Element child : this.leftGBox.children()) {
+				if ("label".equals(child.tag().getName()) && "Resolution:".equals(child.text().trim())) {
+					final String str = child.nextElementSibling().text();
+					return resolveResolution(str);
+				}
+			}
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.bugs.tracker.Parser#getStatus()
+	 */
+	/**
+	 * Gets the resolution timestamp.
+	 * 
+	 * @return the resolution timestamp
+	 */
+	@Override
+	public DateTime getResolutionTimestamp() {
+		// PRECONDITIONS
+		
+		try {
+			parseHistoryElements(this.report.getHistory());
+			return this.resolutionTimestamp;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.bugs.tracker.Parser#getSubject()
+	 */
+	/**
+	 * Gets the resolver.
+	 * 
+	 * @return the resolver
+	 */
+	@Override
+	public Person getResolver() {
+		// PRECONDITIONS
+		
+		try {
+			parseHistoryElements(this.report.getHistory());
+			return this.resolver;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.bugs.tracker.Parser#getSubmitter()
+	 */
+	/**
+	 * Gets the scm fix version.
+	 * 
+	 * @return the scm fix version
+	 */
+	@Override
+	public String getScmFixVersion() {
+		// PRECONDITIONS
+		
+		try {
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.bugs.tracker.Parser#getSummary()
+	 */
+	/**
+	 * Gets the severity.
+	 * 
+	 * @return the severity
+	 */
+	@Override
+	public Severity getSeverity() {
+		// PRECONDITIONS
+		
+		try {
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.bugs.tracker.Parser#getType()
+	 */
+	/**
+	 * Gets the siblings.
+	 * 
+	 * @return the siblings
+	 */
+	@Override
+	public Set<String> getSiblings() {
+		// PRECONDITIONS
+		
+		try {
+			return new HashSet<String>();
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.bugs.tracker.Parser#getVersion()
+	 */
+	/**
+	 * Gets the status.
+	 * 
+	 * @return the status
+	 */
+	@Override
+	public Status getStatus() {
+		// PRECONDITIONS
+		
+		try {
+			for (final Element child : this.leftGBox.children()) {
+				if ("label".equals(child.tag().getName()) && "Status:".equals(child.text().trim())) {
+					final String str = child.nextElementSibling().text();
+					return resolveStatus(str);
+				}
+			}
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.bugs.tracker.Parser#setTracker(org.mozkito.bugs.tracker.Tracker)
+	 */
+	/**
+	 * Gets the subject.
+	 * 
+	 * @return the subject
+	 */
+	@Override
+	public String getSubject() {
+		// PRECONDITIONS
+		
+		try {
+			final MultiMatch findAll = this.subjectRegex.findAll(this.headerBox.text());
+			if (findAll != null) {
+				final Group[] groups = findAll.getGroup("subject");
+				if (groups.length > 0) {
+					return groups[0].getMatch().trim();
+				}
+			}
+			
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.bugs.tracker.Parser#setXMLReport(org.mozkito.bugs.tracker.XmlReport )
+	 */
+	/**
+	 * Gets the submitter.
+	 * 
+	 * @return the submitter
+	 */
+	@Override
+	public Person getSubmitter() {
+		// PRECONDITIONS
+		
+		try {
+			for (final Element child : this.leftGBox.children()) {
+				if ("label".equals(child.tag().getName()) && "Submitted:".equals(child.text().trim())) {
+					final Element pElement = child.nextElementSibling();
+					final MultiMatch multiMatch = SourceforgeParser.submittedRegex.findAll(pElement.text().trim());
+					if (multiMatch != null) {
+						String name = null;
+						String uname = null;
+						final Match groups = multiMatch.getMatch(0);
+						for (final Group group : groups) {
+							if ((group.getName() != null) && ("fullname".equals(group.getName()))) {
+								name = group.getMatch().trim();
+							} else if ((group.getName() != null) && ("username".equals(group.getName()))) {
+								uname = group.getMatch().trim();
+							}
+						}
+						if ((uname != null) || (name != null)) {
+							return new Person(uname, name, null);
+						}
+					}
+				}
+			}
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.bugs.tracker.Parser#getSummary()
+	 */
+	/**
+	 * Gets the summary.
+	 * 
+	 * @return the summary
+	 */
+	@Override
+	public String getSummary() {
+		// PRECONDITIONS
+		
+		try {
+			return getSubject();
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.bugs.tracker.Parser#getType()
+	 */
+	/**
+	 * Gets the type.
+	 * 
+	 * @return the type
+	 */
+	@Override
+	public Type getType() {
+		// PRECONDITIONS
+		
+		try {
+			return this.bugType;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.bugs.tracker.Parser#getVersion()
+	 */
+	/**
+	 * Gets the version.
+	 * 
+	 * @return the version
+	 */
+	@Override
+	public String getVersion() {
+		// PRECONDITIONS
+		
+		try {
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.bugs.tracker.Parser#getHistoryElements()
+	 */
+	/**
+	 * Parses the history elements.
+	 * 
+	 * @param history
+	 *            the history
+	 */
+	@Override
+	public void parseHistoryElements(final History history) {
+		// PRECONDITIONS
+		
+		try {
+			if (this.historyElements == null) {
+				this.historyElements = new TreeSet<HistoryElement>();
 				
 				HistoryElement lastHistoryElement = null;
 				Person assignedTo = getAssignedTo();
@@ -610,9 +1076,9 @@ public class SourceforgeParser implements Parser {
 					}
 					
 					if ((lastHistoryElement == null) || (!lastHistoryElement.getTimestamp().isEqual(timestamp))) {
-						final HistoryElement newHistoryElement = new HistoryElement(getId(), author, timestamp);
+						final HistoryElement newHistoryElement = new HistoryElement(history, author, timestamp);
 						if ((lastHistoryElement != null) && (!lastHistoryElement.isEmpty())) {
-							this.history.add(lastHistoryElement);
+							this.historyElements.add(lastHistoryElement);
 						}
 						lastHistoryElement = newHistoryElement;
 					}
@@ -669,348 +1135,9 @@ public class SourceforgeParser implements Parser {
 					}
 				}
 				if ((lastHistoryElement != null) && (!lastHistoryElement.isEmpty())) {
-					this.history.add(lastHistoryElement);
+					this.historyElements.add(lastHistoryElement);
 				}
 			}
-			
-			return this.history;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#getNumberOfComments()
-	 */
-	@Override
-	public String getId() {
-		// PRECONDITIONS
-		
-		try {
-			final MultiMatch findAll = this.subjectRegex.findAll(this.headerBox.text());
-			if (findAll != null) {
-				final Group[] groups = findAll.getGroup("bugid");
-				if (groups.length > 0) {
-					return groups[0].getMatch().trim();
-				}
-			}
-			
-			return null;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#getPriority()
-	 */
-	@Override
-	public Set<String> getKeywords() {
-		// PRECONDITIONS
-		
-		try {
-			return new HashSet<String>();
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#getProduct()
-	 */
-	@Override
-	public DateTime getLastUpdateTimestamp() {
-		// PRECONDITIONS
-		
-		try {
-			getHistoryElements();
-			return this.lastUpdateTimestamp;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.issues.tracker.Parser#getMd5()
-	 */
-	@Override
-	public final byte[] getMd5() {
-		return this.md5;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#getResolver()
-	 */
-	@Override
-	public Priority getPriority() {
-		// PRECONDITIONS
-		
-		try {
-			for (final Element child : this.leftGBox.children()) {
-				if ("label".equals(child.tag().getName()) && "Priority:".equals(child.text().trim())) {
-					final String priorityStr = child.nextElementSibling().text();
-					return resolvePriority(priorityStr);
-				}
-			}
-			return null;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#getSeverity()
-	 */
-	@Override
-	public String getProduct() {
-		// PRECONDITIONS
-		
-		try {
-			return null;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#getSiblings()
-	 */
-	@Override
-	public Resolution getResolution() {
-		// PRECONDITIONS
-		
-		try {
-			for (final Element child : this.leftGBox.children()) {
-				if ("label".equals(child.tag().getName()) && "Resolution:".equals(child.text().trim())) {
-					final String str = child.nextElementSibling().text();
-					return resolveResolution(str);
-				}
-			}
-			return null;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#getStatus()
-	 */
-	@Override
-	public DateTime getResolutionTimestamp() {
-		// PRECONDITIONS
-		
-		try {
-			getHistoryElements();
-			return this.resolutionTimestamp;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#getSubject()
-	 */
-	@Override
-	public Person getResolver() {
-		// PRECONDITIONS
-		
-		try {
-			getHistoryElements();
-			return this.resolver;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#getSubmitter()
-	 */
-	@Override
-	public String getScmFixVersion() {
-		// PRECONDITIONS
-		
-		try {
-			return null;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#getSummary()
-	 */
-	@Override
-	public Severity getSeverity() {
-		// PRECONDITIONS
-		
-		try {
-			return null;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#getType()
-	 */
-	@Override
-	public Set<String> getSiblings() {
-		// PRECONDITIONS
-		
-		try {
-			return new HashSet<String>();
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#getVersion()
-	 */
-	@Override
-	public Status getStatus() {
-		// PRECONDITIONS
-		
-		try {
-			for (final Element child : this.leftGBox.children()) {
-				if ("label".equals(child.tag().getName()) && "Status:".equals(child.text().trim())) {
-					final String str = child.nextElementSibling().text();
-					return resolveStatus(str);
-				}
-			}
-			return null;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#setTracker(org.mozkito.bugs.tracker.Tracker)
-	 */
-	@Override
-	public String getSubject() {
-		// PRECONDITIONS
-		
-		try {
-			final MultiMatch findAll = this.subjectRegex.findAll(this.headerBox.text());
-			if (findAll != null) {
-				final Group[] groups = findAll.getGroup("subject");
-				if (groups.length > 0) {
-					return groups[0].getMatch().trim();
-				}
-			}
-			
-			return null;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#setXMLReport(org.mozkito.bugs.tracker.XmlReport )
-	 */
-	@Override
-	public Person getSubmitter() {
-		// PRECONDITIONS
-		
-		try {
-			for (final Element child : this.leftGBox.children()) {
-				if ("label".equals(child.tag().getName()) && "Submitted:".equals(child.text().trim())) {
-					final Element pElement = child.nextElementSibling();
-					final MultiMatch multiMatch = SourceforgeParser.submittedRegex.findAll(pElement.text().trim());
-					if (multiMatch != null) {
-						String name = null;
-						String uname = null;
-						final Match groups = multiMatch.getMatch(0);
-						for (final Group group : groups) {
-							if ((group.getName() != null) && ("fullname".equals(group.getName()))) {
-								name = group.getMatch().trim();
-							} else if ((group.getName() != null) && ("username".equals(group.getName()))) {
-								uname = group.getMatch().trim();
-							}
-						}
-						if ((uname != null) || (name != null)) {
-							return new Person(uname, name, null);
-						}
-					}
-				}
-			}
-			return null;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#getSummary()
-	 */
-	@Override
-	public String getSummary() {
-		// PRECONDITIONS
-		
-		try {
-			return getSubject();
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#getType()
-	 */
-	@Override
-	public Type getType() {
-		// PRECONDITIONS
-		
-		try {
-			return this.bugType;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#getVersion()
-	 */
-	@Override
-	public String getVersion() {
-		// PRECONDITIONS
-		
-		try {
-			return null;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#setTracker(org.mozkito.bugs.tracker.Tracker)
-	 */
-	@Override
-	public void setTracker(final Tracker tracker) {
-		// PRECONDITIONS
-		
-		try {
-			this.tracker = tracker;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -1020,8 +1147,18 @@ public class SourceforgeParser implements Parser {
 	 * (non-Javadoc)
 	 * @see org.mozkito.bugs.tracker.Parser#setURI(org.mozkito.bugs.tracker.ReportLink)
 	 */
+	/**
+	 * Sets the context.
+	 * 
+	 * @param issueTracker
+	 *            the issue tracker
+	 * @param reportLink
+	 *            the report link
+	 * @return the report
+	 */
 	@Override
-	public boolean setURI(final ReportLink reportLink) {
+	public Report setContext(final IssueTracker issueTracker,
+	                         final ReportLink reportLink) {
 		// PRECONDITIONS
 		
 		try {
@@ -1039,7 +1176,7 @@ public class SourceforgeParser implements Parser {
 				for (final Element errorElem : errorElements) {
 					if (("h4".equals(errorElem.tag().getName()))
 					        && ("Error".equals(errorElem.text().trim().replaceAll("\"", "").trim()))) {
-						return false;
+						return null;
 					}
 				}
 			}
@@ -1048,7 +1185,7 @@ public class SourceforgeParser implements Parser {
 				if (Logger.logError()) {
 					Logger.error("Could not find main element: <div id=\"yui-main\">");
 				}
-				return false;
+				return null;
 			}
 			
 			Elements headerBoxes = this.mainElement.getElementsByClass("yui-gc");
@@ -1056,7 +1193,7 @@ public class SourceforgeParser implements Parser {
 				if (Logger.logError()) {
 					Logger.error("Could not find <div class=\"yui-gc box\">");
 				}
-				return false;
+				return null;
 			}
 			Element yui_gc_box = null;
 			for (final Element tmp : headerBoxes) {
@@ -1069,7 +1206,7 @@ public class SourceforgeParser implements Parser {
 				if (Logger.logError()) {
 					Logger.error("Could not find <div class=\"yui-gc box\">");
 				}
-				return false;
+				return null;
 			}
 			
 			headerBoxes = yui_gc_box.getElementsByClass("yui-u");
@@ -1077,7 +1214,7 @@ public class SourceforgeParser implements Parser {
 				if (Logger.logError()) {
 					Logger.error("Could not find <div class=\"yui-u first\">");
 				}
-				return false;
+				return null;
 			}
 			Element yui_u_first = null;
 			for (final Element tmp : headerBoxes) {
@@ -1090,7 +1227,7 @@ public class SourceforgeParser implements Parser {
 				if (Logger.logError()) {
 					Logger.error("Could not find <div class=\"yui-u first\">");
 				}
-				return false;
+				return null;
 			}
 			
 			this.headerBox = yui_u_first;
@@ -1100,7 +1237,7 @@ public class SourceforgeParser implements Parser {
 				if (Logger.logError()) {
 					Logger.error("Could not find <div class=\"yui-g box\">");
 				}
-				return false;
+				return null;
 			}
 			for (final Element tmp : gBoxes) {
 				if (tmp.classNames().contains("box")) {
@@ -1112,7 +1249,7 @@ public class SourceforgeParser implements Parser {
 				if (Logger.logError()) {
 					Logger.error("Could not find <div class=\"yui-g box\">");
 				}
-				return false;
+				return null;
 			}
 			
 			final Elements leftGBoxes = this.gBox.getElementsByClass("yui-u");
@@ -1120,7 +1257,7 @@ public class SourceforgeParser implements Parser {
 				if (Logger.logError()) {
 					Logger.error("Could not find <div class=\"yui-u first\">");
 				}
-				return false;
+				return null;
 			}
 			for (final Element tmp : leftGBoxes) {
 				if (tmp.classNames().contains("first")) {
@@ -1132,7 +1269,7 @@ public class SourceforgeParser implements Parser {
 				if (Logger.logError()) {
 					Logger.error("Could not find <div class=\"yui-u first\">");
 				}
-				return false;
+				return null;
 			}
 			
 			this.rightGBox = this.leftGBox.nextElementSibling();
@@ -1143,7 +1280,7 @@ public class SourceforgeParser implements Parser {
 				if (Logger.logError()) {
 					Logger.error("Could not find comment table.");
 				}
-				return false;
+				return null;
 			}
 			
 			final Element h4FileBar = this.mainElement.getElementById("filebar");
@@ -1151,7 +1288,7 @@ public class SourceforgeParser implements Parser {
 				if (Logger.logError()) {
 					Logger.error("Could not find filebar");
 				}
-				return false;
+				return null;
 			}
 			this.attachmentTableContainer = h4FileBar.nextElementSibling();
 			
@@ -1160,21 +1297,42 @@ public class SourceforgeParser implements Parser {
 				if (Logger.logError()) {
 					Logger.error("Could not find changebar");
 				}
-				return false;
+				return null;
 			}
 			this.historyTableContainer = h4ChangeBar.nextElementSibling();
-			
-			return true;
+			this.report = new Report(issueTracker, getId());
+			return this.report;
 		} catch (final UnsupportedProtocolException e) {
 			if (Logger.logError()) {
 				Logger.error(e);
 			}
-			return false;
+			return null;
 		} catch (final FetchException e) {
 			if (Logger.logError()) {
 				Logger.error(e);
 			}
-			return false;
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.bugs.tracker.Parser#setTracker(org.mozkito.bugs.tracker.Tracker)
+	 */
+	/**
+	 * Sets the tracker.
+	 * 
+	 * @param tracker
+	 *            the new tracker
+	 */
+	@Override
+	public void setTracker(final Tracker tracker) {
+		// PRECONDITIONS
+		
+		try {
+			this.tracker = tracker;
 		} finally {
 			// POSTCONDITIONS
 		}

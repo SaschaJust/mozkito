@@ -25,6 +25,8 @@ import org.mozkito.issues.tracker.elements.Type;
 import org.mozkito.issues.tracker.model.AttachmentEntry;
 import org.mozkito.issues.tracker.model.Comment;
 import org.mozkito.issues.tracker.model.History;
+import org.mozkito.issues.tracker.model.IssueTracker;
+import org.mozkito.issues.tracker.model.Report;
 import org.mozkito.persistence.model.Person;
 
 /**
@@ -221,9 +223,20 @@ public interface Parser {
 	 * 
 	 * @param history
 	 *            the history
-	 * @return the history elements
 	 */
 	void parseHistoryElements(History history);
+	
+	/**
+	 * Sets the uri.
+	 * 
+	 * @param issueTracker
+	 *            the issue tracker
+	 * @param reportLink
+	 *            the report link
+	 * @return true, if successful
+	 */
+	Report setContext(IssueTracker issueTracker,
+	                  ReportLink reportLink);
 	
 	/**
 	 * Sets the tracker.
@@ -232,13 +245,4 @@ public interface Parser {
 	 *            the new tracker
 	 */
 	void setTracker(Tracker tracker);
-	
-	/**
-	 * Sets the uri.
-	 * 
-	 * @param reportLink
-	 *            the report link
-	 * @return true, if successful
-	 */
-	boolean setURI(ReportLink reportLink);
 }

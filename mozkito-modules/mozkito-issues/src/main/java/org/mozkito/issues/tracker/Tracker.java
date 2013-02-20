@@ -28,7 +28,6 @@ import net.ownhero.dev.kisa.Logger;
 import org.mozkito.issues.exceptions.InvalidParameterException;
 import org.mozkito.issues.messages.Messages;
 import org.mozkito.issues.tracker.model.Comment;
-import org.mozkito.issues.tracker.model.History;
 import org.mozkito.issues.tracker.model.IssueTracker;
 import org.mozkito.issues.tracker.model.Report;
 import org.mozkito.persistence.Criteria;
@@ -205,17 +204,14 @@ public abstract class Tracker {
 		}
 		
 		parser.setTracker(this);
-		if (!parser.setURI(reportLink)) {
+		final Report report = parser.setContext(this.issueTracker, reportLink);
+		if (report == null) {
 			if (Logger.logWarn()) {
 				Logger.warn("Could not parse report %s. See earlier error messages.", reportLink.toString()); //$NON-NLS-1$
 			}
 			return null;
 		}
 		
-		final String id = parser.getId();
-		Condition.notNull(id, Messages.getString("Tracker.bugid_null")); //$NON-NLS-1$
-		
-		final Report report = new Report(this.issueTracker, id);
 		report.setAttachmentEntries(parser.getAttachmentEntries());
 		if (parser.getAssignedTo() != null) {
 			report.setAssignedTo(parser.getAssignedTo());
@@ -252,8 +248,7 @@ public abstract class Tracker {
 		if (parser.getScmFixVersion() != null) {
 			report.setScmFixVersion(parser.getScmFixVersion());
 		}
-		final History history = new History(report);
-		parser.parseHistoryElements(history);
+		parser.parseHistoryElements(report.getHistory());
 		return report;
 	}
 	
