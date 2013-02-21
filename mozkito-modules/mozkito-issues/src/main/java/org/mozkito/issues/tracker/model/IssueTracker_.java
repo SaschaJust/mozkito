@@ -12,7 +12,7 @@ import javax.persistence.metamodel.SingularAttribute;
 /**
  * The Class IssueTracker_.
  */
-@javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.versions.model.VersionArchive.class)
+@javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.issues.tracker.model.IssueTracker.class)
 @javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
                              date = "Mon Jan 14 13:43:14 CET 2013")
 public class IssueTracker_ {
