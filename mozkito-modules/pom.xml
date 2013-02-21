@@ -17,7 +17,6 @@
 		<module>mozkito-changecouplings</module>
 		<module>mozkito-codeanalysis</module>
 		<module>mozkito-genealogies</module>
-		<module>mozkito-genealogies-metrics</module>
 		<module>mozkito-infozilla</module>
 		<module>mozkito-issues</module>
 		<module>mozkito-issues-analysis</module>
