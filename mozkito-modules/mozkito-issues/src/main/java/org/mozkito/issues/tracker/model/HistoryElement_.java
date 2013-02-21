@@ -32,9 +32,6 @@ import org.mozkito.persistence.model.StringTuple;
                              date = "Mon May 07 15:41:49 CEST 2012")
 public class HistoryElement_ {
 	
-	/** The bug id. */
-	public static volatile SingularAttribute<HistoryElement, String>           bugId;
-	
 	/** The changed date values. */
 	public static volatile MapAttribute<HistoryElement, String, DateTimeTuple> changedDateValues;
 	
