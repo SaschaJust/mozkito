@@ -10,50 +10,23 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  **********************************************************************************************************************/
-package org.mozkito.issues.tracker.elements;
+
+package org.mozkito.issues.model;
+
+import javax.persistence.metamodel.SetAttribute;
+import javax.persistence.metamodel.SingularAttribute;
 
 /**
- * The Enum Type.
- * 
- * @author Sascha Just <sascha.just@mozkito.org>
+ * The Class History_.
  */
-public enum Type {
+@javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.issues.model.History.class)
+@javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
+                             date = "Mon May 07 15:41:49 CEST 2012")
+public class History_ {
 	
-	/** The BUG. */
-	BUG,
-	/** The RFE. */
-	RFE,
-	/** The TASK. */
-	TASK,
-	/** The TEST. */
-	TEST,
-	/** The OTHER. */
-	OTHER,
-	/** The UNKNOWN. */
-	UNKNOWN,
-	/** The DESIG n_ defect. */
-	DESIGN_DEFECT,
-	/** The BACKPORT. */
-	BACKPORT,
-	/** The CLEANUP. */
-	CLEANUP,
-	/** The IMPROVEMENT. */
-	IMPROVEMENT,
-	/** The REFACTORING. */
-	REFACTORING,
-	/** The SPEC. */
-	SPEC,
-	/** The DOCUMENTATION. */
-	DOCUMENTATION,
-	/** The BUIL d_ system. */
-	BUILD_SYSTEM;
+	/** The elements. */
+	public static volatile SetAttribute<History, HistoryElement>     elements;
 	
-	/**
-	 * Gets the handle.
-	 * 
-	 * @return the handle
-	 */
-	public String getClassName() {
-		return this.getClass().getSimpleName();
-	}
+	/** The history. */
+	public static volatile SingularAttribute<HistoryElement, Report> report;
 }

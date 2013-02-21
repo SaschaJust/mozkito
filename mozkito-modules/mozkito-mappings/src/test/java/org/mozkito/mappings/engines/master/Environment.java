@@ -30,8 +30,8 @@ import net.ownhero.dev.ioda.ClassFinder;
 import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 
-import org.mozkito.issues.tracker.model.EnhancedReport;
-import org.mozkito.issues.tracker.model.Report;
+import org.mozkito.issues.model.EnhancedReport;
+import org.mozkito.issues.model.Report;
 import org.mozkito.mappings.finder.Finder;
 import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.model.Candidate;

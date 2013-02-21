@@ -24,8 +24,8 @@ import net.ownhero.dev.kisa.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.mozkito.issues.exceptions.InvalidParameterException;
+import org.mozkito.issues.model.IssueTracker;
 import org.mozkito.issues.tracker.ReportLink;
-import org.mozkito.issues.tracker.model.IssueTracker;
 
 // TODO: Auto-generated Javadoc
 /**

@@ -30,9 +30,9 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import org.mozkito.issues.tracker.elements.Resolution;
-import org.mozkito.issues.tracker.model.History;
-import org.mozkito.issues.tracker.model.HistoryElement;
+import org.mozkito.issues.elements.Resolution;
+import org.mozkito.issues.model.History;
+import org.mozkito.issues.model.HistoryElement;
 import org.mozkito.persistence.model.Person;
 
 /**

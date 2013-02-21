@@ -14,7 +14,7 @@ package org.mozkito.mappings.mappable.model;
 
 import javax.persistence.metamodel.SingularAttribute;
 
-import org.mozkito.issues.tracker.model.Report;
+import org.mozkito.issues.model.Report;
 
 /**
  * The Class MappableReport_.

@@ -31,17 +31,17 @@ import net.ownhero.dev.regex.Regex;
 import org.joda.time.DateTime;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.mozkito.issues.elements.Priority;
+import org.mozkito.issues.elements.Resolution;
+import org.mozkito.issues.elements.Status;
+import org.mozkito.issues.elements.Type;
 import org.mozkito.issues.exceptions.InvalidParameterException;
+import org.mozkito.issues.model.AttachmentEntry;
+import org.mozkito.issues.model.Comment;
+import org.mozkito.issues.model.HistoryElement;
+import org.mozkito.issues.model.IssueTracker;
+import org.mozkito.issues.model.Report;
 import org.mozkito.issues.tracker.ReportLink;
-import org.mozkito.issues.tracker.elements.Priority;
-import org.mozkito.issues.tracker.elements.Resolution;
-import org.mozkito.issues.tracker.elements.Status;
-import org.mozkito.issues.tracker.elements.Type;
-import org.mozkito.issues.tracker.model.AttachmentEntry;
-import org.mozkito.issues.tracker.model.Comment;
-import org.mozkito.issues.tracker.model.HistoryElement;
-import org.mozkito.issues.tracker.model.IssueTracker;
-import org.mozkito.issues.tracker.model.Report;
 import org.mozkito.persistence.model.Person;
 
 /**
@@ -343,7 +343,7 @@ public class SourceforgeParserTest {
 			assertEquals(null, parser.getResolver());
 			assertEquals(null, parser.getSeverity());
 			assertEquals(0, parser.getSiblings().size());
-			assertEquals(org.mozkito.issues.tracker.elements.Status.CLOSED, parser.getStatus());
+			assertEquals(org.mozkito.issues.elements.Status.CLOSED, parser.getStatus());
 			assertEquals("joda-time 1.5+ issues with roundFloor and DST", parser.getSubject());
 			assertTrue(parser.getSubmitter() != null);
 			assertTrue(parser.getSubmitter().getUsernames().contains("daliboz"));

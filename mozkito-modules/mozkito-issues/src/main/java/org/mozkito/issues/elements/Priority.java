@@ -10,27 +10,34 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  **********************************************************************************************************************/
-package org.mozkito.issues.tracker.model.comparators;
-
-import java.util.Comparator;
-
-import org.mozkito.issues.tracker.model.Report;
+package org.mozkito.issues.elements;
 
 /**
- * The Class ReportComparator.
+ * The Enum Priority.
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class ReportComparator implements Comparator<Report> {
+public enum Priority {
 	
-	/*
-	 * (non-Javadoc)
-	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+	/** The UNKNOWN. */
+	UNKNOWN,
+	/** The VER y_ low. */
+	VERY_LOW,
+	/** The LOW. */
+	LOW,
+	/** The NORMAL. */
+	NORMAL,
+	/** The HIGH. */
+	HIGH,
+	/** The VER y_ high. */
+	VERY_HIGH;
+	
+	/**
+	 * Gets the handle.
+	 * 
+	 * @return the handle
 	 */
-	@Override
-	public int compare(final Report o1,
-	                   final Report o2) {
-		return o1.compareTo(o2);
+	public String getClassName() {
+		return this.getClass().getSimpleName();
 	}
-	
 }

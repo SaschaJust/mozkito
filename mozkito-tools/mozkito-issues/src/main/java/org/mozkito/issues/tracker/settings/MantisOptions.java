@@ -34,9 +34,9 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.issues.exceptions.InvalidParameterException;
+import org.mozkito.issues.model.IssueTracker;
 import org.mozkito.issues.tracker.Tracker;
 import org.mozkito.issues.tracker.mantis.MantisTracker;
-import org.mozkito.issues.tracker.model.IssueTracker;
 
 /**
  * The Class MantisOptions.

@@ -16,8 +16,8 @@ import java.util.SortedSet;
 
 import org.joda.time.DateTime;
 
-import org.mozkito.issues.tracker.model.History;
-import org.mozkito.issues.tracker.model.HistoryElement;
+import org.mozkito.issues.model.History;
+import org.mozkito.issues.model.HistoryElement;
 import org.mozkito.persistence.model.Person;
 
 /**

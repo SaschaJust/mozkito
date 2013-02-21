@@ -14,11 +14,11 @@ package org.mozkito.persistence;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
-import org.mozkito.issues.tracker.elements.Status;
-import org.mozkito.issues.tracker.model.Comment;
-import org.mozkito.issues.tracker.model.HistoryElement;
-import org.mozkito.issues.tracker.model.IssueTracker;
-import org.mozkito.issues.tracker.model.Report;
+import org.mozkito.issues.elements.Status;
+import org.mozkito.issues.model.Comment;
+import org.mozkito.issues.model.HistoryElement;
+import org.mozkito.issues.model.IssueTracker;
+import org.mozkito.issues.model.Report;
 import org.mozkito.persistence.model.Person;
 import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;

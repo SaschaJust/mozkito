@@ -30,9 +30,9 @@ import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kisa.Logger;
 
-import org.mozkito.issues.tracker.elements.Type;
-import org.mozkito.issues.tracker.model.EnhancedReport;
-import org.mozkito.issues.tracker.model.Report;
+import org.mozkito.issues.elements.Type;
+import org.mozkito.issues.model.EnhancedReport;
+import org.mozkito.issues.model.Report;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.settings.DatabaseOptions;
 

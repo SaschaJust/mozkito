@@ -10,7 +10,7 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  **********************************************************************************************************************/
-package org.mozkito.issues.tracker.model;
+package org.mozkito.issues.model;
 
 import java.util.Date;
 
@@ -38,7 +38,7 @@ import net.ownhero.dev.kanuni.annotations.simple.Positive;
 
 import org.joda.time.DateTime;
 
-import org.mozkito.issues.tracker.elements.TextElement;
+import org.mozkito.issues.elements.TextElement;
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persistence.model.Person;
 import org.mozkito.persistence.model.PersonContainer;

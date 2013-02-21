@@ -11,48 +11,37 @@
  * specific language governing permissions and limitations under the License.
  **********************************************************************************************************************/
 
-package org.mozkito.issues.tracker.model;
+package org.mozkito.issues.model;
 
 import java.util.Date;
 
 import javax.persistence.metamodel.SingularAttribute;
 
-import org.joda.time.DateTime;
-
 import org.mozkito.persistence.model.PersonContainer;
 
 /**
- * The Class AttachmentEntry_.
+ * The Class Comment_.
  */
-@javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.issues.tracker.model.AttachmentEntry.class)
+@javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.issues.model.Comment.class)
 @javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
                              date = "Mon May 07 15:41:49 CEST 2012")
-public class AttachmentEntry_ {
+public class Comment_ {
 	
-	/** The delta ts. */
-	public static volatile SingularAttribute<AttachmentEntry, DateTime>        deltaTS;
+	/** The bug report. */
+	public static volatile SingularAttribute<Comment, Report>          bugReport;
 	
-	/** The description. */
-	public static volatile SingularAttribute<AttachmentEntry, String>          description;
-	
-	/** The filename. */
-	public static volatile SingularAttribute<AttachmentEntry, String>          filename;
+	/** The generated id. */
+	public static volatile SingularAttribute<Comment, Long>            generatedId;
 	
 	/** The id. */
-	public static volatile SingularAttribute<AttachmentEntry, String>          id;
+	public static volatile SingularAttribute<Comment, Integer>         id;
 	
 	/** The java timestamp. */
-	public static volatile SingularAttribute<AttachmentEntry, Date>            javaTimestamp;
+	public static volatile SingularAttribute<Comment, Date>            javaTimestamp;
 	
-	/** The link. */
-	public static volatile SingularAttribute<AttachmentEntry, String>          link;
-	
-	/** The mime. */
-	public static volatile SingularAttribute<AttachmentEntry, String>          mime;
+	/** The message. */
+	public static volatile SingularAttribute<Comment, String>          message;
 	
 	/** The person container. */
-	public static volatile SingularAttribute<AttachmentEntry, PersonContainer> personContainer;
-	
-	/** The size. */
-	public static volatile SingularAttribute<AttachmentEntry, Long>            size;
+	public static volatile SingularAttribute<Comment, PersonContainer> personContainer;
 }

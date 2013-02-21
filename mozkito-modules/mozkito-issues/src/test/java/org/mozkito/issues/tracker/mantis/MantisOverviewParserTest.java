@@ -23,8 +23,8 @@ import net.ownhero.dev.ioda.FileUtils;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mozkito.issues.model.IssueTracker;
 import org.mozkito.issues.tracker.ReportLink;
-import org.mozkito.issues.tracker.model.IssueTracker;
 
 // TODO: Auto-generated Javadoc
 /**

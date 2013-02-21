@@ -23,7 +23,7 @@ import net.ownhero.dev.andama.threads.Transformer;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
 
-import org.mozkito.issues.tracker.model.Report;
+import org.mozkito.issues.model.Report;
 import org.mozkito.mappings.elements.CandidateFactory;
 import org.mozkito.mappings.finder.Finder;
 import org.mozkito.mappings.mappable.model.MappableReport;

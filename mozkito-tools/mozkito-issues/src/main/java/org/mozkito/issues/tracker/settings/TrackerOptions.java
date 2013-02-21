@@ -32,9 +32,9 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.mozkito.issues.messages.Messages;
+import org.mozkito.issues.model.IssueTracker;
 import org.mozkito.issues.tracker.Tracker;
 import org.mozkito.issues.tracker.TrackerType;
-import org.mozkito.issues.tracker.model.IssueTracker;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.settings.DatabaseOptions;
 

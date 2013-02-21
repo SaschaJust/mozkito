@@ -26,7 +26,7 @@ import javax.persistence.OneToOne;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.JavaUtils;
 
-import org.mozkito.issues.tracker.model.Report;
+import org.mozkito.issues.model.Report;
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.DatabaseType;

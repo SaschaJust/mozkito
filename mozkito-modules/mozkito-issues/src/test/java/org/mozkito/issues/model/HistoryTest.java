@@ -10,7 +10,7 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  **********************************************************************************************************************/
-package org.mozkito.issues.tracker.model;
+package org.mozkito.issues.model;
 
 import static org.junit.Assert.assertEquals;
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
@@ -20,9 +20,13 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.junit.Before;
 import org.junit.Test;
-import org.mozkito.issues.tracker.elements.Priority;
-import org.mozkito.issues.tracker.elements.Resolution;
-import org.mozkito.issues.tracker.elements.Status;
+import org.mozkito.issues.elements.Priority;
+import org.mozkito.issues.elements.Resolution;
+import org.mozkito.issues.elements.Status;
+import org.mozkito.issues.model.Comment;
+import org.mozkito.issues.model.HistoryElement;
+import org.mozkito.issues.model.IssueTracker;
+import org.mozkito.issues.model.Report;
 import org.mozkito.persistence.model.Person;
 
 // TODO: Auto-generated Javadoc

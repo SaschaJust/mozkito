@@ -29,7 +29,7 @@ import net.ownhero.dev.kisa.Highlighter;
 import net.ownhero.dev.kisa.LogLevel;
 import net.ownhero.dev.kisa.Logger;
 
-import org.mozkito.issues.tracker.model.Report;
+import org.mozkito.issues.model.Report;
 import org.mozkito.mappings.engines.Engine;
 import org.mozkito.mappings.engines.Engine.Options;
 import org.mozkito.mappings.filters.Filter;

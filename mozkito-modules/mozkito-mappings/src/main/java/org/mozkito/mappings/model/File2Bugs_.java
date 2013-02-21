@@ -15,7 +15,7 @@ package org.mozkito.mappings.model;
 import javax.persistence.metamodel.SetAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 
-import org.mozkito.issues.tracker.model.Report;
+import org.mozkito.issues.model.Report;
 import org.mozkito.versions.model.Handle;
 
 /**

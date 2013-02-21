@@ -11,7 +11,7 @@
  * specific language governing permissions and limitations under the License.
  **********************************************************************************************************************/
 
-package org.mozkito.issues.tracker.model;
+package org.mozkito.issues.model;
 
 import java.util.Date;
 
@@ -27,7 +27,7 @@ import org.mozkito.persistence.model.StringTuple;
 /**
  * The Class HistoryElement_.
  */
-@javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.issues.tracker.model.HistoryElement.class)
+@javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.issues.model.HistoryElement.class)
 @javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
                              date = "Mon May 07 15:41:49 CEST 2012")
 public class HistoryElement_ {

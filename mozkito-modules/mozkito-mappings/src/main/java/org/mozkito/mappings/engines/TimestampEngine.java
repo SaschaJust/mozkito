@@ -35,10 +35,10 @@ import net.ownhero.dev.regex.Regex;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 
-import org.mozkito.issues.tracker.elements.Resolution;
-import org.mozkito.issues.tracker.model.History;
-import org.mozkito.issues.tracker.model.HistoryElement;
-import org.mozkito.issues.tracker.model.Report;
+import org.mozkito.issues.elements.Resolution;
+import org.mozkito.issues.model.History;
+import org.mozkito.issues.model.HistoryElement;
+import org.mozkito.issues.model.Report;
 import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.mappable.model.MappableReport;

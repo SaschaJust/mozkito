@@ -10,37 +10,43 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  **********************************************************************************************************************/
-package org.mozkito.issues.tracker.elements;
+package org.mozkito.issues.elements;
 
 /**
- * The Enum Status.
+ * The Enum Type.
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public enum Status {
+public enum Type {
 	
+	/** The BUG. */
+	BUG,
+	/** The RFE. */
+	RFE,
+	/** The TASK. */
+	TASK,
+	/** The TEST. */
+	TEST,
+	/** The OTHER. */
+	OTHER,
 	/** The UNKNOWN. */
 	UNKNOWN,
-	/** The UNCONFIRMED. */
-	UNCONFIRMED,
-	/** The NEW. */
-	NEW,
-	/** The ASSIGNED. */
-	ASSIGNED,
-	/** The I n_ progress. */
-	IN_PROGRESS,
-	/** The FEEDBACK. */
-	FEEDBACK,
-	/** The REOPENED. */
-	REOPENED,
-	/** The REVIEWPENDING. */
-	REVIEWPENDING,
-	/** The VERIFIED. */
-	VERIFIED,
-	/** The CLOSED. */
-	CLOSED,
-	/** The ACKNOWLEDGED. */
-	ACKNOWLEDGED;
+	/** The DESIG n_ defect. */
+	DESIGN_DEFECT,
+	/** The BACKPORT. */
+	BACKPORT,
+	/** The CLEANUP. */
+	CLEANUP,
+	/** The IMPROVEMENT. */
+	IMPROVEMENT,
+	/** The REFACTORING. */
+	REFACTORING,
+	/** The SPEC. */
+	SPEC,
+	/** The DOCUMENTATION. */
+	DOCUMENTATION,
+	/** The BUIL d_ system. */
+	BUILD_SYSTEM;
 	
 	/**
 	 * Gets the handle.

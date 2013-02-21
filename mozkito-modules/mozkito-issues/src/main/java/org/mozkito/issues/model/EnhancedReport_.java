@@ -11,16 +11,16 @@
  * specific language governing permissions and limitations under the License.
  **********************************************************************************************************************/
 
-package org.mozkito.issues.tracker.model;
+package org.mozkito.issues.model;
 
 import javax.persistence.metamodel.SingularAttribute;
 
-import org.mozkito.issues.tracker.elements.Type;
+import org.mozkito.issues.elements.Type;
 
 /**
  * The Class EnhancedReport_.
  */
-@javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.issues.tracker.model.EnhancedReport.class)
+@javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.issues.model.EnhancedReport.class)
 @javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
                              date = "Mon May 07 15:41:49 CEST 2012")
 public class EnhancedReport_ {

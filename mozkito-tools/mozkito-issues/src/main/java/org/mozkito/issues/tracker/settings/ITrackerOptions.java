@@ -14,8 +14,8 @@ package org.mozkito.issues.tracker.settings;
 
 import java.net.URI;
 
+import org.mozkito.issues.model.IssueTracker;
 import org.mozkito.issues.tracker.Tracker;
-import org.mozkito.issues.tracker.model.IssueTracker;
 
 /**
  * The Interface ITrackerOptions.

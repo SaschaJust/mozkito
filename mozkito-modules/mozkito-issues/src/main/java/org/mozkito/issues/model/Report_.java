@@ -11,7 +11,7 @@
  * specific language governing permissions and limitations under the License.
  **********************************************************************************************************************/
 
-package org.mozkito.issues.tracker.model;
+package org.mozkito.issues.model;
 
 import java.util.Date;
 
@@ -19,18 +19,18 @@ import javax.persistence.metamodel.ListAttribute;
 import javax.persistence.metamodel.SetAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 
-import org.mozkito.issues.tracker.elements.Priority;
-import org.mozkito.issues.tracker.elements.Resolution;
-import org.mozkito.issues.tracker.elements.Severity;
-import org.mozkito.issues.tracker.elements.Status;
-import org.mozkito.issues.tracker.elements.Type;
+import org.mozkito.issues.elements.Priority;
+import org.mozkito.issues.elements.Resolution;
+import org.mozkito.issues.elements.Severity;
+import org.mozkito.issues.elements.Status;
+import org.mozkito.issues.elements.Type;
 import org.mozkito.persistence.model.PersonContainer;
 import org.mozkito.versions.model.ChangeSet;
 
 /**
  * The Class Report_.
  */
-@javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.issues.tracker.model.Report.class)
+@javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.issues.model.Report.class)
 @javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
                              date = "Mon May 07 15:41:49 CEST 2012")
 public class Report_ {

@@ -10,37 +10,27 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  **********************************************************************************************************************/
-package org.mozkito.issues.tracker.elements;
+package org.mozkito.issues.model.comparators;
 
-import org.joda.time.DateTime;
+import java.util.Comparator;
 
-import org.mozkito.persistence.model.Person;
+import org.mozkito.issues.model.Comment;
 
 /**
- * The Interface TextElement.
+ * The Class CommentComparator.
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public interface TextElement {
+public class CommentComparator implements Comparator<Comment> {
 	
-	/**
-	 * Gets the author.
-	 * 
-	 * @return the author
+	/*
+	 * (non-Javadoc)
+	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 	 */
-	Person getAuthor();
+	@Override
+	public int compare(final Comment o1,
+	                   final Comment o2) {
+		return o1.compareTo(o2);
+	}
 	
-	/**
-	 * Gets the text.
-	 * 
-	 * @return the text
-	 */
-	String getText();
-	
-	/**
-	 * Gets the timestamp.
-	 * 
-	 * @return the timestamp
-	 */
-	DateTime getTimestamp();
 }

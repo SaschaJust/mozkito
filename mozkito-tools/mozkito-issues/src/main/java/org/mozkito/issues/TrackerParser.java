@@ -18,9 +18,9 @@ import net.ownhero.dev.andama.threads.Transformer;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
 
+import org.mozkito.issues.model.Report;
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.issues.tracker.Tracker;
-import org.mozkito.issues.tracker.model.Report;
 
 /**
  * The Class TrackerParser.

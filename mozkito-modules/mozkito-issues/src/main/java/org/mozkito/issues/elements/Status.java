@@ -10,31 +10,37 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  **********************************************************************************************************************/
-package org.mozkito.issues.tracker.elements;
+package org.mozkito.issues.elements;
 
 /**
- * The Enum Severity.
+ * The Enum Status.
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public enum Severity {
+public enum Status {
 	
 	/** The UNKNOWN. */
 	UNKNOWN,
-	/** The ENHANCEMENT. */
-	ENHANCEMENT,
-	/** The TRIVIAL. */
-	TRIVIAL,
-	/** The MINOR. */
-	MINOR,
-	/** The NORMAL. */
-	NORMAL,
-	/** The MAJOR. */
-	MAJOR,
-	/** The CRITICAL. */
-	CRITICAL,
-	/** The BLOCKER. */
-	BLOCKER;
+	/** The UNCONFIRMED. */
+	UNCONFIRMED,
+	/** The NEW. */
+	NEW,
+	/** The ASSIGNED. */
+	ASSIGNED,
+	/** The I n_ progress. */
+	IN_PROGRESS,
+	/** The FEEDBACK. */
+	FEEDBACK,
+	/** The REOPENED. */
+	REOPENED,
+	/** The REVIEWPENDING. */
+	REVIEWPENDING,
+	/** The VERIFIED. */
+	VERIFIED,
+	/** The CLOSED. */
+	CLOSED,
+	/** The ACKNOWLEDGED. */
+	ACKNOWLEDGED;
 	
 	/**
 	 * Gets the handle.

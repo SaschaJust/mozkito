@@ -51,7 +51,7 @@ import org.xml.sax.SAXException;
 import org.mozkito.infozilla.exceptions.EncodingDeterminationException;
 import org.mozkito.infozilla.exceptions.MIMETypeDeterminationException;
 import org.mozkito.infozilla.model.Attachable;
-import org.mozkito.issues.tracker.model.AttachmentEntry;
+import org.mozkito.issues.model.AttachmentEntry;
 import org.mozkito.persistence.Annotated;
 
 /**

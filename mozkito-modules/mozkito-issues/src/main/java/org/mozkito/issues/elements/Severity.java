@@ -10,27 +10,38 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  **********************************************************************************************************************/
-package org.mozkito.issues.tracker.model.comparators;
-
-import java.util.Comparator;
-
-import org.mozkito.issues.tracker.model.Comment;
+package org.mozkito.issues.elements;
 
 /**
- * The Class CommentComparator.
+ * The Enum Severity.
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class CommentComparator implements Comparator<Comment> {
+public enum Severity {
 	
-	/*
-	 * (non-Javadoc)
-	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+	/** The UNKNOWN. */
+	UNKNOWN,
+	/** The ENHANCEMENT. */
+	ENHANCEMENT,
+	/** The TRIVIAL. */
+	TRIVIAL,
+	/** The MINOR. */
+	MINOR,
+	/** The NORMAL. */
+	NORMAL,
+	/** The MAJOR. */
+	MAJOR,
+	/** The CRITICAL. */
+	CRITICAL,
+	/** The BLOCKER. */
+	BLOCKER;
+	
+	/**
+	 * Gets the handle.
+	 * 
+	 * @return the handle
 	 */
-	@Override
-	public int compare(final Comment o1,
-	                   final Comment o2) {
-		return o1.compareTo(o2);
+	public String getClassName() {
+		return this.getClass().getSimpleName();
 	}
-	
 }

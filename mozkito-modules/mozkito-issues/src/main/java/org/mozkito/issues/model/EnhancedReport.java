@@ -10,7 +10,7 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  **********************************************************************************************************************/
-package org.mozkito.issues.tracker.model;
+package org.mozkito.issues.model;
 
 import java.util.List;
 import java.util.Set;
@@ -31,11 +31,11 @@ import net.ownhero.dev.kanuni.conditions.CompareCondition;
 
 import org.joda.time.DateTime;
 
-import org.mozkito.issues.tracker.elements.Priority;
-import org.mozkito.issues.tracker.elements.Resolution;
-import org.mozkito.issues.tracker.elements.Severity;
-import org.mozkito.issues.tracker.elements.Status;
-import org.mozkito.issues.tracker.elements.Type;
+import org.mozkito.issues.elements.Priority;
+import org.mozkito.issues.elements.Resolution;
+import org.mozkito.issues.elements.Severity;
+import org.mozkito.issues.elements.Status;
+import org.mozkito.issues.elements.Type;
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persistence.model.Person;
 import org.mozkito.persistence.model.PersonContainer;
