@@ -24,12 +24,12 @@ import javax.persistence.metamodel.SingularAttribute;
                              date = "Mon May 07 15:41:49 CEST 2012")
 public class History_ {
 	
-	/** The bug id. */
-	public static volatile SingularAttribute<History, String>    bugId;
-	
 	/** The elements. */
-	public static volatile SetAttribute<History, HistoryElement> elements;
+	public static volatile SetAttribute<History, HistoryElement>     elements;
 	
 	/** The id. */
-	public static volatile SingularAttribute<History, Long>      id;
+	public static volatile SingularAttribute<History, Long>          id;
+	
+	/** The history. */
+	public static volatile SingularAttribute<HistoryElement, Report> report;
 }
