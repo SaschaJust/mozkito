@@ -15,7 +15,6 @@ package org.mozkito.issues.tracker.jira;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -26,7 +25,7 @@ import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
 
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.issues.tracker.elements.Resolution;
@@ -55,8 +54,8 @@ public class JiraParserLUCENE2222_NetTest {
 	/**
 	 * Before class.
 	 */
-	@BeforeClass
-	public static void beforeClass() {
+	@Before
+	public void beforeClass() {
 		try {
 			final URI uri = JiraParserLUCENE2222_NetTest.class.getResource(FileUtils.fileSeparator + "LUCENE-2222.xml")
 			                                                  .toURI();
@@ -130,7 +129,7 @@ public class JiraParserLUCENE2222_NetTest {
 	@Test
 	public void testGetHistoryElements() {
 		JiraParserLUCENE2222_NetTest.parser.parseHistoryElements(report.getHistory());
-		assertEquals(3, report.getHistory().size());
+		assertEquals(11, report.getHistory().size());
 		
 		int counter = 0;
 		for (final HistoryElement hElem : report.getHistory()) {
@@ -154,7 +153,7 @@ public class JiraParserLUCENE2222_NetTest {
 					                                     new Regex(JiraHistoryParser.HISTORY_DATE_TIME_PATTERN)),
 					             hElem.getTimestamp());
 					break;
-				case 1:
+				case 4:
 					final Person author1 = hElem.getAuthor();
 					assert (author1 != null);
 					assertTrue(author1.getFullnames().contains("Michael McCandless"));
@@ -180,7 +179,7 @@ public class JiraParserLUCENE2222_NetTest {
 					                                     new Regex(JiraHistoryParser.HISTORY_DATE_TIME_PATTERN)),
 					             hElem.getTimestamp());
 					break;
-				case 2:
+				case 8:
 					final Person author2 = hElem.getAuthor();
 					assert (author2 != null);
 					assertTrue(author2.getFullnames().contains("Uwe Schindler"));
@@ -202,7 +201,7 @@ public class JiraParserLUCENE2222_NetTest {
 					             hElem.getTimestamp());
 					break;
 				default:
-					fail();
+					// do nothing
 			}
 			++counter;
 		}

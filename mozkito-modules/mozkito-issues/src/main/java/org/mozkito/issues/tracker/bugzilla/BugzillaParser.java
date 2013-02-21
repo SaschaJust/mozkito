@@ -433,14 +433,15 @@ public abstract class BugzillaParser implements Parser {
 			this.md5 = DigestUtils.md5(rawContent.getContent());
 			this.xmlReport = createDocument(rawContent);
 			if (this.xmlReport == null) {
-				if (Logger.logError()) {
-					Logger.error("Could not parse report %s. createDocument() returned NULL. See earlier errors.",
-					             uri.toASCIIString());
+				if (Logger.logWarn()) {
+					Logger.warn("Could not parse report %s. createDocument() returned NULL. See earlier errors.",
+					            uri.toASCIIString());
 				}
+				return null;
 			}
 			if (!checkXML(this.xmlReport)) {
-				if (Logger.logError()) {
-					Logger.error("Failed to parse report %s: XML check failed.", uri.toASCIIString());
+				if (Logger.logWarn()) {
+					Logger.warn("Failed to parse report %s: XML check failed.", uri.toASCIIString());
 				}
 				return null;
 			}

@@ -59,7 +59,6 @@ import org.mozkito.issues.tracker.elements.Type;
 import org.mozkito.issues.tracker.model.AttachmentEntry;
 import org.mozkito.issues.tracker.model.Comment;
 import org.mozkito.issues.tracker.model.History;
-import org.mozkito.issues.tracker.model.HistoryElement;
 import org.mozkito.issues.tracker.model.IssueTracker;
 import org.mozkito.issues.tracker.model.Report;
 import org.mozkito.persistence.model.Person;
@@ -191,40 +190,39 @@ public class JiraParser implements Parser {
 	}
 	
 	/** The fetch time. */
-	private DateTime                  fetchTime;
+	private DateTime           fetchTime;
 	
 	/** The tracker. */
 	@SuppressWarnings ("unused")
-	private Tracker                   tracker;
-	
-	/** The history. */
-	private SortedSet<HistoryElement> historyElements   = null;
+	private Tracker            tracker;
 	
 	/** The resolver. */
-	private Person                    resolver;
+	private Person             resolver;
 	
 	/** The md5. */
-	private byte[]                    md5;
+	private byte[]             md5;
 	
 	/** The proxy config. */
-	private ProxyConfig               proxyConfig       = null;
+	private ProxyConfig        proxyConfig       = null;
 	
 	/** The report. */
-	private XmlReport                 xmlReport;
+	private XmlReport          xmlReport;
 	
 	/** The document. */
-	private Document                  document;
+	private Document           document;
 	
 	/** The base uri. */
-	private String                    baseUri;
+	private String             baseUri;
 	
 	/** The issue id. */
-	private String                    issueId;
+	private String             issueId;
 	
-	private Report                    report;
+	private Report             report;
+	
+	private boolean            parsed            = false;
 	
 	/** The Constant DATE_TIME_PATTERN. */
-	public static final String        DATE_TIME_PATTERN = "({E}[A-Za-z]{3}),\\s+({dd}[0-3]?\\d)\\s+({MMM}[A-Za-z]{3,})\\s+({yyyy}\\d{4})\\s+({HH}[0-2]\\d):({mm}[0-5]\\d):({ss}[0-5]\\d)({Z}\\s[+-]\\d{4})";
+	public static final String DATE_TIME_PATTERN = "({E}[A-Za-z]{3}),\\s+({dd}[0-3]?\\d)\\s+({MMM}[A-Za-z]{3,})\\s+({yyyy}\\d{4})\\s+({HH}[0-2]\\d):({mm}[0-5]\\d):({ss}[0-5]\\d)({Z}\\s[+-]\\d{4})";
 	
 	/*
 	 * (non-Javadoc)
@@ -892,7 +890,7 @@ public class JiraParser implements Parser {
 		
 		try {
 			// https://issues.apache.org/jira/browse/LUCENE-2222?page=com.atlassian.jira.plugin.system.issuetabpanels:changehistory-tabpanel#issue-tabs
-			if (this.historyElements == null) {
+			if (!this.parsed) {
 				final StringBuilder sb = new StringBuilder();
 				sb.append("https://issues.apache.org/jira/browse/");
 				sb.append(getId());
@@ -900,10 +898,10 @@ public class JiraParser implements Parser {
 				if (Logger.logDebug()) {
 					Logger.debug("Fetching issue report history from %s", sb.toString());
 				}
-				final JiraHistoryParser historyParser = new JiraHistoryParser(getId(), new URI(sb.toString()));
+				final JiraHistoryParser historyParser = new JiraHistoryParser(new URI(sb.toString()));
 				if (historyParser.parse(history)) {
 					this.resolver = historyParser.getResolver();
-					this.historyElements = historyParser.getHistory();
+					this.parsed = true;
 				}
 			}
 		} catch (final URISyntaxException e) {
