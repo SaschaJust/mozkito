@@ -15,6 +15,7 @@ package org.mozkito.codeanalysis;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
+
 import org.mozkito.codeanalysis.model.ChangeOperationsTest;
 import org.mozkito.codeanalysis.model.JavaChangeOperationTest;
 import org.mozkito.codeanalysis.model.JavaClassDefinitionTest;

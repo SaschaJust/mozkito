@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
+
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.model.Person;
 import org.mozkito.testing.DatabaseTest;

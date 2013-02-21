@@ -18,6 +18,7 @@ import static org.junit.Assert.assertFalse;
 import java.util.List;
 
 import org.junit.Test;
+
 import org.mozkito.persistence.model.Person;
 import org.mozkito.persistence.model.PersonContainer;
 import org.mozkito.testing.DatabaseTest;

@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.ownhero.dev.ioda.JavaUtils;
+import difflib.Delta;
 
 import org.mozkito.versions.elements.AnnotationEntry;
 import org.mozkito.versions.elements.ChangeType;
@@ -29,8 +30,6 @@ import org.mozkito.versions.elements.RevDependencyGraph;
 import org.mozkito.versions.exceptions.RepositoryOperationException;
 import org.mozkito.versions.mercurial.MercurialRepository;
 import org.mozkito.versions.model.ChangeSet;
-
-import difflib.Delta;
 
 /**
  * The Class Repository. Every repository connector that extends this class has to be named [Repotype]Repository. E.g.

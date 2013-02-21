@@ -19,7 +19,7 @@ import java.util.Set;
 
 import javax.persistence.Id;
 
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 
 import org.mozkito.codeanalysis.model.JavaMethodDefinition;
 import org.mozkito.persistence.Criteria;

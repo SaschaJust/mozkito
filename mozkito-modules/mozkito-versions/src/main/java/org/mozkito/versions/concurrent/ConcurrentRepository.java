@@ -25,14 +25,14 @@ import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import net.ownhero.dev.hiari.settings.exceptions.InstantiationError;
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
+import difflib.Delta;
 
 import org.mozkito.versions.Repository;
 import org.mozkito.versions.elements.AnnotationEntry;
@@ -40,8 +40,6 @@ import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.LogEntry;
 import org.mozkito.versions.elements.RevDependencyGraph;
 import org.mozkito.versions.exceptions.RepositoryOperationException;
-
-import difflib.Delta;
 
 /**
  * The Class ConcurrentRepository.
@@ -367,7 +365,8 @@ public class ConcurrentRepository extends Repository {
 					
 					this.threadToRevisionMap.put(thread.getId(), repoClone);
 				} catch (final InstantiationException e) {
-					throw new InstantiationError(e, this.repository.getClass(), null, new Object[0]);
+					throw new net.ownhero.dev.andama.exceptions.InstantiationError(e, this.repository.getClass(), null,
+					                                                               new Object[0]);
 				} catch (final RepositoryOperationException | IllegalAccessException e) {
 					throw new UnrecoverableError(e);
 				}

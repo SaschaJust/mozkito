@@ -19,7 +19,7 @@ import java.util.Set;
 
 import org.neo4j.graphdb.GraphDatabaseService;
 
-import org.mozkito.genealogies.ChangeGenealogy;
+import org.mozkito.genealogies.core.ChangeGenealogy;
 import org.mozkito.genealogies.core.CoreChangeGenealogy;
 import org.mozkito.genealogies.core.GenealogyEdgeType;
 

@@ -25,8 +25,8 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import org.joda.time.DateTime;
 
 import org.mozkito.causeeffect.ctl.CTLFormula;
-import org.mozkito.versions.model.Handle;
 import org.mozkito.versions.model.ChangeSet;
+import org.mozkito.versions.model.Handle;
 
 /**
  * The Class LTCRecommendation.

@@ -33,6 +33,7 @@ import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 
 import org.apache.openjpa.persistence.jdbc.Index;
+
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persistence.Intercepted;
 

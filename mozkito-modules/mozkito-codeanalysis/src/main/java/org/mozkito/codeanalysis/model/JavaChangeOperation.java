@@ -30,6 +30,7 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.jdom2.Attribute;
 import org.jdom2.Element;
+
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persistence.ModelStorage;
 import org.mozkito.versions.elements.ChangeType;

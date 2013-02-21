@@ -12,8 +12,6 @@
  **********************************************************************************************************************/
 package org.mozkito.issues;
 
-import java.util.List;
-
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.model.Pool;
@@ -30,7 +28,6 @@ import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.issues.tracker.Tracker;
-import org.mozkito.issues.tracker.model.IssueTracker;
 import org.mozkito.issues.tracker.settings.TrackerOptions;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.settings.DatabaseOptions;
@@ -66,11 +63,11 @@ public class Bugs extends Chain<Settings> {
 		this.threadPool = new Pool(Bugs.class.getSimpleName(), this);
 		
 		try {
-			this.trackerArguments = ArgumentSetFactory.create(new TrackerOptions(settings.getRoot(),
+			final DatabaseOptions databaseOptions = new DatabaseOptions(settings.getRoot(), Requirement.required,
+			                                                            "issues");
+			this.databaseArguments = ArgumentSetFactory.create(databaseOptions);
+			this.trackerArguments = ArgumentSetFactory.create(new TrackerOptions(settings.getRoot(), databaseOptions,
 			                                                                     Requirement.required));
-			this.databaseArguments = ArgumentSetFactory.create(new DatabaseOptions(settings.getRoot(),
-			                                                                       Requirement.required, "issues"));
-			
 			ArgumentFactory.create(new BooleanArgument.Options(
 			                                                   settings.getRoot(),
 			                                                   "headless",

@@ -12,7 +12,7 @@
  **********************************************************************************************************************/
 package org.mozkito.mappings.engines;
 
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 
 import org.apache.lucene.document.Document;

@@ -17,24 +17,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.util.HashMap;
-import java.util.Map;
 
-import net.ownhero.dev.hiari.settings.ArgumentSet;
-import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
-import net.ownhero.dev.hiari.settings.IOptions;
-import net.ownhero.dev.hiari.settings.InputFileArgument;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
-import net.ownhero.dev.hiari.settings.requirements.Requirement;
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 
 import org.mozkito.changeimpact.ImpactMatrix;
 import org.mozkito.clustering.MultilevelClustering;
 import org.mozkito.clustering.MultilevelClusteringScoreVisitor;
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
-import org.mozkito.settings.RepositoryOptions;
-import org.mozkito.versions.model.ChangeSet;
 
 /**
  * The Class TestImpactVoter.
@@ -42,108 +31,6 @@ import org.mozkito.versions.model.ChangeSet;
  * @author Kim Herzig <herzig@mozkito.org>
  */
 public class TestImpactVoter implements MultilevelClusteringScoreVisitor<JavaChangeOperation> {
-	
-	/**
-	 * The Class Factory.
-	 */
-	public static class Factory extends MultilevelClusteringScoreVisitorFactory<TestImpactVoter> {
-		
-		/** The test coverage in. */
-		private final File testCoverageIn;
-		
-		/**
-		 * Instantiates a new factory.
-		 * 
-		 * @param testCoverageIn
-		 *            the test coverage in
-		 */
-		protected Factory(final File testCoverageIn) {
-			this.testCoverageIn = testCoverageIn;
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.mozkito.untangling.voters.MultilevelClusteringScoreVisitorFactory#createVoter(org.mozkito.versions.model
-		 * .ChangeSet)
-		 */
-		@Override
-		public TestImpactVoter createVoter(final ChangeSet changeset) {
-			return new TestImpactVoter(this.testCoverageIn);
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see org.mozkito.untangling.voters.MultilevelClusteringScoreVisitorFactory#getVoterName()
-		 */
-		@Override
-		public String getVoterName() {
-			// PRECONDITIONS
-			
-			try {
-				return TestImpactVoter.class.getSimpleName();
-			} finally {
-				// POSTCONDITIONS
-			}
-		}
-		
-	}
-	
-	/**
-	 * The Class Options.
-	 */
-	public static class Options extends
-	        ArgumentSetOptions<TestImpactVoter.Factory, ArgumentSet<TestImpactVoter.Factory, Options>> {
-		
-		/** The test impact file options. */
-		private net.ownhero.dev.hiari.settings.InputFileArgument.Options testImpactFileOptions;
-		
-		/**
-		 * Instantiates a new options.
-		 * 
-		 * @param argumentSet
-		 *            the argument set
-		 * @param requirements
-		 *            the requirements
-		 * @param repositoryOptions
-		 *            the repository options
-		 */
-		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements,
-		        final RepositoryOptions repositoryOptions) {
-			super(argumentSet, "testImpactVoter", "TestImpactVoter options.", requirements);
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
-		 */
-		@Override
-		public TestImpactVoter.Factory init() {
-			// PRECONDITIONS
-			final File testCoverageIn = getSettings().getArgument(this.testImpactFileOptions).getValue();
-			return new TestImpactVoter.Factory(testCoverageIn);
-			
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
-		 */
-		@Override
-		public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> argumentSet) throws ArgumentRegistrationException,
-		                                                                                    SettingsParseError {
-			// PRECONDITIONS
-			final Map<String, IOptions<?, ?>> map = new HashMap<>();
-			this.testImpactFileOptions = new InputFileArgument.Options(
-			                                                           argumentSet,
-			                                                           "testImpactIn",
-			                                                           "File containing a serial version of a ImpactMatrix",
-			                                                           null, Requirement.required);
-			map.put(this.testImpactFileOptions.getName(), this.testImpactFileOptions);
-			return map;
-		}
-	}
 	
 	/** The matrix. */
 	private ImpactMatrix matrix = null;

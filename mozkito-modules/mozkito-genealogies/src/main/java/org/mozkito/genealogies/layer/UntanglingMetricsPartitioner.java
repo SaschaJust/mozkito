@@ -27,11 +27,11 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
-import org.mozkito.genealogies.PartitionGenerator;
 import org.mozkito.genealogies.core.CoreChangeGenealogy;
+import org.mozkito.genealogies.core.PartitionGenerator;
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.model.ChangeSet;

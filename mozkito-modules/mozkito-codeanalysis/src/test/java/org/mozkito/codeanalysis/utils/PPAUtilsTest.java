@@ -16,6 +16,7 @@ package org.mozkito.codeanalysis.utils;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+
 import org.mozkito.codeanalysis.model.JavaMethodCall;
 
 /**

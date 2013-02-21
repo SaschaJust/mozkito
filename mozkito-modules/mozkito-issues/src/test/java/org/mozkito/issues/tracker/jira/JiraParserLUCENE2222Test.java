@@ -30,6 +30,7 @@ import net.ownhero.dev.regex.Regex;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.issues.tracker.elements.Priority;
 import org.mozkito.issues.tracker.elements.Resolution;

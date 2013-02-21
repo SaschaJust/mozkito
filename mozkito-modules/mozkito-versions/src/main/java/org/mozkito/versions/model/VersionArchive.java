@@ -34,12 +34,13 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.annotations.string.Length;
 import net.ownhero.dev.kisa.Logger;
 
 import org.joda.time.DateTime;
+
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.elements.RevDependencyGraph;

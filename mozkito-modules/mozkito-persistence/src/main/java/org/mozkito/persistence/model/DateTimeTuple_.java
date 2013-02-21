@@ -14,6 +14,7 @@
 package org.mozkito.persistence.model;
 
 import java.util.Date;
+
 import javax.persistence.metamodel.SingularAttribute;
 
 /**

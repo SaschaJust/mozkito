@@ -21,7 +21,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
-import org.mozkito.genealogies.PartitionGenerator;
+import org.mozkito.genealogies.core.PartitionGenerator;
 import org.mozkito.versions.model.ChangeSet;
 
 /**

@@ -45,13 +45,14 @@ import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.Parser;
 import org.apache.tika.sax.BodyContentHandler;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+
 import org.mozkito.infozilla.exceptions.EncodingDeterminationException;
 import org.mozkito.infozilla.exceptions.MIMETypeDeterminationException;
 import org.mozkito.infozilla.model.Attachable;
 import org.mozkito.issues.tracker.model.AttachmentEntry;
 import org.mozkito.persistence.Annotated;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
 
 /**
  * The Class Attachment.

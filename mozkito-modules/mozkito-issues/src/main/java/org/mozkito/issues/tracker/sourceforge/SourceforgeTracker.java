@@ -15,7 +15,7 @@ package org.mozkito.issues.tracker.sourceforge;
 import java.net.URI;
 import java.util.Set;
 
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 
 import org.mozkito.issues.exceptions.InvalidParameterException;

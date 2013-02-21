@@ -21,9 +21,9 @@ import java.util.LinkedList;
 import java.util.Set;
 
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
-import org.mozkito.genealogies.PartitionGenerator;
 import org.mozkito.genealogies.core.CoreChangeGenealogy;
 import org.mozkito.genealogies.core.GenealogyEdgeType;
+import org.mozkito.genealogies.core.PartitionGenerator;
 import org.mozkito.genealogies.utils.ChangeGenealogyUtils;
 import org.mozkito.persistence.PersistenceUtil;
 

@@ -15,6 +15,7 @@ package org.mozkito.genealogies.layer;
 import java.util.Collection;
 
 import org.joda.time.DateTime;
+
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.versions.model.ChangeSet;
 

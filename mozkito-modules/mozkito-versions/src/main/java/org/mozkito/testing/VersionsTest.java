@@ -20,13 +20,14 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
 import org.junit.After;
 import org.junit.Before;
+
 import org.mozkito.exceptions.TestSettingsError;
 import org.mozkito.testing.annotation.EnvironmentProcessor;
 import org.mozkito.testing.annotation.RepositorySetting;

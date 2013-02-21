@@ -34,6 +34,7 @@ import net.ownhero.dev.regex.Regex;
 
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
+
 import org.mozkito.issues.tracker.elements.Resolution;
 import org.mozkito.issues.tracker.model.History;
 import org.mozkito.issues.tracker.model.HistoryElement;

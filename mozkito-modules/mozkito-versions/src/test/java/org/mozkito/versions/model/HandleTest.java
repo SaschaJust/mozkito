@@ -21,6 +21,7 @@ import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
 import org.mozkito.persistence.model.Person;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.RevDependencyGraph;

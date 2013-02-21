@@ -28,6 +28,7 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kanuni.conditions.StringCondition;
 
 import org.jdom2.Element;
+
 import org.mozkito.persistence.Annotated;
 
 /**

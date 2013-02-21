@@ -28,6 +28,7 @@ import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.lang.StringUtils;
+
 import org.mozkito.untangling.blob.ChangeOperationSet;
 import org.mozkito.versions.exceptions.NoSuchHandleException;
 import org.mozkito.versions.model.Revision;

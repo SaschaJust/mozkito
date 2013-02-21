@@ -34,9 +34,9 @@ import org.mozkito.causeeffect.kripke.LabelGenerator;
 import org.mozkito.genealogies.ChangeGenealogy;
 import org.mozkito.genealogies.utils.VertexSelector;
 import org.mozkito.versions.elements.ChangeType;
+import org.mozkito.versions.model.ChangeSet;
 import org.mozkito.versions.model.Handle;
 import org.mozkito.versions.model.Revision;
-import org.mozkito.versions.model.ChangeSet;
 
 /**
  * The Class LTCExperiment.

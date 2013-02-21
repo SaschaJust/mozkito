@@ -32,7 +32,7 @@ import org.mozkito.versions.concurrent.ConcurrentRepository;
 
 /**
  * The Class RepositoryStorage.
- *
+ * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class RepositoryStorage extends Storage {
@@ -112,8 +112,9 @@ public class RepositoryStorage extends Storage {
 	
 	/**
 	 * Instantiates a new repository storage.
-	 *
-	 * @param repository the repository
+	 * 
+	 * @param repository
+	 *            the repository
 	 */
 	public RepositoryStorage(final ConcurrentRepository repository) {
 		// PRECONDITIONS

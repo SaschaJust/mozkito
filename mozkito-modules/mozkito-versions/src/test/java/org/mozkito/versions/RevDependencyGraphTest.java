@@ -26,6 +26,7 @@ import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
 import org.mozkito.testing.VersionsTest;
 import org.mozkito.testing.annotation.RepositorySetting;
 import org.mozkito.testing.annotation.RepositorySettings;

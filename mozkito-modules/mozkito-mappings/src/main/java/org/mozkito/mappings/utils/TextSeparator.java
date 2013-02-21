@@ -19,16 +19,17 @@ import java.util.LinkedList;
 import java.util.List;
 
 import jregex.REFlags;
-import net.ownhero.dev.ioda.JavaUtils;
-import net.ownhero.dev.regex.Match;
-import net.ownhero.dev.regex.MultiMatch;
-import net.ownhero.dev.regex.Regex;
 
 import com.aliasi.sentences.MedlineSentenceModel;
 import com.aliasi.sentences.SentenceModel;
 import com.aliasi.tokenizer.IndoEuropeanTokenizerFactory;
 import com.aliasi.tokenizer.Tokenizer;
 import com.aliasi.tokenizer.TokenizerFactory;
+
+import net.ownhero.dev.ioda.JavaUtils;
+import net.ownhero.dev.regex.Match;
+import net.ownhero.dev.regex.MultiMatch;
+import net.ownhero.dev.regex.Regex;
 
 /**
  * The Class TextSeparator.

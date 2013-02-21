@@ -13,8 +13,6 @@
 
 package org.mozkito.genealogies.metrics.layer.partition;
 
-import net.ownhero.dev.andama.threads.Group;
-import net.ownhero.dev.andama.threads.Multiplexer;
 import net.ownhero.dev.hiari.settings.Settings;
 
 import org.mozkito.genealogies.metrics.GenealogyPartitionNode;

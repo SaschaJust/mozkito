@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.mozkito</groupId>
+		<artifactId>mozkito-tools</artifactId>
+		<version>0.4-SNAPSHOT</version>
+	</parent>
+	<artifactId>mozkito-untangling-tool</artifactId>
+	<packaging>jar</packaging>
+	<name>(tool)   untangling</name>
+	<description>TODO</description>
+	<properties>
+		<mainClass>untangling.Main</mainClass>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>org.mozkito</groupId>
+			<artifactId>mozkito-versions-tool</artifactId>
+			<version>0.4-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mozkito</groupId>
+			<artifactId>mozkito-untangling</artifactId>
+			<version>0.4-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.derby</groupId>
+			<artifactId>derby</artifactId>
+			<version>10.9.1.0</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+</project>

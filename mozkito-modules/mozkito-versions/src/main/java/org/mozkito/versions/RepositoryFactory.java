@@ -24,7 +24,8 @@ import java.util.Map;
 import java.util.Set;
 
 import net.ownhero.dev.andama.exceptions.ClassLoadingError;
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.andama.exceptions.NoSuchConstructorError;
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.ClassFinder;
 import net.ownhero.dev.ioda.exceptions.WrongClassSearchMethodException;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
@@ -110,11 +111,10 @@ public final class RepositoryFactory {
 			} catch (final SecurityException | IllegalAccessException e) {
 				throw new UnrecoverableError(e);
 			} catch (final NoSuchMethodException e) {
-				throw new net.ownhero.dev.hiari.settings.exceptions.NoSuchConstructorError(e, klass,
-				                                                                           constructorSignature);
+				throw new NoSuchConstructorError(e, klass, constructorSignature);
 			} catch (final InstantiationException e) {
-				throw new net.ownhero.dev.hiari.settings.exceptions.InstantiationError(e, klass, constructor,
-				                                                                       constructorArguments);
+				throw new net.ownhero.dev.andama.exceptions.InstantiationError(e, klass, constructor,
+				                                                               constructorArguments);
 			}
 		}
 		

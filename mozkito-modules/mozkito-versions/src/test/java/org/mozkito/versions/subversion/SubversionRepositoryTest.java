@@ -32,6 +32,9 @@ import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
+
+import difflib.Delta;
+
 import org.mozkito.testing.VersionsTest;
 import org.mozkito.testing.annotation.RepositorySetting;
 import org.mozkito.versions.RepositoryType;
@@ -41,8 +44,6 @@ import org.mozkito.versions.elements.LogEntry;
 import org.mozkito.versions.elements.RevDependencyGraph;
 import org.mozkito.versions.exceptions.RepositoryOperationException;
 import org.mozkito.versions.model.Branch;
-
-import difflib.Delta;
 
 /**
  * The Class SubversionRepositoryTest.

@@ -37,6 +37,7 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.openjpa.persistence.jdbc.Index;
+
 import org.mozkito.persistence.Annotated;
 
 /**

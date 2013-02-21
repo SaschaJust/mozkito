@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
+
 import org.mozkito.genealogies.layer.ChangeGenealogyLayerNode;
 import org.mozkito.genealogies.layer.PartitionChangeGenealogy;
 import org.mozkito.genealogies.metrics.GenealogyMetricValue;

@@ -22,6 +22,7 @@ import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.JavaUtils;
 
 import org.junit.Test;
+
 import org.mozkito.mappings.utils.TextSeparator;
 
 /**

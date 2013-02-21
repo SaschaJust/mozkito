@@ -25,8 +25,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.Settings;
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import net.ownhero.dev.ioda.URIUtils;
@@ -42,19 +42,6 @@ import net.ownhero.dev.regex.Regex;
 import org.apache.commons.io.output.NullOutputStream;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
-import org.mozkito.persistence.model.Person;
-import org.mozkito.versions.ProtocolType;
-import org.mozkito.versions.Repository;
-import org.mozkito.versions.elements.AnnotationEntry;
-import org.mozkito.versions.elements.ChangeType;
-import org.mozkito.versions.elements.LogEntry;
-import org.mozkito.versions.elements.RevDependencyGraph;
-import org.mozkito.versions.elements.RevDependencyGraph.EdgeType;
-import org.mozkito.versions.exceptions.InvalidProtocolType;
-import org.mozkito.versions.exceptions.InvalidRepositoryURI;
-import org.mozkito.versions.exceptions.RepositoryOperationException;
-import org.mozkito.versions.exceptions.UnsupportedProtocolType;
-import org.mozkito.versions.model.Branch;
 import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNDirEntry;
 import org.tmatesoft.svn.core.SVNException;
@@ -78,6 +65,20 @@ import org.tmatesoft.svn.util.SVNDebugLog;
 import difflib.Delta;
 import difflib.DiffUtils;
 import difflib.Patch;
+
+import org.mozkito.persistence.model.Person;
+import org.mozkito.versions.ProtocolType;
+import org.mozkito.versions.Repository;
+import org.mozkito.versions.elements.AnnotationEntry;
+import org.mozkito.versions.elements.ChangeType;
+import org.mozkito.versions.elements.LogEntry;
+import org.mozkito.versions.elements.RevDependencyGraph;
+import org.mozkito.versions.elements.RevDependencyGraph.EdgeType;
+import org.mozkito.versions.exceptions.InvalidProtocolType;
+import org.mozkito.versions.exceptions.InvalidRepositoryURI;
+import org.mozkito.versions.exceptions.RepositoryOperationException;
+import org.mozkito.versions.exceptions.UnsupportedProtocolType;
+import org.mozkito.versions.model.Branch;
 
 /**
  * Subversion connector extending the {@link Repository} base class.

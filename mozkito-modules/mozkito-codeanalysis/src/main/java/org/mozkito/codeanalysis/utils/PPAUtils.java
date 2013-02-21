@@ -29,7 +29,8 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import ca.mcgill.cs.swevo.ppa.PPAOptions;
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
@@ -55,6 +56,11 @@ import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.PPAASTParser;
 import org.eclipse.jdt.core.dom.PackageDeclaration;
+
+import difflib.DeleteDelta;
+import difflib.Delta;
+import difflib.InsertDelta;
+
 import org.mozkito.codeanalysis.internal.visitors.ChangeOperationVisitor;
 import org.mozkito.codeanalysis.model.ChangeOperations;
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
@@ -78,11 +84,6 @@ import org.mozkito.versions.exceptions.NoSuchHandleException;
 import org.mozkito.versions.exceptions.RepositoryOperationException;
 import org.mozkito.versions.model.ChangeSet;
 import org.mozkito.versions.model.Revision;
-
-import ca.mcgill.cs.swevo.ppa.PPAOptions;
-import difflib.DeleteDelta;
-import difflib.Delta;
-import difflib.InsertDelta;
 
 /**
  * The Class PPAUtils.

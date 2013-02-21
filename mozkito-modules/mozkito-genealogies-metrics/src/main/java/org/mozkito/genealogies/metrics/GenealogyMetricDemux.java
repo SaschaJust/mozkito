@@ -13,8 +13,6 @@
 
 package org.mozkito.genealogies.metrics;
 
-import net.ownhero.dev.andama.threads.Demultiplexer;
-import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.hiari.settings.Settings;
 
 /**

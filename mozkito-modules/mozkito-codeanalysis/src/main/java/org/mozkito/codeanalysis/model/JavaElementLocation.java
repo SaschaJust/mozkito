@@ -36,6 +36,7 @@ import org.apache.openjpa.persistence.Type;
 import org.apache.openjpa.persistence.jdbc.Index;
 import org.jdom2.Attribute;
 import org.jdom2.Element;
+
 import org.mozkito.persistence.Annotated;
 
 /**

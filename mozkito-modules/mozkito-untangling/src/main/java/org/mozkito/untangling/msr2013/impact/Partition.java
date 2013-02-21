@@ -1,5 +1,5 @@
-/*******************************************************************************
- * Copyright 2012 Kim Herzig, Sascha Just
+/***********************************************************************************************************************
+ * Copyright 2011 Kim Herzig, Sascha Just
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -9,7 +9,7 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ **********************************************************************************************************************/
 package org.mozkito.untangling.msr2013.impact;
 
 import java.util.Collection;
@@ -18,7 +18,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.Tuple;
 
 /**
@@ -62,8 +62,8 @@ public class Partition implements Comparable<Partition> {
 	 *            the bugs i ds
 	 * @param mixed
 	 *            the mixed
-	 * @param persistenceUtil
-	 *            the persistence util
+	 * @param cos2Files
+	 *            the cos2 files
 	 */
 	public Partition(final String clID, final int partitionNumber, final Collection<Long> operationIds,
 	        final Collection<String> bugsIDs, final boolean mixed, final Map<Long, Tuple<Long, Boolean>> cos2Files) {

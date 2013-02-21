@@ -15,8 +15,17 @@
 		<module>mozkito-mappings</module>
 		<module>mozkito-persons</module>
 		<module>mozkito-versions</module>
+		<module>mozkito-callgraph</module>
+		<module>mozkito-genealogies</module>
+		<module>mozkito-codeanalysis</module>
+		<module>mozkito-untangling</module>
 	</modules>
 	<dependencies>
+		<dependency>
+			<groupId>net.ownhero.dev</groupId>
+			<artifactId>hiari</artifactId>
+			<version>0.2-SNAPSHOT</version>
+		</dependency>
 		<dependency>
 			<groupId>net.ownhero.dev</groupId>
 			<artifactId>andama-core</artifactId>

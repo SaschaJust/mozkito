@@ -178,14 +178,10 @@ public class AuthorEqualityEngine extends Engine {
 	}
 	
 	/**
-	 * Score.
+	 * {@inheritDoc}
 	 * 
-	 * @param from
-	 *            the from
-	 * @param to
-	 *            the to
-	 * @param score
-	 *            the score
+	 * @see org.mozkito.mappings.engines.Engine#score(org.mozkito.mappings.mappable.model.MappableEntity,
+	 *      org.mozkito.mappings.mappable.model.MappableEntity, org.mozkito.mappings.model.Relation)
 	 */
 	@Override
 	public final void score(final MappableEntity from,
@@ -203,9 +199,9 @@ public class AuthorEqualityEngine extends Engine {
 	}
 	
 	/**
-	 * Supported.
+	 * {@inheritDoc}
 	 * 
-	 * @return the expression
+	 * @see org.mozkito.mappings.engines.Engine#supported()
 	 */
 	@Override
 	public final Expression supported() {

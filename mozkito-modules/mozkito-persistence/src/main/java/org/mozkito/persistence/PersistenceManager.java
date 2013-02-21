@@ -28,7 +28,7 @@ import java.util.Map;
 
 import net.ownhero.dev.andama.exceptions.ClassLoadingError;
 import net.ownhero.dev.andama.exceptions.InstantiationError;
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.io.FileUtils;

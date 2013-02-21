@@ -30,6 +30,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
 import org.mozkito.issues.tracker.Tracker;
 import org.mozkito.issues.tracker.elements.Resolution;
 import org.mozkito.issues.tracker.model.History;

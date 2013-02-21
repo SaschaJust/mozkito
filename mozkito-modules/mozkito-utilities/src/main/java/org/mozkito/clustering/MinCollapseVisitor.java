@@ -14,7 +14,7 @@ package org.mozkito.clustering;
 
 import java.util.Map;
 
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 
 /**
  * The Class MinCollapseVisitor.

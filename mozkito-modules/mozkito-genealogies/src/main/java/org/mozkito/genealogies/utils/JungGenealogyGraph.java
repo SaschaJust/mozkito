@@ -22,7 +22,7 @@ import edu.uci.ics.jung.graph.DirectedGraph;
 import edu.uci.ics.jung.graph.util.EdgeType;
 import edu.uci.ics.jung.graph.util.Pair;
 
-import org.mozkito.genealogies.ChangeGenealogy;
+import org.mozkito.genealogies.core.ChangeGenealogy;
 import org.mozkito.genealogies.core.GenealogyEdgeType;
 
 import scala.actors.threadpool.Arrays;

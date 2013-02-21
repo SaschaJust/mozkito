@@ -39,6 +39,7 @@ import noNamespace.WhoDocument.Who;
 
 import org.jdom2.Element;
 import org.joda.time.DateTime;
+
 import org.mozkito.issues.tracker.Tracker;
 import org.mozkito.issues.tracker.XmlReport;
 import org.mozkito.issues.tracker.elements.Priority;

@@ -15,8 +15,6 @@ package org.mozkito.genealogies.metrics;
 import java.io.File;
 import java.util.Map;
 
-import net.ownhero.dev.andama.model.Chain;
-import net.ownhero.dev.andama.model.Pool;
 import net.ownhero.dev.hiari.settings.Settings;
 
 import org.mozkito.genealogies.metrics.utils.MetricLevel;

@@ -21,15 +21,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.JavaUtils;
+import difflib.Delta;
 
 import org.mozkito.infozilla.model.EnhancedReport;
 import org.mozkito.mappings.mappable.model.MappableEntity;
@@ -48,8 +49,6 @@ import org.mozkito.versions.exceptions.NoSuchHandleException;
 import org.mozkito.versions.exceptions.RepositoryOperationException;
 import org.mozkito.versions.model.ChangeSet;
 import org.mozkito.versions.model.Handle;
-
-import difflib.Delta;
 
 /**
  * The Class CodeFragmentsEngine.

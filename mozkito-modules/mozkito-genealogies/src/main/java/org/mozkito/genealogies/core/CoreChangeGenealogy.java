@@ -41,7 +41,6 @@ import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.codeanalysis.model.JavaElement;
 import org.mozkito.codeanalysis.model.JavaMethodCall;
 import org.mozkito.codeanalysis.model.JavaMethodDefinition;
-import org.mozkito.genealogies.ChangeGenealogy;
 import org.mozkito.genealogies.neo4j.Neo4jRootCache;
 import org.mozkito.genealogies.neo4j.Neo4jVertexCache;
 import org.mozkito.genealogies.persistence.JavaChangeOperationCache;
@@ -357,8 +356,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 		
 		if (!dependent.getRevision().getChangeSet().getId().equals(target.getRevision().getChangeSet().getId())) {
 			this.transactionGenealogy.addEdge(dependent.getRevision().getChangeSet(), target.getRevision()
-			                                                                                  .getChangeSet(),
-			                                  edgeType);
+			                                                                                .getChangeSet(), edgeType);
 		}
 		
 		return true;
@@ -495,6 +493,15 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 		                  GenealogyEdgeType.DeletedDefinitionOnDefinition);
 	}
 	
+	/**
+	 * Gets the transaction layer.
+	 * 
+	 * @return the transaction layer
+	 */
+	public TransactionChangeGenealogy getChangeSetLayer() {
+		return this.transactionGenealogy;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see org.mozkito.genealogies.ChangeGenealogy#getCore()
@@ -578,6 +585,8 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 		return getEdge(fromNode, toNode);
 	}
 	
+	// /////////////
+	
 	/**
 	 * Gets the edge.
 	 * 
@@ -606,8 +615,6 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 		}
 		return null;
 	}
-	
-	// /////////////
 	
 	/*
 	 * (non-Javadoc)
@@ -794,15 +801,6 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 			result.add(getVertexForNode(op));
 		}
 		return result;
-	}
-	
-	/**
-	 * Gets the transaction layer.
-	 * 
-	 * @return the transaction layer
-	 */
-	public TransactionChangeGenealogy getChangeSetLayer() {
-		return this.transactionGenealogy;
 	}
 	
 	/**

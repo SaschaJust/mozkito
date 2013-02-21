@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.SortedSet;
 
 import org.joda.time.DateTime;
+
 import org.mozkito.issues.tracker.elements.Priority;
 import org.mozkito.issues.tracker.elements.Resolution;
 import org.mozkito.issues.tracker.elements.Severity;

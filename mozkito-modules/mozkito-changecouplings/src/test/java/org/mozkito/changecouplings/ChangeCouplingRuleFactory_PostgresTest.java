@@ -26,6 +26,7 @@ import net.ownhero.dev.kisa.Logger;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
+
 import org.mozkito.changecouplings.model.FileChangeCoupling;
 import org.mozkito.persistence.ConnectOptions;
 import org.mozkito.persistence.DatabaseType;

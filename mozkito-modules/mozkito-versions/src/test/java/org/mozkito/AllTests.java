@@ -15,6 +15,7 @@ package org.mozkito;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
+
 import org.mozkito.versions.RepositoryFactoryTest;
 import org.mozkito.versions.RevDependencyGraphTest;
 import org.mozkito.versions.git.GitLogParserTest;

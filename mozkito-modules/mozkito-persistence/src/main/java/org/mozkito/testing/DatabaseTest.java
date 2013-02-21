@@ -15,7 +15,7 @@ package org.mozkito.testing;
 
 import java.lang.annotation.Annotation;
 
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;

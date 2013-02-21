@@ -33,6 +33,7 @@ import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.apache.commons.collections.CollectionUtils;
+
 import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.persistence.Annotated;
 

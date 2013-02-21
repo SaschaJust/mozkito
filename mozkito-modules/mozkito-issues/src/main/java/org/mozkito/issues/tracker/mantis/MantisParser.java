@@ -30,7 +30,7 @@ import java.util.TreeSet;
 
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.DateTimeUtils;
 import net.ownhero.dev.ioda.IOUtils;
 import net.ownhero.dev.ioda.MimeUtils;
@@ -55,6 +55,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
 import org.mozkito.issues.tracker.Parser;
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.issues.tracker.Tracker;

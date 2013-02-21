@@ -37,7 +37,6 @@ import org.neo4j.graphdb.index.IndexHits;
 import org.neo4j.graphdb.index.IndexManager;
 import org.neo4j.tooling.GlobalGraphOperations;
 
-import org.mozkito.genealogies.ChangeGenealogy;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.model.ChangeSet;
 
@@ -49,31 +48,31 @@ import org.mozkito.versions.model.ChangeSet;
 public class TransactionChangeGenealogy implements ChangeGenealogy<ChangeSet> {
 	
 	/** The Constant NODE_ID. */
-	public static final String                NODE_ID       = "transaction_id";
+	public static final String           NODE_ID       = "transaction_id";
 	
 	/** The Constant ROOT_VERTICES. */
-	public static final String                ROOT_VERTICES = "root_vertices";
+	public static final String           ROOT_VERTICES = "root_vertices";
 	
 	/** The graph. */
-	private final GraphDatabaseService        graph;
+	private final GraphDatabaseService   graph;
 	
 	/** The persistence util. */
-	private final PersistenceUtil             persistenceUtil;
+	private final PersistenceUtil        persistenceUtil;
 	
 	/** The db file. */
-	private final java.io.File                dbFile;
+	private final java.io.File           dbFile;
 	
 	/** The index manager. */
-	private final IndexManager                indexManager;
+	private final IndexManager           indexManager;
 	
 	/** The node index. */
-	private final Index<Node>                 nodeIndex;
+	private final Index<Node>            nodeIndex;
 	
 	/** The root index. */
-	private final Index<Node>                 rootIndex;
+	private final Index<Node>            rootIndex;
 	
 	/** The core. */
-	private final CoreChangeGenealogy         core;
+	private final CoreChangeGenealogy    core;
 	
 	/** The node cache. */
 	private final Map<String, ChangeSet> nodeCache     = new HashMap<String, ChangeSet>();
@@ -314,7 +313,7 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<ChangeSet> {
 	@Override
 	@NoneNull
 	public Collection<ChangeSet> getDependants(final ChangeSet operation,
-	                                                final GenealogyEdgeType... edgeTypes) {
+	                                           final GenealogyEdgeType... edgeTypes) {
 		final Node node = getNodeForVertex(operation);
 		if (node == null) {
 			if (Logger.logWarn()) {
@@ -510,25 +509,6 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<ChangeSet> {
 	/**
 	 * Returns a collection containing nodes connected though outgoing edges.
 	 * 
-	 * @param node
-	 *            the node
-	 * @param edgeTypes
-	 *            the edge types
-	 * @return the dependents
-	 */
-	private Collection<Node> getParents(final Node node,
-	                                    final GenealogyEdgeType... edgeTypes) {
-		final Iterable<Relationship> relationships = node.getRelationships(Direction.OUTGOING, edgeTypes);
-		final Set<Node> parents = new HashSet<Node>();
-		for (final Relationship rel : relationships) {
-			parents.add(rel.getEndNode());
-		}
-		return parents;
-	}
-	
-	/**
-	 * Returns a collection containing nodes connected though outgoing edges.
-	 * 
 	 * @param operation
 	 *            the operation
 	 * @param edgeTypes
@@ -537,7 +517,7 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<ChangeSet> {
 	 */
 	@Override
 	public Collection<ChangeSet> getParents(final ChangeSet operation,
-	                                             final GenealogyEdgeType... edgeTypes) {
+	                                        final GenealogyEdgeType... edgeTypes) {
 		final Node node = getNodeForVertex(operation);
 		if (node == null) {
 			if (Logger.logWarn()) {
@@ -552,6 +532,25 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<ChangeSet> {
 			parentOperations.add(getVertexForNode(dependentNode));
 		}
 		return parentOperations;
+	}
+	
+	/**
+	 * Returns a collection containing nodes connected though outgoing edges.
+	 * 
+	 * @param node
+	 *            the node
+	 * @param edgeTypes
+	 *            the edge types
+	 * @return the dependents
+	 */
+	private Collection<Node> getParents(final Node node,
+	                                    final GenealogyEdgeType... edgeTypes) {
+		final Iterable<Relationship> relationships = node.getRelationships(Direction.OUTGOING, edgeTypes);
+		final Set<Node> parents = new HashSet<Node>();
+		for (final Relationship rel : relationships) {
+			parents.add(rel.getEndNode());
+		}
+		return parents;
 	}
 	
 	/**
@@ -667,7 +666,7 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<ChangeSet> {
 	 * @return the rCS transaction
 	 */
 	public ChangeSet loadById(final String id,
-	                               final Class<? extends ChangeSet> clazz) {
+	                          final Class<? extends ChangeSet> clazz) {
 		if (!this.nodeCache.containsKey(id)) {
 			this.nodeCache.put(id, this.persistenceUtil.loadById(id, clazz));
 		}

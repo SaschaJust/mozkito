@@ -25,7 +25,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import com.tinkerpop.blueprints.pgm.Graph;
+import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jGraph;
+import com.tinkerpop.blueprints.pgm.util.io.graphml.GraphMLWriter;
+
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.ioda.exceptions.FilePermissionException;
@@ -33,6 +37,9 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.CollectionCondition;
 import net.ownhero.dev.kisa.Logger;
+
+import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.kernel.EmbeddedGraphDatabase;
 
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.genealogies.core.CoreChangeGenealogy;
@@ -46,12 +53,6 @@ import org.mozkito.versions.RepositoryType;
 import org.mozkito.versions.exceptions.UnregisteredRepositoryTypeException;
 import org.mozkito.versions.model.ChangeSet;
 import org.mozkito.versions.model.Revision;
-import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.kernel.EmbeddedGraphDatabase;
-
-import com.tinkerpop.blueprints.pgm.Graph;
-import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jGraph;
-import com.tinkerpop.blueprints.pgm.util.io.graphml.GraphMLWriter;
 
 /**
  * The Class ChangeGenealogyUtils.
