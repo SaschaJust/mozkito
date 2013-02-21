@@ -26,6 +26,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -500,6 +501,8 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	 * 
 	 * @return the history
 	 */
+	@ManyToOne (cascade = { CascadeType.PERSIST }, fetch = FetchType.LAZY)
+	@Column (nullable = false)
 	public History getHistory() {
 		return this.history;
 	}
