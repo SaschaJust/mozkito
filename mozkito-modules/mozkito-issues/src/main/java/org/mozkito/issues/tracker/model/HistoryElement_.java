@@ -55,4 +55,7 @@ public class HistoryElement_ {
 	
 	/** The person container. */
 	public static volatile SingularAttribute<HistoryElement, PersonContainer>  personContainer;
+	
+	/** The history. */
+	public static volatile SingularAttribute<HistoryElement, History>          history;
 }
