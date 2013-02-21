@@ -40,16 +40,16 @@ import org.jdom2.input.SAXBuilder;
 import org.jdom2.input.sax.XMLReaderSAX2Factory;
 import org.joda.time.DateTime;
 
+import org.mozkito.issues.elements.Priority;
+import org.mozkito.issues.elements.Resolution;
+import org.mozkito.issues.elements.Severity;
+import org.mozkito.issues.elements.Status;
+import org.mozkito.issues.model.IssueTracker;
+import org.mozkito.issues.model.Report;
 import org.mozkito.issues.tracker.Parser;
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.issues.tracker.Tracker;
 import org.mozkito.issues.tracker.XmlReport;
-import org.mozkito.issues.tracker.elements.Priority;
-import org.mozkito.issues.tracker.elements.Resolution;
-import org.mozkito.issues.tracker.elements.Severity;
-import org.mozkito.issues.tracker.elements.Status;
-import org.mozkito.issues.tracker.model.IssueTracker;
-import org.mozkito.issues.tracker.model.Report;
 
 /**
  * The Class BugzillaParser.

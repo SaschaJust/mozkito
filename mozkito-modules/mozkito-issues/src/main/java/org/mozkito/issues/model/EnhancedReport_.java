@@ -10,38 +10,27 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  **********************************************************************************************************************/
-package org.mozkito.issues.tracker.elements;
+
+package org.mozkito.issues.model;
+
+import javax.persistence.metamodel.SingularAttribute;
+
+import org.mozkito.issues.elements.Type;
 
 /**
- * The Enum Severity.
- * 
- * @author Sascha Just <sascha.just@mozkito.org>
+ * The Class EnhancedReport_.
  */
-public enum Severity {
+@javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.issues.model.EnhancedReport.class)
+@javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
+                             date = "Mon May 07 15:41:49 CEST 2012")
+public class EnhancedReport_ {
 	
-	/** The UNKNOWN. */
-	UNKNOWN,
-	/** The ENHANCEMENT. */
-	ENHANCEMENT,
-	/** The TRIVIAL. */
-	TRIVIAL,
-	/** The MINOR. */
-	MINOR,
-	/** The NORMAL. */
-	NORMAL,
-	/** The MAJOR. */
-	MAJOR,
-	/** The CRITICAL. */
-	CRITICAL,
-	/** The BLOCKER. */
-	BLOCKER;
+	/** The classified type. */
+	public static volatile SingularAttribute<EnhancedReport, Type>   classifiedType;
 	
-	/**
-	 * Gets the handle.
-	 * 
-	 * @return the handle
-	 */
-	public String getClassName() {
-		return this.getClass().getSimpleName();
-	}
+	/** The predicted type. */
+	public static volatile SingularAttribute<EnhancedReport, Type>   predictedType;
+	
+	/** The report. */
+	public static volatile SingularAttribute<EnhancedReport, Report> report;
 }

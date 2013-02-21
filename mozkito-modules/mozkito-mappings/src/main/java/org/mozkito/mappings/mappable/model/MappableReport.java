@@ -30,9 +30,9 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.jsoup.Jsoup;
 
-import org.mozkito.issues.tracker.model.Comment;
-import org.mozkito.issues.tracker.model.HistoryElement;
-import org.mozkito.issues.tracker.model.Report;
+import org.mozkito.issues.model.Comment;
+import org.mozkito.issues.model.HistoryElement;
+import org.mozkito.issues.model.Report;
 import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.persistence.Annotated;

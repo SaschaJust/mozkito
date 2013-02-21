@@ -26,7 +26,7 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import org.mozkito.issues.tracker.model.Report;
+import org.mozkito.issues.model.Report;
 import org.mozkito.mappings.engines.master.Environment;
 import org.mozkito.mappings.finder.Finder;
 import org.mozkito.mappings.model.Feature;

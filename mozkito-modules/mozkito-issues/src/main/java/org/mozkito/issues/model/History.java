@@ -10,7 +10,7 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  **********************************************************************************************************************/
-package org.mozkito.issues.tracker.model;
+package org.mozkito.issues.model;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -37,7 +37,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
-import org.mozkito.issues.tracker.model.comparators.HistoryElementComparator;
+import org.mozkito.issues.model.comparators.HistoryElementComparator;
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persistence.model.Person;
 

@@ -32,7 +32,7 @@ import org.mozkito.infozilla.model.link.Link;
 import org.mozkito.infozilla.model.log.Log;
 import org.mozkito.infozilla.model.patch.Patch;
 import org.mozkito.infozilla.model.stacktrace.Stacktrace;
-import org.mozkito.issues.tracker.model.Report;
+import org.mozkito.issues.model.Report;
 
 /**
  * The Class EnhancedReport.

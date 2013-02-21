@@ -23,8 +23,8 @@ import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 
-import org.mozkito.issues.tracker.elements.Type;
-import org.mozkito.issues.tracker.model.EnhancedReport;
+import org.mozkito.issues.elements.Type;
+import org.mozkito.issues.model.EnhancedReport;
 import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Mapping;

@@ -10,26 +10,27 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  **********************************************************************************************************************/
+package org.mozkito.issues.model.comparators;
 
-package org.mozkito.issues.tracker.model;
+import java.util.Comparator;
 
-import javax.persistence.metamodel.SetAttribute;
-import javax.persistence.metamodel.SingularAttribute;
+import org.mozkito.issues.model.Comment;
 
 /**
- * The Class History_.
+ * The Class CommentComparator.
+ * 
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
-@javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.issues.tracker.model.History.class)
-@javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
-                             date = "Mon May 07 15:41:49 CEST 2012")
-public class History_ {
+public class CommentComparator implements Comparator<Comment> {
 	
-	/** The elements. */
-	public static volatile SetAttribute<History, HistoryElement>     elements;
+	/*
+	 * (non-Javadoc)
+	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+	 */
+	@Override
+	public int compare(final Comment o1,
+	                   final Comment o2) {
+		return o1.compareTo(o2);
+	}
 	
-	/** The id. */
-	public static volatile SingularAttribute<History, Long>          id;
-	
-	/** The history. */
-	public static volatile SingularAttribute<HistoryElement, Report> report;
 }

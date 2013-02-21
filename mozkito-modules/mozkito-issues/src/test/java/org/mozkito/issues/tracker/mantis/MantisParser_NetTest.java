@@ -28,9 +28,9 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mozkito.issues.model.AttachmentEntry;
+import org.mozkito.issues.model.IssueTracker;
 import org.mozkito.issues.tracker.ReportLink;
-import org.mozkito.issues.tracker.model.AttachmentEntry;
-import org.mozkito.issues.tracker.model.IssueTracker;
 
 /**
  * The Class MantisParser_NetTest.

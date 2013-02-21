@@ -18,7 +18,7 @@ import java.net.URI;
 
 import org.junit.Test;
 import org.mozkito.issues.exceptions.InvalidParameterException;
-import org.mozkito.issues.tracker.model.IssueTracker;
+import org.mozkito.issues.model.IssueTracker;
 
 // TODO: Auto-generated Javadoc
 /**

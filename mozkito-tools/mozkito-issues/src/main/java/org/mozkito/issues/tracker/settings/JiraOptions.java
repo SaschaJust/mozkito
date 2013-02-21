@@ -28,9 +28,9 @@ import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 
 import org.mozkito.issues.exceptions.InvalidParameterException;
+import org.mozkito.issues.model.IssueTracker;
 import org.mozkito.issues.tracker.Tracker;
 import org.mozkito.issues.tracker.jira.JiraTracker;
-import org.mozkito.issues.tracker.model.IssueTracker;
 
 /**
  * The Class JiraOptions.

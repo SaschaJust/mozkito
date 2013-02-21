@@ -10,27 +10,44 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  **********************************************************************************************************************/
-package org.mozkito.issues.tracker.model.comparators;
-
-import java.util.Comparator;
-
-import org.mozkito.issues.tracker.model.Report;
+package org.mozkito.issues.elements;
 
 /**
- * The Class ReportComparator.
+ * The Enum Status.
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class ReportComparator implements Comparator<Report> {
+public enum Status {
 	
-	/*
-	 * (non-Javadoc)
-	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+	/** The UNKNOWN. */
+	UNKNOWN,
+	/** The UNCONFIRMED. */
+	UNCONFIRMED,
+	/** The NEW. */
+	NEW,
+	/** The ASSIGNED. */
+	ASSIGNED,
+	/** The I n_ progress. */
+	IN_PROGRESS,
+	/** The FEEDBACK. */
+	FEEDBACK,
+	/** The REOPENED. */
+	REOPENED,
+	/** The REVIEWPENDING. */
+	REVIEWPENDING,
+	/** The VERIFIED. */
+	VERIFIED,
+	/** The CLOSED. */
+	CLOSED,
+	/** The ACKNOWLEDGED. */
+	ACKNOWLEDGED;
+	
+	/**
+	 * Gets the handle.
+	 * 
+	 * @return the handle
 	 */
-	@Override
-	public int compare(final Report o1,
-	                   final Report o2) {
-		return o1.compareTo(o2);
+	public String getClassName() {
+		return this.getClass().getSimpleName();
 	}
-	
 }

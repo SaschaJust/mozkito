@@ -31,9 +31,9 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.mozkito.issues.exceptions.InvalidParameterException;
+import org.mozkito.issues.model.IssueTracker;
 import org.mozkito.issues.tracker.Tracker;
 import org.mozkito.issues.tracker.bugzilla.BugzillaTracker;
-import org.mozkito.issues.tracker.model.IssueTracker;
 
 /**
  * The Class BugzillaOptions.
@@ -180,7 +180,7 @@ public class BugzillaOptions extends ArgumentSetOptions<Boolean, ArgumentSet<Boo
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.issues.tracker.settings.ITrackerOptions#setup(org.mozkito.issues.tracker.model.IssueTracker,
+	 * @see org.mozkito.issues.tracker.settings.ITrackerOptions#setup(org.mozkito.issues.model.IssueTracker,
 	 *      java.net.URI, java.lang.String, java.lang.String)
 	 */
 	@Override

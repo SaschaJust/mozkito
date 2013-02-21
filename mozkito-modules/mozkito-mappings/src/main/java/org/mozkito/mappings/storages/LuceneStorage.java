@@ -35,8 +35,8 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.Version;
 
-import org.mozkito.issues.tracker.model.Comment;
-import org.mozkito.issues.tracker.model.Report;
+import org.mozkito.issues.model.Comment;
+import org.mozkito.issues.model.Report;
 import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.persistence.Criteria;

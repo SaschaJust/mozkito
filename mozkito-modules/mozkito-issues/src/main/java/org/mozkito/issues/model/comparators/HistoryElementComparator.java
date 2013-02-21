@@ -10,27 +10,27 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  **********************************************************************************************************************/
-package org.mozkito.issues.tracker.model.comparators;
+package org.mozkito.issues.model.comparators;
 
 import java.util.Comparator;
 
-import org.mozkito.issues.tracker.model.Comment;
+import org.mozkito.issues.model.HistoryElement;
 
 /**
- * The Class CommentComparator.
+ * The Class HistoryElementComparator.
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class CommentComparator implements Comparator<Comment> {
+public class HistoryElementComparator implements Comparator<HistoryElement> {
 	
 	/*
 	 * (non-Javadoc)
 	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public int compare(final Comment o1,
-	                   final Comment o2) {
-		return o1.compareTo(o2);
+	public int compare(final HistoryElement arg0,
+	                   final HistoryElement arg1) {
+		return arg0.compareTo(arg1);
 	}
 	
 }

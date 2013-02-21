@@ -10,34 +10,37 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  **********************************************************************************************************************/
-package org.mozkito.issues.tracker.elements;
+package org.mozkito.issues.elements;
+
+import org.joda.time.DateTime;
+
+import org.mozkito.persistence.model.Person;
 
 /**
- * The Enum Priority.
+ * The Interface TextElement.
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public enum Priority {
-	
-	/** The UNKNOWN. */
-	UNKNOWN,
-	/** The VER y_ low. */
-	VERY_LOW,
-	/** The LOW. */
-	LOW,
-	/** The NORMAL. */
-	NORMAL,
-	/** The HIGH. */
-	HIGH,
-	/** The VER y_ high. */
-	VERY_HIGH;
+public interface TextElement {
 	
 	/**
-	 * Gets the handle.
+	 * Gets the author.
 	 * 
-	 * @return the handle
+	 * @return the author
 	 */
-	public String getClassName() {
-		return this.getClass().getSimpleName();
-	}
+	Person getAuthor();
+	
+	/**
+	 * Gets the text.
+	 * 
+	 * @return the text
+	 */
+	String getText();
+	
+	/**
+	 * Gets the timestamp.
+	 * 
+	 * @return the timestamp
+	 */
+	DateTime getTimestamp();
 }

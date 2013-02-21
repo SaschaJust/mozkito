@@ -16,7 +16,7 @@ import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.Sink;
 import net.ownhero.dev.hiari.settings.Settings;
 
-import org.mozkito.issues.tracker.model.Report;
+import org.mozkito.issues.model.Report;
 
 /**
  * The Class TrackerVoidSink.

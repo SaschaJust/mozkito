@@ -22,10 +22,10 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.issues.exceptions.InvalidParameterException;
+import org.mozkito.issues.model.IssueTracker;
 import org.mozkito.issues.tracker.Parser;
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.issues.tracker.Tracker;
-import org.mozkito.issues.tracker.model.IssueTracker;
 
 /**
  * The Class MantisTracker.

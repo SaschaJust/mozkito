@@ -35,9 +35,9 @@ import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.Tuple;
 
 import org.mozkito.issues.analysis.IssuesAnalysis;
-import org.mozkito.issues.tracker.model.History;
-import org.mozkito.issues.tracker.model.HistoryElement;
-import org.mozkito.issues.tracker.model.Report;
+import org.mozkito.issues.model.History;
+import org.mozkito.issues.model.HistoryElement;
+import org.mozkito.issues.model.Report;
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
 

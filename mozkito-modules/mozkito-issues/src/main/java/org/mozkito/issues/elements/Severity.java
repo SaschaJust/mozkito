@@ -10,37 +10,38 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  **********************************************************************************************************************/
-package org.mozkito.issues.tracker.elements;
-
-import org.joda.time.DateTime;
-
-import org.mozkito.persistence.model.Person;
+package org.mozkito.issues.elements;
 
 /**
- * The Interface TextElement.
+ * The Enum Severity.
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public interface TextElement {
+public enum Severity {
+	
+	/** The UNKNOWN. */
+	UNKNOWN,
+	/** The ENHANCEMENT. */
+	ENHANCEMENT,
+	/** The TRIVIAL. */
+	TRIVIAL,
+	/** The MINOR. */
+	MINOR,
+	/** The NORMAL. */
+	NORMAL,
+	/** The MAJOR. */
+	MAJOR,
+	/** The CRITICAL. */
+	CRITICAL,
+	/** The BLOCKER. */
+	BLOCKER;
 	
 	/**
-	 * Gets the author.
+	 * Gets the handle.
 	 * 
-	 * @return the author
+	 * @return the handle
 	 */
-	Person getAuthor();
-	
-	/**
-	 * Gets the text.
-	 * 
-	 * @return the text
-	 */
-	String getText();
-	
-	/**
-	 * Gets the timestamp.
-	 * 
-	 * @return the timestamp
-	 */
-	DateTime getTimestamp();
+	public String getClassName() {
+		return this.getClass().getSimpleName();
+	}
 }

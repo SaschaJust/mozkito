@@ -18,12 +18,12 @@ import java.util.Set;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 
+import org.mozkito.issues.elements.Type;
 import org.mozkito.issues.exceptions.InvalidParameterException;
+import org.mozkito.issues.model.IssueTracker;
 import org.mozkito.issues.tracker.Parser;
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.issues.tracker.Tracker;
-import org.mozkito.issues.tracker.elements.Type;
-import org.mozkito.issues.tracker.model.IssueTracker;
 
 /**
  * The Class SourceforgeTracker.

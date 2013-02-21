@@ -34,9 +34,9 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import org.mozkito.issues.model.IssueTracker;
 import org.mozkito.issues.tracker.OverviewParser;
 import org.mozkito.issues.tracker.ReportLink;
-import org.mozkito.issues.tracker.model.IssueTracker;
 
 /**
  * The Class MantisOverviewParser.

@@ -31,17 +31,17 @@ import net.ownhero.dev.ioda.container.RawContent;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
+import org.mozkito.issues.elements.Priority;
+import org.mozkito.issues.elements.Resolution;
+import org.mozkito.issues.elements.Severity;
+import org.mozkito.issues.elements.Status;
+import org.mozkito.issues.elements.Type;
+import org.mozkito.issues.model.AttachmentEntry;
+import org.mozkito.issues.model.Comment;
+import org.mozkito.issues.model.IssueTracker;
+import org.mozkito.issues.model.Report;
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.issues.tracker.XmlReport;
-import org.mozkito.issues.tracker.elements.Priority;
-import org.mozkito.issues.tracker.elements.Resolution;
-import org.mozkito.issues.tracker.elements.Severity;
-import org.mozkito.issues.tracker.elements.Status;
-import org.mozkito.issues.tracker.elements.Type;
-import org.mozkito.issues.tracker.model.AttachmentEntry;
-import org.mozkito.issues.tracker.model.Comment;
-import org.mozkito.issues.tracker.model.IssueTracker;
-import org.mozkito.issues.tracker.model.Report;
 
 /**
  * The Class BugzillaParser_4_0_4_Test.

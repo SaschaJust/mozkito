@@ -27,9 +27,9 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.issues.exceptions.InvalidParameterException;
 import org.mozkito.issues.messages.Messages;
-import org.mozkito.issues.tracker.model.Comment;
-import org.mozkito.issues.tracker.model.IssueTracker;
-import org.mozkito.issues.tracker.model.Report;
+import org.mozkito.issues.model.Comment;
+import org.mozkito.issues.model.IssueTracker;
+import org.mozkito.issues.model.Report;
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.persistence.model.Person;

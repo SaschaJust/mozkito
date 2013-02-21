@@ -26,7 +26,7 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.joda.time.DateTime;
 
-import org.mozkito.issues.tracker.model.Report;
+import org.mozkito.issues.model.Report;
 import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.messages.Messages;

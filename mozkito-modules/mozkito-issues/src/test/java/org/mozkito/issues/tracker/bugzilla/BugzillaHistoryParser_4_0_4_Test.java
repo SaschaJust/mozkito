@@ -27,10 +27,10 @@ import net.ownhero.dev.kisa.Logger;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
-import org.mozkito.issues.tracker.elements.Priority;
-import org.mozkito.issues.tracker.model.HistoryElement;
-import org.mozkito.issues.tracker.model.IssueTracker;
-import org.mozkito.issues.tracker.model.Report;
+import org.mozkito.issues.elements.Priority;
+import org.mozkito.issues.model.HistoryElement;
+import org.mozkito.issues.model.IssueTracker;
+import org.mozkito.issues.model.Report;
 import org.mozkito.persistence.model.Person;
 
 // TODO: Auto-generated Javadoc
