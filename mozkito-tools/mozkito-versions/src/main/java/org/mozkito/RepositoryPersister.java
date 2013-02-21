@@ -34,11 +34,11 @@ import org.mozkito.versions.model.ChangeSet;
  */
 public class RepositoryPersister extends Sink<ChangeSet> {
 	
-	/** The Constant COMMIT_CACHE. */
-	private static final int COMMIT_CACHE = 100;
+	// /** The Constant COMMIT_CACHE. */
+	// private static final int COMMIT_CACHE = 100;
 	
 	/** The counter. */
-	Integer                  counter      = 0;
+	Integer counter = 0;
 	
 	/**
 	 * Instantiates a new repository persister.

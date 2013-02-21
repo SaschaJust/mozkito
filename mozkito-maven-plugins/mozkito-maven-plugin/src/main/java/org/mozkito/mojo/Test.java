@@ -30,6 +30,12 @@ import net.ownhero.dev.kisa.Logger;
  */
 public class Test {
 	
+	/**
+	 * The main method.
+	 * 
+	 * @param args
+	 *            the arguments
+	 */
 	public static void main(final String[] args) {
 		final boolean useAuth = true;
 		final String feedUrlString = "http://mozkito.org:8085/rss/createAllBuildsRssFeed.action?feedType=rssAll&os_authType=basic";

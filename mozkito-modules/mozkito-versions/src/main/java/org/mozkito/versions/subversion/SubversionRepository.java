@@ -53,6 +53,7 @@ import org.tmatesoft.svn.core.auth.ISVNAuthenticationManager;
 import org.tmatesoft.svn.core.internal.io.dav.DAVRepositoryFactory;
 import org.tmatesoft.svn.core.internal.io.fs.FSRepositoryFactory;
 import org.tmatesoft.svn.core.internal.io.svn.SVNRepositoryFactoryImpl;
+import org.tmatesoft.svn.core.internal.util.SVNEncodingUtil;
 import org.tmatesoft.svn.core.io.SVNRepository;
 import org.tmatesoft.svn.core.wc.SVNClientManager;
 import org.tmatesoft.svn.core.wc.SVNDiffClient;
@@ -144,7 +145,7 @@ public class SubversionRepository extends Repository {
 		SVNURL relativePath;
 		try {
 			
-			relativePath = SVNURL.parseURIDecoded(this.svnurl + "/" + filePath);
+			relativePath = SVNURL.parseURIEncoded(SVNEncodingUtil.autoURIEncode(this.svnurl + "/" + filePath));
 			final SVNLogClient logClient = new SVNLogClient(this.repository.getAuthenticationManager(),
 			                                                SVNWCUtil.createDefaultOptions(true));
 			
@@ -251,7 +252,9 @@ public class SubversionRepository extends Repository {
 		Condition.check(this.initialized, "Repository has to be initialized before calling this method.");
 		
 		try {
-			final SVNURL repoPath = SVNURL.parseURIDecoded(this.repository.getRepositoryRoot(true) + "/" + filePath);
+			final String uriEncode = SVNEncodingUtil.autoURIEncode(this.repository.getRepositoryRoot(true) + "/"
+			        + filePath);
+			final SVNURL repoPath = SVNURL.parseURIEncoded(uriEncode);
 			final SVNRevision fromRevision = buildRevision(baseRevision);
 			final SVNRevision toRevision = buildRevision(revisedRevision);
 			final SVNDiffClient diffClient = new SVNDiffClient(this.repository.getAuthenticationManager(),
@@ -726,7 +729,7 @@ public class SubversionRepository extends Repository {
 					if (Logger.logInfo()) {
 						Logger.info("Parsing URL: " + URIUtils.Uri2String(getUri()));
 					}
-					this.svnurl = SVNURL.parseURIDecoded(URIUtils.Uri2String(getUri()));
+					this.svnurl = SVNURL.parseURIEncoded(SVNEncodingUtil.autoURIEncode(URIUtils.Uri2String(getUri())));
 					if (Logger.logTrace()) {
 						Logger.trace("Done parsing URL: " + getUri().toString() + " resulting in: "
 						        + this.svnurl.toString());
