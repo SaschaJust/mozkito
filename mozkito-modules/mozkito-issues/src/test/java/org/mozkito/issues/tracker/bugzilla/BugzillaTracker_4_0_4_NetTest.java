@@ -17,8 +17,8 @@ import static org.junit.Assert.fail;
 import java.net.URI;
 
 import org.junit.Test;
-
 import org.mozkito.issues.exceptions.InvalidParameterException;
+import org.mozkito.issues.tracker.model.IssueTracker;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -42,7 +42,7 @@ public class BugzillaTracker_4_0_4_NetTest {
 	 */
 	@Test
 	public void testSetup() throws Exception {
-		this.tracker = new BugzillaTracker();
+		this.tracker = new BugzillaTracker(new IssueTracker());
 		this.fetchURI = new URI(
 		                        "https://bugs.eclipse.org/bugs/buglist.cgi?priority=P1;classification=Eclipse;query_format=advanced;version=1.0;product=e4");
 		try {

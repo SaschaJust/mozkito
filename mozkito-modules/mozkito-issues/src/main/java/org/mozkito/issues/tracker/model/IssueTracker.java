@@ -13,6 +13,7 @@
 package org.mozkito.issues.tracker.model;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -76,7 +77,7 @@ public class IssueTracker implements Annotated {
 	private long                generatedId;
 	
 	/** The change sets. */
-	private Map<String, Report> reports;
+	private Map<String, Report> reports = new HashMap<String, Report>();
 	
 	/** The mozkito version. */
 	private String              mozkitoVersion;
@@ -293,6 +294,7 @@ public class IssueTracker implements Annotated {
 	 * @param reports
 	 *            the reports
 	 */
+	@OneToMany (cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
 	public void setReports(final Map<String, Report> reports) {
 		this.reports = reports;
 	}

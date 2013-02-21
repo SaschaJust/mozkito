@@ -14,6 +14,7 @@ package org.mozkito.issues.tracker.mantis;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -34,7 +35,6 @@ import net.ownhero.dev.regex.Regex;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.issues.tracker.elements.Priority;
 import org.mozkito.issues.tracker.elements.Resolution;
@@ -44,6 +44,8 @@ import org.mozkito.issues.tracker.elements.Type;
 import org.mozkito.issues.tracker.model.AttachmentEntry;
 import org.mozkito.issues.tracker.model.Comment;
 import org.mozkito.issues.tracker.model.HistoryElement;
+import org.mozkito.issues.tracker.model.IssueTracker;
+import org.mozkito.issues.tracker.model.Report;
 import org.mozkito.persistence.model.PersonTuple;
 
 /**
@@ -54,13 +56,15 @@ import org.mozkito.persistence.model.PersonTuple;
 public class MantisParserTest {
 	
 	/** The report19810. */
-	private RawContent report19810;
+	private RawContent   report19810;
 	
 	/** The report18828. */
-	private RawContent report18828;
+	private RawContent   report18828;
 	
 	/** The report8468. */
-	private RawContent report8468;
+	private RawContent   report8468;
+	
+	private IssueTracker issueTracker;
 	
 	/**
 	 * Sets the up.
@@ -70,7 +74,7 @@ public class MantisParserTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		
+		this.issueTracker = new IssueTracker();
 		this.report19810 = IOUtils.fetch(getClass().getResource(FileUtils.fileSeparator + "open-bravo-19810.html")
 		                                           .toURI());
 		this.report18828 = IOUtils.fetch(getClass().getResource(FileUtils.fileSeparator + "open-bravo-18828.html")
@@ -141,7 +145,8 @@ public class MantisParserTest {
 	@Test
 	public void testAttachments18828() {
 		final MantisParser parser = new MantisParser();
-		parser.setURI(new ReportLink(this.report18828.getUri(), "18828"));
+		final Report report = parser.setContext(this.issueTracker, new ReportLink(this.report18828.getUri(), "18828"));
+		assertNotNull(report);
 		final List<AttachmentEntry> attachments = parser.getAttachmentEntries();
 		assertTrue(attachments.isEmpty());
 	}
@@ -152,7 +157,8 @@ public class MantisParserTest {
 	@Test
 	public void testKeywords() {
 		final MantisParser parser = new MantisParser();
-		parser.setURI(new ReportLink(this.report8468.getUri(), "8468"));
+		final Report report = parser.setContext(this.issueTracker, new ReportLink(this.report8468.getUri(), "8468"));
+		assertNotNull(report);
 		final Set<String> keywords = parser.getKeywords();
 		assertEquals(2, keywords.size());
 		assertTrue(keywords.contains("main"));
@@ -166,8 +172,8 @@ public class MantisParserTest {
 	public void testParse() {
 		
 		final MantisParser parser = new MantisParser();
-		parser.setURI(new ReportLink(this.report19810.getUri(), "19810"));
-		
+		final Report report = parser.setContext(this.issueTracker, new ReportLink(this.report19810.getUri(), "19810"));
+		assertNotNull(report);
 		assertEquals("0019810", parser.getId());
 		assertEquals("alostale", parser.getAssignedTo().getUsernames().iterator().next());
 		
@@ -199,11 +205,11 @@ public class MantisParserTest {
 		assertTrue(parser.getDescription().startsWith("Whenever a window in"));
 		assertTrue(parser.getDescription().endsWith("dump suffering this issue."));
 		
-		final SortedSet<HistoryElement> history = parser.getHistoryElements();
-		assertFalse(history.isEmpty());
-		assertEquals(5, history.size());
+		parser.parseHistoryElements(report.getHistory());
+		assertFalse(report.getHistory().isEmpty());
+		assertEquals(5, report.getHistory().size());
 		
-		final Iterator<HistoryElement> iterator = history.iterator();
+		final Iterator<HistoryElement> iterator = report.getHistory().iterator();
 		HistoryElement hElement = iterator.next();
 		assert (hElement != null);
 		final Map<String, PersonTuple> changedPersonValues = hElement.getChangedPersonValues();
@@ -283,7 +289,8 @@ public class MantisParserTest {
 	@Test
 	public void testSiblings() {
 		final MantisParser parser = new MantisParser();
-		parser.setURI(new ReportLink(this.report18828.getUri(), "18828"));
+		final Report report = parser.setContext(this.issueTracker, new ReportLink(this.report18828.getUri(), "18828"));
+		assertNotNull(report);
 		final Set<String> siblings = parser.getSiblings();
 		assertEquals(2, siblings.size());
 		assertTrue(siblings.contains("0019022"));

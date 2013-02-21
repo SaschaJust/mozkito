@@ -23,8 +23,8 @@ import net.ownhero.dev.ioda.FileUtils;
 
 import org.junit.Before;
 import org.junit.Test;
-
 import org.mozkito.issues.tracker.ReportLink;
+import org.mozkito.issues.tracker.model.IssueTracker;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -52,7 +52,7 @@ public class MantisOverviewParserTest {
 		try {
 			this.trackerUri = getClass().getResource(FileUtils.fileSeparator).toURI();
 			this.overviewUri = getClass().getResource(FileUtils.fileSeparator + "mantis_overview.html").toURI();
-			this.parser = new MantisOverviewParser(this.trackerUri);
+			this.parser = new MantisOverviewParser(this.trackerUri, new IssueTracker());
 		} catch (final URISyntaxException e) {
 			e.printStackTrace();
 			fail();

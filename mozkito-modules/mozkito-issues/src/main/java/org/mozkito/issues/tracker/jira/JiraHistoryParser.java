@@ -13,8 +13,6 @@
 package org.mozkito.issues.tracker.jira;
 
 import java.net.URI;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import net.ownhero.dev.ioda.DateTimeUtils;
 import net.ownhero.dev.ioda.IOUtils;
@@ -45,50 +43,34 @@ import org.mozkito.persistence.model.Person;
 public class JiraHistoryParser {
 	
 	/** The Constant MIN_CHILD_NODE_SIZE. */
-	private static final int                MIN_CHILD_NODE_SIZE       = 3;
+	private static final int MIN_CHILD_NODE_SIZE       = 3;
 	
 	/** The Constant NAME_TAG_LENGTH. */
-	private static final int                NAME_TAG_LENGTH           = 5;
+	private static final int NAME_TAG_LENGTH           = 5;
 	
 	/** The skip regex. */
-	private static Regex                    skipRegex                 = new Regex(
-	                                                                              "The issue you are trying to view does not exist");
+	private static Regex     skipRegex                 = new Regex("The issue you are trying to view does not exist");
 	
 	/** The history. */
-	private final SortedSet<HistoryElement> history                   = new TreeSet<HistoryElement>();
-	
-	/** The report id. */
-	private final String                    reportId;
+	private boolean          parsed                    = false;
 	
 	/** The uri. */
-	private final URI                       uri;
+	private final URI        uri;
 	
 	/** The resolver. */
-	private Person                          resolver                  = null;
+	private Person           resolver                  = null;
 	
 	/** The history date time pattern. */
-	public static String                    HISTORY_DATE_TIME_PATTERN = "({yyyy}\\d{4})[-:/_]({MM}[0-2]\\d)[-:/_]({dd}[0-3]\\d)T({HH}[0-2]\\d)[-:/_]({mm}[0-5]\\d)([-:/_]({ss}[0-5]\\d))?({Z}[+-]\\d{4})?";
+	public static String     HISTORY_DATE_TIME_PATTERN = "({yyyy}\\d{4})[-:/_]({MM}[0-2]\\d)[-:/_]({dd}[0-3]\\d)T({HH}[0-2]\\d)[-:/_]({mm}[0-5]\\d)([-:/_]({ss}[0-5]\\d))?({Z}[+-]\\d{4})?";
 	
 	/**
 	 * Instantiates a new jira history parser.
 	 * 
-	 * @param reportId
-	 *            the report id
 	 * @param uri
 	 *            the uri
 	 */
-	public JiraHistoryParser(final String reportId, final URI uri) {
-		this.reportId = reportId;
+	public JiraHistoryParser(final URI uri) {
 		this.uri = uri;
-	}
-	
-	/**
-	 * Gets the history.
-	 * 
-	 * @return the history
-	 */
-	public SortedSet<HistoryElement> getHistory() {
-		return this.history;
 	}
 	
 	/**
@@ -109,7 +91,9 @@ public class JiraHistoryParser {
 	 */
 	public boolean parse(final History history) {
 		// PRECONDITIONS
-		
+		if (this.parsed) {
+			return true;
+		}
 		try {
 			try {
 				final RawContent rawContent = IOUtils.fetch(this.uri);
@@ -123,22 +107,23 @@ public class JiraHistoryParser {
 				final Element activityModuleHeading = document.getElementById("activitymodule_heading");
 				if (activityModuleHeading == null) {
 					if (Logger.logError()) {
-						Logger.error("Could not find <div id=\"activitymodule_heading\"> in JIRA history tab. reportId="
-						        + this.reportId);
+						Logger.error("Could not find <div id=\"activitymodule_heading\"> in JIRA history tab. uri="
+						        + this.uri.toString());
 					}
 					return false;
 				}
 				final Element activityContent = activityModuleHeading.nextElementSibling();
 				if (activityContent == null) {
 					if (Logger.logError()) {
-						Logger.error("Could not find to <div id=\"activitymodule_heading\">: reportId=" + this.reportId);
+						Logger.error("Could not find to <div id=\"activitymodule_heading\">: uri="
+						        + this.uri.toString());
 					}
 					return false;
 				}
 				final Elements issuePanelContainer = activityContent.getElementsByClass("issuePanelContainer");
 				if ((issuePanelContainer == null) || (issuePanelContainer.isEmpty())) {
 					if (Logger.logError()) {
-						Logger.error("Could not find to <div class=\"issuePanelContainer\"> reportId=" + this.reportId);
+						Logger.error("Could not find to <div class=\"issuePanelContainer\"> uri=" + this.uri.toString());
 					}
 					return false;
 				}
@@ -199,8 +184,8 @@ public class JiraHistoryParser {
 						for (final Element tr : trs) {
 							if (tr.childNodes().size() < JiraHistoryParser.MIN_CHILD_NODE_SIZE) {
 								if (Logger.logError()) {
-									Logger.error("Cannot handle history table row with less than three columns: reportId="
-									        + this.reportId);
+									Logger.error("Cannot handle history table row with less than three columns: uri="
+									        + this.uri.toString());
 								}
 								continue;
 							}
@@ -231,6 +216,22 @@ public class JiraHistoryParser {
 									}
 									historyElement.addChangedValue("version", tuple.getFirst(), tuple.getSecond());
 								}
+							} else if (fieldString.startsWith("fix version")) {
+								if (!historyElement.contains("fix version")) {
+									historyElement.addChangedValue("fix version", oldValue, newValue);
+								} else {
+									@SuppressWarnings ("unchecked")
+									final Tuple<String, String> tuple = (Tuple<String, String>) historyElement.get("fix version");
+									if (((tuple.getFirst() == null) || (tuple.getFirst().isEmpty()))
+									        && (oldValue != null) && (!oldValue.isEmpty())) {
+										tuple.setFirst(oldValue);
+									}
+									if (((tuple.getSecond() == null) || (tuple.getSecond().isEmpty()))
+									        && (newValue != null) && (!newValue.isEmpty())) {
+										tuple.setSecond(newValue);
+									}
+									historyElement.addChangedValue("fix version", tuple.getFirst(), tuple.getSecond());
+								}
 							} else if (fieldString.startsWith("component")) {
 								historyElement.addChangedValue("component", oldValue, newValue);
 							} else if ("labels".equals(fieldString)) {
@@ -247,9 +248,6 @@ public class JiraHistoryParser {
 								}
 							}
 						}
-						if (!historyElement.isEmpty()) {
-							this.history.add(historyElement);
-						}
 					}
 				}
 			} catch (final UnsupportedProtocolException e) {
@@ -263,6 +261,7 @@ public class JiraHistoryParser {
 				}
 				return false;
 			}
+			this.parsed = true;
 			return true;
 		} finally {
 			// POSTCONDITIONS

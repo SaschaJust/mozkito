@@ -20,7 +20,6 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.mozkito.issues.tracker.elements.Priority;
 import org.mozkito.issues.tracker.elements.Resolution;
 import org.mozkito.issues.tracker.elements.Status;
@@ -52,7 +51,8 @@ public class HistoryTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		this.report = new Report("1");
+		final IssueTracker issueTracker = new IssueTracker();
+		this.report = new Report(issueTracker, "1");
 		this.report.setCreationTimestamp(this.formatter.parseDateTime("2010-01-10 13:23:12"));
 		this.report.setComponent("Model");
 		this.report.setDescription("Some default description");
@@ -65,19 +65,18 @@ public class HistoryTest {
 		this.report.addComment(new Comment(2, new Person("just", "Sascha Just", null),
 		                                   this.formatter.parseDateTime("2010-01-13 19:19:53"),
 		                                   "Some default comment 2"));
-		HistoryElement element = new HistoryElement(this.report.getId(), new Person("doe", "John Doe", "foo@bar.com"),
+		HistoryElement element = new HistoryElement(this.report.getHistory(), new Person("doe", "John Doe",
+		                                                                                 "foo@bar.com"),
 		                                            this.formatter.parseDateTime("2010-01-11 21:12:23"));
 		element.addChangedValue("assignedTo", new Person("", null, null), new Person("kim", "Kim Herzig",
 		                                                                             "herzig@mozkito.org"));
-		element.addChangedValue("priority", new Report("0").getPriority(), Priority.HIGH);
-		element.addChangedValue("status", new Report("0").getStatus(), Status.NEW);
-		this.report.addHistoryElement(element);
+		element.addChangedValue("priority", new Report(issueTracker, "0").getPriority(), Priority.HIGH);
+		element.addChangedValue("status", new Report(issueTracker, "0").getStatus(), Status.NEW);
 		
-		element = new HistoryElement(this.report.getId(), new Person("kim", "Kim Herzig", null),
+		element = new HistoryElement(this.report.getHistory(), new Person("kim", "Kim Herzig", null),
 		                             this.formatter.parseDateTime("2010-01-15 01:59:26"));
-		element.addChangedValue("resolution", new Report("0").getResolution(), Resolution.RESOLVED);
+		element.addChangedValue("resolution", new Report(issueTracker, "0").getResolution(), Resolution.RESOLVED);
 		element.addChangedValue("status", Status.NEW, Status.FEEDBACK);
-		this.report.addHistoryElement(element);
 	}
 	
 	/**

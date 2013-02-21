@@ -25,6 +25,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Transient;
 
@@ -36,7 +37,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
-
 import org.mozkito.issues.tracker.model.comparators.HistoryElementComparator;
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persistence.model.Person;
@@ -47,7 +47,7 @@ import org.mozkito.persistence.model.Person;
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 @Entity
-public class History implements Annotated {
+public class History implements Annotated, Iterable<HistoryElement> {
 	
 	/** The Constant serialVersionUID. */
 	private static final long         serialVersionUID = 1720480073428317973L;
@@ -71,7 +71,7 @@ public class History implements Annotated {
 	 * @param report
 	 *            the report
 	 */
-	public History(@NotNull final Report report) {
+	History(@NotNull final Report report) {
 		setReport(report);
 	}
 	
@@ -301,6 +301,7 @@ public class History implements Annotated {
 	 * @return the bugId
 	 */
 	@Id
+	@OneToOne (fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
 	public Report getReport() {
 		return this.report;
 	}
@@ -320,6 +321,7 @@ public class History implements Annotated {
 	 * 
 	 * @return the iterator
 	 */
+	@Override
 	public Iterator<HistoryElement> iterator() {
 		return getElements().iterator();
 	}

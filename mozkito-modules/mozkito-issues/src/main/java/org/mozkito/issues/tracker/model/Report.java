@@ -36,6 +36,7 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
@@ -712,6 +713,8 @@ public class Report implements Annotated, Comparable<Report> {
 	 * 
 	 * @return the tracker
 	 */
+	@ManyToOne (cascade = { CascadeType.PERSIST }, fetch = FetchType.LAZY)
+	@Column (nullable = false)
 	public IssueTracker getTracker() {
 		return this.tracker;
 	}

@@ -31,7 +31,6 @@ import net.ownhero.dev.ioda.container.RawContent;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.issues.tracker.XmlReport;
 import org.mozkito.issues.tracker.elements.Priority;
@@ -41,9 +40,9 @@ import org.mozkito.issues.tracker.elements.Status;
 import org.mozkito.issues.tracker.elements.Type;
 import org.mozkito.issues.tracker.model.AttachmentEntry;
 import org.mozkito.issues.tracker.model.Comment;
-import org.mozkito.issues.tracker.model.HistoryElement;
+import org.mozkito.issues.tracker.model.IssueTracker;
+import org.mozkito.issues.tracker.model.Report;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class BugzillaParser_4_0_4_Test.
  * 
@@ -69,6 +68,8 @@ public class BugzillaParser_4_0_4_Test {
 	/** The parser. */
 	private BugzillaParser_4_0_4 parser;
 	
+	private IssueTracker         issueTracker;
+	
 	/**
 	 * Sets the up.
 	 * 
@@ -77,7 +78,7 @@ public class BugzillaParser_4_0_4_Test {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		
+		this.issueTracker = new IssueTracker();
 		this.uri1234 = getClass().getResource(FileUtils.fileSeparator + "eclipse_1234.xml").toURI();
 		
 		this.uri114562 = getClass().getResource(FileUtils.fileSeparator + "bugzilla_114562.xml").toURI();
@@ -86,7 +87,7 @@ public class BugzillaParser_4_0_4_Test {
 		this.uri642368 = getClass().getResource(FileUtils.fileSeparator + "bugzilla_642368.xml").toURI();
 		this.fetchURI = new URI("https://issues.eclipse.org/issues/");
 		this.parser = new BugzillaParser_4_0_4();
-		final BugzillaTracker tracker = new BugzillaTracker();
+		final BugzillaTracker tracker = new BugzillaTracker(new IssueTracker());
 		tracker.setUri(this.fetchURI);
 		this.parser.setTracker(tracker);
 	}
@@ -99,7 +100,8 @@ public class BugzillaParser_4_0_4_Test {
 		
 		final ReportLink reportLink = new ReportLink(this.uri642368, "642368");
 		
-		assertTrue(this.parser.setURI(reportLink));
+		final Report report = this.parser.setContext(this.issueTracker, reportLink);
+		assertNotNull(report);
 		assertEquals("642368", this.parser.getId());
 		assertEquals(null, this.parser.getAssignedTo());
 		assertEquals("Components", this.parser.getCategory());
@@ -113,8 +115,8 @@ public class BugzillaParser_4_0_4_Test {
 		assertTrue(this.parser.getDescription().startsWith("User-Agent:"));
 		assertTrue(this.parser.getDescription().endsWith("ReferenceError: \"adblock\" is not defined."));
 		
-		final SortedSet<HistoryElement> history = this.parser.getHistoryElements();
-		assertTrue(history.isEmpty());
+		this.parser.parseHistoryElements(report.getHistory());
+		assertTrue(report.getHistory().isEmpty());
 		
 		assertEquals(null, this.parser.getLastUpdateTimestamp());
 		
@@ -144,7 +146,8 @@ public class BugzillaParser_4_0_4_Test {
 	public void testAttachments() {
 		
 		final ReportLink reportLink = new ReportLink(this.uri153429, "153429");
-		assertTrue(this.parser.setURI(reportLink));
+		final Report report = this.parser.setContext(this.issueTracker, reportLink);
+		assertNotNull(report);
 		final List<AttachmentEntry> attachments = this.parser.getAttachmentEntries();
 		assertEquals(11, attachments.size());
 		assertEquals("80909", attachments.get(0).getId());
@@ -225,7 +228,8 @@ public class BugzillaParser_4_0_4_Test {
 	public void testKeywords() {
 		
 		final ReportLink reportLink = new ReportLink(this.uri153429, "153429");
-		assertTrue(this.parser.setURI(reportLink));
+		final Report report = this.parser.setContext(this.issueTracker, reportLink);
+		assertNotNull(report);
 		final Set<String> keywords = this.parser.getKeywords();
 		assertEquals(1, keywords.size());
 		assertTrue(keywords.contains("plan"));
@@ -238,7 +242,8 @@ public class BugzillaParser_4_0_4_Test {
 	public void testParse() {
 		
 		final ReportLink reportLink = new ReportLink(this.uri114562, "114562");
-		assertTrue(this.parser.setURI(reportLink));
+		final Report report = this.parser.setContext(this.issueTracker, reportLink);
+		assertNotNull(report);
 		assertEquals("114562", this.parser.getId());
 		assertEquals("mik.kersten", this.parser.getAssignedTo().getUsernames().iterator().next());
 		assertEquals("Mik Kersten", this.parser.getAssignedTo().getFullnames().iterator().next());
@@ -270,8 +275,8 @@ public class BugzillaParser_4_0_4_Test {
 		assertEquals(DateTimeUtils.parseDate("2005-11-01 11:42 EST"), this.parser.getCreationTimestamp());
 		assertEquals("eclipse.org is moving to it", this.parser.getDescription());
 		
-		final SortedSet<HistoryElement> history = this.parser.getHistoryElements();
-		assertTrue(history.isEmpty());
+		this.parser.parseHistoryElements(report.getHistory());
+		assertTrue(report.getHistory().isEmpty());
 		
 		assertTrue(DateTimeUtils.parseDate("2005-11-03 23:17:37 -0500").isEqual(this.parser.getLastUpdateTimestamp()));
 		

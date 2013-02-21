@@ -24,12 +24,11 @@ import net.ownhero.dev.ioda.FileUtils;
 
 import org.junit.Ignore;
 import org.junit.Test;
-
 import org.mozkito.issues.exceptions.InvalidParameterException;
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.issues.tracker.elements.Type;
+import org.mozkito.issues.tracker.model.IssueTracker;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class SourceforgeTracker_NetTest.
  * 
@@ -45,7 +44,7 @@ public class SourceforgeTracker_NetTest {
 	public void testLiveOverview() {
 		final String liveUrl = "http://sourceforge.net/";
 		
-		final SourceforgeTracker tracker = new SourceforgeTracker();
+		final SourceforgeTracker tracker = new SourceforgeTracker(new IssueTracker());
 		try {
 			tracker.setup(new URI(liveUrl), null, null, 97367l, 617889l, Type.BUG);
 		} catch (final InvalidParameterException e) {
@@ -181,7 +180,7 @@ public class SourceforgeTracker_NetTest {
 	@Test
 	@Ignore
 	public void testSetup() {
-		final SourceforgeTracker tracker = new SourceforgeTracker();
+		final SourceforgeTracker tracker = new SourceforgeTracker(new IssueTracker());
 		try {
 			tracker.setup(getClass().getResource(FileUtils.fileSeparator).toURI(), null, null, 97367l, 617889l,
 			              Type.BUG);

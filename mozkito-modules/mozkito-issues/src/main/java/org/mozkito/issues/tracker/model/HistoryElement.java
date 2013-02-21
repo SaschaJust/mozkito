@@ -26,6 +26,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -483,7 +484,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	@Transient
 	public HistoryElement getForField(final String field) {
 		final String lowerFieldName = field.toLowerCase();
-		final HistoryElement element = new HistoryElement();
+		final HistoryElement element = new HistoryElement(getHistory(), getAuthor(), getTimestamp());
 		if (getChangedStringValues().containsKey(lowerFieldName)) {
 			element.getChangedStringValues().put(lowerFieldName, getChangedStringValues().get(lowerFieldName));
 		} else if (getChangedPersonValues().containsKey(lowerFieldName)) {
@@ -493,8 +494,6 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 		} else if (getChangedDateValues().containsKey(lowerFieldName)) {
 			element.getChangedDateValues().put(lowerFieldName, getChangedDateValues().get(lowerFieldName));
 		}
-		element.setTimestamp(getTimestamp());
-		element.setAuthor(getAuthor());
 		return element;
 	}
 	
@@ -503,6 +502,8 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	 * 
 	 * @return the history
 	 */
+	@ManyToOne (cascade = { CascadeType.PERSIST }, fetch = FetchType.LAZY)
+	@Column (nullable = false)
 	public History getHistory() {
 		return this.history;
 	}
