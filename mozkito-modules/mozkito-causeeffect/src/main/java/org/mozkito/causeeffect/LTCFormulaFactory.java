@@ -21,7 +21,7 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 
 import org.mozkito.causeeffect.ctl.CTLFormula;
-import org.mozkito.genealogies.ChangeGenealogy;
+import org.mozkito.genealogies.core.ChangeGenealogy;
 import org.mozkito.genealogies.utils.VertexSelector;
 import org.mozkito.versions.model.ChangeSet;
 import org.mozkito.versions.model.Handle;

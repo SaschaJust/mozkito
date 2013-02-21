@@ -18,6 +18,7 @@
 		<module>mozkito-callgraph</module>
 		<module>mozkito-genealogies</module>
 		<module>mozkito-codeanalysis</module>
+		<module>mozkito-causeeffect</module>
 		<module>mozkito-untangling</module>
 	</modules>
 	<dependencies>

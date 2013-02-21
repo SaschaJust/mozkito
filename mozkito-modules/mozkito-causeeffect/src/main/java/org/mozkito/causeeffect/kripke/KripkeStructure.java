@@ -25,7 +25,7 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.mozkito.causeeffect.ctl.CTLFormula;
-import org.mozkito.genealogies.ChangeGenealogy;
+import org.mozkito.genealogies.core.ChangeGenealogy;
 import org.mozkito.genealogies.utils.VertexSelector;
 
 /**

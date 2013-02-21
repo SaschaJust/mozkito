@@ -31,7 +31,7 @@ import org.mozkito.causeeffect.ctl.CTLFormula;
 import org.mozkito.causeeffect.kripke.KripkeStructure;
 import org.mozkito.causeeffect.kripke.Label;
 import org.mozkito.causeeffect.kripke.LabelGenerator;
-import org.mozkito.genealogies.ChangeGenealogy;
+import org.mozkito.genealogies.core.ChangeGenealogy;
 import org.mozkito.genealogies.utils.VertexSelector;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.model.ChangeSet;
@@ -74,40 +74,40 @@ public class LTCExperiment {
 	private final ChangeGenealogy<ChangeSet> genealogy;
 	
 	/** The formula factory. */
-	private final LTCFormulaFactory               formulaFactory;
+	private final LTCFormulaFactory          formulaFactory;
 	
 	/** The true positives. */
-	private int                                   truePositives            = 0;
+	private int                              truePositives            = 0;
 	
 	/** The false positives. */
-	private int                                   falsePositives           = 0;
+	private int                              falsePositives           = 0;
 	
 	/** The sum lowest rank. */
-	private int                                   sumLowestRank            = 0;
+	private int                              sumLowestRank            = 0;
 	
 	/** The num vertices. */
-	private int                                   numVertices              = 0;
+	private int                              numVertices              = 0;
 	
 	/** The num recommendated vertices. */
-	private int                                   numRecommendatedVertices = 0;
+	private int                              numRecommendatedVertices = 0;
 	
 	/** The min confidence. */
-	private final double                          minConfidence;
+	private final double                     minConfidence;
 	
 	/** The time window. */
-	private final int                             timeWindow;
+	private final int                        timeWindow;
 	
 	/** The min support. */
-	private final int                             minSupport;
+	private final int                        minSupport;
 	
 	/** The change set size stat. */
-	private final DescriptiveStatistics           changeSetSizeStat        = new DescriptiveStatistics();
+	private final DescriptiveStatistics      changeSetSizeStat        = new DescriptiveStatistics();
 	
 	/** The keep formula max days. */
-	private final int                             keepFormulaMaxDays;
+	private final int                        keepFormulaMaxDays;
 	
 	/** The num recommendations. */
-	private final int                             numRecommendations;
+	private final int                        numRecommendations;
 	
 	/**
 	 * Instantiates a new lTC experiment.
@@ -250,21 +250,20 @@ public class LTCExperiment {
 		};
 		
 		// generate Kripke Structure
-		final KripkeStructure<ChangeSet> kripkeStructure = KripkeStructure.createFrom(this.genealogy,
-		                                                                                   t,
-		                                                                                   labelGenerator,
-		                                                                                   new VertexSelector<ChangeSet>() {
-			                                                                                   
-			                                                                                   @Override
-			                                                                                   public boolean selectVertex(final ChangeSet vertex) {
-				                                                                                   if (Math.abs(Days.daysBetween(t.getTimestamp(),
-				                                                                                                                 vertex.getTimestamp())
-				                                                                                                    .getDays()) < LTCExperiment.this.timeWindow) {
-					                                                                                   return true;
-				                                                                                   }
-				                                                                                   return false;
-			                                                                                   }
-		                                                                                   });
+		final KripkeStructure<ChangeSet> kripkeStructure = KripkeStructure.createFrom(this.genealogy, t,
+		                                                                              labelGenerator,
+		                                                                              new VertexSelector<ChangeSet>() {
+			                                                                              
+			                                                                              @Override
+			                                                                              public boolean selectVertex(final ChangeSet vertex) {
+				                                                                              if (Math.abs(Days.daysBetween(t.getTimestamp(),
+				                                                                                                            vertex.getTimestamp())
+				                                                                                               .getDays()) < LTCExperiment.this.timeWindow) {
+					                                                                              return true;
+				                                                                              }
+				                                                                              return false;
+			                                                                              }
+		                                                                              });
 		
 		ChangeProperty changeProperty = ChangeProperty.NONE;
 		if (isBugFix(t)) {
