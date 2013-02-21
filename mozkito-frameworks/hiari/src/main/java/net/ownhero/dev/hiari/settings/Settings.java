@@ -24,11 +24,11 @@ import java.util.Properties;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import net.ownhero.dev.andama.exceptions.ClassLoadingError;
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.ClassLoadingError;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.ClassFinder;
 import net.ownhero.dev.ioda.FileUtils;
