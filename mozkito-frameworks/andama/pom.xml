@@ -37,6 +37,7 @@
 		<module>andama-core</module>
 		<module>andama-eventhandlers</module>
 		<module>andama-cli</module>
+		<module>andama-exceptions</module>
 	</modules>
 	<distributionManagement>
 	    <repository>
@@ -128,42 +129,37 @@
 		<repository>
 			<id>own-hero.net-public</id>
 			<name>own-hero.net Public Repositories</name>
-			<url>https://mozkito.org:8080/nexus/content/groups/public</url>
+			<url>http://mozkito.org:8080/nexus/content/groups/public</url>
 		</repository>
 		<repository>
 			<id>own-hero.net-private</id>
 			<name>own-hero.net Private Repositories</name>
-			<url>https://mozkito.org:8080/nexus/content/groups/private</url>
+			<url>http://mozkito.org:8080/nexus/content/groups/private</url>
 		</repository>
 		<repository>
 			<id>own-hero.net-proxy</id>
 			<name>own-hero.net Proxy Repositories</name>
-			<url>https://mozkito.org:8080/nexus/content/groups/proxy</url>
+			<url>http://mozkito.org:8080/nexus/content/groups/proxy</url>
 		</repository>
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
 			<id>own-hero.net-public</id>
 			<name>own-hero.net Public Repositories</name>
-			<url>https://mozkito.org:8080/nexus/content/groups/public</url>
+			<url>http://mozkito.org:8080/nexus/content/groups/public</url>
 		</pluginRepository>
 			<pluginRepository>
 			<id>own-hero.net-private</id>
 			<name>own-hero.net Private Repositories</name>
-			<url>https://mozkito.org:8080/nexus/content/groups/private</url>
+			<url>http://mozkito.org:8080/nexus/content/groups/private</url>
 		</pluginRepository>
 		<pluginRepository>
 			<id>own-hero.net-proxy</id>
 			<name>own-hero.net Proxy Repositories</name>
-			<url>https://mozkito.org:8080/nexus/content/groups/proxy</url>
+			<url>http://mozkito.org:8080/nexus/content/groups/proxy</url>
 		</pluginRepository>
 	</pluginRepositories>
 	<dependencies>
-		<dependency>
-			<groupId>net.ownhero.dev</groupId>
-			<artifactId>kisa</artifactId>
-			<version>0.2-SNAPSHOT</version>
-		</dependency>
 		<dependency>
 			<groupId>net.ownhero.dev</groupId>
 			<artifactId>kanuni</artifactId>

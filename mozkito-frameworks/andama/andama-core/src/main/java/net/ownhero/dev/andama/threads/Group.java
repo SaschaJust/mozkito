@@ -1,22 +1,29 @@
-/**
+/***********************************************************************************************************************
+ * Copyright 2011 Kim Herzig, Sascha Just
  * 
- */
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ **********************************************************************************************************************/
 package net.ownhero.dev.andama.threads;
 
 import java.util.LinkedList;
 import java.util.List;
 
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.model.CrashHandler;
 import net.ownhero.dev.hiari.settings.Settings;
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.kisa.Logger;
 
 /**
- * The {@link Group} is an extension of the {@link ThreadGroup} and takes care on the internal management of.
- * 
- * {@link Node}s. The primary reasons for this class are the internal managed thread list and the uncaught exception
- * handling.
+ * The {@link Group} is an extension of the {@link ThreadGroup} and takes care on the internal management of Nodes. The
+ * primary reasons for this class are the internal managed thread list and the uncaught exception handling.
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
@@ -48,10 +55,10 @@ public class Group extends ThreadGroup {
 	}
 	
 	/**
-	 * Adds a new {@link Node} to the managed thread group.
+	 * Adds a new Node to the managed thread group.
 	 * 
 	 * @param thread
-	 *            the {@link Node} that shall be managed.
+	 *            the Node that shall be managed.
 	 * @return the integer
 	 */
 	public Integer addThread(final Node<?, ?> thread) {
@@ -110,6 +117,11 @@ public class Group extends ThreadGroup {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see java.lang.ThreadGroup#uncaughtException(java.lang.Thread, java.lang.Throwable)
+	 */
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see java.lang.ThreadGroup#uncaughtException(java.lang.Thread, java.lang.Throwable)
 	 */
 	@Override

@@ -41,6 +41,10 @@ public abstract class Transformer<K, V> extends Node<K, V> {
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#getBaseType()
 	 */
+	/**
+	 * {@inheritDoc}
+	 * @see net.ownhero.dev.andama.threads.INode#getBaseType()
+	 */
 	@SuppressWarnings ("rawtypes")
 	@Override
 	public final Class<? extends Node> getBaseType() {
@@ -51,6 +55,10 @@ public abstract class Transformer<K, V> extends Node<K, V> {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#hasInputConnector()
 	 */
+	/**
+	 * {@inheritDoc}
+	 * @see net.ownhero.dev.andama.threads.INode#hasInputConnector()
+	 */
 	@Override
 	public final boolean hasInputConnector() {
 		return true;
@@ -60,6 +68,10 @@ public abstract class Transformer<K, V> extends Node<K, V> {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#hasOutputConnector ()
 	 */
+	/**
+	 * {@inheritDoc}
+	 * @see net.ownhero.dev.andama.threads.INode#hasOutputConnector()
+	 */
 	@Override
 	public final boolean hasOutputConnector() {
 		return true;
@@ -68,6 +80,10 @@ public abstract class Transformer<K, V> extends Node<K, V> {
 	/*
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.threads.AndamaThread#toString()
+	 */
+	/**
+	 * {@inheritDoc}
+	 * @see net.ownhero.dev.andama.threads.Node#toString()
 	 */
 	@Override
 	public String toString() {

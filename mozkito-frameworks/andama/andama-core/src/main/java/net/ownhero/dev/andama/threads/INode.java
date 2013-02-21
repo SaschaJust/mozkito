@@ -308,6 +308,10 @@ public interface INode<K, V> extends Runnable {
 	 * (non-Javadoc)
 	 * @see java.lang.Runnable#run()
 	 */
+	/**
+	 * {@inheritDoc}
+	 * @see java.lang.Runnable#run()
+	 */
 	@Override
 	public abstract void run();
 	

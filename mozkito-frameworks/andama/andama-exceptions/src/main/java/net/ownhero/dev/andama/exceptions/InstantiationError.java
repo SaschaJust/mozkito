@@ -1,18 +1,26 @@
-/**
+/***********************************************************************************************************************
+ * Copyright 2011 Kim Herzig, Sascha Just
  * 
- */
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ **********************************************************************************************************************/
 package net.ownhero.dev.andama.exceptions;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.FileUtils;
 
 /**
  * The Class InstantiationError.
- *
+ * 
  * @author just
  */
 public class InstantiationError extends UnrecoverableError {
@@ -37,11 +45,15 @@ public class InstantiationError extends UnrecoverableError {
 	
 	/**
 	 * Instantiates a new instantiation error.
-	 *
-	 * @param cause the cause
-	 * @param clazz the clazz
-	 * @param constructor the constructor
-	 * @param arguments the arguments
+	 * 
+	 * @param cause
+	 *            the cause
+	 * @param clazz
+	 *            the clazz
+	 * @param constructor
+	 *            the constructor
+	 * @param arguments
+	 *            the arguments
 	 */
 	public InstantiationError(final IllegalArgumentException cause, final Class<?> clazz,
 	        final Constructor<?> constructor, final Object... arguments) {
@@ -50,11 +62,15 @@ public class InstantiationError extends UnrecoverableError {
 	
 	/**
 	 * Instantiates a new instantiation error.
-	 *
-	 * @param cause the cause
-	 * @param clazz the clazz
-	 * @param constructor the constructor
-	 * @param arguments the arguments
+	 * 
+	 * @param cause
+	 *            the cause
+	 * @param clazz
+	 *            the clazz
+	 * @param constructor
+	 *            the constructor
+	 * @param arguments
+	 *            the arguments
 	 */
 	public InstantiationError(final InstantiationException cause, final Class<?> clazz,
 	        final Constructor<?> constructor, final Object... arguments) {
@@ -63,12 +79,17 @@ public class InstantiationError extends UnrecoverableError {
 	
 	/**
 	 * Instantiates a new instantiation error.
-	 *
-	 * @param message the message
-	 * @param cause the cause
-	 * @param clazz the clazz
-	 * @param constructor the constructor
-	 * @param arguments the arguments
+	 * 
+	 * @param message
+	 *            the message
+	 * @param cause
+	 *            the cause
+	 * @param clazz
+	 *            the clazz
+	 * @param constructor
+	 *            the constructor
+	 * @param arguments
+	 *            the arguments
 	 */
 	public InstantiationError(final String message, final IllegalArgumentException cause, final Class<?> clazz,
 	        final Constructor<?> constructor, final Object... arguments) {
@@ -80,12 +101,17 @@ public class InstantiationError extends UnrecoverableError {
 	
 	/**
 	 * Instantiates a new instantiation error.
-	 *
-	 * @param message the message
-	 * @param cause the cause
-	 * @param clazz the clazz
-	 * @param constructor the constructor
-	 * @param arguments the arguments
+	 * 
+	 * @param message
+	 *            the message
+	 * @param cause
+	 *            the cause
+	 * @param clazz
+	 *            the clazz
+	 * @param constructor
+	 *            the constructor
+	 * @param arguments
+	 *            the arguments
 	 */
 	public InstantiationError(final String message, final InstantiationException cause, final Class<?> clazz,
 	        final Constructor<?> constructor, final Object... arguments) {
@@ -155,7 +181,7 @@ public class InstantiationError extends UnrecoverableError {
 	
 	/**
 	 * Gets the arguments.
-	 *
+	 * 
 	 * @return the arguments
 	 */
 	public Object[] getArguments() {
@@ -164,7 +190,7 @@ public class InstantiationError extends UnrecoverableError {
 	
 	/**
 	 * Gets the clazz.
-	 *
+	 * 
 	 * @return the clazz
 	 */
 	public Class<?> getClazz() {
@@ -173,7 +199,7 @@ public class InstantiationError extends UnrecoverableError {
 	
 	/**
 	 * Gets the constructor.
-	 *
+	 * 
 	 * @return the constructor
 	 */
 	public Constructor<?> getConstructor() {

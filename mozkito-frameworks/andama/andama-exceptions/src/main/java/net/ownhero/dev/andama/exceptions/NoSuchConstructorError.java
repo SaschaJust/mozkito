@@ -1,18 +1,26 @@
-/**
+/***********************************************************************************************************************
+ * Copyright 2011 Kim Herzig, Sascha Just
  * 
- */
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ **********************************************************************************************************************/
 package net.ownhero.dev.andama.exceptions;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.FileUtils;
 
 /**
  * The Class NoSuchConstructorError.
- *
+ * 
  * @author just
  */
 public class NoSuchConstructorError extends UnrecoverableError {
@@ -24,32 +32,39 @@ public class NoSuchConstructorError extends UnrecoverableError {
 	static private String     defaultMessage   = "";
 	
 	/** The arguments. */
-	private final Object[]    arguments;
+	private final Class<?>[]  arguments;
 	
 	/** The clazz. */
 	private final Class<?>    clazz;
 	
 	/**
 	 * Instantiates a new no such constructor error.
-	 *
-	 * @param cause the cause
-	 * @param clazz the clazz
-	 * @param arguments the arguments
+	 * 
+	 * @param cause
+	 *            the cause
+	 * @param clazz
+	 *            the clazz
+	 * @param arguments
+	 *            the arguments
 	 */
-	public NoSuchConstructorError(final NoSuchMethodException cause, final Class<?> clazz, final Object... arguments) {
+	public NoSuchConstructorError(final NoSuchMethodException cause, final Class<?> clazz, final Class<?>... arguments) {
 		this(defaultMessage, cause, clazz, arguments);
 	}
 	
 	/**
 	 * Instantiates a new no such constructor error.
-	 *
-	 * @param message the message
-	 * @param cause the cause
-	 * @param clazz the clazz
-	 * @param arguments the arguments
+	 * 
+	 * @param message
+	 *            the message
+	 * @param cause
+	 *            the cause
+	 * @param clazz
+	 *            the clazz
+	 * @param arguments
+	 *            the arguments
 	 */
 	public NoSuchConstructorError(final String message, final NoSuchMethodException cause, final Class<?> clazz,
-	        final Object... arguments) {
+	        final Class<?>... arguments) {
 		super(message, cause);
 		this.clazz = clazz;
 		this.arguments = arguments;
@@ -110,7 +125,7 @@ public class NoSuchConstructorError extends UnrecoverableError {
 	
 	/**
 	 * Gets the arguments.
-	 *
+	 * 
 	 * @return the arguments
 	 */
 	public Object[] getArguments() {
@@ -119,7 +134,7 @@ public class NoSuchConstructorError extends UnrecoverableError {
 	
 	/**
 	 * Gets the clazz.
-	 *
+	 * 
 	 * @return the clazz
 	 */
 	public Class<?> getClazz() {

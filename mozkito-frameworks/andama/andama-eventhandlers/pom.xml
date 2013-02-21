@@ -18,16 +18,4 @@
 	<version>0.4-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<description>Toolchain to process data in a flow model.</description>
-	<dependencies>
-		<dependency>
-			<groupId>net.ownhero.dev</groupId>
-			<artifactId>andama-bus</artifactId>
-			<version>0.4-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>net.ownhero.dev</groupId>
-			<artifactId>hiari</artifactId>
-			<version>0.2-SNAPSHOT</version>
-		</dependency>
-	</dependencies>
 </project>

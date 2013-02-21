@@ -1,6 +1,15 @@
-/**
+/***********************************************************************************************************************
+ * Copyright 2011 Kim Herzig, Sascha Just
  * 
- */
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ **********************************************************************************************************************/
 package net.ownhero.dev.andama.exceptions;
 
 import java.io.File;
@@ -11,7 +20,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
 
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.ClassFinder;
 import net.ownhero.dev.ioda.FileUtils;
 
@@ -27,7 +35,7 @@ import org.apache.lucene.util.Version;
 
 /**
  * The Class ClassLoadingError.
- *
+ * 
  * @author just
  */
 public class ClassLoadingError extends UnrecoverableError {
@@ -52,9 +60,11 @@ public class ClassLoadingError extends UnrecoverableError {
 	
 	/**
 	 * Instantiates a new class loading error.
-	 *
-	 * @param cause the cause
-	 * @param className the class name
+	 * 
+	 * @param cause
+	 *            the cause
+	 * @param className
+	 *            the class name
 	 */
 	public ClassLoadingError(final ClassNotFoundException cause, final String className) {
 		this(defaultMessage, cause, className, System.getProperty("java.class.path"));
@@ -62,10 +72,13 @@ public class ClassLoadingError extends UnrecoverableError {
 	
 	/**
 	 * Instantiates a new class loading error.
-	 *
-	 * @param cause the cause
-	 * @param className the class name
-	 * @param classPath the class path
+	 * 
+	 * @param cause
+	 *            the cause
+	 * @param className
+	 *            the class name
+	 * @param classPath
+	 *            the class path
 	 */
 	public ClassLoadingError(final ClassNotFoundException cause, final String className, final String classPath) {
 		this(defaultMessage, cause, className, classPath);
@@ -73,9 +86,11 @@ public class ClassLoadingError extends UnrecoverableError {
 	
 	/**
 	 * Instantiates a new class loading error.
-	 *
-	 * @param cause the cause
-	 * @param className the class name
+	 * 
+	 * @param cause
+	 *            the cause
+	 * @param className
+	 *            the class name
 	 */
 	public ClassLoadingError(final LinkageError cause, final String className) {
 		this(defaultMessage, cause, className, System.getProperty("java.class.path"));
@@ -83,10 +98,13 @@ public class ClassLoadingError extends UnrecoverableError {
 	
 	/**
 	 * Instantiates a new class loading error.
-	 *
-	 * @param cause the cause
-	 * @param className the class name
-	 * @param classPath the class path
+	 * 
+	 * @param cause
+	 *            the cause
+	 * @param className
+	 *            the class name
+	 * @param classPath
+	 *            the class path
 	 */
 	public ClassLoadingError(final LinkageError cause, final String className, final String classPath) {
 		this(defaultMessage, cause, className, classPath);
@@ -94,10 +112,13 @@ public class ClassLoadingError extends UnrecoverableError {
 	
 	/**
 	 * Instantiates a new class loading error.
-	 *
-	 * @param message the message
-	 * @param cause the cause
-	 * @param className the class name
+	 * 
+	 * @param message
+	 *            the message
+	 * @param cause
+	 *            the cause
+	 * @param className
+	 *            the class name
 	 */
 	public ClassLoadingError(final String message, final ClassNotFoundException cause, final String className) {
 		this(message, cause, className, System.getProperty("java.class.path"));
@@ -105,11 +126,15 @@ public class ClassLoadingError extends UnrecoverableError {
 	
 	/**
 	 * Instantiates a new class loading error.
-	 *
-	 * @param message the message
-	 * @param cause the cause
-	 * @param className the class name
-	 * @param classPath the class path
+	 * 
+	 * @param message
+	 *            the message
+	 * @param cause
+	 *            the cause
+	 * @param className
+	 *            the class name
+	 * @param classPath
+	 *            the class path
 	 */
 	public ClassLoadingError(final String message, final ClassNotFoundException cause, final String className,
 	        final String classPath) {
@@ -120,10 +145,13 @@ public class ClassLoadingError extends UnrecoverableError {
 	
 	/**
 	 * Instantiates a new class loading error.
-	 *
-	 * @param message the message
-	 * @param cause the cause
-	 * @param className the class name
+	 * 
+	 * @param message
+	 *            the message
+	 * @param cause
+	 *            the cause
+	 * @param className
+	 *            the class name
 	 */
 	public ClassLoadingError(final String message, final LinkageError cause, final String className) {
 		this(message, cause, className, System.getProperty("java.class.path"));
@@ -131,11 +159,15 @@ public class ClassLoadingError extends UnrecoverableError {
 	
 	/**
 	 * Instantiates a new class loading error.
-	 *
-	 * @param message the message
-	 * @param cause the cause
-	 * @param className the class name
-	 * @param classPath the class path
+	 * 
+	 * @param message
+	 *            the message
+	 * @param cause
+	 *            the cause
+	 * @param className
+	 *            the class name
+	 * @param classPath
+	 *            the class path
 	 */
 	public ClassLoadingError(final String message, final LinkageError cause, final String className,
 	        final String classPath) {
@@ -217,13 +249,12 @@ public class ClassLoadingError extends UnrecoverableError {
 						contained = true;
 						
 						break;
-					} else {
-						final String[] split = getClassName().split("\\.");
-						if (fqClassName.endsWith("." + (split.length > 1
-						                                                ? split[split.length - 1]
-						                                                : split[0]))) {
-							sameName.add(fqClassName);
-						}
+					}
+					final String[] split = getClassName().split("\\.");
+					if (fqClassName.endsWith("." + (split.length > 1
+					                                                ? split[split.length - 1]
+					                                                : split[0]))) {
+						sameName.add(fqClassName);
 					}
 				}
 				
@@ -265,6 +296,7 @@ public class ClassLoadingError extends UnrecoverableError {
 						                                               ? split[split.length - 1]
 						                                               : split[0];
 						final String[] suggestions = spellChecker.suggestSimilar(simpleClassName, suggestionCount);
+						spellChecker.close();
 						
 						final Set<String> fqSuggestions = new HashSet<String>();
 						for (final String suggestion : sameName) {
@@ -283,8 +315,7 @@ public class ClassLoadingError extends UnrecoverableError {
 							builder.append("  ").append(fqSuggestion).append(FileUtils.lineSeparator);
 						}
 					} catch (final IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						builder.append(e.getMessage());
 					}
 					
 				}
@@ -310,7 +341,7 @@ public class ClassLoadingError extends UnrecoverableError {
 	
 	/**
 	 * Gets the class name.
-	 *
+	 * 
 	 * @return the class name
 	 */
 	public final String getClassName() {
@@ -319,7 +350,7 @@ public class ClassLoadingError extends UnrecoverableError {
 	
 	/**
 	 * Gets the class path.
-	 *
+	 * 
 	 * @return the class path
 	 */
 	public final String getClassPath() {

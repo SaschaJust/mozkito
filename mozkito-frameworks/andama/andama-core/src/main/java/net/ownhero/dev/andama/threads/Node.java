@@ -29,12 +29,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingDeque;
 
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.messages.EventBus;
 import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.storages.AndamaDataStorage;
 import net.ownhero.dev.andama.threads.comparator.AndamaThreadComparator;
 import net.ownhero.dev.hiari.settings.ISettings;
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
@@ -49,8 +49,8 @@ import net.ownhero.dev.kisa.Logger;
  * @param <K>
  *            the key type
  * @param <V>
- *            the value type {@link Node}s are the edges of a {@link Chain} graph, connecting the
- *            {@link AndamaDataStorage} nodes.
+ *            the value type Nodes are the edges of a {@link Chain} graph, connecting the {@link AndamaDataStorage}
+ *            nodes.
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node<?, ?>> {
@@ -255,7 +255,7 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	private boolean                                                    warningSameInputdata = false;
 	
 	/**
-	 * The constructor of the {@link Node}. This should be called from all extending classes.
+	 * The constructor of the Node. This should be called from all extending classes.
 	 * 
 	 * @param threadGroup
 	 *            the {@link Group}. See {@link Group} for details.
@@ -1925,14 +1925,10 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 		super.start();
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	/**
-	 * To string.
+	 * {@inheritDoc}
 	 * 
-	 * @return the string
+	 * @see java.lang.Thread#toString()
 	 */
 	@Override
 	public String toString() {
@@ -1965,15 +1961,10 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 		return builder.toString();
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#waitFor(net.ownhero.dev .andama.threads.AndamaThread)
-	 */
 	/**
-	 * Wait for.
+	 * {@inheritDoc}
 	 * 
-	 * @param thread
-	 *            the thread
+	 * @see net.ownhero.dev.andama.threads.INode#waitFor(net.ownhero.dev.andama.threads.Node)
 	 */
 	@Override
 	public void waitFor(final Node<?, ?> thread) {
