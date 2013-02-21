@@ -31,11 +31,6 @@ import org.mozkito.persistence.PersistenceUtil;
  */
 public class TrackerPersister extends Sink<Report> {
 	
-	/** The Constant COMMIT_SIZE. */
-	private static final int COMMIT_SIZE = 15;
-	/** The i. */
-	private Integer          i           = 0;
-	
 	/**
 	 * Instantiates a new tracker persister.
 	 * 
@@ -69,12 +64,6 @@ public class TrackerPersister extends Sink<Report> {
 				if (Logger.logDebug()) {
 					Logger.debug("Storing " + bugReport);
 				}
-				
-				if ((++TrackerPersister.this.i % TrackerPersister.COMMIT_SIZE) == 0) {
-					persistenceUtil.commitTransaction();
-					persistenceUtil.beginTransaction();
-				}
-				
 				persistenceUtil.saveOrUpdate(bugReport);
 			}
 		};
