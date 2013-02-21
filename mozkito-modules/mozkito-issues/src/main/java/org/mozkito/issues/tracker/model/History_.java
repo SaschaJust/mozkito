@@ -27,9 +27,6 @@ public class History_ {
 	/** The elements. */
 	public static volatile SetAttribute<History, HistoryElement>     elements;
 	
-	/** The id. */
-	public static volatile SingularAttribute<History, Long>          id;
-	
 	/** The history. */
 	public static volatile SingularAttribute<HistoryElement, Report> report;
 }
