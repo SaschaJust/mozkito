@@ -30,7 +30,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-
 import org.mozkito.issues.elements.Resolution;
 import org.mozkito.issues.model.History;
 import org.mozkito.issues.model.HistoryElement;
@@ -158,15 +157,15 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 			final Document document = Jsoup.parse(rawContent.getContent());
 			final Element bugzillaBody = document.getElementById("bugzilla-body");
 			if (bugzillaBody == null) {
-				if (Logger.logError()) {
-					Logger.error(errorHeader + "Could not find bugzilla-body.");
+				if (Logger.logWarn()) {
+					Logger.warn(errorHeader + "Could not find bugzilla-body.");
 				}
 				return false;
 			}
 			final Elements tables = bugzillaBody.getElementsByTag("table");
 			if (tables.isEmpty()) {
-				if (Logger.logError()) {
-					Logger.error(errorHeader + "Could not find bugzill-body table.");
+				if (Logger.logWarn()) {
+					Logger.warn(errorHeader + "Could not find bugzill-body table.");
 				}
 				return false;
 			}
@@ -178,8 +177,8 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 				final Element tr = trs.get(i);
 				final Elements tds = tr.getElementsByTag("td");
 				if (tds.size() < BugzillaHistoryParser_4_0_4.MIN_NUMBER_BODY_TABLE_COLUMNS) {
-					if (Logger.logError()) {
-						Logger.error(errorHeader
+					if (Logger.logWarn()) {
+						Logger.warn(errorHeader
 						        + "at least 3 columns in a mozilla body table are expected in every row.");
 					}
 					return false;
@@ -191,8 +190,8 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 				
 				if (rowspan < 2) {
 					if (tds.size() < BugzillaHistoryParser_4_0_4.MIN_HISTORY_ELEMENT_TABLE_COLUMNS) {
-						if (Logger.logError()) {
-							Logger.error(errorHeader
+						if (Logger.logWarn()) {
+							Logger.warn(errorHeader
 							        + "at least 5 columns in a mozilla body table are expected in new history element rows.");
 						}
 						return false;
@@ -220,8 +219,8 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 					this.history.add(hElement);
 				}
 				if (hElement == null) {
-					if (Logger.logError()) {
-						Logger.error(errorHeader + "current history element must not be null at this point.");
+					if (Logger.logWarn()) {
+						Logger.warn(errorHeader + "current history element must not be null at this point.");
 					}
 					return false;
 				}
@@ -296,8 +295,8 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 			}
 			
 		} catch (final Exception e) {
-			if (Logger.logError()) {
-				Logger.error(e, "Could not parse bugzilla report history.");
+			if (Logger.logWarn()) {
+				Logger.warn(e, "Could not parse bugzilla report history.");
 			}
 		}
 		this.parsed = true;
