@@ -360,7 +360,7 @@ public class RegexEngine extends Engine {
 					 */
 					@Override
 					public boolean evaluate(final Object object) {
-						return ((Feature) object).getEngine().equals(getClass());
+						return ((Feature) object).getEngine().equals(RegexEngine.class);
 					}
 				});
 			}

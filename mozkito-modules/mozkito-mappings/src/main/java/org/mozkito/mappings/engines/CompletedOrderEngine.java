@@ -21,9 +21,9 @@ import org.apache.commons.collections.Predicate;
 
 import org.mozkito.issues.model.Report;
 import org.mozkito.mappings.mappable.FieldKey;
+import org.mozkito.mappings.mappable.model.MappableChangeSet;
 import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.mappable.model.MappableReport;
-import org.mozkito.mappings.mappable.model.MappableChangeSet;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Feature;
 import org.mozkito.mappings.model.Relation;
@@ -139,7 +139,7 @@ public class CompletedOrderEngine extends Engine {
 					 */
 					@Override
 					public boolean evaluate(final Object object) {
-						return ((Feature) object).getEngine().equals(getClass());
+						return ((Feature) object).getEngine().equals(CompletedOrderEngine.class);
 					}
 				});
 			}

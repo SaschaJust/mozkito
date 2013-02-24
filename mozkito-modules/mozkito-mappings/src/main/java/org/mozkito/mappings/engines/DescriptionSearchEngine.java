@@ -142,7 +142,7 @@ public class DescriptionSearchEngine extends SearchEngine {
 					 */
 					@Override
 					public boolean evaluate(final Object object) {
-						return ((Feature) object).getEngine().equals(getClass());
+						return ((Feature) object).getEngine().equals(DescriptionSearchEngine.class);
 					}
 				});
 			}

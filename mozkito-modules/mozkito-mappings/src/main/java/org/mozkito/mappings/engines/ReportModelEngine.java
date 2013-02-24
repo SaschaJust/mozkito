@@ -85,7 +85,7 @@ public class ReportModelEngine extends Engine {
 					 */
 					@Override
 					public boolean evaluate(final Object object) {
-						return ((Feature) object).getEngine().equals(getClass());
+						return ((Feature) object).getEngine().equals(ReportModelEngine.class);
 					}
 				});
 			}

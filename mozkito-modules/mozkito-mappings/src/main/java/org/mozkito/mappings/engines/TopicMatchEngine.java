@@ -83,7 +83,7 @@ public class TopicMatchEngine extends Engine {
 					 */
 					@Override
 					public boolean evaluate(final Object object) {
-						return ((Feature) object).getEngine().equals(getClass());
+						return ((Feature) object).getEngine().equals(TopicMatchEngine.class);
 					}
 				});
 			}
