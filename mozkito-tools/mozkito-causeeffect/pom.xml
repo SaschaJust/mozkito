@@ -35,5 +35,10 @@
 			<version>10.9.1.0</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.mozkito</groupId>
+			<artifactId>mozkito-persistence-settings</artifactId>
+			<version>0.4-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 </project>

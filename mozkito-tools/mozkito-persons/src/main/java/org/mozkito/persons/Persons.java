@@ -86,12 +86,8 @@ public class Persons extends Chain<Settings> {
 	 * 
 	 * @param settings
 	 *            the settings
-	 * @throws SettingsParseError
-	 *             the settings parse error
-	 * @throws ArgumentRegistrationException
-	 *             the argument registration exception
 	 */
-	public Persons(final Settings settings) throws SettingsParseError, ArgumentRegistrationException {
+	public Persons(final Settings settings) {
 		super(settings);
 		
 		try {
@@ -105,20 +101,7 @@ public class Persons extends Chain<Settings> {
 			                                                                     Requirement.required));
 			
 			settings.loadByInheritance(MergingEngine.class.getPackage(), settings.getRoot());
-		} catch (final ArgumentRegistrationException e) {
-			if (Logger.logError()) {
-				Logger.error(e);
-			}
-			throw new Shutdown(e.getMessage(), e);
-		} catch (final ArgumentSetRegistrationException e) {
-			if (Logger.logError()) {
-				Logger.error(e);
-			}
-			throw new Shutdown(e.getMessage(), e);
-		} catch (final SettingsParseError e) {
-			if (Logger.logError()) {
-				Logger.error(e);
-			}
+		} catch (final ArgumentRegistrationException | ArgumentSetRegistrationException | SettingsParseError e) {
 			throw new Shutdown(e.getMessage(), e);
 		}
 	}

@@ -126,7 +126,7 @@ public class MergingEngineOptions extends
 			final HashSet<String> defaultSet = new HashSet<String>();
 			
 			try {
-				final Collection<Class<? extends MergingEngine>> collection = ClassFinder.getClassesExtendingClass(getClass().getPackage(),
+				final Collection<Class<? extends MergingEngine>> collection = ClassFinder.getClassesExtendingClass(MergingEngine.class.getPackage(),
 				                                                                                                   MergingEngine.class,
 				                                                                                                   Modifier.ABSTRACT
 				                                                                                                           | Modifier.INTERFACE

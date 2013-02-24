@@ -9,6 +9,11 @@ mozkito-tools/**/.project
 mozkito-tools/**/.settings
 mozkito-tools/**/eclipse
 mozkito-tools/**/bin
+mozkito-settings/**/.classpath
+mozkito-settings/**/.project
+mozkito-settings/**/.settings
+mozkito-settings/**/eclipse
+mozkito-settings/**/bin
 mozkito-maven-plugins/**/.classpath
 mozkito-maven-plugins/**/.project
 mozkito-maven-plugins/**/.settings

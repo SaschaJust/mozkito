@@ -16,22 +16,24 @@
 package persons;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.Settings;
-import net.ownhero.dev.kisa.Logger;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 
 import org.mozkito.persons.Persons;
 
 /**
  * The Class Main.
- *
+ * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class Main {
 	
 	/**
 	 * The main method.
-	 *
-	 * @param args the arguments
+	 * 
+	 * @param args
+	 *            the arguments
 	 */
 	public static void main(final String[] args) {
 		try {
@@ -40,11 +42,11 @@ public class Main {
 			persons.setName(persons.getClass().getSimpleName());
 			persons.start();
 			persons.join();
-		} catch (final Exception e) {
-			if (Logger.logError()) {
-				Logger.error(e);
-			}
-			throw new Shutdown();
+		} catch (InterruptedException | SettingsParseError | UnrecoverableError e) {
+			System.err.println(e.getMessage());
+			e.printStackTrace();
+		} catch (final Shutdown shutdown) {
+			System.err.println("Shutdown requested.");
 		}
 	}
 	
