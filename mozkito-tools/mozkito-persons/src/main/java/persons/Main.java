@@ -19,6 +19,7 @@ import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
+import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 
 import org.mozkito.persons.Persons;
 
@@ -28,6 +29,10 @@ import org.mozkito.persons.Persons;
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class Main {
+	
+	static {
+		KanuniAgent.initialize();
+	}
 	
 	/**
 	 * The main method.

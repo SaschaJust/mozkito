@@ -13,21 +13,21 @@
 	<url>http://mozkito.org</url>
 	<inceptionYear>2010</inceptionYear>
 	<licenses>
-	  <license>
-	    <name>The Apache Software License, Version 2.0</name>
-	    <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-	    <distribution>repo</distribution>
-	    <comments>A business-friendly OSS license</comments>
-	  </license>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+			<comments>A business-friendly OSS license</comments>
+		</license>
 	</licenses>
-    <issueManagement>
-      <system>Jira</system>
-      <url>http://mozkito.org:8080/jira</url>
-    </issueManagement>
-    <ciManagement>
-      <system>bamboo</system>
-      <url>http://mozkito.org:8080/bamboo</url>
-    </ciManagement>
+	<issueManagement>
+		<system>Jira</system>
+		<url>http://mozkito.org:8080/jira</url>
+	</issueManagement>
+	<ciManagement>
+		<system>bamboo</system>
+		<url>http://mozkito.org:8080/bamboo</url>
+	</ciManagement>
 	<developers>
 		<developer>
 			<id>kim</id>
@@ -211,7 +211,7 @@
 					<target>1.7</target>
 					<encoding>${project.build.sourceEncoding}</encoding>
 					<showWarnings>true</showWarnings>
-				    <showDeprecation>true</showDeprecation>
+					<showDeprecation>true</showDeprecation>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -324,15 +324,15 @@
 					<artifactId>sonar-maven-plugin</artifactId>
 					<version>2.0</version>
 				</plugin>
-		        <plugin>
-		          <groupId>org.apache.maven.plugins</groupId>
-		          <artifactId>maven-checkstyle-plugin</artifactId>
-		          <version>2.10-SNAPSHOT</version>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-checkstyle-plugin</artifactId>
+					<version>2.10-SNAPSHOT</version>
 					<configuration>
 						<enableRulesSummary>true</enableRulesSummary>
 						<configLocation>https://users.own-hero.net/~methos/dropbox/checkstyle.xml</configLocation>
 					</configuration>
-		        </plugin>
+				</plugin>
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>openjpa-maven-plugin</artifactId>
@@ -524,20 +524,20 @@
 									<goal>aggregate</goal>
 								</goals>
 							</execution>
-		                    <execution>
-		                        <id>main</id>
-		                        <phase>verify</phase>
-		                        <goals>
-		                            <goal>instrument</goal>
-		                            <goal>aggregate</goal>
-		                        </goals>
-		                    </execution>
+							<execution>
+								<id>main</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>instrument</goal>
+									<goal>aggregate</goal>
+								</goals>
+							</execution>
 						</executions>
 					</plugin>
-			        <plugin>
-			          <groupId>org.apache.maven.plugins</groupId>
-			          <artifactId>maven-checkstyle-plugin</artifactId>
-			        </plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-checkstyle-plugin</artifactId>
+					</plugin>
 				</plugins>
 			</build>
 			<reporting>
@@ -579,7 +579,7 @@
 			<build>
 				<plugins>
 					<plugin>
-					<artifactId>maven-dependency-plugin</artifactId>
+						<artifactId>maven-dependency-plugin</artifactId>
 						<executions>
 							<execution>
 								<id>copy</id>
@@ -612,21 +612,21 @@
 									<goal>aggregate</goal>
 								</goals>
 							</execution>
-		                    <execution>
-		                        <id>main</id>
-		                        <phase>verify</phase>
-		                        <goals>
-		                            <goal>instrument</goal>
-		                            <goal>aggregate</goal>
-		                        </goals>
-		                    </execution>
+							<execution>
+								<id>main</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>instrument</goal>
+									<goal>aggregate</goal>
+								</goals>
+							</execution>
 						</executions>
 					</plugin>
-			        <plugin>
-			          <groupId>org.apache.maven.plugins</groupId>
-			          <artifactId>maven-checkstyle-plugin</artifactId>
-			        </plugin>
-			        <plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-checkstyle-plugin</artifactId>
+					</plugin>
+					<plugin>
 						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
 							<enableAssertions>true</enableAssertions>
@@ -670,6 +670,22 @@
 							</execution>
 						</executions>
 					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-failsafe-plugin</artifactId>
+						<version>2.11</version>
+						<executions>
+							<execution>
+								<goals>
+									<goal>integration-test</goal>
+									<goal>verify</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<runOrder>alphabetical</runOrder>
+						</configuration>
+					</plugin>
 				</plugins>
 			</build>
 			<reporting>
@@ -701,8 +717,13 @@
 							<includesTestSourceRoots>false</includesTestSourceRoots>
 						</configuration>
 					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-failsafe-plugin</artifactId>
+						<version>2.11</version>
+					</plugin>
 				</plugins>
 			</reporting>
 		</profile>
-</profiles>
+	</profiles>
 </project>

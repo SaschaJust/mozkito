@@ -40,17 +40,15 @@ public class HelpIT {
 	 * @param properties
 	 *            the properties
 	 */
-	@SuppressWarnings ("unchecked")
+	@SuppressWarnings ({ "unchecked", "rawtypes" })
 	private Tuple<Integer, List<String>> exec(final Properties properties) {
 		
 		// TODO this should be automatically generated and be platform independent
 		final String jar = "target/mozkito-versions-tool-0.4-SNAPSHOT-jar-with-dependencies.jar";
 		
 		// move properties to hashmap
-		@SuppressWarnings ("rawtypes")
-		final Map map = properties;
 		final HashMap<String, String> hmap = new HashMap<>();
-		hmap.putAll(map);
+		hmap.putAll((Map) properties);
 		
 		// execute java
 		return CommandExecutor.execute("java", new String[] { "-jar", jar }, null, null, hmap);
@@ -77,7 +75,7 @@ public class HelpIT {
 				
 				try {
 					final String line = (String) object;
-					if (line.contains("[ERROR]")) {
+					if (line.contains("] ERROR")) {
 						System.err.println(line);
 						return true;
 					}
