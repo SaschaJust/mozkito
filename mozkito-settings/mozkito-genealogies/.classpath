@@ -8,10 +8,26 @@
   <classpathentry kind="output" path="eclipse"/>
   <classpathentry kind="var" path="M2_REPO/javax/xml/stream/stax-api/1.0-2/stax-api-1.0-2.jar" sourcepath="M2_REPO/javax/xml/stream/stax-api/1.0-2/stax-api-1.0-2-sources.jar"/>
   <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-  <classpathentry kind="src" path="/mozkito-genealogies"/>
-  <classpathentry kind="src" path="/mozkito-codeanalysis"/>
-  <classpathentry kind="src" path="/mozkito-versions"/>
-  <classpathentry kind="src" path="/mozkito-utilities"/>
+  <classpathentry kind="var" path="M2_REPO/org/mozkito/mozkito-genealogies/0.4-SNAPSHOT/mozkito-genealogies-0.4-SNAPSHOT.jar">
+    <attributes>
+      <attribute value="jar:file:/Users/just/.m2/repository/org/mozkito/mozkito-genealogies/0.4-SNAPSHOT/mozkito-genealogies-0.4-SNAPSHOT-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/org/mozkito/mozkito-codeanalysis/0.4-SNAPSHOT/mozkito-codeanalysis-0.4-SNAPSHOT.jar">
+    <attributes>
+      <attribute value="jar:file:/Users/just/.m2/repository/org/mozkito/mozkito-codeanalysis/0.4-SNAPSHOT/mozkito-codeanalysis-0.4-SNAPSHOT-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/org/mozkito/mozkito-versions/0.4-SNAPSHOT/mozkito-versions-0.4-SNAPSHOT.jar">
+    <attributes>
+      <attribute value="jar:file:/Users/just/.m2/repository/org/mozkito/mozkito-versions/0.4-SNAPSHOT/mozkito-versions-0.4-SNAPSHOT-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/org/mozkito/mozkito-utilities/0.4-SNAPSHOT/mozkito-utilities-0.4-SNAPSHOT.jar" sourcepath="M2_REPO/org/mozkito/mozkito-utilities/0.4-SNAPSHOT/mozkito-utilities-0.4-SNAPSHOT-sources.jar">
+    <attributes>
+      <attribute value="jar:file:/Users/just/.m2/repository/org/mozkito/mozkito-utilities/0.4-SNAPSHOT/mozkito-utilities-0.4-SNAPSHOT-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
   <classpathentry kind="var" path="M2_REPO/commons-lang/commons-lang/2.6/commons-lang-2.6.jar" sourcepath="M2_REPO/commons-lang/commons-lang/2.6/commons-lang-2.6-sources.jar">
     <attributes>
       <attribute value="jar:file:/Users/just/.m2/repository/commons-lang/commons-lang/2.6/commons-lang-2.6-javadoc.jar!/" name="javadoc_location"/>
@@ -144,7 +160,11 @@
       <attribute value="jar:file:/Users/just/.m2/repository/org/slf4j/slf4j-log4j12/1.7.2/slf4j-log4j12-1.7.2-javadoc.jar!/" name="javadoc_location"/>
     </attributes>
   </classpathentry>
-  <classpathentry kind="src" path="/mozkito-persistence"/>
+  <classpathentry kind="var" path="M2_REPO/org/mozkito/mozkito-persistence/0.4-SNAPSHOT/mozkito-persistence-0.4-SNAPSHOT.jar" sourcepath="M2_REPO/org/mozkito/mozkito-persistence/0.4-SNAPSHOT/mozkito-persistence-0.4-SNAPSHOT-sources.jar">
+    <attributes>
+      <attribute value="jar:file:/Users/just/.m2/repository/org/mozkito/mozkito-persistence/0.4-SNAPSHOT/mozkito-persistence-0.4-SNAPSHOT-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
   <classpathentry kind="var" path="M2_REPO/postgresql/postgresql/9.2-1002.jdbc4/postgresql-9.2-1002.jdbc4.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/apache/openjpa/openjpa/2.2.1.1/openjpa-2.2.1.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/net/sourceforge/serp/serp/1.13.1/serp-1.13.1.jar"/>
@@ -342,6 +362,7 @@
       <attribute value="jar:file:/Users/just/.m2/repository/org/neo4j/neo4j-management/1.6.1/neo4j-management-1.6.1-javadoc.jar!/" name="javadoc_location"/>
     </attributes>
   </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/org/mozkito/mozkito-persistence-settings/0.4-SNAPSHOT/mozkito-persistence-settings-0.4-SNAPSHOT.jar"/>
   <classpathentry kind="var" path="M2_REPO/net/ownhero/dev/hiari/0.2-SNAPSHOT/hiari-0.2-SNAPSHOT.jar" sourcepath="M2_REPO/net/ownhero/dev/hiari/0.2-SNAPSHOT/hiari-0.2-SNAPSHOT-sources.jar">
     <attributes>
       <attribute value="jar:file:/Users/just/.m2/repository/net/ownhero/dev/hiari/0.2-SNAPSHOT/hiari-0.2-SNAPSHOT-javadoc.jar!/" name="javadoc_location"/>

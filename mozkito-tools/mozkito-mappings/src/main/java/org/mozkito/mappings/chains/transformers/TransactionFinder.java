@@ -26,8 +26,8 @@ import net.ownhero.dev.kisa.Logger;
 import org.mozkito.issues.model.Report;
 import org.mozkito.mappings.elements.CandidateFactory;
 import org.mozkito.mappings.finder.Finder;
+import org.mozkito.mappings.mappable.model.MappableChangeSet;
 import org.mozkito.mappings.mappable.model.MappableReport;
-import org.mozkito.mappings.mappable.model.MappableTransaction;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Candidate;
 import org.mozkito.mappings.selectors.Selector;
@@ -41,8 +41,8 @@ import org.mozkito.persistence.PersistenceUtil;
 public class TransactionFinder extends Transformer<Report, Candidate> {
 	
 	/** The candidate factory. */
-	private final CandidateFactory<MappableReport, MappableTransaction> candidateFactory = CandidateFactory.getInstance(MappableReport.class,
-	                                                                                                                    MappableTransaction.class);
+	private final CandidateFactory<MappableReport, MappableChangeSet> candidateFactory = CandidateFactory.getInstance(MappableReport.class,
+	                                                                                                                  MappableChangeSet.class);
 	
 	/**
 	 * Instantiates a new transaction finder.
@@ -68,16 +68,16 @@ public class TransactionFinder extends Transformer<Report, Candidate> {
 			public void preProcess() {
 				if (candidates.isEmpty()) {
 					final MappableReport mapReport = new MappableReport(getInputData());
-					final Map<MappableTransaction, Set<Selector>> transactionCandidates = finder.getCandidates(mapReport,
-					                                                                                           MappableTransaction.class,
-					                                                                                           util);
+					final Map<MappableChangeSet, Set<Selector>> transactionCandidates = finder.getCandidates(mapReport,
+					                                                                                         MappableChangeSet.class,
+					                                                                                         util);
 					
 					if (Logger.logInfo()) {
 						Logger.info(Messages.getString("TransactionFinder.processing", mapReport.getClassName(), //$NON-NLS-1$
 						                               mapReport.toString(), transactionCandidates.size()));
 					}
 					
-					for (final MappableTransaction mapTransaction : transactionCandidates.keySet()) {
+					for (final MappableChangeSet mapTransaction : transactionCandidates.keySet()) {
 						if (TransactionFinder.this.candidateFactory.contains(mapReport, mapTransaction)) {
 							if (Logger.logInfo()) {
 								Logger.info(Messages.getString("TransactionFinder.skipping", mapReport, mapTransaction)); //$NON-NLS-1$

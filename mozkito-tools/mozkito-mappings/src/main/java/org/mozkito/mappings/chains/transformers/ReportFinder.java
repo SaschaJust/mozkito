@@ -25,8 +25,8 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.mappings.elements.CandidateFactory;
 import org.mozkito.mappings.finder.Finder;
+import org.mozkito.mappings.mappable.model.MappableChangeSet;
 import org.mozkito.mappings.mappable.model.MappableReport;
-import org.mozkito.mappings.mappable.model.MappableTransaction;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Candidate;
 import org.mozkito.mappings.selectors.Selector;
@@ -41,8 +41,8 @@ import org.mozkito.versions.model.ChangeSet;
 public class ReportFinder extends Transformer<ChangeSet, Candidate> {
 	
 	/** The candidate factory. */
-	private final CandidateFactory<MappableReport, MappableTransaction> candidateFactory = CandidateFactory.getInstance(MappableReport.class,
-	                                                                                                                    MappableTransaction.class);
+	private final CandidateFactory<MappableReport, MappableChangeSet> candidateFactory = CandidateFactory.getInstance(MappableReport.class,
+	                                                                                                                  MappableChangeSet.class);
 	
 	/**
 	 * Instantiates a new transaction finder.
@@ -67,7 +67,7 @@ public class ReportFinder extends Transformer<ChangeSet, Candidate> {
 			@Override
 			public void preProcess() {
 				if (candidates.isEmpty()) {
-					final MappableTransaction mappableTransaction = new MappableTransaction(getInputData());
+					final MappableChangeSet mappableTransaction = new MappableChangeSet(getInputData());
 					final Map<MappableReport, Set<Selector>> reportCandidates = finder.getCandidates(mappableTransaction,
 					                                                                                 MappableReport.class,
 					                                                                                 util);
