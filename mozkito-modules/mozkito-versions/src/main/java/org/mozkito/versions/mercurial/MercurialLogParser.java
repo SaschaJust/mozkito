@@ -22,7 +22,6 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-
 import org.mozkito.persistence.model.Person;
 import org.mozkito.versions.LogParser;
 import org.mozkito.versions.elements.LogEntry;
@@ -76,8 +75,8 @@ public class MercurialLogParser implements LogParser {
 		for (final String line : lines) {
 			final String[] lineParts = line.split("\\+~\\+");
 			if (lineParts.length < MercurialRepository.HG_MAX_LINE_PARTS_LENGTH) {
-				if (Logger.logError()) {
-					Logger.error("hg log could not be parsed. Too less columns in logfile.");
+				if (Logger.logWarn()) {
+					Logger.warn("hg log could not be parsed. Too less columns in logfile.");
 					return null;
 				}
 			}
