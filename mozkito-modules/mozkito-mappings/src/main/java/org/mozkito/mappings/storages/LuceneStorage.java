@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Set;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
+import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
@@ -33,6 +34,7 @@ import org.apache.lucene.util.Version;
 import org.mozkito.issues.model.Comment;
 import org.mozkito.issues.model.Report;
 import org.mozkito.mappings.mappable.FieldKey;
+import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
@@ -50,31 +52,49 @@ import org.mozkito.persistence.PersistenceUtil;
 public class LuceneStorage extends Storage {
 	
 	/** The analyzer. */
-	private Analyzer                        analyzer         = null;
+	private Analyzer                              analyzer         = null;
 	
 	/** The report directory. */
-	private final Directory                 reportDirectory  = new RAMDirectory();
+	private final Directory                       reportDirectory  = new RAMDirectory();
 	
 	/** The iwriter reports. */
-	private IndexWriter                     iwriterReports   = null;
+	private IndexWriter                           iwriterReports   = null;
 	
 	/** The report documents. */
-	private final HashMap<String, Document> reportDocuments  = new HashMap<String, Document>();
+	private final HashMap<String, Document>       reportDocuments  = new HashMap<String, Document>();
 	
 	/** The isearcher reports. */
-	private IndexSearcher                   isearcherReports = null;
+	private IndexSearcher                         isearcherReports = null;
+	
+	private final Class<? extends MappableEntity> oneType;
+	
+	private final Class<? extends MappableEntity> otherType;
 	
 	/** The Constant DESCRIPTION. */
-	public static final String              DESCRIPTION      = Messages.getString("LuceneStorage.description"); //$NON-NLS-1$
-	                                                                                                            
+	public static final String                    DESCRIPTION      = Messages.getString("LuceneStorage.description"); //$NON-NLS-1$
+	                                                                                                                  
 	/** The Constant TAG. */
-	public static final String              TAG              = "lucene";                                       //$NON-NLS-1$
-	                                                                                                            
+	public static final String                    TAG              = "lucene";                                       //$NON-NLS-1$
+	                                                                                                                  
+	/**
+     * 
+     */
+	public LuceneStorage() {
+		this(null, null);
+		
+	}
+	
 	/**
 	 * Instantiates a new lucene storage.
+	 * 
+	 * @param one
+	 *            the one
+	 * @param other
+	 *            the other
 	 */
-	public LuceneStorage() {
-		
+	public LuceneStorage(final Class<? extends MappableEntity> one, final Class<? extends MappableEntity> other) {
+		this.oneType = one;
+		this.otherType = other;
 	}
 	
 	/**
@@ -115,6 +135,11 @@ public class LuceneStorage extends Storage {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.mapping.register.Registered#getDescription ()
 	 */
+	/**
+	 * Gets the description.
+	 * 
+	 * @return the description
+	 */
 	@Override
 	public String getDescription() {
 		return LuceneStorage.DESCRIPTION;
@@ -136,6 +161,40 @@ public class LuceneStorage extends Storage {
 	 */
 	public IndexWriter getIwriterReports() {
 		return this.iwriterReports;
+	}
+	
+	/**
+	 * @return the oneType
+	 */
+	public final Class<? extends MappableEntity> getOneType() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.oneType;
+		} finally {
+			POSTCONDITIONS: {
+				Condition.notNull(this.oneType, "Field '%s' in '%s'.", "oneType", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
+	}
+	
+	/**
+	 * @return the otherType
+	 */
+	public final Class<? extends MappableEntity> getOtherType() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.otherType;
+		} finally {
+			POSTCONDITIONS: {
+				Condition.notNull(this.otherType, "Field '%s' in '%s'.", "otherType", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
 	}
 	
 	/**
