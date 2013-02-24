@@ -12,20 +12,19 @@
  **********************************************************************************************************************/
 package org.mozkito.mappings.engines;
 
-import java.util.HashMap;
-import java.util.Map;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 
-import net.ownhero.dev.hiari.settings.ArgumentSet;
-import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
-import net.ownhero.dev.hiari.settings.IOptions;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
-import net.ownhero.dev.hiari.settings.requirements.Requirement;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 
+import org.mozkito.issues.model.EnhancedReport;
 import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.messages.Messages;
+import org.mozkito.mappings.model.Feature;
 import org.mozkito.mappings.model.Relation;
+import org.mozkito.mappings.requirements.Atom;
 import org.mozkito.mappings.requirements.Expression;
+import org.mozkito.mappings.requirements.Index;
 
 /**
  * The Class ReportModelEngine.
@@ -34,64 +33,12 @@ import org.mozkito.mappings.requirements.Expression;
  */
 public class ReportModelEngine extends Engine {
 	
-	/**
-	 * The Class Options.
-	 */
-	public static final class Options extends
-	        ArgumentSetOptions<ReportModelEngine, ArgumentSet<ReportModelEngine, Options>> {
-		
-		/**
-		 * Instantiates a new options.
-		 * 
-		 * @param argumentSet
-		 *            the argument set
-		 * @param requirements
-		 *            the requirements
-		 */
-		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, ReportModelEngine.TAG, ReportModelEngine.DESCRIPTION, requirements);
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
-		 */
-		@Override
-		public ReportModelEngine init() {
-			// PRECONDITIONS
-			
-			try {
-				return new ReportModelEngine();
-			} finally {
-				// POSTCONDITIONS
-			}
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
-		 */
-		@Override
-		public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> argumentSet) throws ArgumentRegistrationException,
-		                                                                                    SettingsParseError {
-			// PRECONDITIONS
-			
-			try {
-				return new HashMap<String, IOptions<?, ?>>();
-			} finally {
-				// POSTCONDITIONS
-			}
-		}
-		
-	}
-	
 	/** The Constant DESCRIPTION. */
-	private static final String DESCRIPTION = Messages.getString("ReportModelEngine.description"); //$NON-NLS-1$
-	                                                                                               
+	public static final String DESCRIPTION = Messages.getString("ReportModelEngine.description"); //$NON-NLS-1$
+	                                                                                              
 	/** The Constant TAG. */
-	private static final String TAG         = "reportModel";                                      //$NON-NLS-1$
-	                                                                                               
+	public static final String TAG         = "reportModel";                                      //$NON-NLS-1$
+	                                                                                              
 	/*
 	 * (non-Javadoc)
 	 * @see org.mozkito.mappings.register.Node#getDescription()
@@ -107,35 +54,55 @@ public class ReportModelEngine extends Engine {
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.mappings.engines.MappingEngine#score(org.mozkito.mappings.mappable.model.MappableEntity,
-	 * org.mozkito.mappings.mappable.model.MappableEntity, org.mozkito.mappings.model.Relation)
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.mappings.engines.Engine#score(org.mozkito.mappings.model.Relation)
 	 */
 	@Override
-	public void score(final MappableEntity from,
-	                  final MappableEntity to,
-	                  final Relation score) {
-		// PRECONDITIONS
+	public void score(final @NotNull Relation relation) {
+		PRECONDITIONS: {
+			// none
+		}
 		
 		try {
-			// TODO Auto-generated method stub
+			final MappableEntity from = relation.getFrom();
+			final MappableEntity to = relation.getTo();
+			
+			SANITY: {
+				assert from != null;
+				assert to != null;
+			}
+			
 		} finally {
-			// POSTCONDITIONS
+			POSTCONDITIONS: {
+				assert CollectionUtils.exists(relation.getFeatures(), new Predicate() {
+					
+					/**
+					 * {@inheritDoc}
+					 * 
+					 * @see org.apache.commons.collections.Predicate#evaluate(java.lang.Object)
+					 */
+					@Override
+					public boolean evaluate(final Object object) {
+						return ((Feature) object).getEngine().equals(getClass());
+					}
+				});
+			}
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.mappings.engines.MappingEngine#supported()
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.mappings.engines.Engine#supported()
 	 */
 	@Override
 	public Expression supported() {
 		// PRECONDITIONS
 		
 		try {
-			// TODO Auto-generated method stub
-			return null;
+			return new Atom(Index.ONE, EnhancedReport.class);
 		} finally {
 			// POSTCONDITIONS
 		}

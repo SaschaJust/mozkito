@@ -436,13 +436,10 @@ public class Finder {
 	
 	/**
 	 * Load data.
-	 * 
-	 * @param persistenceUtil
-	 *            the persistence util
 	 */
-	public void loadData(final PersistenceUtil persistenceUtil) {
+	public void loadData() {
 		for (final Class<? extends Storage> key : this.storages.keySet()) {
-			this.storages.get(key).loadData(persistenceUtil);
+			this.storages.get(key).loadData();
 		}
 	}
 	
@@ -518,9 +515,9 @@ public class Finder {
 		final int check = expression.check(element1.getClass(), element2.getClass());
 		
 		if (check > 0) {
-			engine.score(element1, element2, relation);
+			engine.score(relation);
 		} else if (check < 0) {
-			engine.score(element2, element1, relation);
+			engine.score(relation);
 		} else if (Logger.logInfo()) {
 			Logger.info(Messages.getString("Finder.skippingEngine", engine.getClassName(), expression)); //$NON-NLS-1$ 
 		}

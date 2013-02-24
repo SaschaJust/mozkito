@@ -24,7 +24,7 @@ import org.mozkito.mappings.mappable.FieldKey;
 
 /**
  * The Class MappableStructuredReport.
- *
+ * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class MappableStructuredReport extends MappableEntity {
@@ -45,13 +45,18 @@ public class MappableStructuredReport extends MappableEntity {
 		this.report = report;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.mappings.mappable.model.MappableEntity#get(org.mozkito.mappings.mappable.FieldKey)
+	/**
+	 * Gets the.
+	 * 
+	 * @param <T>
+	 *            the generic type
+	 * @param key
+	 *            the key
+	 * @return the t
 	 */
 	@Override
 	@Transient
-	public Object get(final FieldKey key) {
+	public <T> T get(final FieldKey key) {
 		// PRECONDITIONS
 		
 		try {
@@ -63,14 +68,21 @@ public class MappableStructuredReport extends MappableEntity {
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.mappings.mappable.model.MappableEntity#get(org.mozkito.mappings.mappable.FieldKey, int)
+	/**
+	 * Gets the.
+	 * 
+	 * @param <T>
+	 *            the generic type
+	 * @param key
+	 *            the key
+	 * @param index
+	 *            the index
+	 * @return the t
 	 */
 	@Override
 	@Transient
-	public Object get(final FieldKey key,
-	                  final int index) {
+	public <T> T get(final FieldKey key,
+	                 final int index) {
 		// PRECONDITIONS
 		
 		try {
@@ -82,9 +94,10 @@ public class MappableStructuredReport extends MappableEntity {
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.mappings.mappable.model.MappableEntity#getBaseType()
+	/**
+	 * Gets the base type.
+	 * 
+	 * @return the base type
 	 */
 	@Override
 	@Transient

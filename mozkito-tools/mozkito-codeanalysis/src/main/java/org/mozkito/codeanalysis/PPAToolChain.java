@@ -43,8 +43,8 @@ import net.ownhero.dev.kisa.Logger;
 import org.mozkito.codeanalysis.model.JavaElementFactory;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.settings.DatabaseOptions;
-import org.mozkito.settings.RepositoryOptions;
 import org.mozkito.versions.Repository;
+import org.mozkito.versions.settings.RepositoryOptions;
 
 /**
  * The Class PPAToolChain.

@@ -13,112 +13,84 @@
 
 package org.mozkito.mappings.engines;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 
-import java.util.Map;
+import java.io.IOException;
 import java.util.Queue;
 
-import net.ownhero.dev.ioda.JavaUtils;
-
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Ignore;
-import org.junit.Test;
 
-import org.mozkito.issues.model.Report;
-import org.mozkito.mappings.engines.master.Environment;
-import org.mozkito.mappings.finder.Finder;
+import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.mappings.model.Feature;
-import org.mozkito.mappings.model.Relation;
-import org.mozkito.persistence.ConnectOptions;
-import org.mozkito.persistence.DatabaseType;
-import org.mozkito.testing.DatabaseTest;
-import org.mozkito.testing.annotation.DatabaseSettings;
-import org.mozkito.versions.model.ChangeSet;
+import org.mozkito.mappings.test.elements.EngineTest;
+import org.mozkito.mappings.test.elements.Fields;
+import org.mozkito.mappings.test.elements.TestResources;
 
 /**
- * The Class AuthorEqualityEngineTest.
- * 
  * @author Sascha Just <sascha.just@mozkito.org>
+ * 
  */
-@DatabaseSettings (unit = "mappings",
-                   database = "moskito_jruby_july2010",
-                   options = ConnectOptions.VALIDATE_OR_CREATE_SCHEMA,
-                   hostname = "grid1.st.cs.uni-saarland.de",
-                   password = "miner",
-                   username = "miner",
-                   type = DatabaseType.POSTGRESQL)
-@Ignore
-public class AuthorEqualityEngineTest extends DatabaseTest {
-	
-	/** The engines. */
-	private Map<Class<? extends Engine>, Engine> engines;
-	
-	/** The engine. */
-	private Engine                               engine;
-	
-	/** The finder. */
-	private static Finder                        finder;
+public class AuthorEqualityEngineTest extends EngineTest {
 	
 	/**
-	 * Sets the up before class.
+	 * {@inheritDoc}
 	 * 
-	 * @throws Exception
-	 *             the exception
+	 * @see org.mozkito.mappings.test.elements.EngineTest#testNegativeScore()
 	 */
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-		AuthorEqualityEngineTest.finder = Environment.setup("/engines.authorEquality.test.properties");
+	@Override
+	@Ignore
+	public void testNegativeScore() throws IOException {
+		// this engine doesn't score negatively
 	}
 	
 	/**
-	 * Score.
+	 * {@inheritDoc}
 	 * 
-	 * @param changeSetId
-	 *            the transaction id
-	 * @param reportId
-	 *            the report id
-	 * @return the relation
-	 * @throws Exception
-	 *             the exception
+	 * @see org.mozkito.mappings.test.elements.EngineTest#testNeutralScore()
 	 */
-	private Relation score(final String changeSetId,
-	                       final String reportId) throws Exception {
-		final ChangeSet changeset = Environment.loadTransaction(getPersistenceUtil(), changeSetId);
-		assertNotNull("Failed retreiving transaction from database.", changeset);
+	@Override
+	@TestResources (from = "report2", to = "changeset1")
+	@Fields (both = FieldKey.AUTHOR)
+	public void testNeutralScore() throws IOException {
+		this.engine.score(this.relation);
 		
-		final Report report = Environment.loadReport(getPersistenceUtil(), reportId);
-		assertNotNull("Failed retreiving report from database.", report);
+		assertNotEquals(this.relation.getFrom().get(FieldKey.AUTHOR), this.relation.getTo().get(FieldKey.AUTHOR));
 		
-		final Relation relation = Environment.relation(changeset, report);
-		assertNotNull("Failed creating relation from " + changeset + " and " + report, relation);
+		final Queue<Feature> features = this.relation.getFeatures();
+		assertNotNull(features);
+		assertFalse(features.isEmpty());
+		assertEquals(1, features.size());
 		
-		AuthorEqualityEngineTest.finder.score(this.engine, relation);
-		
-		return relation;
+		final Feature feature = features.iterator().next();
+		assertNotNull(feature);
+		assertEquals((Double) 0d, (Double) feature.getConfidence());
 	}
 	
 	/**
-	 * Sets the up.
-	 */
-	@Before
-	public void setUp() {
-		this.engines = AuthorEqualityEngineTest.finder.getEngines();
-		this.engine = this.engines.get(AuthorEqualityEngine.class);
-	}
-	
-	/**
-	 * Test score_9be47462f004ba9a9f729a46448fde9e304fe848_21.
+	 * Test method for
+	 * {@link org.mozkito.mappings.engines.AuthorEqualityEngine#score(org.mozkito.mappings.model.Relation)} .
 	 * 
-	 * @throws Exception
-	 *             the exception
+	 * @throws IOException
 	 */
-	@Test
-	public final void testScore_9be47462f004ba9a9f729a46448fde9e304fe848_21() throws Exception {
-		final Relation relation = score("9be47462f004ba9a9f729a46448fde9e304fe848", "JRUBY-21");
-		final Queue<Feature> features = relation.getFeatures();
+	@Override
+	@TestResources (from = "report1", to = "changeset1")
+	@Fields (both = FieldKey.AUTHOR)
+	public final void testPositiveScore() throws IOException {
 		
-		fail(JavaUtils.collectionToString(features));
+		this.engine.score(this.relation);
+		
+		assertEquals(this.relation.getFrom().get(FieldKey.AUTHOR), this.relation.getTo().get(FieldKey.AUTHOR));
+		
+		final Queue<Feature> features = this.relation.getFeatures();
+		assertNotNull(features);
+		assertFalse(features.isEmpty());
+		assertEquals(1, features.size());
+		
+		final Feature feature = features.iterator().next();
+		assertNotNull(feature);
+		assertEquals(AuthorEqualityEngine.DEFAULT_CONFIDENCE, (Double) feature.getConfidence());
 	}
 }

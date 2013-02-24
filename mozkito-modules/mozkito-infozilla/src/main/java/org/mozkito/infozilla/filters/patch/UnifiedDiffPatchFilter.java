@@ -14,11 +14,6 @@ package org.mozkito.infozilla.filters.patch;
 
 import java.util.List;
 
-import net.ownhero.dev.hiari.settings.ArgumentSet;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
-
 import org.mozkito.infozilla.filters.FilterTextRemover;
 import org.mozkito.infozilla.model.patch.Patch;
 
@@ -81,21 +76,6 @@ public class UnifiedDiffPatchFilter extends PatchFilter {
 		return foundPatches;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#init()
-	 */
-	@Override
-	public void init() {
-		// PRECONDITIONS
-		
-		try {
-			// TODO Auto-generated method stub
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
 	/**
 	 * Checks if is relaxed.
 	 * 
@@ -103,24 +83,6 @@ public class UnifiedDiffPatchFilter extends PatchFilter {
 	 */
 	public boolean isRelaxed() {
 		return this.relaxed;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#provide(net.ownhero.dev.hiari.settings.ArgumentSet)
-	 */
-	@Override
-	public ArgumentSet<?, ?> provide(final ArgumentSet<?, ?> root) throws ArgumentRegistrationException,
-	                                                              ArgumentSetRegistrationException,
-	                                                              SettingsParseError {
-		// PRECONDITIONS
-		
-		try {
-			// TODO Auto-generated method stub
-			return null;
-		} finally {
-			// POSTCONDITIONS
-		}
 	}
 	
 	/*

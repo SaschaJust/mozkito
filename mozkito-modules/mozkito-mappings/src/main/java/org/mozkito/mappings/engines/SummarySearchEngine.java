@@ -12,17 +12,11 @@
  **********************************************************************************************************************/
 package org.mozkito.mappings.engines;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.hiari.settings.ArgumentSet;
-import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
-import net.ownhero.dev.hiari.settings.IOptions;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
-import net.ownhero.dev.hiari.settings.requirements.Requirement;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
@@ -33,6 +27,7 @@ import org.apache.lucene.util.Version;
 import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.messages.Messages;
+import org.mozkito.mappings.model.Feature;
 import org.mozkito.mappings.model.Relation;
 import org.mozkito.mappings.requirements.And;
 import org.mozkito.mappings.requirements.Atom;
@@ -47,74 +42,19 @@ import org.mozkito.mappings.storages.LuceneStorage;
  */
 public class SummarySearchEngine extends SearchEngine {
 	
-	/**
-	 * The Class Options.
-	 */
-	public static class Options extends
-	        ArgumentSetOptions<SummarySearchEngine, ArgumentSet<SummarySearchEngine, Options>> {
-		
-		/**
-		 * Instantiates a new options.
-		 * 
-		 * @param argumentSet
-		 *            the argument set
-		 * @param requirements
-		 *            the requirements
-		 */
-		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, SummarySearchEngine.TAG, SummarySearchEngine.DESCRIPTION, requirements);
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
-		 */
-		@Override
-		public SummarySearchEngine init() {
-			// PRECONDITIONS
-			
-			try {
-				return new SummarySearchEngine();
-			} finally {
-				// POSTCONDITIONS
-			}
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
-		 */
-		@Override
-		public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> argumentSet) throws ArgumentRegistrationException,
-		                                                                                    SettingsParseError {
-			// PRECONDITIONS
-			
-			try {
-				return new HashMap<>();
-			} finally {
-				// POSTCONDITIONS
-			}
-		}
-		
-	}
-	
 	/** The Constant description. */
-	private static final String DESCRIPTION = Messages.getString("SummarySearchEngine.description"); //$NON-NLS-1$
-	                                                                                                 
+	public static final String DESCRIPTION = Messages.getString("SummarySearchEngine.description"); //$NON-NLS-1$
+	                                                                                                
 	/** The Constant TAG. */
-	private static final String TAG         = "summary";                                            //$NON-NLS-1$
-	                                                                                                 
-	/** The parser. */
-	private QueryParser         parser      = null;
-	
+	public static final String TAG         = "summary";                                            //$NON-NLS-1$
+	                                                                                                
 	/** The top x hits. */
-	private final int           TOP_X_HITS  = 1000;
+	private final int          TOP_X_HITS  = 1000;
 	
 	/**
 	 * Instantiates a new summary search engine.
 	 */
-	SummarySearchEngine() {
+	public SummarySearchEngine() {
 		// should only be called by settings or for testing purposes.
 	}
 	
@@ -127,52 +67,77 @@ public class SummarySearchEngine extends SearchEngine {
 		return SummarySearchEngine.DESCRIPTION;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#score(de
-	 * .unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity,
-	 * de.unisaarland.cs.st.moskito.mapping.mappable.MappableEntity, de.unisaarland.cs.st.moskito.mapping.model.Mapping)
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.mappings.engines.Engine#score(org.mozkito.mappings.model.Relation)
 	 */
 	@Override
-	public void score(final MappableEntity element1,
-	                  final MappableEntity element2,
-	                  final Relation score) {
-		
-		double confidence = 0d;
-		String toContent = null;
-		String toSubstring = null;
-		
-		final LuceneStorage luceneStorage = getStorage(LuceneStorage.class);
+	public void score(final @NotNull Relation relation) {
+		PRECONDITIONS: {
+			// none
+		}
 		
 		try {
-			this.parser = new QueryParser(Version.LUCENE_31, "summary", luceneStorage.getAnalyzer()); //$NON-NLS-1$
-			final Query query = buildQuery(element1.get(FieldKey.BODY).toString(), this.parser);
+			final MappableEntity from = relation.getFrom();
+			final MappableEntity to = relation.getTo();
 			
-			if (query != null) {
-				final IndexSearcher indexSearcher = luceneStorage.getIsearcherReports();
+			SANITY: {
+				assert from != null;
+				assert to != null;
+			}
+			
+			double confidence = 0d;
+			String toContent = null;
+			String toSubstring = null;
+			
+			final LuceneStorage luceneStorage = getStorage(LuceneStorage.class);
+			
+			try {
+				final QueryParser parser = new QueryParser(Version.LUCENE_31, "summary", luceneStorage.getAnalyzer()); //$NON-NLS-1$
+				final Query query = buildQuery(from.get(FieldKey.BODY).toString(), parser);
 				
-				if (indexSearcher != null) {
-					final ScoreDoc[] hits = indexSearcher.search(query, null, this.TOP_X_HITS).scoreDocs;
-					// Iterate through the results:
-					for (final ScoreDoc hit : hits) {
-						final Document hitDoc = luceneStorage.getIsearcherReports().doc(hit.doc);
-						// TODO change hardcoded strings
-						final Long bugId = Long.parseLong(hitDoc.get("bugid")); //$NON-NLS-1$
-						
-						if ((bugId + "").compareTo(element2.get(FieldKey.ID).toString()) == 0) { //$NON-NLS-1$
-							confidence = hit.score;
-							toContent = element2.get(FieldKey.SUMMARY).toString();
-							toSubstring = element2.get(FieldKey.SUMMARY).toString();
+				if (query != null) {
+					final IndexSearcher indexSearcher = luceneStorage.getIsearcherReports();
+					
+					if (indexSearcher != null) {
+						final ScoreDoc[] hits = indexSearcher.search(query, null, this.TOP_X_HITS).scoreDocs;
+						// Iterate through the results:
+						for (final ScoreDoc hit : hits) {
+							final Document hitDoc = luceneStorage.getIsearcherReports().doc(hit.doc);
+							// TODO change hardcoded strings
+							final Long bugId = Long.parseLong(hitDoc.get("bugid")); //$NON-NLS-1$
 							
-							break;
+							if ((bugId + "").compareTo(to.get(FieldKey.ID).toString()) == 0) { //$NON-NLS-1$
+								confidence = hit.score;
+								toContent = to.get(FieldKey.SUMMARY).toString();
+								toSubstring = to.get(FieldKey.SUMMARY).toString();
+								
+								break;
+							}
 						}
 					}
 				}
+				addFeature(relation, confidence, "message", from.get(FieldKey.BODY), from.get(FieldKey.BODY), //$NON-NLS-1$
+				           "summary", toContent, toSubstring); //$NON-NLS-1$
+			} catch (final Exception e) {
+				throw new UnrecoverableError(e);
 			}
-			addFeature(score, confidence, "message", element1.get(FieldKey.BODY), element1.get(FieldKey.BODY), //$NON-NLS-1$
-			           "summary", toContent, toSubstring); //$NON-NLS-1$
-		} catch (final Exception e) {
-			throw new UnrecoverableError(e);
+		} finally {
+			POSTCONDITIONS: {
+				assert CollectionUtils.exists(relation.getFeatures(), new Predicate() {
+					
+					/**
+					 * {@inheritDoc}
+					 * 
+					 * @see org.apache.commons.collections.Predicate#evaluate(java.lang.Object)
+					 */
+					@Override
+					public boolean evaluate(final Object object) {
+						return ((Feature) object).getEngine().equals(getClass());
+					}
+				});
+			}
 		}
 	}
 	

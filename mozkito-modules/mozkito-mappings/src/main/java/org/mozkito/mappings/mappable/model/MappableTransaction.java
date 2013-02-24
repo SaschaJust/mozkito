@@ -77,37 +77,38 @@ public class MappableTransaction extends MappableEntity {
 	 * (non-Javadoc)
 	 * @see org.mozkito.mapping.mappable.MappableEntity#get(de .unisaarland.cs.st.reposuite.mapping.mappable.FieldKey)
 	 */
+	@SuppressWarnings ("unchecked")
 	@Override
-	public Object get(@NotNull final FieldKey key) {
+	public <T> T get(@NotNull final FieldKey key) {
 		switch (key) {
 			case AUTHOR:
-				return getChangeSet().getAuthor();
+				return (T) getChangeSet().getAuthor();
 			case BODY:
-				return getChangeSet().getMessage();
+				return (T) getChangeSet().getMessage();
 			case CLOSED_TIMESTAMP:
-				return getChangeSet().getTimestamp();
+				return (T) getChangeSet().getTimestamp();
 			case CLOSER:
-				return getChangeSet().getAuthor();
+				return (T) getChangeSet().getAuthor();
 			case CREATION_TIMESTAMP:
-				return getChangeSet().getTimestamp();
+				return (T) getChangeSet().getTimestamp();
 			case FILE:
 				// this should probably be a collection of mappings-files (own
 				// class for mappings)
-				return getChangeSet().getChangedFiles();
+				return (T) getChangeSet().getChangedFiles();
 			case PATH:
-				return getChangeSet().getChangedFiles();
+				return (T) getChangeSet().getChangedFiles();
 			case RESOLUTION_TIMESTAMP:
-				return getChangeSet().getTimestamp();
+				return (T) getChangeSet().getTimestamp();
 			case SUMMARY:
-				return getChangeSet().getMessage();
+				return (T) getChangeSet().getMessage();
 			case ID:
-				return getId();
+				return (T) getId();
 			case CHANGER:
-				return getChangeSet().getAuthor();
+				return (T) getChangeSet().getAuthor();
 			case COMMENT:
-				return getChangeSet().getMessage();
+				return (T) getChangeSet().getMessage();
 			case MODIFICATION_TIMESTAMP:
-				return getChangeSet().getTimestamp();
+				return (T) getChangeSet().getTimestamp();
 			default:
 				break;
 		}
@@ -121,14 +122,15 @@ public class MappableTransaction extends MappableEntity {
 	 * @see org.mozkito.mapping.mappable.MappableEntity#get(de .unisaarland.cs.st.reposuite.mapping.mappable.FieldKey,
 	 * int)
 	 */
+	@SuppressWarnings ("unchecked")
 	@Override
-	public Object get(@NotNull final FieldKey key,
-	                  @NotNegative final int index) {
+	public <T> T get(@NotNull final FieldKey key,
+	                 @NotNegative final int index) {
 		switch (key) {
 			case FILE:
-				return getFile(index);
+				return (T) getFile(index);
 			case PATH:
-				return getFile(index);
+				return (T) getFile(index);
 			default:
 				if (Logger.logWarn()) {
 					Logger.warn(Messages.getString("MappableEntity.notIndexable", key.name(), getClassName())); //$NON-NLS-1$
@@ -145,6 +147,16 @@ public class MappableTransaction extends MappableEntity {
 	@Transient
 	public Class<?> getBaseType() {
 		return ChangeSet.class;
+	}
+	
+	/**
+	 * Gets the transaction.
+	 * 
+	 * @return the transaction
+	 */
+	@OneToOne (fetch = FetchType.LAZY)
+	public ChangeSet getChangeSet() {
+		return this.changeset;
 	}
 	
 	/**
@@ -183,16 +195,6 @@ public class MappableTransaction extends MappableEntity {
 	@Transient
 	public String getText() {
 		return getChangeSet().getMessage();
-	}
-	
-	/**
-	 * Gets the transaction.
-	 * 
-	 * @return the transaction
-	 */
-	@OneToOne (fetch = FetchType.LAZY)
-	public ChangeSet getChangeSet() {
-		return this.changeset;
 	}
 	
 	/**

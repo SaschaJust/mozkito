@@ -13,20 +13,7 @@
 
 package org.mozkito.mappings.storages;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import net.ownhero.dev.hiari.settings.ArgumentSet;
-import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
-import net.ownhero.dev.hiari.settings.IOptions;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
-import net.ownhero.dev.hiari.settings.requirements.Requirement;
-
 import org.mozkito.mappings.messages.Messages;
-import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.settings.DatabaseOptions;
-import org.mozkito.settings.RepositoryOptions;
 import org.mozkito.versions.Repository;
 import org.mozkito.versions.concurrent.ConcurrentRepository;
 
@@ -37,78 +24,14 @@ import org.mozkito.versions.concurrent.ConcurrentRepository;
  */
 public class RepositoryStorage extends Storage {
 	
-	/**
-	 * The Class Options.
-	 */
-	public static final class Options extends
-	        ArgumentSetOptions<RepositoryStorage, ArgumentSet<RepositoryStorage, Options>> {
-		
-		/** The repository options. */
-		RepositoryOptions repositoryOptions;
-		
-		/**
-		 * Instantiates a new options.
-		 * 
-		 * @param argumentSet
-		 *            the argument set
-		 * @param requirements
-		 *            the requirements
-		 */
-		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, RepositoryStorage.TAG, RepositoryStorage.DESCRIPTION, requirements);
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
-		 */
-		@Override
-		public RepositoryStorage init() {
-			// PRECONDITIONS
-			
-			try {
-				final ArgumentSet<Repository, RepositoryOptions> repositoryArgument = getSettings().getArgumentSet(this.repositoryOptions);
-				return new RepositoryStorage(new ConcurrentRepository(repositoryArgument.getValue()));
-			} finally {
-				// POSTCONDITIONS
-			}
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
-		 */
-		@Override
-		public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> argumentSet) throws ArgumentRegistrationException,
-		                                                                                    SettingsParseError {
-			// PRECONDITIONS
-			
-			try {
-				final Map<String, IOptions<?, ?>> ret = new HashMap<>();
-				this.repositoryOptions = new RepositoryOptions(argumentSet, Requirement.required,
-				                                               getSettings().getSetOptions(DatabaseOptions.class));
-				
-				if (required()) {
-					ret.put(this.repositoryOptions.getName(), this.repositoryOptions);
-				}
-				
-				return ret;
-			} finally {
-				// POSTCONDITIONS
-			}
-		}
-		
-	}
-	
 	/** The Constant DESCRIPTION. */
-	private static final String DESCRIPTION = Messages.getString("RepositoryStorage.description"); //$NON-NLS-1$
-	                                                                                               
+	public static final String DESCRIPTION = Messages.getString("RepositoryStorage.description"); //$NON-NLS-1$
+	                                                                                              
 	/** The Constant TAG. */
-	private static final String TAG         = "repository";                                       //$NON-NLS-1$
-	                                                                                               
+	public static final String TAG         = "repository";                                       //$NON-NLS-1$
+	                                                                                              
 	/** The repository. */
-	private Repository          repository;
+	private Repository         repository;
 	
 	/**
 	 * Instantiates a new repository storage.
@@ -151,21 +74,6 @@ public class RepositoryStorage extends Storage {
 		
 		try {
 			return this.repository;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.mappings.storages.Storage#loadData(org.mozkito.persistence.PersistenceUtil)
-	 */
-	@Override
-	public void loadData(final PersistenceUtil util) {
-		// PRECONDITIONS
-		
-		try {
-			// stub
 		} finally {
 			// POSTCONDITIONS
 		}

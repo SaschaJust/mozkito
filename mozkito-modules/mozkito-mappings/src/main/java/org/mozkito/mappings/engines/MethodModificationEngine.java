@@ -13,22 +13,15 @@
 package org.mozkito.mappings.engines;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
-import net.ownhero.dev.hiari.settings.ArgumentSet;
-import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
-import net.ownhero.dev.hiari.settings.DoubleArgument;
-import net.ownhero.dev.hiari.settings.IOptions;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
-import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
 
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
@@ -38,11 +31,14 @@ import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.mappable.model.MappableTransaction;
 import org.mozkito.mappings.messages.Messages;
+import org.mozkito.mappings.model.Feature;
 import org.mozkito.mappings.model.Relation;
 import org.mozkito.mappings.requirements.And;
 import org.mozkito.mappings.requirements.Atom;
 import org.mozkito.mappings.requirements.Expression;
 import org.mozkito.mappings.requirements.Index;
+import org.mozkito.mappings.storages.PersistenceStorage;
+import org.mozkito.mappings.storages.Storage;
 import org.mozkito.persistence.PPAPersistenceUtil;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.elements.ChangeType;
@@ -57,100 +53,17 @@ import org.mozkito.versions.model.ChangeSet;
  */
 public class MethodModificationEngine extends Engine {
 	
-	/**
-	 * The Class Options.
-	 */
-	public static final class Options extends
-	        ArgumentSetOptions<MethodModificationEngine, ArgumentSet<MethodModificationEngine, Options>> {
-		
-		/** The confidence option. */
-		private DoubleArgument.Options confidenceOption;
-		
-		/**
-		 * Instantiates a new options.
-		 * 
-		 * @param argumentSet
-		 *            the argument set
-		 * @param requirements
-		 *            the requirements
-		 */
-		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, MethodModificationEngine.TAG, MethodModificationEngine.DESCRIPTION, requirements);
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
-		 */
-		@Override
-		public MethodModificationEngine init() {
-			// PRECONDITIONS
-			
-			try {
-				final DoubleArgument confidenceArgument = getSettings().getArgument(this.confidenceOption);
-				return new MethodModificationEngine(confidenceArgument.getValue());
-			} finally {
-				// POSTCONDITIONS
-			}
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
-		 */
-		@Override
-		public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> argumentSet) throws ArgumentRegistrationException,
-		                                                                                    SettingsParseError {
-			// PRECONDITIONS
-			
-			try {
-				final Map<String, IOptions<?, ?>> map = new HashMap<>();
-				
-				this.confidenceOption = new DoubleArgument.Options(
-				                                                   argumentSet,
-				                                                   "confidence", //$NON-NLS-1$
-				                                                   Messages.getString("MethodModificationEngine.confidenceDescription"), //$NON-NLS-1$
-				                                                   MethodModificationEngine.getDefaultConfidence(),
-				                                                   Requirement.required);
-				map.put(this.confidenceOption.getName(), this.confidenceOption);
-				
-				return map;
-			} finally {
-				// POSTCONDITIONS
-			}
-		}
-		
-	}
-	
 	/** The constant defaultConfidence. */
-	private static final Double DEFAULT_CONFIDENCE = 1d;
+	public static final Double DEFAULT_CONFIDENCE = 1d;
 	
 	/** The constant description. */
-	private static final String DESCRIPTION        = Messages.getString("MethodModificationEngine.description"); //$NON-NLS-1$
-	
+	public static final String DESCRIPTION        = Messages.getString("MethodModificationEngine.description"); //$NON-NLS-1$
+	                                                                                                            
 	/** The Constant TAG. */
-	private static final String TAG                = "methodModification";                                      //$NON-NLS-1$
-	                                                                                                             
-	/**
-	 * Gets the default confidence.
-	 * 
-	 * @return the defaultConfidences
-	 */
-	private static Double getDefaultConfidence() {
-		// PRECONDITIONS
-		
-		try {
-			return MethodModificationEngine.DEFAULT_CONFIDENCE;
-		} finally {
-			// POSTCONDITIONS
-			Condition.notNull(MethodModificationEngine.DEFAULT_CONFIDENCE, "Field '%s' in '%s'.", "DEFAULT_CONFIDENCE", //$NON-NLS-1$ //$NON-NLS-2$
-			                  MethodModificationEngine.class.getSimpleName());
-		}
-	}
+	public static final String TAG                = "methodmodification";
 	
 	/** The confidence. */
-	private Double confidence = MethodModificationEngine.DEFAULT_CONFIDENCE;
+	private Double             confidence         = MethodModificationEngine.DEFAULT_CONFIDENCE;
 	
 	/**
 	 * Instantiates a new author equality engine.
@@ -195,56 +108,111 @@ public class MethodModificationEngine extends Engine {
 	}
 	
 	/**
-	 * Score.
+	 * {@inheritDoc}
 	 * 
-	 * @param from
-	 *            the from
-	 * @param to
-	 *            the to
-	 * @param score
-	 *            the score
+	 * @see org.mozkito.mappings.engines.Engine#score(org.mozkito.mappings.model.Relation)
 	 */
 	@Override
-	public final void score(@NotNull final MappableEntity from,
-	                        @NotNull final MappableEntity to,
-	                        @NotNull final Relation score) {
-		int matches = 0;
-		final StringBuilder builder = new StringBuilder();
-		double localConfidence = 0d;
-		
-		final PersistenceUtil persistenceUtil = getPersistenceUtil();
-		final Set<String> subjects = new HashSet<>();
-		
-		final Collection<JavaChangeOperation> changeOperations = PPAPersistenceUtil.getChangeOperation(persistenceUtil,
-		                                                                                               ((MappableTransaction) from).getChangeSet());
-		
-		for (final JavaChangeOperation operation : changeOperations) {
-			if (operation.getChangeType().equals(ChangeType.Modified)) {
-				
-				final JavaElement javaElement = operation.getChangedElementLocation().getElement();
-				if (javaElement instanceof JavaMethodDefinition) {
-					final String fullQualifiedName = javaElement.getFullQualifiedName();
-					subjects.add(fullQualifiedName);
-				}
-			}
+	public void score(final @NotNull Relation relation) {
+		PRECONDITIONS: {
+			// none
 		}
 		
-		for (final String subject : subjects) {
-			final String bodyText = (String) to.get(FieldKey.BODY);
+		try {
+			final MappableEntity from = relation.getFrom();
+			final MappableEntity to = relation.getTo();
+			final PersistenceStorage persistenceStorage = getStorage(PersistenceStorage.class);
 			
-			if (StringUtils.containsIgnoreCase(bodyText, subject)) {
-				++matches;
-				if (builder.length() > 0) {
-					builder.append(',');
+			SANITY: {
+				assert from != null;
+				assert to != null;
+				assert persistenceStorage != null;
+				assert persistenceStorage.getUtil() != null;
+			}
+			
+			int matches = 0;
+			final StringBuilder builder = new StringBuilder();
+			double localConfidence = 0d;
+			
+			final PersistenceUtil persistenceUtil = persistenceStorage.getUtil();
+			final Set<String> subjects = new HashSet<>();
+			
+			final Collection<JavaChangeOperation> changeOperations = PPAPersistenceUtil.getChangeOperation(persistenceUtil,
+			                                                                                               ((MappableTransaction) from).getChangeSet());
+			
+			for (final JavaChangeOperation operation : changeOperations) {
+				if (operation.getChangeType().equals(ChangeType.Modified)) {
+					
+					final JavaElement javaElement = operation.getChangedElementLocation().getElement();
+					if (javaElement instanceof JavaMethodDefinition) {
+						final String fullQualifiedName = javaElement.getFullQualifiedName();
+						subjects.add(fullQualifiedName);
+					}
 				}
-				builder.append(subject.toUpperCase());
+			}
+			
+			for (final String subject : subjects) {
+				final String bodyText = (String) to.get(FieldKey.BODY);
+				
+				if (StringUtils.containsIgnoreCase(bodyText, subject)) {
+					++matches;
+					if (builder.length() > 0) {
+						builder.append(',');
+					}
+					builder.append(subject.toUpperCase());
+				}
+			}
+			
+			localConfidence = ((double) matches) / ((double) subjects.size());
+			
+			addFeature(relation, localConfidence, "JAVA_CHANGE_OPERATION", "", //$NON-NLS-1$ //$NON-NLS-2$
+			           JavaUtils.collectionToString(subjects), FieldKey.BODY.name(), "", builder.toString()); //$NON-NLS-1$
+		} finally {
+			POSTCONDITIONS: {
+				assert CollectionUtils.exists(relation.getFeatures(), new Predicate() {
+					
+					/**
+					 * {@inheritDoc}
+					 * 
+					 * @see org.apache.commons.collections.Predicate#evaluate(java.lang.Object)
+					 */
+					@Override
+					public boolean evaluate(final Object object) {
+						return ((Feature) object).getEngine().equals(getClass());
+					}
+				});
 			}
 		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.mappings.register.Node#storageDependency()
+	 */
+	@Override
+	public Set<Class<? extends Storage>> storageDependency() {
+		PRECONDITIONS: {
+			// none
+		}
 		
-		localConfidence = ((double) matches) / ((double) subjects.size());
-		
-		addFeature(score, localConfidence, "JAVA_CHANGE_OPERATION", "", //$NON-NLS-1$ //$NON-NLS-2$
-		           JavaUtils.collectionToString(subjects), FieldKey.BODY.name(), "", builder.toString()); //$NON-NLS-1$
+		try {
+			return new HashSet<Class<? extends Storage>>() {
+				
+				/**
+                 * 
+                 */
+				private static final long serialVersionUID = 5345541441559660378L;
+				
+				{
+					add(PersistenceStorage.class);
+				}
+			};
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/**

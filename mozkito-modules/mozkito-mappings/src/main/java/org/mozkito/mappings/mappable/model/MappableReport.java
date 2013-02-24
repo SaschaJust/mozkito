@@ -77,18 +77,24 @@ public class MappableReport extends MappableEntity implements Annotated {
 		setReport(report);
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.mapping.mappable.MappableEntity#get(de .unisaarland.cs.st.reposuite.mapping.mappable.FieldKey)
+	/**
+	 * Gets the.
+	 * 
+	 * @param <T>
+	 *            the generic type
+	 * @param key
+	 *            the key
+	 * @return the t
 	 */
+	@SuppressWarnings ("unchecked")
 	@Override
 	@Transient
-	public Object get(final FieldKey key) {
+	public <T> T get(final FieldKey key) {
 		switch (key) {
 			case AUTHOR:
-				return getReport().getSubmitter();
+				return (T) getReport().getSubmitter();
 			case BODY:
-				return getReport().getDescription();
+				return (T) getReport().getDescription();
 			case CHANGER:
 				final Set<Person> persons = new HashSet<Person>();
 				
@@ -98,26 +104,26 @@ public class MappableReport extends MappableEntity implements Annotated {
 					persons.add(iterator.next().getAuthor());
 				}
 				
-				return persons;
+				return (T) persons;
 			case COMMENT:
-				return getReport().getComments();
+				return (T) getReport().getComments();
 			case TYPE:
-				return getReport().getType();
+				return (T) getReport().getType();
 			case CLOSED_TIMESTAMP:
 				// TODO this might be wrong
-				return getReport().getResolutionTimestamp();
+				return (T) getReport().getResolutionTimestamp();
 			case CLOSER:
-				return getReport().getResolver();
+				return (T) getReport().getResolver();
 			case CREATION_TIMESTAMP:
-				return getReport().getCreationTimestamp();
+				return (T) getReport().getCreationTimestamp();
 			case ID:
-				return getReport().getId();
+				return (T) getReport().getId();
 			case MODIFICATION_TIMESTAMP:
-				return getReport().getLastUpdateTimestamp();
+				return (T) getReport().getLastUpdateTimestamp();
 			case RESOLUTION_TIMESTAMP:
-				return getReport().getResolutionTimestamp();
+				return (T) getReport().getResolutionTimestamp();
 			case SUMMARY:
-				return getReport().getSummary();
+				return (T) getReport().getSummary();
 			default:
 				break;
 		}
@@ -130,10 +136,11 @@ public class MappableReport extends MappableEntity implements Annotated {
 	 * (non-Javadoc)
 	 * @see org.mozkito.mappings.mappable.model.MappableEntity#get(org.mozkito.mappings.mappable.FieldKey, int)
 	 */
+	@SuppressWarnings ("unchecked")
 	@Override
 	@Transient
-	public Object get(final FieldKey key,
-	                  final int index) {
+	public <T> T get(final FieldKey key,
+	                 final int index) {
 		switch (key) {
 			case COMMENT:
 				if (getReport().getComments().size() > index) {
@@ -145,7 +152,7 @@ public class MappableReport extends MappableEntity implements Annotated {
 						comment = iterator.next();
 					}
 					
-					return comment;
+					return (T) comment;
 				} else {
 					return null;
 				}
@@ -165,7 +172,7 @@ public class MappableReport extends MappableEntity implements Annotated {
 					person = iterator2.next();
 				}
 				
-				return person;
+				return (T) person;
 			default:
 				if (Logger.logWarn()) {
 					Logger.warn(Messages.getString("MappableEntity.notIndexable", key.name(), getClassName())); //$NON-NLS-1$

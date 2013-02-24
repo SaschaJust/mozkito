@@ -23,16 +23,13 @@ import java.util.Set;
 
 import cc.mallet.util.Strings;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.hiari.settings.ArgumentSet;
-import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
-import net.ownhero.dev.hiari.settings.IOptions;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
-import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.JavaUtils;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.StringLiteral;
@@ -45,6 +42,7 @@ import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.mappable.model.MappableStructuredReport;
 import org.mozkito.mappings.mappable.model.MappableTransaction;
 import org.mozkito.mappings.messages.Messages;
+import org.mozkito.mappings.model.Feature;
 import org.mozkito.mappings.model.Relation;
 import org.mozkito.mappings.requirements.And;
 import org.mozkito.mappings.requirements.Atom;
@@ -107,63 +105,12 @@ public class LogEngine extends Engine {
 		}
 	}
 	
-	/**
-	 * The Class Options.
-	 */
-	public static final class Options extends ArgumentSetOptions<LogEngine, ArgumentSet<LogEngine, Options>> {
-		
-		/**
-		 * Instantiates a new options.
-		 * 
-		 * @param argumentSet
-		 *            the argument set
-		 * @param requirements
-		 *            the requirements
-		 */
-		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, LogEngine.TAG, LogEngine.DESCRIPTION, requirements);
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
-		 */
-		@Override
-		public LogEngine init() {
-			// PRECONDITIONS
-			
-			try {
-				return new LogEngine();
-			} finally {
-				// POSTCONDITIONS
-			}
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
-		 */
-		@Override
-		public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> argumentSet) throws ArgumentRegistrationException,
-		                                                                                    SettingsParseError {
-			// PRECONDITIONS
-			
-			try {
-				return new HashMap<String, IOptions<?, ?>>();
-			} finally {
-				// POSTCONDITIONS
-			}
-		}
-		
-	}
-	
 	/** The Constant DESCRIPTION. */
-	private static final String DESCRIPTION = Messages.getString("LogEngine.description"); //$NON-NLS-1$
-	                                                                                       
+	public static final String DESCRIPTION = Messages.getString("LogEngine.description"); //$NON-NLS-1$
+	                                                                                      
 	/** The Constant TAG. */
-	private static final String TAG         = "log";                                      //$NON-NLS-1$
-	                                                                                       
+	public static final String TAG         = "log";                                      //$NON-NLS-1$
+	                                                                                      
 	/**
 	 * Harmonic mean.
 	 * 
@@ -196,18 +143,26 @@ public class LogEngine extends Engine {
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.mappings.engines.MappingEngine#score(org.mozkito.mappings.mappable.model.MappableEntity,
-	 * org.mozkito.mappings.mappable.model.MappableEntity, org.mozkito.mappings.model.Relation)
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.mappings.engines.Engine#score(org.mozkito.mappings.model.Relation)
 	 */
 	@Override
-	public void score(final MappableEntity from,
-	                  final MappableEntity to,
-	                  final Relation score) {
-		// PRECONDITIONS
+	public void score(final @NotNull Relation relation) {
+		PRECONDITIONS: {
+			// none
+		}
 		
 		try {
+			final MappableEntity from = relation.getFrom();
+			final MappableEntity to = relation.getTo();
+			
+			SANITY: {
+				assert from != null;
+				assert to != null;
+			}
+			
 			final MappableStructuredReport mappableStructuredReport = (MappableStructuredReport) from;
 			final EnhancedReport report = mappableStructuredReport.getReport();
 			
@@ -260,10 +215,23 @@ public class LogEngine extends Engine {
 			
 			final double localConfidence = harmonicMean(minDistances.toArray(new Double[0]));
 			
-			addFeature(score, localConfidence, "LOG", JavaUtils.collectionToString(logs), //$NON-NLS-1$
+			addFeature(relation, localConfidence, "LOG", JavaUtils.collectionToString(logs), //$NON-NLS-1$
 			           "", "CONSTANT STRINGS", JavaUtils.collectionToString(visitor.getStrings()), ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		} finally {
-			// POSTCONDITIONS
+			POSTCONDITIONS: {
+				assert CollectionUtils.exists(relation.getFeatures(), new Predicate() {
+					
+					/**
+					 * {@inheritDoc}
+					 * 
+					 * @see org.apache.commons.collections.Predicate#evaluate(java.lang.Object)
+					 */
+					@Override
+					public boolean evaluate(final Object object) {
+						return ((Feature) object).getEngine().equals(getClass());
+					}
+				});
+			}
 		}
 	}
 	

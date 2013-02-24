@@ -30,11 +30,6 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.mozkito</groupId>
-			<artifactId>mozkito-versions-tool</artifactId>
-			<version>0.4-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>org.mozkito</groupId>
 			<artifactId>mozkito-infozilla</artifactId>
 			<version>0.4-SNAPSHOT</version>
 		</dependency>

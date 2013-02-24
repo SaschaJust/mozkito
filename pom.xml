@@ -67,9 +67,10 @@
 		<url>http://www.st.cs.uni-saarland.de/</url>
 	</organization>
 	<modules>
-		<module>mozkito-tools</module>
-		<module>mozkito-modules</module>
 		<module>mozkito-maven-plugins</module>
+		<module>mozkito-modules</module>
+		<module>mozkito-settings</module>
+		<module>mozkito-tools</module>
 	</modules>
 	<dependencies>
 		<dependency>

@@ -21,22 +21,11 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import net.ownhero.dev.hiari.settings.ArgumentSet;
-import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
-import net.ownhero.dev.hiari.settings.DirectoryArgument;
-import net.ownhero.dev.hiari.settings.DoubleArgument;
-import net.ownhero.dev.hiari.settings.IOptions;
-import net.ownhero.dev.hiari.settings.LongArgument;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
-import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
@@ -52,7 +41,6 @@ import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.codeanalysis.model.JavaElement;
 import org.mozkito.codeanalysis.model.JavaMethodDefinition;
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.settings.DatabaseOptions;
 import org.mozkito.versions.model.ChangeSet;
 
 /**
@@ -91,7 +79,7 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 		 * @param cacheDir
 		 *            the cache dir
 		 */
-		protected Factory(final int minSupport, final double minConfidence,
+		public Factory(final int minSupport, final double minConfidence,
 		        @NotNull final PersistenceUtil persistenceUtil, final File cacheDir) {
 			this.minSupport = minSupport;
 			this.minConfidence = minConfidence;
@@ -126,94 +114,6 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 			}
 		}
 		
-	}
-	
-	/**
-	 * The Class Options.
-	 */
-	public static class Options extends
-	        ArgumentSetOptions<ChangeCouplingVoter.Factory, ArgumentSet<ChangeCouplingVoter.Factory, Options>> {
-		
-		/** The min support options. */
-		private net.ownhero.dev.hiari.settings.LongArgument.Options      minSupportOptions;
-		
-		/** The min confidence options. */
-		private net.ownhero.dev.hiari.settings.DoubleArgument.Options    minConfidenceOptions;
-		
-		/** The cache dir options. */
-		private net.ownhero.dev.hiari.settings.DirectoryArgument.Options cacheDirOptions;
-		
-		/** The database options. */
-		private final DatabaseOptions                                    databaseOptions;
-		
-		/**
-		 * Instantiates a new options.
-		 * 
-		 * @param argumentSet
-		 *            the argument set
-		 * @param requirements
-		 *            the requirements
-		 * @param databaseOptions
-		 *            the database options
-		 */
-		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements,
-		        final DatabaseOptions databaseOptions) {
-			super(argumentSet, "changeCouplingVoter", "ChangeCouplingVoter options.", requirements);
-			this.databaseOptions = databaseOptions;
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
-		 */
-		@Override
-		public ChangeCouplingVoter.Factory init() {
-			// PRECONDITIONS
-			
-			final Long minSupport = getSettings().getArgument(this.minSupportOptions).getValue();
-			final Double minConfidence = getSettings().getArgument(this.minConfidenceOptions).getValue();
-			final File cacheDir = getSettings().getArgument(this.cacheDirOptions).getValue();
-			final PersistenceUtil persistenceUtil = getSettings().getArgumentSet(this.databaseOptions).getValue();
-			
-			return new ChangeCouplingVoter.Factory(minSupport.intValue(), minConfidence.doubleValue(), persistenceUtil,
-			                                       cacheDir);
-			
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
-		 */
-		@Override
-		public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> argumentSet) throws ArgumentRegistrationException,
-		                                                                                    SettingsParseError {
-			// PRECONDITIONS
-			final Map<String, IOptions<?, ?>> map = new HashMap<>();
-			map.put(this.databaseOptions.getName(), this.databaseOptions);
-			this.minSupportOptions = new LongArgument.Options(
-			                                                  argumentSet,
-			                                                  "minSupport",
-			                                                  "Set the minimum support for used change couplings to this value",
-			                                                  3l, Requirement.required);
-			map.put(this.minSupportOptions.getName(), this.minSupportOptions);
-			
-			this.minConfidenceOptions = new DoubleArgument.Options(
-			                                                       argumentSet,
-			                                                       "minConfidence",
-			                                                       "Set minimum confidence for used change couplings to this value",
-			                                                       0.7d, Requirement.required);
-			map.put(this.minConfidenceOptions.getName(), this.minConfidenceOptions);
-			
-			this.cacheDirOptions = new DirectoryArgument.Options(
-			                                                     argumentSet,
-			                                                     "cacheDir",
-			                                                     "Cache directory containing change coupling pre-computations using the naming converntion <changeSetId>.cc",
-			                                                     null, Requirement.required, false);
-			map.put(this.cacheDirOptions.getName(), this.cacheDirOptions);
-			
-			return map;
-		}
 	}
 	
 	/** The couplings. */

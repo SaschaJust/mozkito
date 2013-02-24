@@ -12,18 +12,9 @@
  **********************************************************************************************************************/
 package org.mozkito.mappings.selectors;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
-import net.ownhero.dev.hiari.settings.ArgumentSet;
-import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
-import net.ownhero.dev.hiari.settings.IOptions;
-import net.ownhero.dev.hiari.settings.StringArgument;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
-import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
@@ -44,91 +35,23 @@ import org.mozkito.versions.model.ChangeSet;
  */
 public class AllChangeSetsSelector extends Selector {
 	
-	/**
-	 * The Class Options.
-	 */
-	public static final class Options extends
-	        ArgumentSetOptions<AllChangeSetsSelector, ArgumentSet<AllChangeSetsSelector, Options>> {
-		
-		/** The tag option. */
-		private net.ownhero.dev.hiari.settings.StringArgument.Options tagOption;
-		
-		/**
-		 * Instantiates a new options.
-		 * 
-		 * @param argumentSet
-		 *            the argument set
-		 * @param requirements
-		 *            the requirements
-		 */
-		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, AllChangeSetsSelector.TAG, AllChangeSetsSelector.DESCRIPTION, requirements);
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
-		 */
-		@Override
-		public AllChangeSetsSelector init() {
-			// PRECONDITIONS
-			
-			try {
-				final AllChangeSetsSelector selector = new AllChangeSetsSelector();
-				final StringArgument tagArgument = getSettings().getArgument(this.tagOption);
-				
-				final String tag = tagArgument.getValue();
-				if (tag != null) {
-					selector.setTagFormat(tag);
-				}
-				return selector;
-			} finally {
-				// POSTCONDITIONS
-			}
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
-		 */
-		@Override
-		public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> argumentSet) throws ArgumentRegistrationException,
-		                                                                                    SettingsParseError {
-			// PRECONDITIONS
-			
-			try {
-				final Map<String, IOptions<?, ?>> map = new HashMap<>();
-				
-				this.tagOption = new StringArgument.Options(argumentSet, "tag", //$NON-NLS-1$
-				                                            Messages.getString("AllChangeSetsSelector.optionTag"), //$NON-NLS-1$
-				                                            null, Requirement.optional);
-				map.put(this.tagOption.getName(), this.tagOption);
-				
-				return map;
-			} finally {
-				// POSTCONDITIONS
-			}
-		}
-		
-	}
-	
 	/** The Constant DESCRIPTION. */
-	private static final String DESCRIPTION = Messages.getString("AllChangeSetsSelector.description"); //$NON-NLS-1$
-	                                                                                                   
+	public static final String DESCRIPTION = Messages.getString("AllChangeSetsSelector.description"); //$NON-NLS-1$
+	                                                                                                  
 	/** The Constant TAG. */
-	private static final String TAG         = "allChangeSets";                                        //$NON-NLS-1$
-	                                                                                                   
+	public static final String TAG         = "allChangeSets";                                        //$NON-NLS-1$
+	                                                                                                  
 	/** The tag format. */
-	private String              tagFormat   = null;
+	private String             tagFormat   = null;
 	
 	/**
 	 * Instantiates a new all report selector.
 	 * 
-	 * @deprecated default constructor should only be called by the active {@link PersistenceUtil}
+	 * @param tagFormat
+	 *            the tag format
 	 */
-	@Deprecated
-	public AllChangeSetsSelector() {
+	public AllChangeSetsSelector(final String tagFormat) {
+		setTagFormat(tagFormat);
 	}
 	
 	/*
@@ -170,7 +93,7 @@ public class AllChangeSetsSelector extends Selector {
 	 * @param tagFormat
 	 *            the tagFormat to set
 	 */
-	final void setTagFormat(final String tagFormat) {
+	private final void setTagFormat(final String tagFormat) {
 		// PRECONDITIONS
 		Condition.notNull(tagFormat, "Argument '%s' in '%s'.", "tagFormat", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
 		

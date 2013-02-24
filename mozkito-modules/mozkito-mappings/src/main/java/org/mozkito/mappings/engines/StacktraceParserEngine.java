@@ -13,20 +13,15 @@
 package org.mozkito.mappings.engines;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import net.ownhero.dev.hiari.settings.ArgumentSet;
-import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
-import net.ownhero.dev.hiari.settings.IOptions;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
-import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.JavaUtils;
-import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.codeanalysis.model.JavaElement;
@@ -38,11 +33,14 @@ import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.mappable.model.MappableStructuredReport;
 import org.mozkito.mappings.mappable.model.MappableTransaction;
 import org.mozkito.mappings.messages.Messages;
+import org.mozkito.mappings.model.Feature;
 import org.mozkito.mappings.model.Relation;
 import org.mozkito.mappings.requirements.And;
 import org.mozkito.mappings.requirements.Atom;
 import org.mozkito.mappings.requirements.Expression;
 import org.mozkito.mappings.requirements.Index;
+import org.mozkito.mappings.storages.PersistenceStorage;
+import org.mozkito.mappings.storages.Storage;
 import org.mozkito.persistence.PPAPersistenceUtil;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.elements.ChangeType;
@@ -55,64 +53,12 @@ import org.mozkito.versions.model.ChangeSet;
  */
 public class StacktraceParserEngine extends Engine {
 	
-	/**
-	 * The Class Options.
-	 */
-	public static final class Options extends
-	        ArgumentSetOptions<StacktraceParserEngine, ArgumentSet<StacktraceParserEngine, Options>> {
-		
-		/**
-		 * Instantiates a new options.
-		 * 
-		 * @param argumentSet
-		 *            the argument set
-		 * @param requirements
-		 *            the requirements
-		 */
-		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, TAG, DESCRIPTION, requirements);
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
-		 */
-		@Override
-		public StacktraceParserEngine init() {
-			// PRECONDITIONS
-			
-			try {
-				return new StacktraceParserEngine();
-			} finally {
-				// POSTCONDITIONS
-			}
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
-		 */
-		@Override
-		public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> argumentSet) throws ArgumentRegistrationException,
-		                                                                                    SettingsParseError {
-			// PRECONDITIONS
-			
-			try {
-				return new HashMap<>();
-			} finally {
-				// POSTCONDITIONS
-			}
-		}
-		
-	}
-	
 	/** The Constant TAG. */
-	private static final String TAG         = "stacktraceParser";                                      //$NON-NLS-1$
-	                                                                                                    
+	public static final String TAG         = "stacktraceParser";                                      //$NON-NLS-1$
+	                                                                                                   
 	/** The Constant DESCRIPTION. */
-	private static final String DESCRIPTION = Messages.getString("StacktraceParserEngine.description"); //$NON-NLS-1$
-	                                                                                                    
+	public static final String DESCRIPTION = Messages.getString("StacktraceParserEngine.description"); //$NON-NLS-1$
+	                                                                                                   
 	/*
 	 * (non-Javadoc)
 	 * @see org.mozkito.mappings.register.Node#getDescription()
@@ -128,25 +74,35 @@ public class StacktraceParserEngine extends Engine {
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.mappings.engines.Engine#score(org.mozkito.mappings.mappable.model.MappableEntity,
-	 * org.mozkito.mappings.mappable.model.MappableEntity, org.mozkito.mappings.model.Relation)
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.mappings.engines.Engine#score(org.mozkito.mappings.model.Relation)
 	 */
 	@Override
-	@NoneNull
-	public void score(final MappableEntity from,
-	                  final MappableEntity to,
-	                  final Relation score) {
-		// PRECONDITIONS
+	public void score(final @NotNull Relation relation) {
+		PRECONDITIONS: {
+			// none
+		}
 		
 		try {
+			final MappableEntity from = relation.getFrom();
+			final MappableEntity to = relation.getTo();
+			final PersistenceStorage persistenceStorage = getStorage(PersistenceStorage.class);
+			
+			SANITY: {
+				assert from != null;
+				assert to != null;
+				assert persistenceStorage != null;
+				assert persistenceStorage.getUtil() != null;
+			}
+			
 			final MappableStructuredReport mappableStructuredReport = (MappableStructuredReport) from;
 			final EnhancedReport report = mappableStructuredReport.getReport();
 			
 			final MappableTransaction mappableTransaction = (MappableTransaction) to;
 			final ChangeSet transaction = mappableTransaction.getChangeSet();
-			final PersistenceUtil persistenceUtil = getPersistenceUtil();
+			final PersistenceUtil persistenceUtil = persistenceStorage.getUtil();
 			final Set<String> subjects = new HashSet<>();
 			final Collection<JavaChangeOperation> changeOperations = PPAPersistenceUtil.getChangeOperation(persistenceUtil,
 			                                                                                               transaction);
@@ -177,10 +133,53 @@ public class StacktraceParserEngine extends Engine {
 				}
 			}
 			
-			addFeature(score, localConfidence, "STACKTRACES", "", "", "JAVA_CHANGE_OPERATION", "", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+			addFeature(relation, localConfidence, "STACKTRACES", "", "", "JAVA_CHANGE_OPERATION", "", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 			           JavaUtils.collectionToString(subjects));
 		} finally {
-			// POSTCONDITIONS
+			POSTCONDITIONS: {
+				assert CollectionUtils.exists(relation.getFeatures(), new Predicate() {
+					
+					/**
+					 * {@inheritDoc}
+					 * 
+					 * @see org.apache.commons.collections.Predicate#evaluate(java.lang.Object)
+					 */
+					@Override
+					public boolean evaluate(final Object object) {
+						return ((Feature) object).getEngine().equals(getClass());
+					}
+				});
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.mappings.register.Node#storageDependency()
+	 */
+	@Override
+	public Set<Class<? extends Storage>> storageDependency() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return new HashSet<Class<? extends Storage>>() {
+				
+				/**
+                 * 
+                 */
+				private static final long serialVersionUID = 1L;
+				
+				{
+					add(PersistenceStorage.class);
+				}
+			};
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
 		}
 	}
 	

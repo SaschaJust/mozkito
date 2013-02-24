@@ -12,18 +12,12 @@
  **********************************************************************************************************************/
 package org.mozkito.mappings.engines;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import net.ownhero.dev.hiari.settings.ArgumentSet;
-import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
-import net.ownhero.dev.hiari.settings.DoubleArgument;
-import net.ownhero.dev.hiari.settings.IOptions;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
-import net.ownhero.dev.hiari.settings.requirements.Requirement;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 
 import org.mozkito.issues.model.Report;
 import org.mozkito.mappings.mappable.FieldKey;
@@ -31,6 +25,7 @@ import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.mappable.model.MappableReport;
 import org.mozkito.mappings.mappable.model.MappableTransaction;
 import org.mozkito.mappings.messages.Messages;
+import org.mozkito.mappings.model.Feature;
 import org.mozkito.mappings.model.Relation;
 import org.mozkito.mappings.requirements.And;
 import org.mozkito.mappings.requirements.Atom;
@@ -45,103 +40,22 @@ import org.mozkito.versions.model.ChangeSet;
  */
 public class CompletedOrderEngine extends Engine {
 	
-	/**
-	 * The Class Options.
-	 */
-	public static final class Options extends
-	        ArgumentSetOptions<CompletedOrderEngine, ArgumentSet<CompletedOrderEngine, Options>> {
-		
-		/** The confidence option. */
-		private DoubleArgument.Options confidenceOption;
-		
-		/**
-		 * Instantiates a new options.
-		 * 
-		 * @param argumentSet
-		 *            the argument set
-		 * @param requirements
-		 *            the requirements
-		 */
-		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, CompletedOrderEngine.class.getSimpleName(), CompletedOrderEngine.DESCRIPTION,
-			      requirements);
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
-		 */
-		@Override
-		public CompletedOrderEngine init() {
-			// PRECONDITIONS
-			
-			try {
-				final DoubleArgument confidenceArgument = getSettings().getArgument(this.confidenceOption);
-				return new CompletedOrderEngine(confidenceArgument.getValue());
-			} finally {
-				// POSTCONDITIONS
-			}
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
-		 */
-		@Override
-		public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> argumentSet) throws ArgumentRegistrationException,
-		                                                                                    SettingsParseError {
-			// PRECONDITIONS
-			
-			try {
-				final Map<String, IOptions<?, ?>> map = new HashMap<>();
-				this.confidenceOption = new DoubleArgument.Options(
-				                                                   argumentSet,
-				                                                   "confidence", //$NON-NLS-1$
-				                                                   Messages.getString("CompletedOrderEngine.confidenceDescription"), //$NON-NLS-1$
-				                                                   CompletedOrderEngine.getDefaultConfidence(),
-				                                                   Requirement.required);
-				map.put(this.confidenceOption.getName(), this.confidenceOption);
-				return map;
-			} finally {
-				// POSTCONDITIONS
-			}
-		}
-		
-	}
-	
 	/** The constant defaultConfidence. */
-	private static final Double DEFAULT_CONFIDENCE = 1d;
+	public static final Double DEFAULT_CONFIDENCE = 1d;
 	
 	/** The constant description. */
-	private static final String DESCRIPTION        = Messages.getString("CompletedOrderEngine.description"); //$NON-NLS-1$
-	                                                                                                         
-	/**
-	 * Gets the default confidence.
-	 * 
-	 * @return the defaultConfidences
-	 */
-	private static Double getDefaultConfidence() {
-		// PRECONDITIONS
-		
-		try {
-			return CompletedOrderEngine.DEFAULT_CONFIDENCE;
-		} finally {
-			// POSTCONDITIONS
-			Condition.notNull(CompletedOrderEngine.DEFAULT_CONFIDENCE, "Field '%s' in '%s'.", "defaultConfidence", //$NON-NLS-1$ //$NON-NLS-2$
-			                  CompletedOrderEngine.class.getSimpleName());
-		}
-	}
-	
+	public static final String DESCRIPTION        = Messages.getString("CompletedOrderEngine.description"); //$NON-NLS-1$
+	                                                                                                        
 	/** The confidence. */
-	private Double confidence;
+	private Double             confidence;
 	
 	/**
 	 * Instantiates a new completed order engine.
-	 *
-	 * @param confidence the confidence
+	 * 
+	 * @param confidence
+	 *            the confidence
 	 */
-	CompletedOrderEngine(final Double confidence) {
+	public CompletedOrderEngine(final Double confidence) {
 		// PRECONDITIONS
 		
 		try {
@@ -177,32 +91,59 @@ public class CompletedOrderEngine extends Engine {
 		return CompletedOrderEngine.DESCRIPTION;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.mappings.engines.MappingEngine#score(de
-	 * .unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity, org.mozkito.mapping.mappable.MappableEntity,
-	 * org.mozkito.mapping.model.Mapping)
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.mappings.engines.Engine#score(org.mozkito.mappings.model.Relation)
 	 */
 	@Override
-	public final void score(final MappableEntity from,
-	                        final MappableEntity to,
-	                        final Relation score) {
-		final ChangeSet changeset = ((MappableTransaction) from).getChangeSet();
-		final Report report = ((MappableReport) to).getReport();
-		double localConfidence = 0d;
-		
-		if ((report.getResolutionTimestamp() != null)
-		        && changeset.getTimestamp().isBefore(report.getResolutionTimestamp())) {
-			if (Logger.logDebug()) {
-				Logger.debug("Transaction was committed before report got marked as resolved."); //$NON-NLS-1$
-			}
-			localConfidence = getConfidence();
+	public void score(final @NotNull Relation relation) {
+		PRECONDITIONS: {
+			// none
 		}
 		
-		addFeature(score, localConfidence, FieldKey.CREATION_TIMESTAMP.name(), changeset.getTimestamp(),
-		           changeset.getTimestamp(), FieldKey.CREATION_TIMESTAMP.name(), report.getResolutionTimestamp(),
-		           report.getResolutionTimestamp());
-		
+		try {
+			final MappableEntity from = relation.getFrom();
+			final MappableEntity to = relation.getTo();
+			
+			SANITY: {
+				assert from != null;
+				assert to != null;
+			}
+			
+			final ChangeSet changeset = ((MappableTransaction) from).getChangeSet();
+			final Report report = ((MappableReport) to).getReport();
+			final double localConfidence;
+			
+			if ((report.getResolutionTimestamp() != null)
+			        && changeset.getTimestamp().isBefore(report.getResolutionTimestamp())) {
+				if (Logger.logDebug()) {
+					Logger.debug("Transaction was committed before report got marked as resolved."); //$NON-NLS-1$
+				}
+				localConfidence = getConfidence();
+			} else {
+				localConfidence = 0d;
+			}
+			
+			addFeature(relation, localConfidence, FieldKey.CREATION_TIMESTAMP.name(), changeset.getTimestamp(),
+			           changeset.getTimestamp(), FieldKey.CREATION_TIMESTAMP.name(), report.getResolutionTimestamp(),
+			           report.getResolutionTimestamp());
+		} finally {
+			POSTCONDITIONS: {
+				assert CollectionUtils.exists(relation.getFeatures(), new Predicate() {
+					
+					/**
+					 * {@inheritDoc}
+					 * 
+					 * @see org.apache.commons.collections.Predicate#evaluate(java.lang.Object)
+					 */
+					@Override
+					public boolean evaluate(final Object object) {
+						return ((Feature) object).getEngine().equals(getClass());
+					}
+				});
+			}
+		}
 	}
 	
 	/*

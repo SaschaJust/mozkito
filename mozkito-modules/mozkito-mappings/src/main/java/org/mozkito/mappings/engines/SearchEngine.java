@@ -22,13 +22,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import net.ownhero.dev.hiari.settings.ArgumentSet;
-import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
-import net.ownhero.dev.hiari.settings.IOptions;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
-import net.ownhero.dev.hiari.settings.requirements.Requirement;
-
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
@@ -44,70 +37,17 @@ import org.mozkito.mappings.utils.Information;
  */
 public abstract class SearchEngine extends Engine {
 	
-	/**
-	 * The Class Options.
-	 */
-	public static class Options extends ArgumentSetOptions<Set<SearchEngine>, ArgumentSet<Set<SearchEngine>, Options>> {
-		
-		/**
-		 * Instantiates a new options.
-		 * 
-		 * @param argumentSet
-		 *            the argument set
-		 * @param requirements
-		 *            the requirements
-		 */
-		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, SearchEngine.TAG, SearchEngine.DESCRIPTION, requirements);
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
-		 */
-		@Override
-		public Set<SearchEngine> init() {
-			// PRECONDITIONS
-			
-			try {
-				// TODO Auto-generated method stub
-				return null;
-			} finally {
-				// POSTCONDITIONS
-			}
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
-		 */
-		@Override
-		public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> argumentSet) throws ArgumentRegistrationException,
-		                                                                                    SettingsParseError {
-			// PRECONDITIONS
-			
-			try {
-				// TODO Auto-generated method stub
-				return null;
-			} finally {
-				// POSTCONDITIONS
-			}
-		}
-		
-	}
-	
 	/** The Constant TAG. */
-	private static final String TAG             = "search";                                      //$NON-NLS-1$
-	                                                                                              
+	public static final String TAG             = "search";                                      //$NON-NLS-1$
+	                                                                                             
 	/** The Constant DESCRIPTION. */
-	private static final String DESCRIPTION     = Messages.getString("SearchEngine.description"); //$NON-NLS-1$
-	                                                                                              
+	public static final String DESCRIPTION     = Messages.getString("SearchEngine.description"); //$NON-NLS-1$
+	                                                                                             
 	/** The Constant MIN_QUERY_CHARS. */
-	private static final int    MIN_QUERY_CHARS = 8;
+	public static final int    MIN_QUERY_CHARS = 8;
 	
 	/** The Constant MAX_QUERY_CHARS. */
-	private static final int    MAX_QUERY_CHARS = 255;
+	public static final int    MAX_QUERY_CHARS = 255;
 	
 	/**
 	 * Builds the query.

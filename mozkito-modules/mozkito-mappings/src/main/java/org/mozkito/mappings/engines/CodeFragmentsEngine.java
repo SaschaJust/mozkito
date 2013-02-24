@@ -14,22 +14,19 @@ package org.mozkito.mappings.engines;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.hiari.settings.ArgumentSet;
-import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
-import net.ownhero.dev.hiari.settings.IOptions;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
-import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.JavaUtils;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
+
 import difflib.Delta;
 
 import org.mozkito.infozilla.model.EnhancedReport;
@@ -37,6 +34,7 @@ import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.mappable.model.MappableStructuredReport;
 import org.mozkito.mappings.mappable.model.MappableTransaction;
 import org.mozkito.mappings.messages.Messages;
+import org.mozkito.mappings.model.Feature;
 import org.mozkito.mappings.model.Relation;
 import org.mozkito.mappings.requirements.And;
 import org.mozkito.mappings.requirements.Atom;
@@ -57,73 +55,22 @@ import org.mozkito.versions.model.Handle;
  */
 public class CodeFragmentsEngine extends Engine {
 	
-	/**
-	 * The Class Options.
-	 */
-	public static final class Options extends
-	        ArgumentSetOptions<CodeFragmentsEngine, ArgumentSet<CodeFragmentsEngine, Options>> {
-		
-		/**
-		 * Instantiates a new options.
-		 * 
-		 * @param argumentSet
-		 *            the argument set
-		 * @param requirements
-		 *            the requirements
-		 */
-		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, CodeFragmentsEngine.TAG, CodeFragmentsEngine.DESCRIPTION, requirements);
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
-		 */
-		@Override
-		public CodeFragmentsEngine init() {
-			// PRECONDITIONS
-			
-			try {
-				return new CodeFragmentsEngine();
-			} finally {
-				// POSTCONDITIONS
-			}
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
-		 */
-		@Override
-		public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> argumentSet) throws ArgumentRegistrationException,
-		                                                                                    SettingsParseError {
-			// PRECONDITIONS
-			
-			try {
-				return new HashMap<String, IOptions<?, ?>>();
-			} finally {
-				// POSTCONDITIONS
-			}
-		}
-		
-	}
-	
 	/** The Constant TAG. */
-	private static final String TAG         = "codefragments";                                      //$NON-NLS-1$
-	                                                                                                 
+	public static final String TAG         = "codefragments";                                      //$NON-NLS-1$
+	                                                                                                
 	/** The Constant DESCRIPTION. */
-	private static final String DESCRIPTION = Messages.getString("CodeFragmentsEngine.description"); //$NON-NLS-1$
-	                                                                                                 
+	public static final String DESCRIPTION = Messages.getString("CodeFragmentsEngine.description"); //$NON-NLS-1$
+	                                                                                                
 	/**
 	 * Instantiates a new code fragments engine.
 	 */
-	CodeFragmentsEngine() {
+	public CodeFragmentsEngine() {
 		// should only be used by settings or for testing purposes
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see org.mozkito.mappings.register.Node#getDescription()
 	 */
 	@Override
@@ -151,32 +98,59 @@ public class CodeFragmentsEngine extends Engine {
 		return 0;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.mappings.engines.MappingEngine#score(org.mozkito.mappings.mappable.model.MappableEntity,
-	 * org.mozkito.mappings.mappable.model.MappableEntity, org.mozkito.mappings.model.Relation)
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.mappings.engines.Engine#score(org.mozkito.mappings.model.Relation)
 	 */
 	@Override
-	public void score(final MappableEntity from,
-	                  final MappableEntity to,
-	                  final Relation score) {
-		// PRECONDITIONS
+	public void score(final @NotNull Relation relation) {
+		PRECONDITIONS: {
+			// none
+		}
 		
 		try {
+			final MappableEntity from = relation.getFrom();
+			final MappableEntity to = relation.getTo();
+			
+			SANITY: {
+				assert from != null;
+				assert to != null;
+			}
+			
 			final List<String> patchOriginalLines = new LinkedList<>();
 			
 			final MappableStructuredReport report = (MappableStructuredReport) from;
 			final EnhancedReport enhancedReport = report.getReport();
 			final MappableTransaction transaction = (MappableTransaction) to;
-			
 			final RepositoryStorage repositoryStorage = getStorage(RepositoryStorage.class);
+			
+			SANITY: {
+				assert repositoryStorage != null;
+			}
+			
 			final Repository repository = repositoryStorage.getRepository();
+			
+			SANITY: {
+				assert repository != null;
+				final ChangeSet changeSet = transaction.getChangeSet();
+				assert changeSet != null;
+			}
+			
 			final Collection<Handle> changedFiles = transaction.getChangeSet().getChangedFiles();
+			
+			SANITY: {
+				assert changedFiles != null;
+			}
 			
 			for (final Handle handle : changedFiles) {
 				try {
-					String path;
-					path = handle.getPath(transaction.getChangeSet());
+					final String path = handle.getPath(transaction.getChangeSet());
+					
+					SANITY: {
+						assert path != null;
+					}
+					
 					Collection<Delta> diff;
 					try {
 						diff = repository.diff(path, transaction.getChangeSet().getBranchParent().getId(),
@@ -184,6 +158,7 @@ public class CodeFragmentsEngine extends Engine {
 					} catch (final RepositoryOperationException e) {
 						throw new UnrecoverableError(e);
 					}
+					
 					for (final Delta delta : diff) {
 						@SuppressWarnings ("unchecked")
 						final List<String> lines = (List<String>) delta.getOriginal().getLines();
@@ -196,22 +171,43 @@ public class CodeFragmentsEngine extends Engine {
 			
 			final Collection<String> codeFragments = enhancedReport.getCodeFragments();
 			
+			SANITY: {
+				assert codeFragments != null;
+			}
+			
 			final List<String> codeFragmentList = new LinkedList<>();
+			
 			for (final String codeBlock : codeFragments) {
 				final String[] split = codeBlock.split(FileUtils.lineSeparator);
+				
 				if (split != null) {
 					codeFragmentList.addAll(Arrays.asList(split));
 				}
-				
 			}
 			
+			// determine maximum confidence
 			final double localConfidence = Math.max(0.0d, partiallyContains(patchOriginalLines, codeFragmentList));
-			addFeature(score,
+			
+			// add result
+			addFeature(relation,
 			           localConfidence,
 			           "CODEFRAGMENTS", "?", JavaUtils.collectionToString(codeFragments), "PATCH", "?", JavaUtils.collectionToString(patchOriginalLines)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			
 		} finally {
-			// POSTCONDITIONS
+			POSTCONDITIONS: {
+				assert CollectionUtils.exists(relation.getFeatures(), new Predicate() {
+					
+					/**
+					 * {@inheritDoc}
+					 * 
+					 * @see org.apache.commons.collections.Predicate#evaluate(java.lang.Object)
+					 */
+					@Override
+					public boolean evaluate(final Object object) {
+						return ((Feature) object).getEngine().equals(getClass());
+					}
+				});
+			}
 		}
 	}
 	

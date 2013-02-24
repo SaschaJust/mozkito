@@ -148,7 +148,7 @@ public class MappingChain extends Chain<Settings> {
 			Condition.notNull(persistenceUtil,
 			                  "Local variable '%s' in '%s:'.", "persistenceUtil", getClassName(), "setup()"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			
-			finder.loadData(persistenceUtil);
+			finder.loadData();
 			final Group group = this.threadPool.getThreadGroup();
 			
 			// load sources

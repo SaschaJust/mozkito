@@ -13,19 +13,9 @@
 package org.mozkito.untangling.blob.combine;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
-import net.ownhero.dev.hiari.settings.ArgumentSet;
-import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
-import net.ownhero.dev.hiari.settings.DoubleArgument;
-import net.ownhero.dev.hiari.settings.IOptions;
-import net.ownhero.dev.hiari.settings.LongArgument;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
-import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -35,7 +25,6 @@ import org.mozkito.changecouplings.ChangeCouplingRuleFactory;
 import org.mozkito.changecouplings.model.FileChangeCoupling;
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.settings.DatabaseOptions;
 import org.mozkito.untangling.blob.ChangeOperationSet;
 import org.mozkito.versions.model.ChangeSet;
 import org.mozkito.versions.model.Handle;
@@ -46,79 +35,6 @@ import org.mozkito.versions.model.Handle;
  * @author Kim Herzig <herzig@mozkito.org>
  */
 public class ChangeCouplingCombineOperator implements CombineOperator<ChangeOperationSet> {
-	
-	/**
-	 * The Class Options.
-	 */
-	public static class Options extends
-	        ArgumentSetOptions<ChangeCouplingCombineOperator, ArgumentSet<ChangeCouplingCombineOperator, Options>> {
-		
-		/** The database options. */
-		private final DatabaseOptions                                 databaseOptions;
-		
-		/** The min support options. */
-		private net.ownhero.dev.hiari.settings.LongArgument.Options   minSupportOptions;
-		
-		/** The min confidence options. */
-		private net.ownhero.dev.hiari.settings.DoubleArgument.Options minConfidenceOptions;
-		
-		/**
-		 * Instantiates a new options.
-		 * 
-		 * @param argumentSet
-		 *            the argument set
-		 * @param requirements
-		 *            the requirements
-		 * @param databaseOptions
-		 *            the database options
-		 */
-		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements,
-		        final DatabaseOptions databaseOptions) {
-			super(argumentSet, "ccCombineOp", "ChangeCouplingCombineOperator options.", requirements);
-			this.databaseOptions = databaseOptions;
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
-		 */
-		@Override
-		public ChangeCouplingCombineOperator init() {
-			// PRECONDITIONS
-			final PersistenceUtil persistenceUtil = getSettings().getArgumentSet(this.databaseOptions).getValue();
-			final Double minConfidence = getSettings().getArgument(this.minConfidenceOptions).getValue();
-			final Long minSupport = getSettings().getArgument(this.minSupportOptions).getValue();
-			return new ChangeCouplingCombineOperator(minSupport.intValue(), minConfidence.doubleValue(),
-			                                         persistenceUtil);
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
-		 */
-		@Override
-		public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> argumentSet) throws ArgumentRegistrationException,
-		                                                                                    SettingsParseError {
-			// PRECONDITIONS
-			final Map<String, IOptions<?, ?>> map = new HashMap<>();
-			map.put(this.databaseOptions.getName(), this.databaseOptions);
-			
-			this.minSupportOptions = new LongArgument.Options(
-			                                                  argumentSet,
-			                                                  "minSupport",
-			                                                  "Minimum support for change couplings used to tangle change sets.",
-			                                                  3l, Requirement.required);
-			map.put(this.minSupportOptions.getName(), this.minSupportOptions);
-			this.minConfidenceOptions = new DoubleArgument.Options(
-			                                                       argumentSet,
-			                                                       "minConfidence",
-			                                                       "Minimum confidence for change couplings used to tangle change sets.",
-			                                                       0.5, Requirement.required);
-			map.put(this.minConfidenceOptions.getName(), this.minConfidenceOptions);
-			return map;
-		}
-	}
 	
 	/** The persistence util. */
 	private final PersistenceUtil persistenceUtil;
@@ -139,7 +55,7 @@ public class ChangeCouplingCombineOperator implements CombineOperator<ChangeOper
 	 * @param persistenceUtil
 	 *            the persistence util
 	 */
-	protected ChangeCouplingCombineOperator(final int minSupport, final double minConfidence,
+	public ChangeCouplingCombineOperator(final int minSupport, final double minConfidence,
 	        final PersistenceUtil persistenceUtil) {
 		this.minSupport = minSupport;
 		this.minConfidence = minConfidence;

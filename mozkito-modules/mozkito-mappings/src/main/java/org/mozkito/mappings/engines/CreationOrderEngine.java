@@ -12,24 +12,18 @@
  **********************************************************************************************************************/
 package org.mozkito.mappings.engines;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import net.ownhero.dev.hiari.settings.ArgumentSet;
-import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
-import net.ownhero.dev.hiari.settings.DoubleArgument;
-import net.ownhero.dev.hiari.settings.IOptions;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
-import net.ownhero.dev.hiari.settings.requirements.Requirement;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.joda.time.DateTime;
 
 import org.mozkito.issues.model.Report;
 import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.messages.Messages;
+import org.mozkito.mappings.model.Feature;
 import org.mozkito.mappings.model.Relation;
 import org.mozkito.mappings.requirements.And;
 import org.mozkito.mappings.requirements.Atom;
@@ -44,111 +38,35 @@ import org.mozkito.versions.model.ChangeSet;
  */
 public class CreationOrderEngine extends Engine {
 	
-	/**
-	 * The Class Options.
-	 */
-	public static final class Options extends
-	        ArgumentSetOptions<CreationOrderEngine, ArgumentSet<CreationOrderEngine, Options>> {
-		
-		/** The confidence option. */
-		private DoubleArgument.Options confidenceOption;
-		
-		/**
-		 * Instantiates a new options.
-		 * 
-		 * @param argumentSet
-		 *            the argument set
-		 * @param requirements
-		 *            the requirements
-		 */
-		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, CreationOrderEngine.TAG, CreationOrderEngine.DESCRIPTION, requirements);
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
-		 */
-		@Override
-		public CreationOrderEngine init() {
-			// PRECONDITIONS
-			
-			try {
-				final DoubleArgument confidenceArgument = getSettings().getArgument(this.confidenceOption);
-				return new CreationOrderEngine(confidenceArgument.getValue());
-			} finally {
-				// POSTCONDITIONS
-			}
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
-		 */
-		@Override
-		public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> argumentSet) throws ArgumentRegistrationException,
-		                                                                                    SettingsParseError {
-			// PRECONDITIONS
-			
-			try {
-				final Map<String, IOptions<?, ?>> map = new HashMap<>();
-				this.confidenceOption = new DoubleArgument.Options(
-				                                                   argumentSet,
-				                                                   "confidence", //$NON-NLS-1$
-				                                                   Messages.getString("AuthorEqualityEngine.confidenceDescription"), //$NON-NLS-1$
-				                                                   CreationOrderEngine.getDefaultConfidence(),
-				                                                   Requirement.required);
-				map.put(this.confidenceOption.getName(), this.confidenceOption);
-				return map;
-			} finally {
-				// POSTCONDITIONS
-			}
-		}
-		
-	}
-	
 	/** The constant defaultConfidence. */
-	private static final Double DEFAULT_CONFIDENCE = 1d;
+	public static final Double DEFAULT_CONFIDENCE = 1d;
 	
 	/** The constant description. */
-	private static final String DESCRIPTION        = Messages.getString("CreationOrderEngine.description"); //$NON-NLS-1$
-	
+	public static final String DESCRIPTION        = Messages.getString("CreationOrderEngine.description"); //$NON-NLS-1$
+	                                                                                                       
 	/** The Constant TAG. */
-	private static final String TAG                = "creationOrder";                                      //$NON-NLS-1$
-	                                                                                                        
-	/**
-	 * Gets the default confidence.
-	 * 
-	 * @return the defaultConfidences
-	 */
-	private static Double getDefaultConfidence() {
-		// PRECONDITIONS
-		
-		try {
-			return CreationOrderEngine.DEFAULT_CONFIDENCE;
-		} finally {
-			// POSTCONDITIONS
-			Condition.notNull(CreationOrderEngine.DEFAULT_CONFIDENCE, "Field '%s' in '%s'.", "defaultConfidence", //$NON-NLS-1$ //$NON-NLS-2$
-			                  CreationOrderEngine.class.getSimpleName());
-		}
-	}
-	
+	public static final String TAG                = "creationOrder";                                      //$NON-NLS-1$
+	                                                                                                       
 	/** The confidence. */
-	private Double confidence;
+	private Double             confidence;
 	
 	/**
 	 * Instantiates a new creation order engine.
-	 *
-	 * @param confidence the confidence
+	 * 
+	 * @param confidence
+	 *            the confidence
 	 */
 	public CreationOrderEngine(final Double confidence) {
-		// PRECONDITIONS
+		PRECONDITIONS: {
+			// none
+		}
 		
 		try {
 			this.confidence = confidence;
 		} finally {
-			// POSTCONDITIONS
+			POSTCONDITIONS: {
+				// none
+			}
 		}
 	}
 	
@@ -158,13 +76,16 @@ public class CreationOrderEngine extends Engine {
 	 * @return the confidence
 	 */
 	private Double getConfidence() {
-		// PRECONDITIONS
+		PRECONDITIONS: {
+			// none
+		}
 		
 		try {
 			return this.confidence;
 		} finally {
-			// POSTCONDITIONS
-			Condition.notNull(this.confidence, "Field '%s' in '%s'.", "confidence", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
+			POSTCONDITIONS: {
+				Condition.notNull(this.confidence, "Field '%s' in '%s'.", "confidence", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 		}
 	}
 	
@@ -178,27 +99,57 @@ public class CreationOrderEngine extends Engine {
 		return CreationOrderEngine.DESCRIPTION;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.mappings.engines.MappingEngine#score(de
-	 * .unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity, org.mozkito.mapping.mappable.MappableEntity,
-	 * org.mozkito.mapping.model.Mapping)
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.mappings.engines.Engine#score(org.mozkito.mappings.model.Relation)
 	 */
 	@Override
-	public void score(final MappableEntity from,
-	                  final MappableEntity to,
-	                  final Relation score) {
-		double localConfidence = 0d;
-		if (((DateTime) from.get(FieldKey.CREATION_TIMESTAMP)).isBefore(((DateTime) to.get(FieldKey.CREATION_TIMESTAMP)))) {
-			localConfidence = getConfidence();
+	public void score(final @NotNull Relation relation) {
+		PRECONDITIONS: {
+			// none
 		}
 		
-		addFeature(score, localConfidence, FieldKey.CREATION_TIMESTAMP.name(),
-		           ((DateTime) from.get(FieldKey.CREATION_TIMESTAMP)).toString(),
-		           ((DateTime) from.get(FieldKey.CREATION_TIMESTAMP)).toString(), FieldKey.CREATION_TIMESTAMP.name(),
-		           ((DateTime) to.get(FieldKey.CREATION_TIMESTAMP)).toString(),
-		           ((DateTime) to.get(FieldKey.CREATION_TIMESTAMP)).toString());
-		
+		try {
+			final MappableEntity from = relation.getFrom();
+			final MappableEntity to = relation.getTo();
+			
+			SANITY: {
+				assert from != null;
+				assert to != null;
+				assert from.get(FieldKey.CREATION_TIMESTAMP) != null;
+				assert to.get(FieldKey.CREATION_TIMESTAMP) != null;
+			}
+			
+			final double localConfidence;
+			if (((DateTime) from.get(FieldKey.CREATION_TIMESTAMP)).isBefore(((DateTime) to.get(FieldKey.CREATION_TIMESTAMP)))) {
+				localConfidence = getConfidence();
+			} else {
+				localConfidence = 0d;
+			}
+			
+			// add result
+			addFeature(relation, localConfidence, FieldKey.CREATION_TIMESTAMP.name(),
+			           ((DateTime) from.get(FieldKey.CREATION_TIMESTAMP)).toString(),
+			           ((DateTime) from.get(FieldKey.CREATION_TIMESTAMP)).toString(),
+			           FieldKey.CREATION_TIMESTAMP.name(), ((DateTime) to.get(FieldKey.CREATION_TIMESTAMP)).toString(),
+			           ((DateTime) to.get(FieldKey.CREATION_TIMESTAMP)).toString());
+		} finally {
+			POSTCONDITIONS: {
+				assert CollectionUtils.exists(relation.getFeatures(), new Predicate() {
+					
+					/**
+					 * {@inheritDoc}
+					 * 
+					 * @see org.apache.commons.collections.Predicate#evaluate(java.lang.Object)
+					 */
+					@Override
+					public boolean evaluate(final Object object) {
+						return ((Feature) object).getEngine().equals(getClass());
+					}
+				});
+			}
+		}
 	}
 	
 	/*

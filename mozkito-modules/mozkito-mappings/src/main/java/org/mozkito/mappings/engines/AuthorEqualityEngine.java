@@ -12,136 +12,58 @@
  **********************************************************************************************************************/
 package org.mozkito.mappings.engines;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import net.ownhero.dev.hiari.settings.ArgumentSet;
-import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
-import net.ownhero.dev.hiari.settings.DoubleArgument;
-import net.ownhero.dev.hiari.settings.IOptions;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
-import net.ownhero.dev.hiari.settings.requirements.Requirement;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 
 import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.messages.Messages;
+import org.mozkito.mappings.model.Feature;
 import org.mozkito.mappings.model.Relation;
 import org.mozkito.mappings.requirements.And;
 import org.mozkito.mappings.requirements.Atom;
 import org.mozkito.mappings.requirements.Expression;
 import org.mozkito.mappings.requirements.Index;
+import org.mozkito.persistence.model.Person;
 
 /**
  * This engine scores according to the equality of the authors of both entities. If the confidence value isn't set
- * explicitly, the default value is used.
+ * explicitly, the default value is used. This engine requires mozkito-persons to be run.s
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
 public class AuthorEqualityEngine extends Engine {
 	
-	/**
-	 * The Class Options.
-	 */
-	public static final class Options extends
-	        ArgumentSetOptions<AuthorEqualityEngine, ArgumentSet<AuthorEqualityEngine, Options>> {
-		
-		/** The confidence option. */
-		private DoubleArgument.Options confidenceOption;
-		
-		/**
-		 * Instantiates a new options.
-		 * 
-		 * @param argumentSet
-		 *            the argument set
-		 * @param requirements
-		 *            the requirements
-		 */
-		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, AuthorEqualityEngine.TAG, AuthorEqualityEngine.DESCRIPTION, requirements);
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
-		 */
-		@Override
-		public AuthorEqualityEngine init() {
-			// PRECONDITIONS
-			
-			try {
-				final DoubleArgument confidenceArgument = getSettings().getArgument(this.confidenceOption);
-				return new AuthorEqualityEngine(confidenceArgument.getValue());
-			} finally {
-				// POSTCONDITIONS
-			}
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
-		 */
-		@Override
-		public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> argumentSet) throws ArgumentRegistrationException,
-		                                                                                    SettingsParseError {
-			// PRECONDITIONS
-			
-			try {
-				final Map<String, IOptions<?, ?>> map = new HashMap<>();
-				this.confidenceOption = new DoubleArgument.Options(
-				                                                   argumentSet,
-				                                                   "confidence", //$NON-NLS-1$
-				                                                   Messages.getString("AuthorEqualityEngine.confidenceDescription"), //$NON-NLS-1$
-				                                                   AuthorEqualityEngine.getDefaultConfidence(),
-				                                                   Requirement.required);
-				map.put(this.confidenceOption.getName(), this.confidenceOption);
-				return map;
-			} finally {
-				// POSTCONDITIONS
-			}
-		}
-		
-	}
-	
 	/** The constant defaultConfidence. */
-	private static final Double DEFAULT_CONFIDENCE = 0.2d;
+	public static final Double DEFAULT_CONFIDENCE = 0.2d;
 	
 	/** The Constant TAG. */
-	private static final String TAG                = "author";                                              //$NON-NLS-1$
-	                                                                                                         
+	public static final String TAG                = "author";                                              //$NON-NLS-1$
+	                                                                                                        
 	/** The constant description. */
-	private static final String DESCRIPTION        = Messages.getString("AuthorEqualityEngine.description"); //$NON-NLS-1$
-	                                                                                                         
+	public static final String DESCRIPTION        = Messages.getString("AuthorEqualityEngine.description"); //$NON-NLS-1$
+	                                                                                                        
+	/** The confidence. */
+	private Double             confidence         = DEFAULT_CONFIDENCE;
+	
 	/**
-	 * Gets the default confidence.
-	 * 
-	 * @return the defaultConfidences
+	 * Instantiates a new author equality engine that scores with the default confidence, if requirements are met.
 	 */
-	private static Double getDefaultConfidence() {
-		// PRECONDITIONS
-		
-		try {
-			return AuthorEqualityEngine.DEFAULT_CONFIDENCE;
-		} finally {
-			// POSTCONDITIONS
-			Condition.notNull(AuthorEqualityEngine.DEFAULT_CONFIDENCE, "Field '%s' in '%s'.", "DEFAULT_CONFIDENCE", //$NON-NLS-1$ //$NON-NLS-2$
-			                  AuthorEqualityEngine.class.getSimpleName());
-		}
+	public AuthorEqualityEngine() {
+		this.confidence = DEFAULT_CONFIDENCE;
 	}
 	
-	/** The confidence. */
-	private Double confidence;
-	
 	/**
-	 * Instantiates a new author equality engine.
+	 * Instantiates a new author equality engine that scores with the given confidence, if requirements are met.
 	 * 
 	 * @param confidence
 	 *            the confidence
 	 */
-	AuthorEqualityEngine(final double confidence) {
+	public AuthorEqualityEngine(final double confidence) {
 		// PRECONDITIONS
 		
 		try {
@@ -152,7 +74,8 @@ public class AuthorEqualityEngine extends Engine {
 	}
 	
 	/**
-	 * Gets the confidence.
+	 * Gets the confidence. This method is for internal use only and returns the confidence that is used to score if
+	 * requirements are met.
 	 * 
 	 * @return the confidence
 	 */
@@ -168,9 +91,9 @@ public class AuthorEqualityEngine extends Engine {
 	}
 	
 	/**
-	 * Gets the description.
+	 * {@inheritDoc}
 	 * 
-	 * @return the description
+	 * @see org.mozkito.mappings.register.Node#getDescription()
 	 */
 	@Override
 	public final String getDescription() {
@@ -180,22 +103,57 @@ public class AuthorEqualityEngine extends Engine {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.mappings.engines.Engine#score(org.mozkito.mappings.mappable.model.MappableEntity,
-	 *      org.mozkito.mappings.mappable.model.MappableEntity, org.mozkito.mappings.model.Relation)
+	 * @see org.mozkito.mappings.engines.Engine#score(org.mozkito.mappings.model.Relation)
 	 */
 	@Override
-	public final void score(final MappableEntity from,
-	                        final MappableEntity to,
-	                        final Relation score) {
-		double localConfidence = 0d;
-		
-		// check if the values in the author fields are equal
-		if (from.get(FieldKey.AUTHOR).equals(to.get(FieldKey.AUTHOR))) {
-			localConfidence = getConfidence();
+	public void score(final @NotNull Relation relation) {
+		PRECONDITIONS: {
+			// none
 		}
 		
-		addFeature(score, localConfidence, FieldKey.AUTHOR.name(), from.get(FieldKey.AUTHOR),
-		           from.get(FieldKey.AUTHOR), FieldKey.AUTHOR.name(), to.get(FieldKey.AUTHOR), to.get(FieldKey.AUTHOR));
+		try {
+			final MappableEntity from = relation.getFrom();
+			final MappableEntity to = relation.getTo();
+			double localConfidence = 0d;
+			
+			SANITY: {
+				assert from != null;
+				assert to != null;
+			}
+			
+			final Person fromAuthor = from.<Person> get(FieldKey.AUTHOR);
+			final Person toAuthor = to.<Person> get(FieldKey.AUTHOR);
+			
+			SANITY: {
+				assert fromAuthor != null;
+				assert fromAuthor != null;
+			}
+			
+			// check if the values in the author fields are equal
+			if (fromAuthor.equals(toAuthor)) {
+				localConfidence = getConfidence();
+			}
+			
+			// add result
+			addFeature(relation, localConfidence, FieldKey.AUTHOR.name(), from.get(FieldKey.AUTHOR),
+			           from.get(FieldKey.AUTHOR), FieldKey.AUTHOR.name(), to.get(FieldKey.AUTHOR),
+			           to.get(FieldKey.AUTHOR));
+		} finally {
+			POSTCONDITIONS: {
+				assert CollectionUtils.exists(relation.getFeatures(), new Predicate() {
+					
+					/**
+					 * {@inheritDoc}
+					 * 
+					 * @see org.apache.commons.collections.Predicate#evaluate(java.lang.Object)
+					 */
+					@Override
+					public boolean evaluate(final Object object) {
+						return ((Feature) object).getEngine().equals(getClass());
+					}
+				});
+			}
+		}
 	}
 	
 	/**

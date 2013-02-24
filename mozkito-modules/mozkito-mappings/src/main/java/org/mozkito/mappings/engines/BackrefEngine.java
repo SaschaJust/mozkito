@@ -12,21 +12,16 @@
  **********************************************************************************************************************/
 package org.mozkito.mappings.engines;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import net.ownhero.dev.hiari.settings.ArgumentSet;
-import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
-import net.ownhero.dev.hiari.settings.DoubleArgument;
-import net.ownhero.dev.hiari.settings.IOptions;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
-import net.ownhero.dev.hiari.settings.requirements.Requirement;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 
 import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.messages.Messages;
+import org.mozkito.mappings.model.Feature;
 import org.mozkito.mappings.model.Relation;
 import org.mozkito.mappings.requirements.And;
 import org.mozkito.mappings.requirements.Atom;
@@ -41,94 +36,28 @@ import org.mozkito.mappings.requirements.Index;
  */
 public class BackrefEngine extends Engine {
 	
-	/**
-	 * The Class Options.
-	 */
-	public static final class Options extends ArgumentSetOptions<BackrefEngine, ArgumentSet<BackrefEngine, Options>> {
-		
-		/** The confidence option. */
-		private DoubleArgument.Options confidenceOption;
-		
-		/**
-		 * Instantiates a new options.
-		 * 
-		 * @param argumentSet
-		 *            the argument set
-		 * @param requirements
-		 *            the requirements
-		 */
-		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, BackrefEngine.class.getSimpleName(), BackrefEngine.DESCRIPTION, requirements);
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
-		 */
-		@Override
-		public BackrefEngine init() {
-			// PRECONDITIONS
-			
-			try {
-				final DoubleArgument confidenceArgument = getSettings().getArgument(this.confidenceOption);
-				return new BackrefEngine(confidenceArgument.getValue());
-			} finally {
-				// POSTCONDITIONS
-			}
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
-		 */
-		@Override
-		public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> argumentSet) throws ArgumentRegistrationException,
-		                                                                                    SettingsParseError {
-			// PRECONDITIONS
-			
-			try {
-				final Map<String, IOptions<?, ?>> map = new HashMap<>();
-				this.confidenceOption = new DoubleArgument.Options(
-				                                                   argumentSet,
-				                                                   "confidence", //$NON-NLS-1$
-				                                                   Messages.getString("BackrefEngine.confidenceDescription"), //$NON-NLS-1$
-				                                                   BackrefEngine.getDefaultConfidence(),
-				                                                   Requirement.required);
-				map.put(this.confidenceOption.getName(), this.confidenceOption);
-				return map;
-			} finally {
-				// POSTCONDITIONS
-			}
-		}
-		
-	}
-	
 	/** The constant defaultConfidence. */
-	private static final Double DEFAULT_CONFIDENCE = 1d;
+	public static final Double DEFAULT_CONFIDENCE = 1d;
 	
 	/** The constant description. */
-	private static final String DESCRIPTION        = Messages.getString("BackrefEngine.description"); //$NON-NLS-1$
-	                                                                                                  
+	public static final String DESCRIPTION        = Messages.getString("BackrefEngine.description"); //$NON-NLS-1$
+	                                                                                                 
+	/** The confidence. */
+	private Double             confidence         = DEFAULT_CONFIDENCE;
+	
 	/**
-	 * Gets the default confidence.
-	 * 
-	 * @return the defaultConfidences
+	 * Instantiates a new backref engine.
 	 */
-	private static Double getDefaultConfidence() {
+	public BackrefEngine() {
 		// PRECONDITIONS
 		
 		try {
-			return BackrefEngine.DEFAULT_CONFIDENCE;
+			this.confidence = DEFAULT_CONFIDENCE;
 		} finally {
 			// POSTCONDITIONS
-			Condition.notNull(BackrefEngine.DEFAULT_CONFIDENCE, "Field '%s' in '%s'.", "defaultConfidence", //$NON-NLS-1$ //$NON-NLS-2$
-			                  BackrefEngine.class.getSimpleName());
+			Condition.notNull(this.confidence, "Field '%s' in '%s'.", "confidence", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
-	
-	/** The confidence. */
-	private Double confidence;
 	
 	/**
 	 * Instantiates a new backref engine.
@@ -136,13 +65,14 @@ public class BackrefEngine extends Engine {
 	 * @param confidence
 	 *            the confidence
 	 */
-	BackrefEngine(final Double confidence) {
+	public BackrefEngine(final Double confidence) {
 		// PRECONDITIONS
 		
 		try {
 			this.confidence = confidence;
 		} finally {
 			// POSTCONDITIONS
+			Condition.notNull(confidence, "Field '%s' in '%s'.", "confidence", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
@@ -151,7 +81,7 @@ public class BackrefEngine extends Engine {
 	 * 
 	 * @return the confidence
 	 */
-	public final Double getConfidence() {
+	private final Double getConfidence() {
 		// PRECONDITIONS
 		
 		try {
@@ -163,42 +93,70 @@ public class BackrefEngine extends Engine {
 	}
 	
 	/**
-	 * Gets the description.
+	 * {@inheritDoc}
 	 * 
-	 * @return the description
+	 * @see org.mozkito.mappings.register.Node#getDescription()
 	 */
 	@Override
 	public final String getDescription() {
 		return BackrefEngine.DESCRIPTION;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.mappings.engines.MappingEngine#score(de
-	 * .unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity, org.mozkito.mapping.mappable.MappableEntity,
-	 * org.mozkito.mapping.model.Mapping)
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.mappings.engines.Engine#score(org.mozkito.mappings.model.Relation)
 	 */
 	@Override
-	public final void score(final MappableEntity element1,
-	                        final MappableEntity element2,
-	                        final Relation score) {
-		final String fullText = element2.getText();
-		final String id = element1.getId();
-		
-		double localConfidence = 0d;
-		
-		// check if the text representation of the elements contain the others ID
-		if (element2.getText().contains(element1.getId()) && element1.getText().contains(element2.getId())) {
-			localConfidence = getConfidence();
-			
+	public void score(final @NotNull Relation relation) {
+		PRECONDITIONS: {
+			// none
 		}
 		
-		addFeature(score, localConfidence, FieldKey.ID.name(), id, id, "FULLTEXT", fullText, fullText); //$NON-NLS-1$
+		try {
+			final MappableEntity from = relation.getFrom();
+			final MappableEntity to = relation.getTo();
+			
+			SANITY: {
+				assert from != null;
+				assert to != null;
+			}
+			
+			final String fullText = to.getText();
+			final String id = from.getId();
+			
+			double localConfidence = 0d;
+			
+			// check if the text representation of the elements contain the others ID
+			if (to.getText().contains(from.getId()) && from.getText().contains(to.getId())) {
+				localConfidence = getConfidence();
+				
+			}
+			
+			// add results
+			addFeature(relation, localConfidence, FieldKey.ID.name(), id, id, "FULLTEXT", fullText, fullText); //$NON-NLS-1$
+		} finally {
+			POSTCONDITIONS: {
+				assert CollectionUtils.exists(relation.getFeatures(), new Predicate() {
+					
+					/**
+					 * {@inheritDoc}
+					 * 
+					 * @see org.apache.commons.collections.Predicate#evaluate(java.lang.Object)
+					 */
+					@Override
+					public boolean evaluate(final Object object) {
+						return ((Feature) object).getEngine().equals(getClass());
+					}
+				});
+			}
+		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.mappings.engines.MappingEngine#supported()
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.mappings.engines.Engine#supported()
 	 */
 	@Override
 	public final Expression supported() {

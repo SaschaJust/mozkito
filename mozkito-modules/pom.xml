@@ -11,7 +11,6 @@
 	<description>Data Mining and Analyzation for Various Repositories</description>
 	<packaging>pom</packaging>
 	<modules>
-		<module>mozkito-atomicchanges</module>
 		<module>mozkito-callgraph</module>
 		<module>mozkito-causeeffect</module>
 		<module>mozkito-changecouplings</module>
@@ -35,9 +34,9 @@
 		</dependency>
 		<dependency>
 			<groupId>net.ownhero.dev</groupId>
-			<artifactId>hiari</artifactId>
-			<version>0.2-SNAPSHOT</version>
-		</dependency>
+			<artifactId>andama-exceptions</artifactId>
+			<version>0.4-SNAPSHOT</version>
+			</dependency>
 		<dependency>
 			<groupId>org.apache.derby</groupId>
 			<artifactId>derby</artifactId>

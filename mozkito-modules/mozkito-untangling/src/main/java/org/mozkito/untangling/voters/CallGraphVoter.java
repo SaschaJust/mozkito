@@ -71,7 +71,7 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 	 * @param cacheDir
 	 *            the cache dir
 	 */
-	protected CallGraphVoter(final File eclipseDir, final String[] eclipseArguments, final ChangeSet changeset,
+	public CallGraphVoter(final File eclipseDir, final String[] eclipseArguments, final ChangeSet changeset,
 	        final File cacheDir) {
 		File callGraphFile = null;
 		if ((cacheDir != null) && (cacheDir.isDirectory()) && (cacheDir.canRead())) {

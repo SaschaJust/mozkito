@@ -12,17 +12,8 @@
  **********************************************************************************************************************/
 package org.mozkito.mappings.selectors;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-
-import net.ownhero.dev.hiari.settings.ArgumentSet;
-import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
-import net.ownhero.dev.hiari.settings.IOptions;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
-import net.ownhero.dev.hiari.settings.requirements.Requirement;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
@@ -44,64 +35,12 @@ import org.mozkito.versions.model.ChangeSet;
  */
 public class ClassifiedReportSelector extends Selector {
 	
-	/**
-	 * The Class Options.
-	 */
-	public static final class Options extends
-	        ArgumentSetOptions<ClassifiedReportSelector, ArgumentSet<ClassifiedReportSelector, Options>> {
-		
-		/**
-		 * Instantiates a new options.
-		 * 
-		 * @param argumentSet
-		 *            the argument set
-		 * @param requirements
-		 *            the requirements
-		 */
-		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, ClassifiedReportSelector.TAG, ClassifiedReportSelector.DESCRIPTION, requirements);
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
-		 */
-		@Override
-		public ClassifiedReportSelector init() {
-			// PRECONDITIONS
-			
-			try {
-				return new ClassifiedReportSelector();
-			} finally {
-				// POSTCONDITIONS
-			}
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
-		 */
-		@Override
-		public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> argumentSet) throws ArgumentRegistrationException,
-		                                                                                    SettingsParseError {
-			// PRECONDITIONS
-			
-			try {
-				return new HashMap<String, IOptions<?, ?>>();
-			} finally {
-				// POSTCONDITIONS
-			}
-		}
-		
-	}
-	
 	/** The Constant DESCRIPTION. */
-	private static final String DESCRIPTION = Messages.getString("ClassifiedReportSelector.description"); //$NON-NLS-1$
-	                                                                                                      
+	public static final String DESCRIPTION = Messages.getString("ClassifiedReportSelector.description"); //$NON-NLS-1$
+	                                                                                                     
 	/** The Constant TAG. */
-	private static final String TAG         = "classifiedReport";                                        //$NON-NLS-1$
-	                                                                                                      
+	public static final String TAG         = "classifiedReport";                                        //$NON-NLS-1$
+	                                                                                                     
 	/*
 	 * (non-Javadoc)
 	 * @see org.mozkito.mappings.register.Node#getDescription()

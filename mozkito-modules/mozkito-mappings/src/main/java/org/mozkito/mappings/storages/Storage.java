@@ -13,7 +13,6 @@
 package org.mozkito.mappings.storages;
 
 import org.mozkito.mappings.register.Node;
-import org.mozkito.persistence.PersistenceUtil;
 
 /**
  * The Class MappingStorage.
@@ -24,11 +23,8 @@ public abstract class Storage extends Node {
 	
 	/**
 	 * Load data.
-	 * 
-	 * @param util
-	 *            the util
 	 */
-	public void loadData(final PersistenceUtil util) { // stub
+	public void loadData() { // stub
 	}
 	
 }

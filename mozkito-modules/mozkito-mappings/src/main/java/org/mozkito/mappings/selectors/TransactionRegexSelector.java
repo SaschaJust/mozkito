@@ -13,19 +13,10 @@
 package org.mozkito.mappings.selectors;
 
 import java.lang.reflect.Constructor;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.hiari.settings.ArgumentSet;
-import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
-import net.ownhero.dev.hiari.settings.IOptions;
-import net.ownhero.dev.hiari.settings.StringArgument;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
-import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.regex.Match;
 import net.ownhero.dev.regex.MultiMatch;
@@ -47,96 +38,24 @@ import org.mozkito.versions.model.ChangeSet;
  */
 public class TransactionRegexSelector extends Selector {
 	
-	/**
-	 * The Class Options.
-	 */
-	public static final class Options extends
-	        ArgumentSetOptions<TransactionRegexSelector, ArgumentSet<TransactionRegexSelector, Options>> {
-		
-		/** The pattern option. */
-		private StringArgument.Options patternOption;
-		
-		/**
-		 * Instantiates a new options.
-		 * 
-		 * @param argumentSet
-		 *            the argument set
-		 * @param requirements
-		 *            the requirements
-		 */
-		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, TransactionRegexSelector.TAG, TransactionRegexSelector.DESCRIPTION, requirements);
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
-		 */
-		@Override
-		public TransactionRegexSelector init() {
-			// PRECONDITIONS
-			
-			try {
-				final StringArgument patternArgument = getSettings().getArgument(this.patternOption);
-				return new TransactionRegexSelector(patternArgument.getValue());
-			} finally {
-				// POSTCONDITIONS
-			}
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
-		 */
-		@Override
-		public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> argumentSet) throws ArgumentRegistrationException,
-		                                                                                    SettingsParseError {
-			// PRECONDITIONS
-			
-			try {
-				final Map<String, IOptions<?, ?>> map = new HashMap<>();
-				this.patternOption = new StringArgument.Options(
-				                                                argumentSet,
-				                                                "pattern", //$NON-NLS-1$
-				                                                Messages.getString("TransactionRegexSelector.optionPattern"), //$NON-NLS-1$
-				                                                TransactionRegexSelector.DEFAULT_PATTERN,
-				                                                Requirement.required);
-				map.put(this.patternOption.getName(), this.patternOption);
-				return map;
-			} finally {
-				// POSTCONDITIONS
-			}
-		}
-		
-	}
-	
 	/** The Constant TAG. */
-	private static final String TAG             = "transactionRegex";                                        //$NON-NLS-1$
-	                                                                                                          
+	public static final String TAG             = "transactionRegex";                                        //$NON-NLS-1$
+	                                                                                                         
 	/** The Constant DEFAULT_PATTERN. */
-	private static final String DEFAULT_PATTERN = "(\\p{XDigit}{7,})";                                       //$NON-NLS-1$
-	                                                                                                          
+	public static final String DEFAULT_PATTERN = "(\\p{XDigit}{7,})";                                       //$NON-NLS-1$
+	                                                                                                         
 	/** The Constant DESCRIPTION. */
-	private static final String DESCRIPTION     = Messages.getString("TransactionRegexSelector.description"); //$NON-NLS-1$
-	                                                                                                          
+	public static final String DESCRIPTION     = Messages.getString("TransactionRegexSelector.description"); //$NON-NLS-1$
+	                                                                                                         
 	/** The pattern. */
-	private final String        pattern;
+	private final String       pattern;
 	
 	/**
 	 * Instantiates a new transaction regex selector.
 	 * 
-	 * @deprecated the default constructor should only be called by the active {@link PersistenceUtil}.
 	 */
-	@Deprecated
 	public TransactionRegexSelector() {
-		// PRECONDITIONS
-		
-		try {
-			this.pattern = TransactionRegexSelector.DEFAULT_PATTERN;
-		} finally {
-			// POSTCONDITIONS
-		}
+		this(TransactionRegexSelector.DEFAULT_PATTERN);
 	}
 	
 	/**

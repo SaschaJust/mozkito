@@ -12,17 +12,6 @@
  **********************************************************************************************************************/
 package org.mozkito.untangling.blob.combine;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import net.ownhero.dev.hiari.settings.ArgumentSet;
-import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
-import net.ownhero.dev.hiari.settings.IOptions;
-import net.ownhero.dev.hiari.settings.LongArgument;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
-import net.ownhero.dev.hiari.settings.requirements.Requirement;
-
 import org.joda.time.DateTime;
 import org.joda.time.Hours;
 
@@ -36,59 +25,6 @@ import org.mozkito.versions.model.ChangeSet;
  */
 public class ConsecutiveChangeCombineOperator implements CombineOperator<ChangeOperationSet> {
 	
-	/**
-	 * The Class Options.
-	 */
-	public static class Options
-	        extends
-	        ArgumentSetOptions<ConsecutiveChangeCombineOperator, ArgumentSet<ConsecutiveChangeCombineOperator, Options>> {
-		
-		/** The time window options. */
-		private net.ownhero.dev.hiari.settings.LongArgument.Options timeWindowOptions;
-		
-		/**
-		 * Instantiates a new options.
-		 * 
-		 * @param argumentSet
-		 *            the argument set
-		 * @param requirements
-		 *            the requirements
-		 */
-		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, "consecCombineOp", "ConsecutiveChangeCombineOperator options.", requirements);
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
-		 */
-		@Override
-		public ConsecutiveChangeCombineOperator init() {
-			// PRECONDITIONS
-			final Long timeWindow = getSettings().getArgument(this.timeWindowOptions).getValue();
-			return new ConsecutiveChangeCombineOperator(timeWindow.intValue());
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
-		 */
-		@Override
-		public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> argumentSet) throws ArgumentRegistrationException,
-		                                                                                    SettingsParseError {
-			// PRECONDITIONS
-			final Map<String, IOptions<?, ?>> map = new HashMap<>();
-			this.timeWindowOptions = new LongArgument.Options(
-			                                                  argumentSet,
-			                                                  "timeWindowSize",
-			                                                  "The number of hours that may lay between two change sets combined by the ConsecutiveChangeCombineOperator.",
-			                                                  0l, Requirement.required);
-			map.put(this.timeWindowOptions.getName(), this.timeWindowOptions);
-			return map;
-		}
-	}
-	
 	/** The time window. */
 	private final int timeWindow;
 	
@@ -98,7 +34,7 @@ public class ConsecutiveChangeCombineOperator implements CombineOperator<ChangeO
 	 * @param timeWindow
 	 *            the time window
 	 */
-	protected ConsecutiveChangeCombineOperator(final int timeWindow) {
+	public ConsecutiveChangeCombineOperator(final int timeWindow) {
 		this.timeWindow = timeWindow;
 	}
 	

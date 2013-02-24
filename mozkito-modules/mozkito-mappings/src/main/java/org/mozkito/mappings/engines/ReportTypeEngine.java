@@ -12,18 +12,11 @@
  **********************************************************************************************************************/
 package org.mozkito.mappings.engines;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import net.ownhero.dev.hiari.settings.ArgumentSet;
-import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
-import net.ownhero.dev.hiari.settings.DoubleArgument;
-import net.ownhero.dev.hiari.settings.EnumArgument;
-import net.ownhero.dev.hiari.settings.IOptions;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
-import net.ownhero.dev.hiari.settings.requirements.Requirement;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 
 import org.mozkito.issues.elements.Type;
 import org.mozkito.issues.model.Report;
@@ -31,6 +24,7 @@ import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.mappable.model.MappableReport;
 import org.mozkito.mappings.messages.Messages;
+import org.mozkito.mappings.model.Feature;
 import org.mozkito.mappings.model.Relation;
 import org.mozkito.mappings.requirements.Atom;
 import org.mozkito.mappings.requirements.Expression;
@@ -44,140 +38,31 @@ import org.mozkito.mappings.requirements.Or;
  */
 public class ReportTypeEngine extends Engine {
 	
-	/**
-	 * The Class Options.
-	 */
-	public static final class Options extends
-	        ArgumentSetOptions<ReportTypeEngine, ArgumentSet<ReportTypeEngine, Options>> {
-		
-		/** The confidence option. */
-		private DoubleArgument.Options                                    confidenceOption;
-		
-		/** The type option. */
-		private net.ownhero.dev.hiari.settings.EnumArgument.Options<Type> typeOption;
-		
-		/**
-		 * Instantiates a new options.
-		 * 
-		 * @param argumentSet
-		 *            the argument set
-		 * @param requirements
-		 *            the requirements
-		 */
-		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, ReportTypeEngine.TAG, ReportTypeEngine.DESCRIPTION, requirements);
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
-		 */
-		@Override
-		public ReportTypeEngine init() {
-			// PRECONDITIONS
-			
-			try {
-				final DoubleArgument confidenceArgument = getSettings().getArgument(this.confidenceOption);
-				final EnumArgument<Type> typeArgument = getSettings().getArgument(this.typeOption);
-				
-				return new ReportTypeEngine(confidenceArgument.getValue(), typeArgument.getValue());
-			} finally {
-				// POSTCONDITIONS
-			}
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
-		 */
-		@Override
-		public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> argumentSet) throws ArgumentRegistrationException,
-		                                                                                    SettingsParseError {
-			// PRECONDITIONS
-			
-			try {
-				final Map<String, IOptions<?, ?>> map = new HashMap<>();
-				this.confidenceOption = new DoubleArgument.Options(
-				                                                   argumentSet,
-				                                                   "confidence", //$NON-NLS-1$
-				                                                   Messages.getString("AuthorEqualityEngine.confidenceDescription"), //$NON-NLS-1$
-				                                                   ReportTypeEngine.getDefaultConfidence(),
-				                                                   Requirement.required);
-				map.put(this.confidenceOption.getName(), this.confidenceOption);
-				
-				this.typeOption = new EnumArgument.Options<Type>(
-				                                                 argumentSet,
-				                                                 "type", //$NON-NLS-1$
-				                                                 Messages.getString("ReportTypeEngine.typeDescription"), //$NON-NLS-1$
-				                                                 ReportTypeEngine.getDefaultType(),
-				                                                 Requirement.required);
-				map.put(this.typeOption.getName(), this.typeOption);
-				return map;
-			} finally {
-				// POSTCONDITIONS
-			}
-		}
-		
-	}
-	
 	/** The constant defaultConfidence. */
-	private static final Double DEAFULT_CONFIDENCE = 1d;
+	public static final Double DEFAULT_CONFIDENCE = 1d;
 	
 	/** The default type. */
-	private static final Type   DEFAULT_TYPE       = Type.BUG;
+	public static final Type   DEFAULT_TYPE       = Type.BUG;
 	
 	/** The constant description. */
-	private static final String DESCRIPTION        = Messages.getString("ReportTypeEngine.description"); //$NON-NLS-1$
-	                                                                                                     
+	public static final String DESCRIPTION        = Messages.getString("ReportTypeEngine.description"); //$NON-NLS-1$
+	                                                                                                    
 	/** The Constant TAG. */
-	private static final String TAG                = "reportType";                                      //$NON-NLS-1$
-	                                                                                                     
-	/**
-	 * Gets the default confidence.
-	 * 
-	 * @return the defaultconfidence
-	 */
-	private static Double getDefaultConfidence() {
-		// PRECONDITIONS
-		
-		try {
-			return ReportTypeEngine.DEAFULT_CONFIDENCE;
-		} finally {
-			// POSTCONDITIONS
-			Condition.notNull(ReportTypeEngine.DEAFULT_CONFIDENCE, "Field '%s' in '%s'.", "defaultConfidence", //$NON-NLS-1$ //$NON-NLS-2$
-			                  ReportTypeEngine.class.getSimpleName());
-		}
-	}
-	
-	/**
-	 * Gets the default type.
-	 * 
-	 * @return the defaultType
-	 */
-	private static Type getDefaultType() {
-		// PRECONDITIONS
-		
-		try {
-			return ReportTypeEngine.DEFAULT_TYPE;
-		} finally {
-			// POSTCONDITIONS
-			Condition.notNull(ReportTypeEngine.DEFAULT_TYPE,
-			                  "Field '%s' in '%s'.", "defaultType", ReportTypeEngine.class.getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-	}
-	
+	public static final String TAG                = "reportType";                                      //$NON-NLS-1$
+	                                                                                                    
 	/** The confidence. */
-	private Double confidence;
+	private Double             confidence;
 	
 	/** The type. */
-	private Type   type;
+	private Type               type;
 	
 	/**
 	 * Instantiates a new report type engine.
-	 *
-	 * @param confidence the confidence
-	 * @param type the type
+	 * 
+	 * @param confidence
+	 *            the confidence
+	 * @param type
+	 *            the type
 	 */
 	public ReportTypeEngine(final Double confidence, final Type type) {
 		// PRECONDITIONS
@@ -225,33 +110,58 @@ public class ReportTypeEngine extends Engine {
 		return this.type;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.mappings.engines.MappingEngine#score(de
-	 * .unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity, org.mozkito.mapping.mappable.MappableEntity,
-	 * org.mozkito.mapping.model.Mapping)
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.mappings.engines.Engine#score(org.mozkito.mappings.model.Relation)
 	 */
 	@Override
-	public void score(final MappableEntity element1,
-	                  final MappableEntity element2,
-	                  final Relation score) {
-		if (element1 instanceof MappableReport) {
-			if (element1.get(FieldKey.TYPE) == getType()) {
-				addFeature(score, getConfidence(), FieldKey.TYPE.name(), element1.get(FieldKey.TYPE).toString(),
-				           element1.get(FieldKey.TYPE).toString(), Engine.getUnused(), Engine.getUnknown(),
-				           Engine.getUnknown());
-			}
-		} else if (element2 instanceof MappableReport) {
-			if (element2.get(FieldKey.TYPE) == getType()) {
-				addFeature(score, getConfidence(), FieldKey.TYPE.name(), element2.get(FieldKey.TYPE).toString(),
-				           element2.get(FieldKey.TYPE).toString(), Engine.getUnused(), Engine.getUnknown(),
-				           Engine.getUnknown());
-			}
-		} else {
-			addFeature(score, -getConfidence(), Engine.getUnused(), Engine.getUnknown(), Engine.getUnknown(),
-			           Engine.getUnused(), Engine.getUnknown(), Engine.getUnknown());
+	public void score(final @NotNull Relation relation) {
+		PRECONDITIONS: {
+			// none
 		}
 		
+		try {
+			final MappableEntity from = relation.getFrom();
+			final MappableEntity to = relation.getTo();
+			
+			SANITY: {
+				assert from != null;
+				assert to != null;
+			}
+			
+			if (from instanceof MappableReport) {
+				if (from.get(FieldKey.TYPE) == getType()) {
+					addFeature(relation, getConfidence(), FieldKey.TYPE.name(), from.get(FieldKey.TYPE).toString(),
+					           from.get(FieldKey.TYPE).toString(), Engine.getUnused(), Engine.getUnknown(),
+					           Engine.getUnknown());
+				}
+			} else if (to instanceof MappableReport) {
+				if (to.get(FieldKey.TYPE) == getType()) {
+					addFeature(relation, getConfidence(), FieldKey.TYPE.name(), to.get(FieldKey.TYPE).toString(),
+					           to.get(FieldKey.TYPE).toString(), Engine.getUnused(), Engine.getUnknown(),
+					           Engine.getUnknown());
+				}
+			} else {
+				addFeature(relation, -getConfidence(), Engine.getUnused(), Engine.getUnknown(), Engine.getUnknown(),
+				           Engine.getUnused(), Engine.getUnknown(), Engine.getUnknown());
+			}
+		} finally {
+			POSTCONDITIONS: {
+				assert CollectionUtils.exists(relation.getFeatures(), new Predicate() {
+					
+					/**
+					 * {@inheritDoc}
+					 * 
+					 * @see org.apache.commons.collections.Predicate#evaluate(java.lang.Object)
+					 */
+					@Override
+					public boolean evaluate(final Object object) {
+						return ((Feature) object).getEngine().equals(getClass());
+					}
+				});
+			}
+		}
 	}
 	
 	/*

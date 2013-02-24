@@ -12,18 +12,9 @@
  **********************************************************************************************************************/
 package org.mozkito.mappings.selectors;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
-import net.ownhero.dev.hiari.settings.ArgumentSet;
-import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
-import net.ownhero.dev.hiari.settings.IOptions;
-import net.ownhero.dev.hiari.settings.StringArgument;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
-import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
@@ -50,123 +41,46 @@ import org.mozkito.versions.model.ChangeSet;
  */
 public class ReportRegexSelector extends Selector {
 	
-	/**
-	 * The Class Options.
-	 */
-	public static final class Options extends
-	        ArgumentSetOptions<ReportRegexSelector, ArgumentSet<ReportRegexSelector, Options>> {
-		
-		/** The pattern option. */
-		private StringArgument.Options                                patternOption;
-		
-		/** The tag option. */
-		private net.ownhero.dev.hiari.settings.StringArgument.Options tagOption;
-		
-		/**
-		 * Instantiates a new options.
-		 * 
-		 * @param argumentSet
-		 *            the argument set
-		 * @param requirements
-		 *            the requirements
-		 */
-		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, ReportRegexSelector.TAG, ReportRegexSelector.DESCRIPTION, requirements);
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
-		 */
-		@Override
-		public ReportRegexSelector init() {
-			// PRECONDITIONS
-			
-			try {
-				final StringArgument patternArgument = getSettings().getArgument(this.patternOption);
-				final ReportRegexSelector selector = new ReportRegexSelector(patternArgument.getValue());
-				final StringArgument tagArgument = getSettings().getArgument(this.tagOption);
-				
-				final String tag = tagArgument.getValue();
-				if (tag != null) {
-					selector.setTagFormat(tag);
-				}
-				return selector;
-			} finally {
-				// POSTCONDITIONS
-			}
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
-		 */
-		@Override
-		public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> argumentSet) throws ArgumentRegistrationException,
-		                                                                                    SettingsParseError {
-			// PRECONDITIONS
-			
-			try {
-				final Map<String, IOptions<?, ?>> map = new HashMap<>();
-				this.patternOption = new StringArgument.Options(
-				                                                argumentSet,
-				                                                "pattern", //$NON-NLS-1$
-				                                                Messages.getString("ReportRegexSelector.optionPattern"), //$NON-NLS-1$
-				                                                ReportRegexSelector.DEFAULT_PATTERN,
-				                                                Requirement.required);
-				map.put(this.patternOption.getName(), this.patternOption);
-				
-				this.tagOption = new StringArgument.Options(argumentSet, "tag", //$NON-NLS-1$
-				                                            Messages.getString("ReportRegexSelector.optionTag"), //$NON-NLS-1$
-				                                            null, Requirement.optional);
-				map.put(this.tagOption.getName(), this.tagOption);
-				
-				return map;
-			} finally {
-				// POSTCONDITIONS
-			}
-		}
-		
-	}
-	
 	/** The Constant DEFAULT_PATTERN. */
-	private static final String DEFAULT_PATTERN = "(\\p{Digit}{2,})";                                   //$NON-NLS-1$
-	                                                                                                     
+	public static final String DEFAULT_PATTERN = "(\\p{Digit}{2,})";                                   //$NON-NLS-1$
+	                                                                                                    
 	/** The Constant DESCRIPTION. */
-	private static final String DESCRIPTION     = Messages.getString("ReportRegexSelector.description"); //$NON-NLS-1$
-	                                                                                                     
+	public static final String DESCRIPTION     = Messages.getString("ReportRegexSelector.description"); //$NON-NLS-1$
+	                                                                                                    
 	/** The Constant TAG. */
-	private static final String TAG             = "reportRegex";                                        //$NON-NLS-1$
-	                                                                                                     
+	public static final String TAG             = "reportRegex";                                        //$NON-NLS-1$
+	                                                                                                    
 	/** The pattern. */
-	private final String        pattern;
+	private final String       pattern;
 	
 	/** The tag format. */
-	private String              tagFormat       = null;
+	private String             tagFormat       = null;
 	
 	/**
 	 * Instantiates a new report regex selector.
 	 * 
-	 * @deprecated default constructor should only be called by the active {@link PersistenceUtil}
+	 * @param tagFormat
+	 *            the tag format
 	 */
-	@Deprecated
-	public ReportRegexSelector() {
-		this.pattern = ReportRegexSelector.DEFAULT_PATTERN;
+	public ReportRegexSelector(final String tagFormat) {
+		this(tagFormat, ReportRegexSelector.DEFAULT_PATTERN);
 	}
 	
 	/**
 	 * Instantiates a new report regex selector.
 	 * 
+	 * @param tagFormat
+	 *            the tag format
 	 * @param pattern
 	 *            the pattern
 	 */
-	public ReportRegexSelector(final String pattern) {
+	public ReportRegexSelector(final String tagFormat, final String pattern) {
 		// PRECONDITIONS
 		
 		try {
 			// TODO warn if pattern does not contain groups
 			// TODO error if pattern contains more than 1 group and does not have a named group 'id'
+			setTagFormat(tagFormat);
 			this.pattern = pattern;
 		} finally {
 			// POSTCONDITIONS

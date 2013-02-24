@@ -1,0 +1,7 @@
+base=org.mozkito.issues.model.Report
+id=123
+text=there are several remaining warnings
+supported.0=author
+supported.1=comment
+field.author=just,sascha.just@mozkito.org,Sascha Just
+field.comment.1=fixed in 04ff08dd3f073dc98e39d68a324632ad4ba0450f

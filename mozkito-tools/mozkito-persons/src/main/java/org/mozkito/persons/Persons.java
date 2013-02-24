@@ -33,6 +33,7 @@ import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.persons.engine.MergingEngine;
 import org.mozkito.persons.messages.Messages;
 import org.mozkito.persons.processing.MergingProcessor;
+import org.mozkito.persons.settings.MergingEngineOptions;
 import org.mozkito.settings.DatabaseOptions;
 
 /**
@@ -43,16 +44,16 @@ import org.mozkito.settings.DatabaseOptions;
 public class Persons extends Chain<Settings> {
 	
 	/** The thread pool. */
-	private final Pool                                             threadPool;
+	private final Pool                                            threadPool;
 	
 	/** The database arguments. */
-	private ArgumentSet<PersistenceUtil, DatabaseOptions>          databaseArguments;
+	private ArgumentSet<PersistenceUtil, DatabaseOptions>         databaseArguments;
 	
 	/** The persistence util. */
-	private PersistenceUtil                                        persistenceUtil;
+	private PersistenceUtil                                       persistenceUtil;
 	
 	/** The engines set. */
-	private ArgumentSet<Set<MergingEngine>, MergingEngine.Options> enginesSet;
+	private ArgumentSet<Set<MergingEngine>, MergingEngineOptions> enginesSet;
 	
 	/**
 	 * Instantiates a new persons.
@@ -74,8 +75,8 @@ public class Persons extends Chain<Settings> {
 		this.threadPool = new Pool(Persons.class.getSimpleName(), this);
 		final Settings settings = getSettings();
 		this.persistenceUtil = util;
-		this.enginesSet = ArgumentSetFactory.create(new MergingEngine.Options(getSettings().getRoot(),
-		                                                                      Requirement.required));
+		this.enginesSet = ArgumentSetFactory.create(new MergingEngineOptions(getSettings().getRoot(),
+		                                                                     Requirement.required));
 		settings.loadByInheritance(MergingEngine.class.getPackage(), settings.getRoot());
 		
 	}
@@ -100,8 +101,8 @@ public class Persons extends Chain<Settings> {
 			                                                            "persistence"); //$NON-NLS-1$
 			this.databaseArguments = ArgumentSetFactory.create(databaseOptions);
 			
-			this.enginesSet = ArgumentSetFactory.create(new MergingEngine.Options(getSettings().getRoot(),
-			                                                                      Requirement.required));
+			this.enginesSet = ArgumentSetFactory.create(new MergingEngineOptions(getSettings().getRoot(),
+			                                                                     Requirement.required));
 			
 			settings.loadByInheritance(MergingEngine.class.getPackage(), settings.getRoot());
 		} catch (final ArgumentRegistrationException e) {
@@ -141,24 +142,6 @@ public class Persons extends Chain<Settings> {
 		final MergingProcessor processor = new MergingProcessor();
 		for (final MergingEngine engine : this.enginesSet.getValue()) {
 			processor.addEngine(engine);
-			try {
-				engine.provide(getSettings().getRoot());
-			} catch (final ArgumentRegistrationException e) {
-				if (Logger.logError()) {
-					Logger.error(e);
-				}
-				
-			} catch (final ArgumentSetRegistrationException e) {
-				if (Logger.logError()) {
-					Logger.error(e);
-				}
-				
-			} catch (final SettingsParseError e) {
-				if (Logger.logError()) {
-					Logger.error(e);
-				}
-			}
-			engine.init();
 		}
 		
 		processor.providePersistenceUtil(this.persistenceUtil);

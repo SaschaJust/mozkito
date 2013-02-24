@@ -15,15 +15,13 @@ package org.mozkito.infozilla.filters;
 
 import java.util.List;
 
-import net.ownhero.dev.hiari.settings.SettingsProvider;
-
 /**
  * This interface describes the method interface for every infoZilla InfozillaFilter.
  * 
  * @author Nicolas Bettenburg, Sascha Just
  * 
  */
-public abstract class InfozillaFilter implements SettingsProvider {
+public abstract class InfozillaFilter {
 	
 	/**
 	 * Gets the output text.

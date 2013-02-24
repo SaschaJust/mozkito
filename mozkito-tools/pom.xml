@@ -11,16 +11,19 @@
 	<description>Data Mining and Analyzation for Various Repositories</description>
 	<packaging>pom</packaging>
 	<modules>
+		<module>mozkito-atomicchanges</module>
+		<module>mozkito-callgraph</module>
+		<module>mozkito-causeeffect</module>
+		<module>mozkito-changecouplings</module>
+		<module>mozkito-codeanalysis</module>
+		<module>mozkito-genealogies</module>
+		<module>mozkito-genealogies-metrics</module>
+		<module>mozkito-infozilla</module>
 		<module>mozkito-issues</module>
 		<module>mozkito-mappings</module>
 		<module>mozkito-persons</module>
-		<module>mozkito-versions</module>
-		<module>mozkito-callgraph</module>
-		<module>mozkito-genealogies</module>
-		<module>mozkito-genealogies-metrics</module>
-		<module>mozkito-codeanalysis</module>
-		<module>mozkito-causeeffect</module>
 		<module>mozkito-untangling</module>
+		<module>mozkito-versions</module>
 	</modules>
 	<dependencies>
 		<dependency>
@@ -31,6 +34,11 @@
 		<dependency>
 			<groupId>net.ownhero.dev</groupId>
 			<artifactId>andama-core</artifactId>
+			<version>0.4-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mozkito</groupId>
+			<artifactId>mozkito-persistence-settings</artifactId>
 			<version>0.4-SNAPSHOT</version>
 		</dependency>
 	</dependencies>

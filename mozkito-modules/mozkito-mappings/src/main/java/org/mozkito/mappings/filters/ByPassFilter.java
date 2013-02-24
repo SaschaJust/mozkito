@@ -12,16 +12,6 @@
  **********************************************************************************************************************/
 package org.mozkito.mappings.filters;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import net.ownhero.dev.hiari.settings.ArgumentSet;
-import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
-import net.ownhero.dev.hiari.settings.IOptions;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
-import net.ownhero.dev.hiari.settings.requirements.Requirement;
-
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Mapping;
 import org.mozkito.mappings.requirements.ByPass;
@@ -34,62 +24,11 @@ import org.mozkito.mappings.requirements.Expression;
  */
 public class ByPassFilter extends Filter {
 	
-	/**
-	 * The Class Options.
-	 */
-	public static final class Options extends ArgumentSetOptions<ByPassFilter, ArgumentSet<ByPassFilter, Options>> {
-		
-		/**
-		 * Instantiates a new options.
-		 * 
-		 * @param argumentSet
-		 *            the argument set
-		 * @param requirements
-		 *            the requirements
-		 */
-		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, ByPassFilter.TAG, ByPassFilter.DESCRIPTION, requirements);
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
-		 */
-		@Override
-		public ByPassFilter init() {
-			// PRECONDITIONS
-			
-			try {
-				return new ByPassFilter();
-			} finally {
-				// POSTCONDITIONS
-			}
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
-		 */
-		@Override
-		public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> argumentSet) throws ArgumentRegistrationException,
-		                                                                                    SettingsParseError {
-			// PRECONDITIONS
-			
-			try {
-				return new HashMap<String, IOptions<?, ?>>();
-			} finally {
-				// POSTCONDITIONS
-			}
-		}
-		
-	}
-	
 	/** The Constant DESCRIPTION. */
-	public static final String  DESCRIPTION = Messages.getString("ByPassFilter.description"); //$NON-NLS-1$
+	public static final String DESCRIPTION = Messages.getString("ByPassFilter.description"); //$NON-NLS-1$
 	/** The Constant TAG. */
-	private static final String TAG         = "byPass";                                      //$NON-NLS-1$
-	                                                                                          
+	public static final String TAG         = "byPass";                                      //$NON-NLS-1$
+	                                                                                         
 	/*
 	 * (non-Javadoc)
 	 * @see org.mozkito.mappings.filters.Filter#filter(org.mozkito.mappings.model.Mapping)

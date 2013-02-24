@@ -60,8 +60,9 @@ public abstract class MappableEntity implements Annotated {
 	/** The generated id. */
 	private long              generatedId;
 	
-	/*
-	 * (non-Javadoc)
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -93,7 +94,7 @@ public abstract class MappableEntity implements Annotated {
 	 * @return the object
 	 */
 	@Transient
-	public abstract Object get(FieldKey key);
+	public abstract <T> T get(FieldKey key);
 	
 	/**
 	 * Gets the.
@@ -105,8 +106,8 @@ public abstract class MappableEntity implements Annotated {
 	 * @return the object
 	 */
 	@Transient
-	public abstract Object get(FieldKey key,
-	                           int index);
+	public abstract <T> T get(FieldKey key,
+	                          int index);
 	
 	/**
 	 * Gets the all.
@@ -178,9 +179,9 @@ public abstract class MappableEntity implements Annotated {
 	public abstract Class<?> getBaseType();
 	
 	/**
-	 * Gets the handle.
+	 * {@inheritDoc}
 	 * 
-	 * @return the handle
+	 * @see org.mozkito.persistence.Annotated#getClassName()
 	 */
 	@Override
 	@Transient
@@ -192,9 +193,14 @@ public abstract class MappableEntity implements Annotated {
 		try {
 			final LinkedList<Class<?>> list = new LinkedList<Class<?>>();
 			Class<?> clazz = getClass();
+			
+			SANITY: {
+				assert clazz != null;
+			}
+			
 			list.add(clazz);
 			
-			while ((clazz = clazz.getEnclosingClass()) != null) {
+			for (clazz = clazz.getEnclosingClass(); clazz != null; clazz = clazz.getEnclosingClass()) {
 				list.addFirst(clazz);
 			}
 			
@@ -257,8 +263,9 @@ public abstract class MappableEntity implements Annotated {
 	@Transient
 	public abstract String getText();
 	
-	/*
-	 * (non-Javadoc)
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override

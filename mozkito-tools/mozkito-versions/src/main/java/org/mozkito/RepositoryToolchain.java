@@ -36,10 +36,10 @@ import org.joda.time.DateTime;
 
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.settings.DatabaseOptions;
-import org.mozkito.settings.RepositoryOptions;
 import org.mozkito.versions.Repository;
 import org.mozkito.versions.exceptions.RepositoryOperationException;
 import org.mozkito.versions.model.VersionArchive;
+import org.mozkito.versions.settings.RepositoryOptions;
 
 /**
  * The Class RepositoryToolchain.

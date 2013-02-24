@@ -17,21 +17,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import au.com.bytecode.opencsv.CSVReader;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.hiari.settings.ArgumentSet;
-import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
-import net.ownhero.dev.hiari.settings.IOptions;
-import net.ownhero.dev.hiari.settings.StringArgument;
-import net.ownhero.dev.hiari.settings.URIArgument;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
-import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
@@ -39,11 +29,14 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.ArrayUtils;
 
 import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.messages.Messages;
+import org.mozkito.mappings.model.Feature;
 import org.mozkito.mappings.model.Relation;
 import org.mozkito.mappings.requirements.And;
 import org.mozkito.mappings.requirements.Atom;
@@ -194,83 +187,6 @@ public class RegexEngine extends Engine {
 		
 	}
 	
-	/**
-	 * The Class Options.
-	 */
-	public static final class Options extends ArgumentSetOptions<RegexEngine, ArgumentSet<RegexEngine, Options>> {
-		
-		/** The config uri option. */
-		private URIArgument.Options    configURIOption;
-		
-		/** The unpad option. */
-		private StringArgument.Options unpadOption;
-		
-		/**
-		 * Instantiates a new options.
-		 * 
-		 * @param argumentSet
-		 *            the argument set
-		 * @param requirements
-		 *            the requirements
-		 */
-		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, RegexEngine.class.getSimpleName(), Messages.getString("RegexEngine.description"), //$NON-NLS-1$
-			      requirements);
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
-		 */
-		@Override
-		public RegexEngine init() {
-			// PRECONDITIONS
-			
-			try {
-				final URIArgument configURIArgument = getSettings().getArgument(this.configURIOption);
-				final RegexEngine engine = new RegexEngine(configURIArgument.getValue());
-				final StringArgument unpadArgument = getSettings().getArgument(this.unpadOption);
-				
-				if (unpadArgument.getValue() != null) {
-					engine.unpad = unpadArgument.getValue();
-				}
-				
-				return engine;
-			} finally {
-				// POSTCONDITIONS
-			}
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
-		 */
-		@Override
-		public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> argumentSet) throws ArgumentRegistrationException,
-		                                                                                    SettingsParseError {
-			// PRECONDITIONS
-			
-			try {
-				final Map<String, IOptions<?, ?>> map = new HashMap<>();
-				this.configURIOption = new URIArgument.Options(argumentSet, "config", //$NON-NLS-1$
-				                                               Messages.getString("RegexEngine.configDescription"), //$NON-NLS-1$
-				                                               null, Requirement.required);
-				map.put(this.configURIOption.getName(), this.configURIOption);
-				
-				this.unpadOption = new StringArgument.Options(
-				                                              argumentSet,
-				                                              "unpad", Messages.getString("RegexEngine.unpadDescription"), null, Requirement.optional); //$NON-NLS-1$ //$NON-NLS-2$
-				map.put(this.unpadOption.getName(), this.unpadOption);
-				
-				return map;
-			} finally {
-				// POSTCONDITIONS
-			}
-		}
-		
-	}
-	
 	/** The config uri. */
 	private URI                 configURI;
 	
@@ -290,7 +206,7 @@ public class RegexEngine extends Engine {
 	 * @param configURI
 	 *            the config uri
 	 */
-	private RegexEngine(@NotNull final URI configURI) {
+	public RegexEngine(@NotNull final URI configURI) {
 		// PRECONDITIONS
 		
 		try {
@@ -377,52 +293,78 @@ public class RegexEngine extends Engine {
 		return this.matchers;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.mappings.engines.MappingEngine#score(de
-	 * .unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity, org.mozkito.mapping.mappable.MappableEntity,
-	 * org.mozkito.mapping.model.Mapping)
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.mappings.engines.Engine#score(org.mozkito.mappings.model.Relation)
 	 */
 	@Override
-	public final void score(final MappableEntity element1,
-	                        final MappableEntity element2,
-	                        final Relation score) {
-		double value = 0d;
-		String relevantString = ""; //$NON-NLS-1$
-		
-		if (Logger.logDebug()) {
-			Logger.debug(this.getClass().getSimpleName() + " checking " + element1); //$NON-NLS-1$
+	public void score(final @NotNull Relation relation) {
+		PRECONDITIONS: {
+			// none
 		}
 		
-		for (final Matcher matcher : this.matchers) {
-			final String id = element2.getId();
+		try {
+			final MappableEntity from = relation.getFrom();
+			final MappableEntity to = relation.getTo();
 			
-			if (this.unpad != null) {
-				if (Logger.logDebug()) {
-					Logger.debug("Unpadding '%s' using [%s].", id, this.unpad); //$NON-NLS-1$
-				}
-				id.replaceAll("^[" + this.unpad + "]+", "[" + this.unpad + "]*"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			SANITY: {
+				assert from != null;
+				assert to != null;
 			}
 			
-			final Regex regex = matcher.getRegex(id);
+			double value = 0d;
+			String relevantString = ""; //$NON-NLS-1$
 			
-			if (value < matcher.getScore()) {
-				if (Logger.logDebug()) {
-					Logger.debug("Using regex '" + regex.getPattern() + "'."); //$NON-NLS-1$ //$NON-NLS-2$
+			if (Logger.logDebug()) {
+				Logger.debug(this.getClass().getSimpleName() + " checking " + from); //$NON-NLS-1$
+			}
+			
+			for (final Matcher matcher : this.matchers) {
+				final String id = to.getId();
+				
+				if (this.unpad != null) {
+					if (Logger.logDebug()) {
+						Logger.debug("Unpadding '%s' using [%s].", id, this.unpad); //$NON-NLS-1$
+					}
+					id.replaceAll("^[" + this.unpad + "]+", "[" + this.unpad + "]*"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				}
 				
-				if ((regex.find(element1.get(FieldKey.BODY).toString()) != null) && (matcher.getScore() > value)) {
-					value = matcher.getScore();
-					relevantString = regex.getGroup("match"); //$NON-NLS-1$
+				final Regex regex = matcher.getRegex(id);
+				
+				if (value < matcher.getScore()) {
 					if (Logger.logDebug()) {
-						Logger.debug("Found match: %s", relevantString); //$NON-NLS-1$
+						Logger.debug("Using regex '" + regex.getPattern() + "'."); //$NON-NLS-1$ //$NON-NLS-2$
+					}
+					
+					if ((regex.find(from.get(FieldKey.BODY).toString()) != null) && (matcher.getScore() > value)) {
+						value = matcher.getScore();
+						relevantString = regex.getGroup("match"); //$NON-NLS-1$
+						if (Logger.logDebug()) {
+							Logger.debug("Found match: %s", relevantString); //$NON-NLS-1$
+						}
 					}
 				}
 			}
+			
+			addFeature(relation, value, FieldKey.BODY.name(), from.get(FieldKey.BODY).toString(), relevantString,
+			           FieldKey.ID.name(), to.get(FieldKey.ID).toString(), to.get(FieldKey.ID).toString());
+		} finally {
+			POSTCONDITIONS: {
+				assert CollectionUtils.exists(relation.getFeatures(), new Predicate() {
+					
+					/**
+					 * {@inheritDoc}
+					 * 
+					 * @see org.apache.commons.collections.Predicate#evaluate(java.lang.Object)
+					 */
+					@Override
+					public boolean evaluate(final Object object) {
+						return ((Feature) object).getEngine().equals(getClass());
+					}
+				});
+			}
 		}
-		
-		addFeature(score, value, FieldKey.BODY.name(), element1.get(FieldKey.BODY).toString(), relevantString,
-		           FieldKey.ID.name(), element2.get(FieldKey.ID).toString(), element2.get(FieldKey.ID).toString());
 	}
 	
 	/**

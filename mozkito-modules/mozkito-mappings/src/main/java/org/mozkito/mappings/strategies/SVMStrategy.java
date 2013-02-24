@@ -13,20 +13,11 @@
 package org.mozkito.mappings.strategies;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Queue;
 
 import libsvm.svm;
 import libsvm.svm_model;
 import libsvm.svm_node;
-import net.ownhero.dev.hiari.settings.ArgumentSet;
-import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
-import net.ownhero.dev.hiari.settings.IOptions;
-import net.ownhero.dev.hiari.settings.InputFileArgument;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
-import net.ownhero.dev.hiari.settings.requirements.Requirement;
 
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Composite;
@@ -40,86 +31,22 @@ import org.mozkito.mappings.training.LibSVMTrainer;
  */
 public class SVMStrategy extends Strategy {
 	
-	/**
-	 * The Class Options.
-	 */
-	public static final class Options extends ArgumentSetOptions<SVMStrategy, ArgumentSet<SVMStrategy, Options>> {
-		
-		/** The negative file option. */
-		private InputFileArgument.Options negativeFileOption;
-		
-		/** The positive file option. */
-		private InputFileArgument.Options positiveFileOption;
-		
-		/**
-		 * Instantiates a new options.
-		 * 
-		 * @param argumentSet
-		 *            the argument set
-		 * @param requirements
-		 *            the requirements
-		 */
-		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, SVMStrategy.TAG, SVMStrategy.DESCRIPTION, requirements);
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
-		 */
-		@Override
-		public SVMStrategy init() {
-			// PRECONDITIONS
-			
-			try {
-				final InputFileArgument positiveFileArgument = getSettings().getArgument(this.positiveFileOption);
-				final InputFileArgument negativeFileArgument = getSettings().getArgument(this.negativeFileOption);
-				return new SVMStrategy(positiveFileArgument.getValue(), negativeFileArgument.getValue());
-			} finally {
-				// POSTCONDITIONS
-			}
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
-		 */
-		@Override
-		public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> argumentSet) throws ArgumentRegistrationException,
-		                                                                                    SettingsParseError {
-			final Map<String, IOptions<?, ?>> map = new HashMap<>();
-			
-			this.positiveFileOption = new InputFileArgument.Options(
-			                                                        argumentSet,
-			                                                        "positiveSamples", Messages.getString("SVMStrategy.optionPositiveSamples"), null, //$NON-NLS-1$ //$NON-NLS-2$
-			                                                        Requirement.required);
-			map.put(this.positiveFileOption.getName(), this.positiveFileOption);
-			this.negativeFileOption = new InputFileArgument.Options(
-			                                                        argumentSet,
-			                                                        "negativeSamples", Messages.getString("SVMStrategy.optionNevativeSamples"), null, //$NON-NLS-1$ //$NON-NLS-2$
-			                                                        Requirement.required);
-			map.put(this.negativeFileOption.getName(), this.negativeFileOption);
-			
-			return map;
-		}
-		
-	}
-	
 	/** The model. */
-	svm_model                   model;
+	private svm_model          model;
 	
 	/** The Constant TAG. */
-	private static final String TAG         = "svm";                                        //$NON-NLS-1$
-	
+	public static final String TAG         = "svm";                                        //$NON-NLS-1$
+	                                                                                        
 	/** The Constant DESCRIPTION. */
-	private static final String DESCRIPTION = Messages.getString("SVMStrategy.description"); //$NON-NLS-1$
-	                                                                                         
+	public static final String DESCRIPTION = Messages.getString("SVMStrategy.description"); //$NON-NLS-1$
+	                                                                                        
 	/**
 	 * Instantiates a new sVM strategy.
-	 *
-	 * @param value the value
-	 * @param value2 the value2
+	 * 
+	 * @param value
+	 *            the value
+	 * @param value2
+	 *            the value2
 	 */
 	public SVMStrategy(final File value, final File value2) {
 		// PRECONDITIONS

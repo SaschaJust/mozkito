@@ -42,20 +42,21 @@ import net.ownhero.dev.kisa.Logger;
 import org.mozkito.persistence.PPAPersistenceUtil;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.settings.DatabaseOptions;
-import org.mozkito.settings.RepositoryOptions;
 import org.mozkito.untangling.Untangling.ScoreCombinationMode;
 import org.mozkito.untangling.Untangling.UntanglingCollapse;
 import org.mozkito.untangling.blob.ArtificialBlobGenerator;
 import org.mozkito.untangling.blob.ArtificialBlobGenerator.ArtificialBlobGeneratorStrategy;
 import org.mozkito.untangling.blob.ChangeOperationSet;
-import org.mozkito.untangling.blob.combine.ChangeCouplingCombineOperator;
-import org.mozkito.untangling.blob.combine.ConsecutiveChangeCombineOperator;
-import org.mozkito.untangling.blob.combine.PackageDistanceCombineOperator;
-import org.mozkito.untangling.voters.CallGraphVoterOptions;
 import org.mozkito.untangling.voters.ChangeCouplingVoter;
-import org.mozkito.untangling.voters.DataDependencyVoterOptions;
-import org.mozkito.untangling.voters.TestImpactVoterOptions;
+import org.mozkito.untanlging.settings.operators.ChangeCouplingCombineOperatorOptions;
+import org.mozkito.untanlging.settings.operators.ConsecutiveChangeCombineOperatorOptions;
+import org.mozkito.untanlging.settings.operators.PackageDistanceCombineOperatorOptions;
+import org.mozkito.untanlging.settings.voters.CallGraphVoterOptions;
+import org.mozkito.untanlging.settings.voters.ChangeCouplingVoterOptions;
+import org.mozkito.untanlging.settings.voters.DataDependencyVoterOptions;
+import org.mozkito.untanlging.settings.voters.TestImpactVoterOptions;
 import org.mozkito.versions.model.ChangeSet;
+import org.mozkito.versions.settings.RepositoryOptions;
 
 /**
  * The Class UntanglingOptions.
@@ -114,28 +115,28 @@ public class UntanglingOptions extends
 	private DatabaseOptions                                                               databaseOptions;
 	
 	/** The change coupling combine options. */
-	private org.mozkito.untangling.blob.combine.ChangeCouplingCombineOperator.Options     changeCouplingCombineOptions;
+	private ChangeCouplingCombineOperatorOptions                                          changeCouplingCombineOptions;
 	
 	/** The consecutive combine options. */
-	private org.mozkito.untangling.blob.combine.ConsecutiveChangeCombineOperator.Options  consecutiveCombineOptions;
+	private ConsecutiveChangeCombineOperatorOptions                                       consecutiveCombineOptions;
 	
 	/** The blob window size options. */
 	private Options                                                                       blobWindowSizeOptions;
 	
 	/** The package distance combine options. */
-	private org.mozkito.untangling.blob.combine.PackageDistanceCombineOperator.Options    packageDistanceCombineOptions;
+	private PackageDistanceCombineOperatorOptions                                         packageDistanceCombineOptions;
 	
 	/** The call graph voter options. */
-	private org.mozkito.untangling.voters.CallGraphVoterOptions                           callGraphVoterOptions;
+	private CallGraphVoterOptions                                                         callGraphVoterOptions;
 	
 	/** The change coupling voter options. */
-	private org.mozkito.untangling.voters.ChangeCouplingVoter.Options                     changeCouplingVoterOptions;
+	private ChangeCouplingVoterOptions                                                    changeCouplingVoterOptions;
 	
 	/** The data dependency voter options. */
-	private org.mozkito.untangling.voters.DataDependencyVoterOptions                      dataDependencyVoterOptions;
+	private DataDependencyVoterOptions                                                    dataDependencyVoterOptions;
 	
 	/** The test impact voter options. */
-	private org.mozkito.untangling.voters.TestImpactVoterOptions                          testImpactVoterOptions;
+	private TestImpactVoterOptions                                                        testImpactVoterOptions;
 	
 	/** The artificial blob cache options. */
 	private net.ownhero.dev.hiari.settings.DirectoryArgument.Options                      artificialBlobCacheOptions;
@@ -275,7 +276,7 @@ public class UntanglingOptions extends
 				control.setChangeSetsToUntangle(instructions);
 			}
 			
-			final ArgumentSet<org.mozkito.untangling.voters.CallGraphVoterOptions.Factory, org.mozkito.untangling.voters.CallGraphVoterOptions> callGraphVoterArg = getSettings().getArgumentSet(this.callGraphVoterOptions);
+			final ArgumentSet<org.mozkito.untanlging.settings.voters.CallGraphVoterOptions.Factory, org.mozkito.untanlging.settings.voters.CallGraphVoterOptions> callGraphVoterArg = getSettings().getArgumentSet(this.callGraphVoterOptions);
 			if (callGraphVoterArg != null) {
 				final CallGraphVoterOptions.Factory callGraphVoter = callGraphVoterArg.getValue();
 				if (callGraphVoter != null) {
@@ -283,7 +284,7 @@ public class UntanglingOptions extends
 				}
 			}
 			
-			final ArgumentSet<org.mozkito.untangling.voters.ChangeCouplingVoter.Factory, org.mozkito.untangling.voters.ChangeCouplingVoter.Options> changeCouplingVoterArg = getSettings().getArgumentSet(this.changeCouplingVoterOptions);
+			final ArgumentSet<org.mozkito.untangling.voters.ChangeCouplingVoter.Factory, ChangeCouplingVoterOptions> changeCouplingVoterArg = getSettings().getArgumentSet(this.changeCouplingVoterOptions);
 			if (changeCouplingVoterArg != null) {
 				final ChangeCouplingVoter.Factory changeCouplingVoter = changeCouplingVoterArg.getValue();
 				if (changeCouplingVoter != null) {
@@ -291,7 +292,7 @@ public class UntanglingOptions extends
 				}
 			}
 			
-			final ArgumentSet<org.mozkito.untangling.voters.DataDependencyVoterOptions.Factory, org.mozkito.untangling.voters.DataDependencyVoterOptions> dataDepVoterArg = getSettings().getArgumentSet(this.dataDependencyVoterOptions);
+			final ArgumentSet<org.mozkito.untanlging.settings.voters.DataDependencyVoterOptions.Factory, org.mozkito.untanlging.settings.voters.DataDependencyVoterOptions> dataDepVoterArg = getSettings().getArgumentSet(this.dataDependencyVoterOptions);
 			if (dataDepVoterArg != null) {
 				final DataDependencyVoterOptions.Factory dataDependencyVoter = dataDepVoterArg.getValue();
 				if (dataDependencyVoter != null) {
@@ -299,7 +300,7 @@ public class UntanglingOptions extends
 				}
 			}
 			
-			final ArgumentSet<org.mozkito.untangling.voters.TestImpactVoterOptions.Factory, org.mozkito.untangling.voters.TestImpactVoterOptions> testImpactVoterArg = getSettings().getArgumentSet(this.testImpactVoterOptions);
+			final ArgumentSet<org.mozkito.untanlging.settings.voters.TestImpactVoterOptions.Factory, org.mozkito.untanlging.settings.voters.TestImpactVoterOptions> testImpactVoterArg = getSettings().getArgumentSet(this.testImpactVoterOptions);
 			if (testImpactVoterArg != null) {
 				final TestImpactVoterOptions.Factory testImpactVoter = testImpactVoterArg.getValue();
 				if (testImpactVoter != null) {
@@ -450,27 +451,27 @@ public class UntanglingOptions extends
 			                                                     new ArrayList<String>(0), Requirement.optional);
 			map.put(this.atomicChangesOptions.getName(), this.atomicChangesOptions);
 			
-			this.changeCouplingCombineOptions = new ChangeCouplingCombineOperator.Options(
-			                                                                              set,
-			                                                                              Requirement.equals(this.generatorStrategyOptions,
-			                                                                                                 ArtificialBlobGeneratorStrategy.COUPLINGS),
-			                                                                              this.databaseOptions);
+			this.changeCouplingCombineOptions = new ChangeCouplingCombineOperatorOptions(
+			                                                                             set,
+			                                                                             Requirement.equals(this.generatorStrategyOptions,
+			                                                                                                ArtificialBlobGeneratorStrategy.COUPLINGS),
+			                                                                             this.databaseOptions);
 			if (this.changeCouplingCombineOptions.required()) {
 				map.put(this.changeCouplingCombineOptions.getName(), this.changeCouplingCombineOptions);
 			}
 			
-			this.consecutiveCombineOptions = new ConsecutiveChangeCombineOperator.Options(
-			                                                                              set,
-			                                                                              Requirement.equals(this.generatorStrategyOptions,
-			                                                                                                 ArtificialBlobGeneratorStrategy.CONSECUTIVE));
+			this.consecutiveCombineOptions = new ConsecutiveChangeCombineOperatorOptions(
+			                                                                             set,
+			                                                                             Requirement.equals(this.generatorStrategyOptions,
+			                                                                                                ArtificialBlobGeneratorStrategy.CONSECUTIVE));
 			if (this.consecutiveCombineOptions.required()) {
 				map.put(this.consecutiveCombineOptions.getName(), this.consecutiveCombineOptions);
 			}
 			
-			this.packageDistanceCombineOptions = new PackageDistanceCombineOperator.Options(
-			                                                                                set,
-			                                                                                Requirement.equals(this.generatorStrategyOptions,
-			                                                                                                   ArtificialBlobGeneratorStrategy.PACKAGE));
+			this.packageDistanceCombineOptions = new PackageDistanceCombineOperatorOptions(
+			                                                                               set,
+			                                                                               Requirement.equals(this.generatorStrategyOptions,
+			                                                                                                  ArtificialBlobGeneratorStrategy.PACKAGE));
 			if (this.packageDistanceCombineOptions.required()) {
 				map.put(this.packageDistanceCombineOptions.getName(), this.packageDistanceCombineOptions);
 			}
@@ -492,11 +493,11 @@ public class UntanglingOptions extends
 			                                                             true, Requirement.required);
 			map.put(this.useChangeCouplingsOptions.getName(), this.useChangeCouplingsOptions);
 			
-			this.changeCouplingVoterOptions = new ChangeCouplingVoter.Options(
-			                                                                  set,
-			                                                                  Requirement.equals(this.useChangeCouplingsOptions,
-			                                                                                     true),
-			                                                                  this.databaseOptions);
+			this.changeCouplingVoterOptions = new ChangeCouplingVoterOptions(
+			                                                                 set,
+			                                                                 Requirement.equals(this.useChangeCouplingsOptions,
+			                                                                                    true),
+			                                                                 this.databaseOptions);
 			if (this.changeCouplingVoterOptions.required()) {
 				map.put(this.changeCouplingVoterOptions.getName(), this.changeCouplingVoterOptions);
 			}

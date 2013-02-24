@@ -48,9 +48,9 @@ import org.mozkito.codeanalysis.model.JavaElementLocationSet;
 import org.mozkito.codeanalysis.utils.PPAUtils;
 import org.mozkito.codeanalysis.visitors.PPATypeVisitor;
 import org.mozkito.settings.DatabaseOptions;
-import org.mozkito.settings.RepositoryOptions;
 import org.mozkito.versions.Repository;
 import org.mozkito.versions.exceptions.RepositoryOperationException;
+import org.mozkito.versions.settings.RepositoryOptions;
 
 /**
  * The Class CallGraphToolChain.

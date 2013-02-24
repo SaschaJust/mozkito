@@ -13,20 +13,17 @@
 package org.mozkito.mappings.engines;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.hiari.settings.ArgumentSet;
-import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
-import net.ownhero.dev.hiari.settings.IOptions;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
-import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.JavaUtils;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
+
 import difflib.Delta;
 
 import org.mozkito.infozilla.model.EnhancedReport;
@@ -35,6 +32,7 @@ import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.mappable.model.MappableStructuredReport;
 import org.mozkito.mappings.mappable.model.MappableTransaction;
 import org.mozkito.mappings.messages.Messages;
+import org.mozkito.mappings.model.Feature;
 import org.mozkito.mappings.model.Relation;
 import org.mozkito.mappings.requirements.And;
 import org.mozkito.mappings.requirements.Atom;
@@ -55,65 +53,19 @@ import org.mozkito.versions.model.Handle;
  */
 public class PatchEngine extends Engine {
 	
-	/**
-	 * The Class Options.
-	 */
-	public static final class Options extends ArgumentSetOptions<PatchEngine, ArgumentSet<PatchEngine, Options>> {
-		
-		/**
-		 * Instantiates a new options.
-		 * 
-		 * @param argumentSet
-		 *            the argument set
-		 * @param requirements
-		 *            the requirements
-		 */
-		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, PatchEngine.TAG, PatchEngine.DESCRIPTION, requirements);
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
-		 */
-		@Override
-		public PatchEngine init() {
-			// PRECONDITIONS
-			
-			try {
-				return new PatchEngine();
-			} finally {
-				// POSTCONDITIONS
-			}
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
-		 */
-		@Override
-		public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> argumentSet) throws ArgumentRegistrationException,
-		                                                                                    SettingsParseError {
-			// PRECONDITIONS
-			
-			try {
-				return new HashMap<String, IOptions<?, ?>>();
-			} finally {
-				// POSTCONDITIONS
-			}
-		}
-		
-	}
-	
 	/** The Constant DESCRIPTION. */
-	private static final String DESCRIPTION = Messages.getString("PatchEngine.description"); //$NON-NLS-1$
-	                                                                                         
+	public static final String DESCRIPTION = Messages.getString("PatchEngine.description"); //$NON-NLS-1$
+	                                                                                        
 	/** The Constant TAG. */
-	private static final String TAG         = "patch";                                      //$NON-NLS-1$
-	                                                                                         
+	public static final String TAG         = "patch";
+	
 	/*
 	 * (non-Javadoc)
+	 * @see org.mozkito.mappings.register.Node#getDescription()
+	 */
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see org.mozkito.mappings.register.Node#getDescription()
 	 */
 	@Override
@@ -127,18 +79,26 @@ public class PatchEngine extends Engine {
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.mappings.engines.MappingEngine#score(org.mozkito.mappings.mappable.model.MappableEntity,
-	 * org.mozkito.mappings.mappable.model.MappableEntity, org.mozkito.mappings.model.Relation)
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.mappings.engines.Engine#score(org.mozkito.mappings.model.Relation)
 	 */
 	@Override
-	public void score(final MappableEntity from,
-	                  final MappableEntity to,
-	                  final Relation score) {
-		// PRECONDITIONS
+	public void score(final @NotNull Relation relation) {
+		PRECONDITIONS: {
+			// none
+		}
 		
 		try {
+			final MappableEntity from = relation.getFrom();
+			final MappableEntity to = relation.getTo();
+			
+			SANITY: {
+				assert from != null;
+				assert to != null;
+			}
+			
 			final MappableStructuredReport mappableStructuredReport = (MappableStructuredReport) from;
 			final EnhancedReport report = mappableStructuredReport.getReport();
 			
@@ -194,36 +154,60 @@ public class PatchEngine extends Engine {
 				}
 			}
 			
-			addFeature(score, localConfidence, "PATCH", JavaUtils.collectionToString(patches), //$NON-NLS-1$
+			addFeature(relation, localConfidence, "PATCH", JavaUtils.collectionToString(patches), //$NON-NLS-1$
 			           "", "DIFF", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			
 		} finally {
-			// POSTCONDITIONS
+			POSTCONDITIONS: {
+				assert CollectionUtils.exists(relation.getFeatures(), new Predicate() {
+					
+					/**
+					 * {@inheritDoc}
+					 * 
+					 * @see org.apache.commons.collections.Predicate#evaluate(java.lang.Object)
+					 */
+					@Override
+					public boolean evaluate(final Object object) {
+						return ((Feature) object).getEngine().equals(getClass());
+					}
+				});
+			}
 		}
 	}
 	
 	/**
 	 * Similarity.
-	 *
-	 * @param patch the patch
-	 * @param diff the diff
+	 * 
+	 * @param patch
+	 *            the patch
+	 * @param diff
+	 *            the diff
 	 * @return the double
 	 */
 	private double similarity(final Patch patch,
 	                          final Collection<Delta> diff) {
-		// PRECONDITIONS
+		PRECONDITIONS: {
+			// none
+		}
 		
 		try {
 			// TODO Auto-generated method stub
 			// return 0;
 			throw new RuntimeException("Method 'similarity' has not yet been implemented."); //$NON-NLS-1$
 		} finally {
-			// POSTCONDITIONS
+			POSTCONDITIONS: {
+				// none
+			}
 		}
 	}
 	
 	/*
 	 * (non-Javadoc)
+	 * @see org.mozkito.mappings.register.Node#storageDependency()
+	 */
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see org.mozkito.mappings.register.Node#storageDependency()
 	 */
 	@Override
@@ -250,6 +234,11 @@ public class PatchEngine extends Engine {
 	/*
 	 * (non-Javadoc)
 	 * @see org.mozkito.mappings.engines.MappingEngine#supported()
+	 */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.mappings.engines.Engine#supported()
 	 */
 	@Override
 	public Expression supported() {

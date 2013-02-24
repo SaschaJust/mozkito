@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import net.ownhero.dev.ioda.URIUtils;
@@ -370,9 +369,8 @@ public class SubversionRepository extends Repository {
 							map.put(changedPaths.get(o).getPath(), ChangeType.Renamed);
 							break;
 						default:
-							throw UnrecoverableError.format("Unsupported change type '%s'. %s", changedPaths.get(o)
-							                                                                                .getType(),
-							                                Settings.getReportThis());
+							throw UnrecoverableError.format("Unsupported change type '%s'.", changedPaths.get(o)
+							                                                                             .getType());
 							
 					}
 				}

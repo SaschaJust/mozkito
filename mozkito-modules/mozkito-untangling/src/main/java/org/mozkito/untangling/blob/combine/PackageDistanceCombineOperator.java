@@ -13,17 +13,8 @@
 package org.mozkito.untangling.blob.combine;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import net.ownhero.dev.hiari.settings.ArgumentSet;
-import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
-import net.ownhero.dev.hiari.settings.IOptions;
-import net.ownhero.dev.hiari.settings.LongArgument;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
-import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.Logger;
 
@@ -39,60 +30,6 @@ import org.mozkito.versions.model.Revision;
  * @author Kim Herzig <herzig@mozkito.org>
  */
 public class PackageDistanceCombineOperator implements CombineOperator<ChangeOperationSet> {
-	
-	/**
-	 * The Class Options.
-	 */
-	public static class Options extends
-	        ArgumentSetOptions<PackageDistanceCombineOperator, ArgumentSet<PackageDistanceCombineOperator, Options>> {
-		
-		/** The max package distance options. */
-		private net.ownhero.dev.hiari.settings.LongArgument.Options maxPackageDistanceOptions;
-		
-		/**
-		 * Instantiates a new options.
-		 * 
-		 * @param argumentSet
-		 *            the argument set
-		 * @param requirements
-		 *            the requirements
-		 */
-		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, "ccCombineOp", "ChangeCouplingCombineOperator options.", requirements);
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
-		 */
-		@Override
-		public PackageDistanceCombineOperator init() {
-			// PRECONDITIONS
-			final Long maxPackageDistance = getSettings().getArgument(this.maxPackageDistanceOptions).getValue();
-			return new PackageDistanceCombineOperator(maxPackageDistance);
-			
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
-		 */
-		@Override
-		public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> argumentSet) throws ArgumentRegistrationException,
-		                                                                                    SettingsParseError {
-			// PRECONDITIONS
-			final Map<String, IOptions<?, ?>> map = new HashMap<>();
-			
-			this.maxPackageDistanceOptions = new LongArgument.Options(
-			                                                          argumentSet,
-			                                                          "maxPackageDistance",
-			                                                          "The maximal allowed distance between packages allowed when generating blobs using package distances.",
-			                                                          0l, Requirement.required);
-			map.put(this.maxPackageDistanceOptions.getName(), this.maxPackageDistanceOptions);
-			return map;
-		}
-	}
 	
 	/**
 	 * Can combine paths.
@@ -146,7 +83,7 @@ public class PackageDistanceCombineOperator implements CombineOperator<ChangeOpe
 	 * @param maxPackageDistance
 	 *            the max package distance
 	 */
-	protected PackageDistanceCombineOperator(final Long maxPackageDistance) {
+	public PackageDistanceCombineOperator(final Long maxPackageDistance) {
 		this.maxPackageDistance = maxPackageDistance;
 	}
 	

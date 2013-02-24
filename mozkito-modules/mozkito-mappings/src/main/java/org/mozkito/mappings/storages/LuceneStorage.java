@@ -13,16 +13,11 @@
 package org.mozkito.mappings.storages;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.hiari.settings.ArgumentSet;
-import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
-import net.ownhero.dev.hiari.settings.IOptions;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
-import net.ownhero.dev.hiari.settings.requirements.Requirement;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
@@ -54,57 +49,6 @@ import org.mozkito.persistence.PersistenceUtil;
  */
 public class LuceneStorage extends Storage {
 	
-	/**
-	 * The Class Options.
-	 */
-	public static final class Options extends ArgumentSetOptions<LuceneStorage, ArgumentSet<LuceneStorage, Options>> {
-		
-		/**
-		 * Instantiates a new options.
-		 * 
-		 * @param argumentSet
-		 *            the argument set
-		 * @param requirements
-		 *            the requirements
-		 */
-		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, LuceneStorage.TAG, LuceneStorage.DESCRIPTION, requirements);
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
-		 */
-		@Override
-		public LuceneStorage init() {
-			// PRECONDITIONS
-			
-			try {
-				return new LuceneStorage();
-			} finally {
-				// POSTCONDITIONS
-			}
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
-		 */
-		@Override
-		public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> argumentSet) throws ArgumentRegistrationException,
-		                                                                                    SettingsParseError {
-			// PRECONDITIONS
-			
-			try {
-				return new HashMap<>();
-			} finally {
-				// POSTCONDITIONS
-			}
-		}
-		
-	}
-	
 	/** The analyzer. */
 	private Analyzer                        analyzer         = null;
 	
@@ -121,10 +65,10 @@ public class LuceneStorage extends Storage {
 	private IndexSearcher                   isearcherReports = null;
 	
 	/** The Constant DESCRIPTION. */
-	private static final String             DESCRIPTION      = Messages.getString("LuceneStorage.description"); //$NON-NLS-1$
+	public static final String              DESCRIPTION      = Messages.getString("LuceneStorage.description"); //$NON-NLS-1$
 	                                                                                                            
 	/** The Constant TAG. */
-	private static final String             TAG              = "lucene";                                       //$NON-NLS-1$
+	public static final String              TAG              = "lucene";                                       //$NON-NLS-1$
 	                                                                                                            
 	/**
 	 * Instantiates a new lucene storage.
@@ -212,27 +156,39 @@ public class LuceneStorage extends Storage {
 		return this.reportDocuments;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.mapping.storages.MappingStorage#loadData
-	 * (de.unisaarland.cs.st.moskito.persistence.PersistenceUtil)
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.mappings.storages.Storage#loadData()
 	 */
 	@Override
-	public void loadData(final PersistenceUtil util) {
-		final Criteria<Report> criteria = util.createCriteria(Report.class);
-		final List<Report> list = util.load(criteria);
-		for (final Report report : list) {
-			addReportDocument(report);
+	public void loadData() {
+		PRECONDITIONS: {
+			// none
 		}
+		
 		try {
-			this.iwriterReports.close();
-		} catch (final Exception e) {
-			throw new UnrecoverableError(e);
-		} finally {
+			final PersistenceStorage storage = getStorage(PersistenceStorage.class);
+			final PersistenceUtil util = storage.getUtil();
+			final Criteria<Report> criteria = util.createCriteria(Report.class);
+			final List<Report> list = util.load(criteria);
+			for (final Report report : list) {
+				addReportDocument(report);
+			}
 			try {
-				this.isearcherReports = new IndexSearcher(IndexReader.open(this.reportDirectory));
+				this.iwriterReports.close();
 			} catch (final Exception e) {
 				throw new UnrecoverableError(e);
+			} finally {
+				try {
+					this.isearcherReports = new IndexSearcher(IndexReader.open(this.reportDirectory));
+				} catch (final Exception e) {
+					throw new UnrecoverableError(e);
+				}
+			}
+		} finally {
+			POSTCONDITIONS: {
+				// none
 			}
 		}
 	}
@@ -271,5 +227,36 @@ public class LuceneStorage extends Storage {
 	 */
 	public void setIwriterReports(final IndexWriter iwriterReports) {
 		this.iwriterReports = iwriterReports;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.mappings.register.Node#storageDependency()
+	 */
+	@Override
+	public Set<Class<? extends Storage>> storageDependency() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return new HashSet<Class<? extends Storage>>() {
+				
+				/**
+                 * 
+                 */
+				private static final long serialVersionUID = 1L;
+				
+				{
+					
+					add(PersistenceStorage.class);
+				}
+			};
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 }
