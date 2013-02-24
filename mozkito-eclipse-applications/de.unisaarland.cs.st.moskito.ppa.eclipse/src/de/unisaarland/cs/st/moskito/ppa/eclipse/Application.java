@@ -27,7 +27,7 @@ public class Application implements IApplication {
 	 */
 	@Override
 	public Object start(final IApplicationContext context) throws Exception {
-		ppa.Main.main(new String[0]);
+		codeanalysis.Main.main(new String[0]);
 		return IApplication.EXIT_OK;
 	}
 	
