@@ -32,7 +32,7 @@ import org.junit.Test;
  * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
-public class HelpIT {
+public class VersionsIT {
 	
 	/**
 	 * Exec.
@@ -59,9 +59,55 @@ public class HelpIT {
 	 * Test.
 	 */
 	@Test
-	public final void testSimple() {
+	public final void testHelp() {
 		final Properties properties = new Properties();
 		properties.put("help", "");
+		final Tuple<Integer, List<String>> execute = exec(properties);
+		
+		// check log
+		assertFalse(CollectionUtils.exists(execute.getSecond(), new Predicate() {
+			
+			@Override
+			public boolean evaluate(final Object object) {
+				PRECONDITIONS: {
+					// none
+				}
+				
+				try {
+					final String line = (String) object;
+					if (line.contains("] ERROR")) {
+						System.err.println(line);
+						return true;
+					}
+					return false;
+				} finally {
+					POSTCONDITIONS: {
+						// none
+					}
+				}
+			}
+		}));
+		
+		// check return value
+		assertEquals("Exit code non-zero.", (Integer) 0, execute.getFirst());
+	}
+	
+	/**
+	 * Test.
+	 */
+	@Test
+	public final void testMozkitoRepository() {
+		final Properties properties = new Properties();
+		properties.put("database.name", "mozkitoVersionsIntegrationTest");
+		properties.put("database.user", "miner");
+		properties.put("database.password", "miner");
+		properties.put("repository.uri", "http://mozkito.org:7990/scm/MOZKITO/mozkito.git");
+		properties.put("repository.type", "GIT");
+		properties.put("repository.mainBranch", "master");
+		properties.put("headless", "");
+		properties.put("repository.user", "mozkito_integration_tests");
+		properties.put("repository.password", "mozkito_integration_tests");
+		
 		final Tuple<Integer, List<String>> execute = exec(properties);
 		
 		// check log
