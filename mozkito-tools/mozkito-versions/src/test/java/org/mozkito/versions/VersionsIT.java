@@ -26,11 +26,13 @@ import net.ownhero.dev.ioda.Tuple;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
- * @author Sascha Just <sascha.just@mozkito.org>
+ * The Class VersionsIT.
  * 
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class VersionsIT {
 	
@@ -39,6 +41,7 @@ public class VersionsIT {
 	 * 
 	 * @param properties
 	 *            the properties
+	 * @return the tuple
 	 */
 	@SuppressWarnings ({ "unchecked", "rawtypes" })
 	private Tuple<Integer, List<String>> exec(final Properties properties) {
@@ -53,6 +56,17 @@ public class VersionsIT {
 		// execute java
 		return CommandExecutor.execute("java", new String[] { "-jar", jar }, null, null, hmap);
 		
+	}
+	
+	/**
+	 * Setup.
+	 */
+	@Before
+	public void setup() {
+		final String dropAllTables = "function dropalltables() { dbname=$1; for f in $(psql $dbname <<<'\\dt' | awk -F'|' '/^ [^ ]/ { print $2; }' | tail -n +2); do psql $dbname <<<\"DROP TABLE $f CASCADE;\" ; done; }";
+		CommandExecutor.execute(dropAllTables, new String[0], null, null, new HashMap<String, String>());
+		CommandExecutor.execute("dropalltables", new String[] { "mozkitoversionsintegrationtest" }, null, null,
+		                        new HashMap<String, String>());
 	}
 	
 	/**
@@ -98,6 +112,7 @@ public class VersionsIT {
 	@Test
 	public final void testMozkitoRepository() {
 		final Properties properties = new Properties();
+		properties.put("database.host", "");
 		properties.put("database.name", "mozkitoVersionsIntegrationTest");
 		properties.put("database.user", "miner");
 		properties.put("database.password", "miner");
@@ -105,8 +120,8 @@ public class VersionsIT {
 		properties.put("repository.type", "GIT");
 		properties.put("repository.mainBranch", "master");
 		properties.put("headless", "");
-		properties.put("repository.user", "mozkito_integration_tests");
-		properties.put("repository.password", "mozkito_integration_tests");
+		properties.put("repository.user", "mozkitoversionsintegrationtest");
+		properties.put("repository.password", "mozkitoversionsintegrationtest");
 		
 		final Tuple<Integer, List<String>> execute = exec(properties);
 		
