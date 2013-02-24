@@ -1,0 +1,38 @@
+database.name=moskito_xstream_may2011
+database.user=miner
+database.password=miner
+log.level=info
+repository.uri=/data/kim/miner_repos/xstream/git_repo_09_03_2011/
+repository.type=GIT
+
+tracker.uri=http://jira.codehaus.org
+tracker.type=JIRA
+jira.projectKey=XSTR
+
+headless
+mapping.config.regexFile=file:///scratch/just/reposuite/settings/reposuite_xstream_may2011.regex
+mapping.score.AuthorEquality=1
+mapping.score.AuthorInequality=0
+mapping.score.ReportCreatedAfterTransaction=1
+mapping.score.ReportResolvedWithinWindow=1
+mapping.window.ReportResolvedAfterTransaction=00d 00h 00m 00s,+03d 00h 00m 00s
+mapping.strategies=MajorityStrategy
+
+##### Untangling options: #####
+
+callgraph.eclipse = /data/kim/moskito/eclipse-apps/linux/eclipse-reposuite-callgraph/
+datadependency.eclipse = /data/kim/moskito/eclipse-apps/linux/eclipse-reposuite-datadependency/
+callgraph.cache.dir = /data/kim/cache.callgraph/xstream
+changecouplings.cache.dir = /data/kim/cache.filechangecouplings/xstream
+package.distance = 2
+vote.changecouplings.minconfidence = 0.1
+vote.changecouplings.minsupport = 3
+datadependency.cache.dir = /data/kim/cache.datadependency/xstream/
+
+##### Genealogy Metrics #####
+fix.pattern=XSTR-({bugids}\\d+)
+genealogy.graphdb=/data/kim/genealogies/xstream/may2011/
+#genealogy.graphdb=/tmpfs/xstream/may2011/
+metricLevel=TRANSACTION
+metricOut=/data/kim/genealogies/xstream/xstream_may2011_genealogy_transaction_metrics.csv
+fileAggregateOut=/data/kim/genealogies/xstream/xstream_may2011_genealogy_transaction_fileMetrics.csv

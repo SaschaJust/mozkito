@@ -1,0 +1,28 @@
+database.name=moskito_argouml_june2010
+database.user=miner
+database.password=miner
+log.level=info
+repository.uri=/data/kim/miner_repos/argoUML/git_repo_17_06_2010/
+repository.type=GIT
+headless
+tracker.fetchURI=http://argouml.tigris.org/issues/
+tracker.pattern=xml.cgi?id=<BUGID>
+tracker.type=ISSUEZILLA
+tracker.stop=6297
+
+callgraph.eclipse = /data/kim/moskito/eclipse-apps/linux/eclipse-moskito-callgraph/
+datadependency.eclipse = /data/kim/moskito/eclipse-apps/linux/eclipse-moskito-datadependency/
+callgraph.cache.dir = /data/kim/cache.callgraph/argouml/
+changecouplings.cache.dir = /data/kim/cache.filechangecouplings/argouml
+package.distance = 2
+vote.changecouplings.minconfidence = 0.1
+vote.changecouplings.minsupport = 3
+datadependency.cache.dir = /data/kim/cache.datadependency/argouml/
+
+
+##### Change Genenealogy Metrics #####
+genealogy.graphdb=/data/kim/genealogies/argouml/june2010/
+#fix.pattern="(issue number|bug|issue|#|fixes:|issues)\\s*:?\\s*({bugids}\\d+(,\\s*\\d+)*)"
+metricLevel=TRANSACTION
+metricOut=/data/kim/genealogies/argouml/argouml_june2010_genealogy_transaction_metrics.csv
+fileAggregateOut=/data/kim/genealogies/argouml/argouml_june2010_genealogy_transaction_fileMetrics.csv

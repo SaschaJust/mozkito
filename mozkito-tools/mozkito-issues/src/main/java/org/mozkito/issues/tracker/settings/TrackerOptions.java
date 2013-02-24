@@ -140,6 +140,10 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 				issueTracker = IssueTracker.loadIssueTracker(util);
 			} catch (final NoSuchElementException e) {
 				issueTracker = new IssueTracker();
+				util.beginTransaction();
+				util.saveOrUpdate(issueTracker);
+				util.commitTransaction();
+				
 			}
 			
 			switch (trackerTypeArgument.getValue()) {

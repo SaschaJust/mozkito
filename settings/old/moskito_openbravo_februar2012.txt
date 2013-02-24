@@ -1,0 +1,12 @@
+database.name=moskito_openbravo_februar2012
+database.user=miner
+database.password=miner
+log.level=info
+repository.uri=/data/kim/miner_repos/openbravo/openbravo_21.02.2012.git/
+repository.type=GIT
+headless
+
+tracker.proxy.cacheDir=/scratch/kim/miner_repos/openbravo/mantis_cache/
+tracker.uri=https://issues.openbravo.com/
+tracker.type=MANTIS
+
