@@ -14,16 +14,16 @@ package org.mozkito.mappings.mappable.model;
 
 import javax.persistence.metamodel.SingularAttribute;
 
-import org.mozkito.versions.model.ChangeSet;
+import org.mozkito.infozilla.model.EnhancedReport;
 
 /**
- * The Class MappableTransaction_.
+ * The Class MappableReport_.
  */
-@javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.mappings.mappable.model.MappableTransaction.class)
+@javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.mappings.mappable.model.MappableStructuredReport.class)
 @javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
-                             date = "Thu Nov 03 18:48:56 CET 2011")
-public class MappableTransaction_ extends MappableEntity_ {
+                             date = "Thu Nov 03 18:46:21 CET 2011")
+public class MappableStructuredReport_ extends MappableEntity_ {
 	
-	/** The transaction. */
-	public static volatile SingularAttribute<MappableTransaction, ChangeSet> changeset;
+	/** The report. */
+	public static volatile SingularAttribute<MappableReport, EnhancedReport> report;
 }

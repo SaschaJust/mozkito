@@ -43,7 +43,7 @@ import org.mozkito.versions.model.Handle;
  */
 @Entity
 @DiscriminatorValue ("MAPPABLETRANSACTION")
-public class MappableTransaction extends MappableEntity {
+public class MappableChangeSet extends MappableEntity {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 3493346151115096823L;
@@ -57,7 +57,7 @@ public class MappableTransaction extends MappableEntity {
 	 * @deprecated used only by persistence utility
 	 */
 	@Deprecated
-	public MappableTransaction() {
+	public MappableChangeSet() {
 		super();
 	}
 	
@@ -67,7 +67,7 @@ public class MappableTransaction extends MappableEntity {
 	 * @param changeset
 	 *            the transaction
 	 */
-	public MappableTransaction(final ChangeSet changeset) {
+	public MappableChangeSet(final ChangeSet changeset) {
 		super();
 		
 		setTransaction(changeset);

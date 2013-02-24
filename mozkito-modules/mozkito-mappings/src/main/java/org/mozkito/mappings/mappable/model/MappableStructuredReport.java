@@ -15,6 +15,8 @@ package org.mozkito.mappings.mappable.model;
 
 import java.util.Set;
 
+import javax.persistence.FetchType;
+import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
 import net.ownhero.dev.kanuni.conditions.Condition;
@@ -136,6 +138,7 @@ public class MappableStructuredReport extends MappableEntity {
 	 * 
 	 * @return the report
 	 */
+	@OneToOne (fetch = FetchType.LAZY)
 	public final EnhancedReport getReport() {
 		// PRECONDITIONS
 		

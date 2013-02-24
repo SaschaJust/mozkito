@@ -80,11 +80,11 @@ public class Dummy extends MappableEntity {
 		try {
 			final String value = this.properties.getProperty("field." + key.name().toLowerCase());
 			if (value != null) {
-				final String[] entries = value.split(",");
-				assert entries.length == 3;
 				
 				switch (key) {
 					case AUTHOR:
+						final String[] entries = value.split(",");
+						assert entries.length == 3;
 						if (!persons.containsKey(entries[0])) {
 							persons.put(entries[0], new Person(entries[0], entries[2], entries[1]));
 						}

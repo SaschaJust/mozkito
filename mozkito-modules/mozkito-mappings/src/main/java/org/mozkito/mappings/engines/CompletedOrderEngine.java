@@ -23,7 +23,7 @@ import org.mozkito.issues.model.Report;
 import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.mappable.model.MappableReport;
-import org.mozkito.mappings.mappable.model.MappableTransaction;
+import org.mozkito.mappings.mappable.model.MappableChangeSet;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Feature;
 import org.mozkito.mappings.model.Relation;
@@ -111,7 +111,7 @@ public class CompletedOrderEngine extends Engine {
 				assert to != null;
 			}
 			
-			final ChangeSet changeset = ((MappableTransaction) from).getChangeSet();
+			final ChangeSet changeset = ((MappableChangeSet) from).getChangeSet();
 			final Report report = ((MappableReport) to).getReport();
 			final double localConfidence;
 			

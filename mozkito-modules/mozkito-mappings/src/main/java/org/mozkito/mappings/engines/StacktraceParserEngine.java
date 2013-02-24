@@ -31,7 +31,7 @@ import org.mozkito.infozilla.model.stacktrace.Stacktrace;
 import org.mozkito.infozilla.model.stacktrace.StacktraceEntry;
 import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.mappable.model.MappableStructuredReport;
-import org.mozkito.mappings.mappable.model.MappableTransaction;
+import org.mozkito.mappings.mappable.model.MappableChangeSet;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Feature;
 import org.mozkito.mappings.model.Relation;
@@ -100,8 +100,8 @@ public class StacktraceParserEngine extends Engine {
 			final MappableStructuredReport mappableStructuredReport = (MappableStructuredReport) from;
 			final EnhancedReport report = mappableStructuredReport.getReport();
 			
-			final MappableTransaction mappableTransaction = (MappableTransaction) to;
-			final ChangeSet transaction = mappableTransaction.getChangeSet();
+			final MappableChangeSet mappableChangeSet = (MappableChangeSet) to;
+			final ChangeSet transaction = mappableChangeSet.getChangeSet();
 			final PersistenceUtil persistenceUtil = persistenceStorage.getUtil();
 			final Set<String> subjects = new HashSet<>();
 			final Collection<JavaChangeOperation> changeOperations = PPAPersistenceUtil.getChangeOperation(persistenceUtil,

@@ -40,7 +40,7 @@ import org.mozkito.infozilla.model.log.Log;
 import org.mozkito.infozilla.model.log.LogEntry;
 import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.mappable.model.MappableStructuredReport;
-import org.mozkito.mappings.mappable.model.MappableTransaction;
+import org.mozkito.mappings.mappable.model.MappableChangeSet;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Feature;
 import org.mozkito.mappings.model.Relation;
@@ -166,8 +166,8 @@ public class LogEngine extends Engine {
 			final MappableStructuredReport mappableStructuredReport = (MappableStructuredReport) from;
 			final EnhancedReport report = mappableStructuredReport.getReport();
 			
-			final MappableTransaction mappableTransaction = (MappableTransaction) to;
-			final ChangeSet transaction = mappableTransaction.getChangeSet();
+			final MappableChangeSet mappableChangeSet = (MappableChangeSet) to;
+			final ChangeSet transaction = mappableChangeSet.getChangeSet();
 			final Collection<Handle> changedFiles = transaction.getChangedFiles();
 			final RepositoryStorage storage = getStorage(RepositoryStorage.class);
 			final Repository repository = storage.getRepository();

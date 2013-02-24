@@ -30,9 +30,9 @@ import org.apache.commons.collections.Predicate;
 import difflib.Delta;
 
 import org.mozkito.infozilla.model.EnhancedReport;
+import org.mozkito.mappings.mappable.model.MappableChangeSet;
 import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.mappable.model.MappableStructuredReport;
-import org.mozkito.mappings.mappable.model.MappableTransaction;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Feature;
 import org.mozkito.mappings.model.Relation;
@@ -122,7 +122,7 @@ public class CodeFragmentsEngine extends Engine {
 			
 			final MappableStructuredReport report = (MappableStructuredReport) from;
 			final EnhancedReport enhancedReport = report.getReport();
-			final MappableTransaction transaction = (MappableTransaction) to;
+			final MappableChangeSet transaction = (MappableChangeSet) to;
 			final RepositoryStorage repositoryStorage = getStorage(RepositoryStorage.class);
 			
 			SANITY: {
@@ -204,7 +204,7 @@ public class CodeFragmentsEngine extends Engine {
 					 */
 					@Override
 					public boolean evaluate(final Object object) {
-						return ((Feature) object).getEngine().equals(getClass());
+						return ((Feature) object).getEngine().equals(CodeFragmentsEngine.class);
 					}
 				});
 			}

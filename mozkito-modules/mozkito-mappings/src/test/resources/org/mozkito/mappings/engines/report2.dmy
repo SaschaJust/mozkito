@@ -5,3 +5,4 @@ supported.0=author
 supported.1=comment
 field.author=kim,kim@mozkito.org,Kim Herzig
 field.comment.1=fixed in 04ff08dd3f073dc98e39d68a324632ad4ba0abcd
+field.body=fixed in 04ff08dd3f073dc98e39d68a324632ad4ba0abcd

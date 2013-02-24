@@ -29,7 +29,7 @@ import org.mozkito.codeanalysis.model.JavaElement;
 import org.mozkito.codeanalysis.model.JavaMethodDefinition;
 import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.mappings.mappable.model.MappableEntity;
-import org.mozkito.mappings.mappable.model.MappableTransaction;
+import org.mozkito.mappings.mappable.model.MappableChangeSet;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Feature;
 import org.mozkito.mappings.model.Relation;
@@ -138,7 +138,7 @@ public class MethodModificationEngine extends Engine {
 			final Set<String> subjects = new HashSet<>();
 			
 			final Collection<JavaChangeOperation> changeOperations = PPAPersistenceUtil.getChangeOperation(persistenceUtil,
-			                                                                                               ((MappableTransaction) from).getChangeSet());
+			                                                                                               ((MappableChangeSet) from).getChangeSet());
 			
 			for (final JavaChangeOperation operation : changeOperations) {
 				if (operation.getChangeType().equals(ChangeType.Modified)) {
