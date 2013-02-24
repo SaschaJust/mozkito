@@ -1,5 +1,5 @@
 function mvn() {
-	mvn $@ | tee maven.log | grcat conf.mvn
+	/usr/bin/mvn $@ | tee maven.log | grcat conf.mvn
 	rm -f maven.err maven.warn
 	cat maven.log | awk '
 		BEGIN {
