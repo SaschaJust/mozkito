@@ -113,15 +113,15 @@ public class VersionsIT {
 	public final void testMozkitoRepository() {
 		final Properties properties = new Properties();
 		properties.put("database.host", "");
-		properties.put("database.name", "mozkitoVersionsIntegrationTest");
+		properties.put("database.name", "mozkitoversionsintegrationtest");
 		properties.put("database.user", "miner");
 		properties.put("database.password", "miner");
 		properties.put("repository.uri", "http://mozkito.org:7990/scm/MOZKITO/mozkito.git");
 		properties.put("repository.type", "GIT");
 		properties.put("repository.mainBranch", "master");
 		properties.put("headless", "");
-		properties.put("repository.user", "mozkitoversionsintegrationtest");
-		properties.put("repository.password", "mozkitoversionsintegrationtest");
+		properties.put("repository.user", "mozkito_integration_tests");
+		properties.put("repository.password", "mozkito_integration_tests");
 		
 		final Tuple<Integer, List<String>> execute = exec(properties);
 		
