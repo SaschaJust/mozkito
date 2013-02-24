@@ -26,7 +26,7 @@ import net.ownhero.dev.ioda.Tuple;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
-import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -61,7 +61,6 @@ public class VersionsIT {
 	/**
 	 * Setup.
 	 */
-	@Before
 	public void setup() {
 		final String dropAllTables = "function dropalltables() { dbname=$1; for f in $(psql $dbname <<<'\\dt' | awk -F'|' '/^ [^ ]/ { print $2; }' | tail -n +2); do psql $dbname <<<\"DROP TABLE $f CASCADE;\" ; done; }";
 		CommandExecutor.execute(dropAllTables, new String[0], null, null, new HashMap<String, String>());
@@ -110,6 +109,7 @@ public class VersionsIT {
 	 * Test.
 	 */
 	@Test
+	@Ignore
 	public final void testMozkitoRepository() {
 		final Properties properties = new Properties();
 		properties.put("database.host", "");
