@@ -1,5 +1,5 @@
-/*******************************************************************************
- * Copyright 2012 Kim Herzig, Sascha Just
+/***********************************************************************************************************************
+ * Copyright 2011 Kim Herzig, Sascha Just
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -9,7 +9,7 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ **********************************************************************************************************************/
 
 package net.ownhero.dev.ioda;
 
@@ -421,35 +421,53 @@ public class ClassFinder {
 				IOUtils.copy(resource.openStream(), outputStream);
 				
 				outputStream.close();
-				final JarFile jFile = new JarFile(randomFile);
-				final Enumeration<JarEntry> entries = jFile.entries();
-				while (entries.hasMoreElements()) {
-					final JarEntry element = entries.nextElement();
+				JarFile jFile = null;
+				
+				try {
+					jFile = new JarFile(randomFile);
 					
-					if (!element.isDirectory()) {
-						final String currentName = element.getName();
+					final Enumeration<JarEntry> entries = jFile.entries();
+					while (entries.hasMoreElements()) {
+						final JarEntry element = entries.nextElement();
 						
-						if (currentName.toLowerCase().endsWith(".jar")) {
-							final InputStream inputStream2 = jFile.getInputStream(element);
-							final File randomFile2 = FileUtils.createRandomFile(FileShutdownAction.DELETE);
-							final OutputStream outputStream2 = new FileOutputStream(randomFile2);
-							IOUtils.copy(inputStream2, outputStream2);
+						if (!element.isDirectory()) {
+							final String currentName = element.getName();
 							
-							classes.addAll(getClassesFromJarFile(packageName, randomFile2.getAbsolutePath(), modifiers));
-							randomFile2.delete();
-						} else if ((element.getName().length() > path.length())
-						        && element.getName().substring(0, path.length()).equals(path)
-						        && element.getName().endsWith(".class")) {
-							final Class<?> class1 = Class.forName(element.getName()
-							                                             .replaceAll(StringEscapeUtils.escapeJava(FileUtils.fileSeparator),
-							                                                         ".").replace(".class", ""));
-							if (modifiers != null) {
-								if ((class1.getModifiers() & modifiers) == 0) {
+							if (currentName.toLowerCase().endsWith(".jar")) {
+								final InputStream inputStream2 = jFile.getInputStream(element);
+								final File randomFile2 = FileUtils.createRandomFile(FileShutdownAction.DELETE);
+								final OutputStream outputStream2 = new FileOutputStream(randomFile2);
+								IOUtils.copy(inputStream2, outputStream2);
+								
+								classes.addAll(getClassesFromJarFile(packageName, randomFile2.getAbsolutePath(),
+								                                     modifiers));
+								randomFile2.delete();
+							} else if ((element.getName().length() > path.length())
+							        && element.getName().substring(0, path.length()).equals(path)
+							        && element.getName().endsWith(".class")) {
+								final Class<?> class1 = Class.forName(element.getName()
+								                                             .replaceAll(StringEscapeUtils.escapeJava(FileUtils.fileSeparator),
+								                                                         ".").replace(".class", ""));
+								if (modifiers != null) {
+									if ((class1.getModifiers() & modifiers) == 0) {
+										classes.add(class1);
+									}
+								} else {
 									classes.add(class1);
 								}
-							} else {
-								classes.add(class1);
 							}
+						}
+					}
+				} catch (final IOException e) {
+					if (Logger.logWarn()) {
+						Logger.warn("Skipping invalid JAR resource `" + randomFile + "`: " + e.getMessage());
+					}
+				} finally {
+					if (jFile != null) {
+						try {
+							jFile.close();
+						} catch (final IOException ignore) {
+							// ignore
 						}
 					}
 				}

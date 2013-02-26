@@ -13,10 +13,6 @@
 
 package net.ownhero.dev.ioda.classpath.elements;
 
-import java.io.IOException;
-import java.net.URL;
-import java.net.URLClassLoader;
-
 import net.ownhero.dev.ioda.classpath.ClassPath;
 import net.ownhero.dev.ioda.classpath.ClassPath.Element;
 import net.ownhero.dev.ioda.classpath.exceptions.ElementLoadingException;
@@ -55,17 +51,16 @@ public class CompilationUnit extends Element {
 			switch (getSource()) {
 				case URL:
 					try {
-						final URLClassLoader loader = new URLClassLoader(new URL[] { new URL(getPath()) });
+						final ClassLoader loader = getClassPath().getLoader();
 						this.clazz = loader.loadClass(getName());
-						loader.close();
-					} catch (final IOException | ClassNotFoundException e) {
+					} catch (final ClassNotFoundException | NoClassDefFoundError | UnsatisfiedLinkError e) {
 						throw new ElementLoadingException("Invalid URL for class " + getName() + ".", e);
 					}
 					break;
 				default:
 					try {
 						this.clazz = Class.forName(getName());
-					} catch (final ClassNotFoundException e) {
+					} catch (final ClassNotFoundException | NoClassDefFoundError | UnsatisfiedLinkError e) {
 						throw new ElementLoadingException(e);
 					}
 			}

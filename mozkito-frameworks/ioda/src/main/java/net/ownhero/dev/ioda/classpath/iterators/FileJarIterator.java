@@ -16,10 +16,12 @@ package net.ownhero.dev.ioda.classpath.iterators;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Enumeration;
 import java.util.NoSuchElementException;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.jar.JarInputStream;
 
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.classpath.ClassPath;
@@ -29,7 +31,7 @@ import net.ownhero.dev.ioda.classpath.ClassPath.Element.Type;
 import net.ownhero.dev.ioda.classpath.ClassPath.ElementIterator;
 import net.ownhero.dev.ioda.classpath.elements.CompilationUnit;
 import net.ownhero.dev.ioda.classpath.elements.Resource;
-import net.ownhero.dev.kisa.Logger;
+import net.ownhero.dev.ioda.classpath.exceptions.GenericClassPathException;
 
 import org.apache.commons.io.FilenameUtils;
 
@@ -47,15 +49,14 @@ public class FileJarIterator implements ElementIterator {
 	private JarFile               jarFile;
 	
 	/** The next entry. */
-	private JarEntry              nextEntry   = null;
+	private JarEntry              nextEntry = null;
 	
 	/** The entries. */
 	private Enumeration<JarEntry> entries;
 	
-	/** The jar in jar. */
-	private final boolean         jarInJar    = false;
+	private final ClassLoader     classLoader;
 	
-	private final ClassLoader     classLoader = Thread.currentThread().getContextClassLoader();
+	private JarStreamIterator     streamIterator;
 	
 	/**
 	 * Instantiates a new file jar iterator.
@@ -66,13 +67,12 @@ public class FileJarIterator implements ElementIterator {
 	public FileJarIterator(final ClassPath classPath) {
 		this.classPath = classPath;
 		try {
+			this.classLoader = URLClassLoader.newInstance(new URL[] { new URL("file://" + classPath.getPath()) });
 			this.jarFile = new JarFile(classPath.getPath());
 			this.entries = this.jarFile.entries();
 			setNext();
 		} catch (final IOException e) {
-			if (Logger.logError()) {
-				Logger.error(e);
-			}
+			throw new GenericClassPathException("Could not access JAR file at " + classPath.getPath() + ".", e);
 		}
 	}
 	
@@ -110,22 +110,14 @@ public class FileJarIterator implements ElementIterator {
 			final CompilationUnit unit = (CompilationUnit) element;
 			
 			try {
-				final Class<?> clazz = Class.forName(unit.getName());
+				
+				final Class<?> clazz = this.classLoader.loadClass(unit.getName());
 				unit.setClass(clazz);
 				return clazz;
 			} catch (final ClassNotFoundException e) {
 				// class not found on the class path. try loading it from the JAr file manually
-				
+				return null;
 			}
-			
-			final Enumeration<URL> resources = this.classLoader.getResources(unit.getPath());
-			
-			assert resources != null;
-			assert resources.hasMoreElements();
-			
-			resources.nextElement();
-			
-			return null;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -141,9 +133,11 @@ public class FileJarIterator implements ElementIterator {
 		// PRECONDITIONS
 		
 		try {
-			// TODO Auto-generated method stub
-			// return null;
-			throw new RuntimeException("Method 'loadResource' has not yet been implemented."); //$NON-NLS-1$
+			if (!(element instanceof Resource)) {
+				throw new IllegalArgumentException();
+			}
+			
+			return this.classLoader.getResourceAsStream(element.getPath());
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -169,19 +163,24 @@ public class FileJarIterator implements ElementIterator {
 			final String currentName = current.getName();
 			
 			final String extension = FilenameUtils.getExtension(currentName).toLowerCase();
-			final String fqn = FilenameUtils.removeExtension(currentName).replace(FileUtils.pathSeparator, ".");
+			final String fqn = FilenameUtils.removeExtension(currentName).replace(FileUtils.fileSeparator, ".");
 			
-			if ("jar".equals(extension)) {
-				assert this.jarInJar;
-				// TODO process this
-				return null;
-			} else if ("class".equals(extension)) {
-				return new CompilationUnit(fqn, this.classPath.getPath() + "$" + fqn, Type.COMPILATION_UNIT,
-				                           Source.LOCAL, this.classPath);
-			} else {
-				// resource
-				return new Resource(currentName, this.classPath.getPath() + "/" + currentName, Type.RESOURCE,
-				                    Source.LOCAL, this.classPath);
+			switch (extension) {
+				case "jar":
+					assert ClassPath.JAR_IN_JAR_ENABLED;
+					assert this.streamIterator.hasNext();
+					final Element retval = this.streamIterator.next();
+					if (!this.streamIterator.hasNext()) {
+						this.streamIterator = null;
+					}
+					return retval;
+				case "class":
+					return new CompilationUnit(fqn, this.classPath.getPath() + "!" + fqn, Type.COMPILATION_UNIT,
+					                           Source.LOCAL, this.classPath);
+				default:
+					// resource
+					return new Resource(currentName, this.classPath.getPath() + "/" + currentName, Type.RESOURCE,
+					                    Source.LOCAL, this.classPath);
 			}
 		} finally {
 			// POSTCONDITIONS
@@ -210,18 +209,35 @@ public class FileJarIterator implements ElementIterator {
 	private void setNext() {
 		assert this.entries != null;
 		boolean found = false;
-		FIND_NEXT: while (this.entries.hasMoreElements()) {
-			this.nextEntry = this.entries.nextElement();
-			if (!this.nextEntry.isDirectory()) {
-				final String extension = FilenameUtils.getExtension(this.nextEntry.getName()).toLowerCase();
-				if ("jar".equals(extension)) {
-					if (this.jarInJar) {
+		
+		// this means we either were not processing a JAR in JAR or there were no remaining entries.
+		// look up the next entry in this JAR
+		if (!found) {
+			FIND_NEXT: while (this.entries.hasMoreElements()) {
+				this.nextEntry = this.entries.nextElement();
+				if (!this.nextEntry.isDirectory()) {
+					final String extension = FilenameUtils.getExtension(this.nextEntry.getName()).toLowerCase();
+					if ("jar".equals(extension)) {
+						if (ClassPath.JAR_IN_JAR_ENABLED) {
+							System.err.println("PROCESSING JAR IN JAR: " + this.classPath + " --> "
+							        + this.nextEntry.getName());
+							found = true;
+							JarInputStream jarInputStream;
+							try {
+								jarInputStream = new JarInputStream(this.jarFile.getInputStream(this.nextEntry));
+								this.streamIterator = new JarStreamIterator(this.classPath, this.nextEntry.getName(),
+								                                            jarInputStream);
+							} catch (final IOException e) {
+								throw new GenericClassPathException("Cannot load JAR in JAR: "
+								        + this.nextEntry.getName() + " in " + this.classPath.getPath(), e);
+							}
+							
+							break FIND_NEXT;
+						}
+					} else {
 						found = true;
 						break FIND_NEXT;
 					}
-				} else {
-					found = true;
-					break FIND_NEXT;
 				}
 			}
 		}

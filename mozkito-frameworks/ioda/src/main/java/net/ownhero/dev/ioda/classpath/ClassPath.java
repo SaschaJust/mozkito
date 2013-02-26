@@ -15,7 +15,9 @@ package net.ownhero.dev.ioda.classpath;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -23,10 +25,22 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
+import jregex.REFlags;
 import net.ownhero.dev.ioda.classpath.ClassPath.Element.Criterion;
+import net.ownhero.dev.ioda.classpath.classloaders.BootstrapClassloader;
 import net.ownhero.dev.ioda.classpath.criteria.And;
 import net.ownhero.dev.ioda.classpath.criteria.IsClass;
+import net.ownhero.dev.ioda.classpath.criteria.Not;
+import net.ownhero.dev.ioda.classpath.elements.CompilationUnit;
+import net.ownhero.dev.ioda.classpath.elements.Resource;
 import net.ownhero.dev.ioda.classpath.exceptions.ElementLoadingException;
+import net.ownhero.dev.ioda.classpath.exceptions.GenericClassPathException;
+import net.ownhero.dev.ioda.classpath.iterators.FileJarIterator;
+import net.ownhero.dev.ioda.classpath.iterators.LocalDirectoryIterator;
+import net.ownhero.dev.ioda.classpath.iterators.UrlClassIterator;
+import net.ownhero.dev.ioda.classpath.iterators.UrlJarIterator;
+import net.ownhero.dev.regex.Match;
+import net.ownhero.dev.regex.Regex;
 
 import org.apache.commons.io.FilenameUtils;
 
@@ -65,7 +79,10 @@ public final class ClassPath {
 			/** The local. */
 			LOCAL,
 			/** The url. */
-			URL;
+			URL,
+			
+			/** The stream. */
+			STREAM;
 		}
 		
 		/**
@@ -201,6 +218,28 @@ public final class ClassPath {
 		 *             the element loading exception
 		 */
 		public abstract Object load() throws ElementLoadingException;
+		
+		/**
+		 * {@inheritDoc}
+		 * 
+		 * @see java.lang.Object#toString()
+		 */
+		@Override
+		public String toString() {
+			final StringBuilder builder = new StringBuilder();
+			builder.append("Element [name=");
+			builder.append(this.name);
+			builder.append(", path=");
+			builder.append(this.path);
+			builder.append(", Type=");
+			builder.append(this.Type);
+			builder.append(", source=");
+			builder.append(this.source);
+			builder.append(", classPath=");
+			builder.append(this.classPath);
+			builder.append("]");
+			return builder.toString();
+		}
 	}
 	
 	/**
@@ -332,11 +371,17 @@ public final class ClassPath {
 		URL_JAR;
 	}
 	
+	/** The Constant MAVEN_VERSION_PATTERN. */
+	private static final String                MAVEN_VERSION_PATTERN = "({ARTIFACTID}.+)-({MAJOR}[0-9]+)(\\.({MINOR}[0-9]+))?(\\.({INCREMENTAL}[0-9]+))?(-(({BUILD}[0-9]+)|({QUALIFIER}SNAPSHOT|RELEASE)))?";
+	
+	/** The jar in jar enabled. */
+	public static boolean                      JAR_IN_JAR_ENABLED    = true;
+	
 	/** The Constant CLASS_PATHS. */
-	private static final Collection<ClassPath> SOURCES            = new HashSet<>();
+	private static final Collection<ClassPath> SOURCES               = new HashSet<>();
 	
 	/** The Constant EXTERNAL_RESOURCES. */
-	private static final Set<URL>              EXTERNAL_RESOURCES = new HashSet<>();
+	private static final Set<URL>              EXTERNAL_RESOURCES    = new HashSet<>();
 	
 	static {
 		final String[] CLASS_PATHS = System.getProperty("java.class.path").split(System.getProperty("path.separator"));
@@ -396,7 +441,7 @@ public final class ClassPath {
 	 * 
 	 * @return the class[]
 	 */
-	public static Collection<Element> findClasses() {
+	public static Collection<CompilationUnit> findClasses() {
 		return findClasses(null);
 	}
 	
@@ -407,9 +452,9 @@ public final class ClassPath {
 	 *            the criterion
 	 * @return the class[]
 	 */
-	public static Collection<Element> findClasses(final Criterion criterion) {
+	public static Collection<CompilationUnit> findClasses(final Criterion criterion) {
 		final java.util.Iterator<Element> iterator = iterator();
-		final List<Element> classes = new LinkedList<>();
+		final List<CompilationUnit> classes = new LinkedList<>();
 		Criterion localCriterion = null;
 		
 		if (criterion != null) {
@@ -421,12 +466,75 @@ public final class ClassPath {
 		while (iterator.hasNext()) {
 			final Element element = iterator.next();
 			assert element != null;
+			
 			if (localCriterion.accept(element)) {
-				classes.add(element);
+				assert element instanceof CompilationUnit;
+				classes.add((CompilationUnit) element);
 			}
 		}
 		
 		return classes;
+	}
+	
+	/**
+	 * Gets the declaring class.
+	 * 
+	 * @param clazz
+	 *            the clazz
+	 * @return the declaring class
+	 */
+	private static Class<?> getDeclaringClass(final Class<?> clazz) {
+		Class<?> declaring = clazz;
+		while (declaring.getDeclaringClass() != null) {
+			declaring = declaring.getDeclaringClass();
+		}
+		
+		while (declaring.getEnclosingClass() != null) {
+			declaring = declaring.getEnclosingClass();
+		}
+		
+		return declaring;
+	}
+	
+	/**
+	 * @return
+	 */
+	public static Collection<Resource> getResources() {
+		// PRECONDITIONS
+		
+		try {
+			return getResources(null);
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/**
+	 * @param object
+	 * @return
+	 */
+	private static Collection<Resource> getResources(final Criterion criterion) {
+		final java.util.Iterator<Element> iterator = iterator();
+		final List<Resource> resources = new LinkedList<>();
+		Criterion localCriterion = null;
+		
+		if (criterion != null) {
+			localCriterion = new And(new Not(new IsClass()), criterion);
+		} else {
+			localCriterion = new Not(new IsClass());
+		}
+		
+		while (iterator.hasNext()) {
+			final Element element = iterator.next();
+			assert element != null;
+			
+			if (localCriterion.accept(element)) {
+				assert element instanceof Resource;
+				resources.add((Resource) element);
+			}
+		}
+		
+		return resources;
 	}
 	
 	/**
@@ -460,6 +568,87 @@ public final class ClassPath {
 		return null;
 	}
 	
+	/**
+	 * Version.
+	 * 
+	 * @param clazz
+	 *            the clazz
+	 * @return the string
+	 */
+	public static String version(final Class<?> clazz) {
+		final URL url = where(clazz);
+		final String path = url.getPath();
+		if (path.contains(".jar")) {
+			final int to = path.lastIndexOf(".jar");
+			final String lastJarPart = path.substring(0, to + ".jar".length());
+			final String jarName = lastJarPart.substring(lastJarPart.lastIndexOf('/') + 1);
+			
+			final String baseName = FilenameUtils.getBaseName(jarName);
+			final Regex regex = new Regex(MAVEN_VERSION_PATTERN, REFlags.IGNORE_CASE);
+			final Match match = regex.find(baseName);
+			if (match != null) {
+				final StringBuilder builder = new StringBuilder();
+				builder.append(match.getGroup("ARTIFACTID").getMatch()).append('-');
+				builder.append(match.getGroup("MAJOR").getMatch());
+				if (match.getGroup("MINOR") != null) {
+					builder.append('.').append(match.getGroup("MINOR").getMatch());
+					if (match.getGroup("INCREMENTAL") != null) {
+						builder.append('.').append(match.getGroup("INCREMENTAL").getMatch());
+					}
+				}
+				
+				if (match.getGroup("BUILD") != null) {
+					builder.append('-').append(match.getGroup("BUILD").getMatch());
+				} else if (match.getGroup("QUALIFIER") != null) {
+					builder.append('.').append(match.getGroup("QUALIFIER").getMatch());
+				}
+				
+				return builder.toString();
+			} else {
+				return null;
+			}
+		} else {
+			return null;
+		}
+	}
+	
+	/**
+	 * Where.
+	 * 
+	 * @param clazz
+	 *            the clazz
+	 * @return the url
+	 */
+	public static URL where(final Class<?> clazz) {
+		final Class<?> declaredClass = getDeclaringClass(clazz);
+		final String fqn = declaredClass.getCanonicalName();
+		assert fqn != null;
+		
+		final ClassLoader loader = who(clazz);
+		assert loader != null : "ClassLoader must not be null for loaded classes.";
+		return loader.getResource(fqn.replace('.', '/') + ".class");
+		
+	}
+	
+	/**
+	 * Who.
+	 * 
+	 * @param clazz
+	 *            the clazz
+	 * @return the class loader
+	 */
+	public static ClassLoader who(final Class<?> clazz) {
+		final ClassLoader loader = clazz.getClassLoader();
+		if (loader == null) {
+			return BootstrapClassloader.getInstance();
+		} else {
+			return loader;
+		}
+	}
+	
+	/** The loader. */
+	private ClassLoader  loader;
+	
 	/** The kind. */
 	private final Kind   kind;
 	
@@ -478,6 +667,23 @@ public final class ClassPath {
 		super();
 		this.path = path;
 		this.kind = kind;
+		try {
+			switch (kind) {
+				case URL_JAR:
+					this.loader = URLClassLoader.newInstance(new URL[] { new URL(path) });
+					break;
+				case LOCAL_DIRECTORY:
+				case LOCAL_JAR:
+					this.loader = URLClassLoader.newInstance(new URL[] { new URL("file://" + path) });
+					break;
+				case URL_CLASS:
+					throw new GenericClassPathException("Not yet supported");
+				default:
+					throw new GenericClassPathException("Not yet supported");
+			}
+		} catch (final MalformedURLException e) {
+			throw new GenericClassPathException(e);
+		}
 	}
 	
 	/**
@@ -487,9 +693,23 @@ public final class ClassPath {
 	 */
 	public final Kind getKind() {
 		// PRECONDITIONS
-		
 		try {
 			return this.kind;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/**
+	 * Gets the loader.
+	 * 
+	 * @return the loader
+	 */
+	public final ClassLoader getLoader() {
+		// PRECONDITIONS
+		
+		try {
+			return this.loader;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -516,7 +736,34 @@ public final class ClassPath {
 	 * @return the java.util. iterator
 	 */
 	private final java.util.Iterator<Element> sourceIterator() {
-		return null;
+		switch (this.kind) {
+			case LOCAL_DIRECTORY:
+				return new LocalDirectoryIterator(this);
+			case LOCAL_JAR:
+				return new FileJarIterator(this);
+			case URL_JAR:
+				return new UrlJarIterator(this);
+			case URL_CLASS:
+				return new UrlClassIterator(this);
+			default:
+				throw new IllegalArgumentException();
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		final StringBuilder builder = new StringBuilder();
+		builder.append("ClassPath [kind=");
+		builder.append(this.kind);
+		builder.append(", path=");
+		builder.append(this.path);
+		builder.append("]");
+		return builder.toString();
 	}
 	
 }
