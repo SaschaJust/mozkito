@@ -1,5 +1,5 @@
-/*******************************************************************************
- * Copyright 2012 Kim Herzig, Sascha Just
+/***********************************************************************************************************************
+ * Copyright 2011 Kim Herzig, Sascha Just
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -9,7 +9,7 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ **********************************************************************************************************************/
 
 package net.ownhero.dev.ioda;
 
@@ -52,7 +52,7 @@ public class URIUtils {
 			if (address.getPort() > -1) {
 				authority += ":" + address.getPort();
 			}
-			StringBuilder uriString = new StringBuilder();
+			final StringBuilder uriString = new StringBuilder();
 			uriString.append(address.getScheme());
 			uriString.append("://");
 			uriString.append(authority);
@@ -67,7 +67,7 @@ public class URIUtils {
 			}
 			try {
 				uri = new URI(uriString.toString());
-			} catch (URISyntaxException e1) {
+			} catch (final URISyntaxException e1) {
 				if (Logger.logError()) {
 					Logger.error("Newly generated URI using the specified username cannot be parsed. URI = `"
 					        + uriString.toString() + "`");
@@ -84,8 +84,9 @@ public class URIUtils {
 	/**
 	 * Uri2 string converts a URI to a string that conforms RFC 1738. Java refuses to implement this (see
 	 * http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6351751)
-	 *
-	 * @param uri the uri
+	 * 
+	 * @param uri
+	 *            the uri
 	 * @return the string
 	 */
 	public static String Uri2String(final URI uri) {

@@ -1,5 +1,5 @@
-/*******************************************************************************
- * Copyright 2012 Kim Herzig, Sascha Just
+/***********************************************************************************************************************
+ * Copyright 2011 Kim Herzig, Sascha Just
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -9,7 +9,7 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ **********************************************************************************************************************/
 
 package net.ownhero.dev.ioda;
 
@@ -67,12 +67,14 @@ public class CommandExecutor extends Thread {
 	 * @param environment
 	 *            the environment
 	 * @return the tuple
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	public static Tuple<Integer, List<String>> execute(@NotNull final String command,
 	                                                   @NotNull final String[] arguments,
 	                                                   final File dir,
 	                                                   final InputStream input,
-	                                                   @NotNull final Map<String, String> environment) {
+	                                                   @NotNull final Map<String, String> environment) throws IOException {
 		return execute(command, arguments, dir, input, environment, Charset.defaultCharset());
 	}
 	
@@ -93,13 +95,15 @@ public class CommandExecutor extends Thread {
 	 * @param charset
 	 *            the charset
 	 * @return a tuple with the program's exit code and a list of lines representing the output of the program
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	public static Tuple<Integer, List<String>> execute(@NotNull final String command,
 	                                                   @NotNull final String[] arguments,
 	                                                   final File dir,
 	                                                   final InputStream input,
 	                                                   final Map<String, String> environment,
-	                                                   @NotNull final Charset charset) {
+	                                                   @NotNull final Charset charset) throws IOException {
 		// merge command and arguments to one list
 		final List<String> lineElements = new LinkedList<String>();
 		String localCommand = command;
@@ -113,10 +117,7 @@ public class CommandExecutor extends Thread {
 		try {
 			localCommand = FileUtils.checkExecutable(localCommand);
 		} catch (final ExternalExecutableException e) {
-			if (Logger.logError()) {
-				Logger.error(e);
-			}
-			return new Tuple<Integer, List<String>>(-1, null);
+			throw new IOException(e);
 		}
 		
 		// create new ProcessBuilder
@@ -145,19 +146,6 @@ public class CommandExecutor extends Thread {
 			                                                               ? "present"
 			                                                               : "omitted") + "][environment:"
 			        + StringEscapeUtils.escapeJava(JavaUtils.mapToString(processBuilder.environment())) + "]");
-		} else if (Logger.logInfo()) {
-			final StringBuilder builder = new StringBuilder();
-			
-			builder.append("Executing (").append(dir != null
-			                                                ? dir.getAbsolutePath()
-			                                                : new File(".").getAbsolutePath()).append("): ")
-			       .append(localCommand);
-			
-			for (final String argument : arguments) {
-				builder.append(" ").append(argument);
-			}
-			
-			Logger.info(builder.toString());
 		}
 		
 		// Merge stdout and stderr to one stream
@@ -210,32 +198,35 @@ public class CommandExecutor extends Thread {
 			// wait for the process (this should return instantly if no error
 			// occurred
 			
-			if ((returnValue != 0) || readTask.error || ((writeTask != null) && writeTask.error)) {
-				if (Logger.logError()) {
-					final StringBuilder stringBuilder = new StringBuilder();
-					stringBuilder.append("Executed: [command:");
-					stringBuilder.append(localCommand);
-					stringBuilder.append("][arguments:");
-					stringBuilder.append(StringEscapeUtils.escapeJava(Arrays.toString(arguments)));
-					stringBuilder.append("][workingdir:");
-					stringBuilder.append((dir != null
-					                                 ? dir.getAbsolutePath()
-					                                 : "(null)"));
-					stringBuilder.append("][input:");
-					stringBuilder.append((input != null
-					                                   ? "present"
-					                                   : "omitted"));
-					stringBuilder.append("][environment:");
-					stringBuilder.append(StringEscapeUtils.escapeJava(JavaUtils.mapToString(processBuilder.environment())));
-					stringBuilder.append("] failed with exitCode: ");
-					stringBuilder.append(returnValue);
-					Logger.error(stringBuilder.toString());
+			if (readTask.error || ((writeTask != null) && writeTask.error)) {
+				final StringBuilder stringBuilder = new StringBuilder();
+				stringBuilder.append("Executed: [command:");
+				stringBuilder.append(localCommand);
+				stringBuilder.append("][arguments:");
+				stringBuilder.append(StringEscapeUtils.escapeJava(Arrays.toString(arguments)));
+				stringBuilder.append("][workingdir:");
+				stringBuilder.append((dir != null
+				                                 ? dir.getAbsolutePath()
+				                                 : "(null)"));
+				stringBuilder.append("][input:");
+				stringBuilder.append((input != null
+				                                   ? "present"
+				                                   : "omitted"));
+				stringBuilder.append("][environment:");
+				stringBuilder.append(StringEscapeUtils.escapeJava(JavaUtils.mapToString(processBuilder.environment())));
+				stringBuilder.append("] failed with exitCode: ");
+				stringBuilder.append(returnValue);
+				final String logMessage = stringBuilder.toString();
+				if (Logger.logDebug()) {
+					Logger.debug(logMessage);
 					readTask.logLinesOnError();
 					if (writeTask != null) {
 						writeTask.logLinesOnError();
 					}
 				}
+				throw new IOException(logMessage);
 			}
+			
 			return new Tuple<Integer, List<String>>(returnValue, readTask.getReadLines());
 		} catch (final Exception e) {
 			if (Logger.logError()) {
@@ -361,6 +352,9 @@ public class CommandExecutor extends Thread {
 	/*
 	 * (non-Javadoc)
 	 * @see java.lang.Thread#run()
+	 */
+	/**
+	 * Run.
 	 */
 	@Override
 	public void run() {
