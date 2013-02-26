@@ -217,9 +217,11 @@ public class MercurialRepositoryTest extends VersionsTest {
 	
 	/**
 	 * Test get transaction id.
+	 * 
+	 * @throws RepositoryOperationException
 	 */
 	@Test
-	public void testGetChangeSetId() {
+	public void testGetChangeSetId() throws RepositoryOperationException {
 		assertEquals(MercurialRepositoryTest.T_E52DEF97EBC1F78C9286B1E7C36783AA67604439, this.repo.getChangeSetId(0));
 		assertEquals(MercurialRepositoryTest.T_CBCC33D919A27B9450D117F211A5F4F45615CAB9, this.repo.getChangeSetId(6));
 		assertEquals(MercurialRepositoryTest.T_67635FE9EFEB2FD3751DF9EA67650C71E59E3DF1, this.repo.getChangeSetId(18));
@@ -256,9 +258,11 @@ public class MercurialRepositoryTest extends VersionsTest {
 	
 	/**
 	 * Test get former path name.
+	 * 
+	 * @throws RepositoryOperationException
 	 */
 	@Test
-	public void testGetFormerPathName() {
+	public void testGetFormerPathName() throws RepositoryOperationException {
 		String formerPathName = this.repo.getFormerPathName(MercurialRepositoryTest.T_96A9F105774B50F1FA3361212C4D12AE057A4285,
 		                                                    "3_renamed.txt");
 		assertNull(formerPathName);

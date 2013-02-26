@@ -111,11 +111,16 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 				Logger.debug("Firing command: %s/eclipse %s ", eclipseDir.getAbsolutePath(),
 				             StringUtils.join(arguments.toArray(new String[arguments.size()]), " "));
 			}
-			final Tuple<Integer, List<String>> response = CommandExecutor.execute(eclipseDir.getAbsolutePath()
-			                                                                              + FileUtils.fileSeparator
-			                                                                              + "eclipse",
-			                                                                      arguments.toArray(new String[arguments.size()]),
-			                                                                      eclipseExecDir, null, environment);
+			Tuple<Integer, List<String>> response;
+			
+			try {
+				response = CommandExecutor.execute(eclipseDir.getAbsolutePath() + FileUtils.fileSeparator + "eclipse",
+				                                   arguments.toArray(new String[arguments.size()]), eclipseExecDir,
+				                                   null, environment);
+			} catch (final IOException e) {
+				response = new Tuple<Integer, List<String>>(-1, new LinkedList<String>());
+			}
+			
 			try {
 				FileUtils.forceDelete(eclipseExecDir);
 			} catch (final IOException ignore) {

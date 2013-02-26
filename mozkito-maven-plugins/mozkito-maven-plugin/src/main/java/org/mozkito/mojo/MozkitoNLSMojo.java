@@ -238,7 +238,6 @@ public class MozkitoNLSMojo extends AbstractMojo {
 				        + this.outputDirectory.getAbsolutePath() + "`.");
 			}
 		}
-		getLog().error("Trying to create file: " + file.getAbsolutePath());
 		file.createNewFile();
 		return file;
 	}

@@ -64,9 +64,11 @@ public class GitRepositoryTest extends VersionsTest {
 	
 	/**
 	 * Test annotate.
+	 * 
+	 * @throws RepositoryOperationException
 	 */
 	@Test
-	public void testAnnotate() {
+	public void testAnnotate() throws RepositoryOperationException {
 		List<AnnotationEntry> annotate = this.repo.annotate("3.txt", "637acf68104e7bdff8235fb2e1a254300ffea3cb");
 		
 		assertEquals(3, annotate.size());
@@ -133,9 +135,11 @@ public class GitRepositoryTest extends VersionsTest {
 	
 	/**
 	 * Test diff.
+	 * 
+	 * @throws RepositoryOperationException
 	 */
 	@Test
-	public void testDiff() {
+	public void testDiff() throws RepositoryOperationException {
 		final Collection<Delta> diff = this.repo.diff("3.txt", "637acf68104e7bdff8235fb2e1a254300ffea3cb",
 		                                              "9be561b3657e2b1da2b09d675dddd5f45c47f57c");
 		assertEquals(1, diff.size());
@@ -191,9 +195,11 @@ public class GitRepositoryTest extends VersionsTest {
 	
 	/**
 	 * Test get former path name.
+	 * 
+	 * @throws RepositoryOperationException
 	 */
 	@Test
-	public void testGetFormerPathName() {
+	public void testGetFormerPathName() throws RepositoryOperationException {
 		String formerPathName = this.repo.getFormerPathName("96a9f105774b50f1fa3361212c4d12ae057a4285", "3_renamed.txt");
 		assertNotNull(formerPathName);
 		assertEquals("3.txt", formerPathName);
@@ -253,17 +259,21 @@ public class GitRepositoryTest extends VersionsTest {
 	
 	/**
 	 * Test get transaction count.
+	 * 
+	 * @throws RepositoryOperationException
 	 */
 	@Test
-	public void testGetTransactionCount() {
+	public void testGetTransactionCount() throws RepositoryOperationException {
 		assertEquals(20, this.repo.getChangeSetCount());
 	}
 	
 	/**
 	 * Test get transaction index.
+	 * 
+	 * @throws RepositoryOperationException
 	 */
 	@Test
-	public void testGetTransactionIndex() {
+	public void testGetTransactionIndex() throws RepositoryOperationException {
 		assertEquals(19, this.repo.getChangeSetIndex("HEAD"));
 		assertEquals(6, this.repo.getChangeSetIndex("98d5c40ef3c14503a472ba4133ae3529c7578e30"));
 	}

@@ -162,8 +162,13 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 		if ((filePath == null) || (revision == null)) {
 			throw new RepositoryOperationException("filePath and revision must not be null. Abort.");
 		}
-		final Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "annotate", "-cfud",
-		        "-r", revision, filePath }, this.cloneDir, null, null);
+		Tuple<Integer, List<String>> response;
+		try {
+			response = CommandExecutor.execute("hg", new String[] { "annotate", "-cfud", "-r", revision, filePath },
+			                                   this.cloneDir, null, null);
+		} catch (final IOException e) {
+			throw new RepositoryOperationException(e);
+		}
 		
 		if (response.getFirst() != 0) {
 			return null;
@@ -219,10 +224,18 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	
 	/**
 	 * Cache hashes. This is requries to identify short hashes output by hg log.
+	 * 
+	 * @throws RepositoryOperationException
 	 */
-	private void cacheHashes() {
-		final Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log", "--template",
-		        "'{node}\n'" }, this.cloneDir, null, null);
+	private void cacheHashes() throws RepositoryOperationException {
+		Tuple<Integer, List<String>> response;
+		try {
+			response = CommandExecutor.execute("hg", new String[] { "log", "--template", "'{node}\n'" }, this.cloneDir,
+			                                   null, null);
+		} catch (final IOException e) {
+			throw new RepositoryOperationException(e);
+		}
+		
 		if (response.getFirst() != 0) {
 			if (Logger.logWarn()) {
 				Logger.warn("Could not cache hashes");
@@ -252,8 +265,13 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 			throw new RepositoryOperationException("Path and revision must not be null.");
 		}
 		
-		final Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "update", "-C",
-		        revision }, this.cloneDir, null, null);
+		Tuple<Integer, List<String>> response;
+		try {
+			response = CommandExecutor.execute("hg", new String[] { "update", "-C", revision }, this.cloneDir, null,
+			                                   null);
+		} catch (final IOException e) {
+			throw new RepositoryOperationException(e);
+		}
 		
 		if (response.getFirst() != 0) {
 			return null;
@@ -281,8 +299,14 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	 */
 	private boolean clone(final InputStream inputStream,
 	                      final String destDir) throws RepositoryOperationException {
-		final Tuple<Integer, List<String>> returnValue = CommandExecutor.execute("hg", new String[] { "clone", "-U",
-		        getUri().toString(), destDir }, this.cloneDir, inputStream, null);
+		Tuple<Integer, List<String>> returnValue;
+		try {
+			returnValue = CommandExecutor.execute("hg", new String[] { "clone", "-U", getUri().toString(), destDir },
+			                                      this.cloneDir, inputStream, null);
+		} catch (final IOException e) {
+			throw new RepositoryOperationException(e);
+		}
+		
 		if (returnValue.getFirst() == 0) {
 			this.cloneDir = new File(destDir);
 			if (!this.cloneDir.exists()) {
@@ -331,15 +355,26 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 			}
 		}
 		
-		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "cat", "-r", baseRevision,
-		        filePath }, this.cloneDir, null, null);
+		Tuple<Integer, List<String>> response;
+		try {
+			response = CommandExecutor.execute("hg", new String[] { "cat", "-r", baseRevision, filePath },
+			                                   this.cloneDir, null, null);
+		} catch (final IOException e) {
+			throw new RepositoryOperationException(e);
+		}
+		
 		if (response.getFirst() != 0) {
 			return null;
 		}
 		final List<String> original = response.getSecond();
 		List<String> revised = new ArrayList<String>(0);
-		response = CommandExecutor.execute("hg", new String[] { "cat", "-r", revisedRevision, filePath },
-		                                   this.cloneDir, null, null);
+		try {
+			response = CommandExecutor.execute("hg", new String[] { "cat", "-r", revisedRevision, filePath },
+			                                   this.cloneDir, null, null);
+		} catch (final IOException e) {
+			throw new RepositoryOperationException(e);
+		}
+		
 		if (response.getFirst() == 0) {
 			revised = response.getSecond();
 		}
@@ -353,7 +388,7 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	 * @see org.mozkito.versions.DistributedCommandLineRepository#executeLog(java.lang.String)
 	 */
 	@Override
-	public Tuple<Integer, List<String>> executeLog(@NotNull @MinLength (min = 1) final String revision) {
+	public Tuple<Integer, List<String>> executeLog(@NotNull @MinLength (min = 1) final String revision) throws RepositoryOperationException {
 		return hgLog(revision);
 	}
 	
@@ -363,7 +398,7 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	 */
 	@Override
 	public Tuple<Integer, List<String>> executeLog(@NotNull @MinLength (min = 1) final String fromRevision,
-	                                               @NotNull @MinLength (min = 1) final String toRevision) {
+	                                               @NotNull @MinLength (min = 1) final String toRevision) throws RepositoryOperationException {
 		final StringBuilder revisionSelectionBuilder = new StringBuilder();
 		revisionSelectionBuilder.append(fromRevision);
 		revisionSelectionBuilder.append("::");
@@ -379,8 +414,13 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	@Override
 	public String gatherToolInformation() {
 		final StringBuilder builder = new StringBuilder();
-		final Tuple<Integer, List<String>> execute = CommandExecutor.execute("hg", new String[] { "--version" },
-		                                                                     FileUtils.tmpDir, null, null);
+		Tuple<Integer, List<String>> execute;
+		try {
+			execute = CommandExecutor.execute("hg", new String[] { "--version" }, FileUtils.tmpDir, null, null);
+		} catch (final IOException e) {
+			execute = new Tuple<Integer, List<String>>(-1, new LinkedList<String>());
+		}
+		
 		if (execute.getFirst() != 0) {
 			builder.append(getClassName()).append(" could not determine `hg` version. (Error code: ")
 			       .append(execute.getFirst()).append(").");
@@ -426,8 +466,14 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 			throw new RepositoryOperationException("Could not set log style `miner` in order to parse log. Abort.", e1);
 		}
 		
-		final Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log", "--style",
-		        "minerlog", "-r", revision + ":" + revision }, this.cloneDir, null, null);
+		Tuple<Integer, List<String>> response;
+		try {
+			response = CommandExecutor.execute("hg", new String[] { "log", "--style", "minerlog", "-r",
+			        revision + ":" + revision }, this.cloneDir, null, null);
+		} catch (final IOException e) {
+			throw new RepositoryOperationException(e);
+		}
+		
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -483,8 +529,14 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	@Override
 	public long getChangeSetCount() throws RepositoryOperationException {
 		
-		final Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log", "-r", "tip",
-		        "--template", "{rev}" + FileUtils.lineSeparator }, this.cloneDir, null, null);
+		Tuple<Integer, List<String>> response;
+		try {
+			response = CommandExecutor.execute("hg", new String[] { "log", "-r", "tip", "--template",
+			        "{rev}" + FileUtils.lineSeparator }, this.cloneDir, null, null);
+		} catch (final IOException e) {
+			throw new RepositoryOperationException(e);
+		}
+		
 		if (response.getFirst() != 0) {
 			return -1;
 		}
@@ -504,10 +556,17 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	 * @see org.mozkito.versions.Repository#getChangeSetId(long)
 	 */
 	@Override
-	public String getChangeSetId(@NotNegative final long index) {
+	public String getChangeSetId(@NotNegative final long index) throws RepositoryOperationException {
 		
 		final String[] args = new String[] { "log", "-r", String.valueOf(index), "--template={node}\\n" };
-		final Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", args, this.cloneDir, null, null);
+		Tuple<Integer, List<String>> response;
+		
+		try {
+			response = CommandExecutor.execute("hg", args, this.cloneDir, null, null);
+		} catch (final IOException e) {
+			throw new RepositoryOperationException(e);
+		}
+		
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -533,8 +592,15 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	@Override
 	public String getFirstRevisionId() throws RepositoryOperationException {
 		if (getStartRevision() == null) {
-			final Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log", "-r0",
-			        "--template", "{node}" }, this.cloneDir, null, null);
+			Tuple<Integer, List<String>> response;
+			
+			try {
+				response = CommandExecutor.execute("hg", new String[] { "log", "-r0", "--template", "{node}" },
+				                                   this.cloneDir, null, null);
+			} catch (final IOException e) {
+				throw new RepositoryOperationException(e);
+			}
+			
 			if (response.getFirst() != 0) {
 				return null;
 			}
@@ -556,12 +622,18 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	@Override
 	@NoneNull
 	public String getFormerPathName(final String revision,
-	                                final String pathName) {
+	                                final String pathName) throws RepositoryOperationException {
 		Condition.notNull(revision, "Cannot get former path name of null revision");
 		Condition.notNull(pathName, "Cannot get former path name for null path");
 		
-		final Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log", "-r",
-		        revision, "--template", "{file_copies}" }, this.cloneDir, null, null);
+		Tuple<Integer, List<String>> response;
+		try {
+			response = CommandExecutor.execute("hg", new String[] { "log", "-r", revision, "--template",
+			        "{file_copies}" }, this.cloneDir, null, null);
+		} catch (final IOException e) {
+			throw new RepositoryOperationException(e);
+		}
+		
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -592,8 +664,13 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	@Override
 	public String getHEADRevisionId() throws RepositoryOperationException {
 		if (getEndRevision() == null) {
-			final Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log", "-rtip",
-			        "--template", "{node}" }, this.cloneDir, null, null);
+			Tuple<Integer, List<String>> response;
+			try {
+				response = CommandExecutor.execute("hg", new String[] { "log", "-rtip", "--template", "{node}" },
+				                                   this.cloneDir, null, null);
+			} catch (final IOException e) {
+				throw new RepositoryOperationException(e);
+			}
 			
 			if (response.getFirst() != 0) {
 				return null;
@@ -762,10 +839,16 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	 * @param revisionSelection
 	 *            the revision selection
 	 * @return the tuple
+	 * @throws RepositoryOperationException
 	 */
-	private Tuple<Integer, List<String>> hgLog(@NotNull @MinLength (min = 1) final String revisionSelection) {
-		return CommandExecutor.execute("hg", new String[] { "log", "--style", "minerlog", "-r", revisionSelection },
-		                               this.cloneDir, null, null);
+	private Tuple<Integer, List<String>> hgLog(@NotNull @MinLength (min = 1) final String revisionSelection) throws RepositoryOperationException {
+		try {
+			return CommandExecutor.execute("hg",
+			                               new String[] { "log", "--style", "minerlog", "-r", revisionSelection },
+			                               this.cloneDir, null, null);
+		} catch (final IOException e) {
+			throw new RepositoryOperationException(e);
+		}
 		
 	}
 	

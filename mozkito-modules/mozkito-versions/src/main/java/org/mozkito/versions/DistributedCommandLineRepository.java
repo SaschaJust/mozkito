@@ -38,8 +38,10 @@ public abstract class DistributedCommandLineRepository extends Repository {
 	 * @param revision
 	 *            the revision
 	 * @return the tuple
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
 	 */
-	public abstract Tuple<Integer, List<String>> executeLog(String revision);
+	public abstract Tuple<Integer, List<String>> executeLog(String revision) throws RepositoryOperationException;
 	
 	/**
 	 * Execute the log command on the command line.
@@ -50,9 +52,11 @@ public abstract class DistributedCommandLineRepository extends Repository {
 	 *            the to revision
 	 * @return a tuple of command line return value and the list of lines printed by the command executed. (see
 	 *         CommandLineExecutor.class)
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
 	 */
 	public abstract Tuple<Integer, List<String>> executeLog(String fromRevision,
-	                                                        String toRevision);
+	                                                        String toRevision) throws RepositoryOperationException;
 	
 	/**
 	 * Gets the log parser.
@@ -63,6 +67,11 @@ public abstract class DistributedCommandLineRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see org.mozkito.versions.Repository#log(java.lang.String, java.lang.String)
+	 */
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see org.mozkito.versions.Repository#log(java.lang.String, java.lang.String)
 	 */
 	@Override

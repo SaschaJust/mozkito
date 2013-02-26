@@ -73,45 +73,45 @@ public class MozkitoMetaMojo extends AbstractMojo {
 	 * @see org.apache.maven.plugin.Mojo#execute()
 	 */
 	public void execute() throws MojoExecutionException {
-		final Pattern pattern = Pattern.compile("^\\p{XDigit}+$");
-		final String ls = System.getProperty("line.separator");
-		final Tuple<Integer, List<String>> execution = CommandExecutor.execute("git", new String[] { "log",
-		        "HEAD^..HEAD", "--pretty=format:%H" }, this.baseDir, null, new HashMap<String, String>());
-		final List<String> output = execution.getSecond();
-		String head = null;
-		
-		if (output.isEmpty()) {
-			getLog().error("Getting git head revision failed.");
-			return;
-		} else {
-			final String firstLine = output.iterator().next();
-			if ((execution.getFirst() != 0) || firstLine.startsWith("fatal:")) {
-				getLog().error("Getting git head revision failed: " + firstLine);
-			} else {
-				final Matcher matcher = pattern.matcher(firstLine);
-				if (matcher.matches()) {
-					head = output.iterator().next();
-				} else {
-					getLog().error("Getting git head revision failed. Output is not a hash: " + firstLine);
-				}
-			}
-		}
-		
-		final Tuple<Integer, List<String>> diff = CommandExecutor.execute("git", new String[] { "diff" }, this.baseDir,
-		                                                                  null, new HashMap<String, String>());
-		final boolean modified = !diff.getFirst().equals(0) || !diff.getSecond().isEmpty();
-		
 		final File f = this.outputDirectory;
 		
 		if (!f.exists()) {
 			f.mkdirs();
 		}
-		
+		FileWriter w = null;
 		final File directory = new File(f, "metadata");
 		final File file = new File(directory, "metadata.properties");
 		
-		FileWriter w = null;
 		try {
+			final Pattern pattern = Pattern.compile("^\\p{XDigit}+$");
+			final String ls = System.getProperty("line.separator");
+			final Tuple<Integer, List<String>> execution = CommandExecutor.execute("git", new String[] { "log",
+			        "HEAD^..HEAD", "--pretty=format:%H" }, this.baseDir, null, new HashMap<String, String>());
+			final List<String> output = execution.getSecond();
+			String head = null;
+			
+			if (output.isEmpty()) {
+				getLog().error("Getting git head revision failed.");
+				return;
+			} else {
+				final String firstLine = output.iterator().next();
+				if ((execution.getFirst() != 0) || firstLine.startsWith("fatal:")) {
+					getLog().error("Getting git head revision failed: " + firstLine);
+				} else {
+					final Matcher matcher = pattern.matcher(firstLine);
+					if (matcher.matches()) {
+						head = output.iterator().next();
+					} else {
+						getLog().error("Getting git head revision failed. Output is not a hash: " + firstLine);
+					}
+				}
+			}
+			
+			final Tuple<Integer, List<String>> diff = CommandExecutor.execute("git", new String[] { "diff" },
+			                                                                  this.baseDir, null,
+			                                                                  new HashMap<String, String>());
+			final boolean modified = !diff.getFirst().equals(0) || !diff.getSecond().isEmpty();
+			
 			if (getLog().isInfoEnabled()) {
 				getLog().info("Generating meta data file...");
 			}

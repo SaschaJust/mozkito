@@ -16,6 +16,7 @@ package org.mozkito.versions;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,9 +43,10 @@ public class VersionsIT {
 	 * @param properties
 	 *            the properties
 	 * @return the tuple
+	 * @throws IOException
 	 */
 	@SuppressWarnings ({ "unchecked", "rawtypes" })
-	private Tuple<Integer, List<String>> exec(final Properties properties) {
+	private Tuple<Integer, List<String>> exec(final Properties properties) throws IOException {
 		
 		// TODO this should be automatically generated and be platform independent
 		final String jar = "target/mozkito-versions-tool-0.4-SNAPSHOT-jar-with-dependencies.jar";
@@ -55,13 +57,14 @@ public class VersionsIT {
 		
 		// execute java
 		return CommandExecutor.execute("java", new String[] { "-jar", jar }, null, null, hmap);
-		
 	}
 	
 	/**
 	 * Setup.
+	 * 
+	 * @throws IOException
 	 */
-	public void setup() {
+	public void setup() throws IOException {
 		final String dropAllTables = "function dropalltables() { dbname=$1; for f in $(psql $dbname <<<'\\dt' | awk -F'|' '/^ [^ ]/ { print $2; }' | tail -n +2); do psql $dbname <<<\"DROP TABLE $f CASCADE;\" ; done; }";
 		CommandExecutor.execute(dropAllTables, new String[0], null, null, new HashMap<String, String>());
 		CommandExecutor.execute("dropalltables", new String[] { "mozkitoversionsintegrationtest" }, null, null,
@@ -70,9 +73,11 @@ public class VersionsIT {
 	
 	/**
 	 * Test.
+	 * 
+	 * @throws IOException
 	 */
 	@Test
-	public final void testHelp() {
+	public final void testHelp() throws IOException {
 		final Properties properties = new Properties();
 		properties.put("help", "");
 		final Tuple<Integer, List<String>> execute = exec(properties);
@@ -107,10 +112,12 @@ public class VersionsIT {
 	
 	/**
 	 * Test.
+	 * 
+	 * @throws IOException
 	 */
 	@Test
 	@Ignore
-	public final void testMozkitoRepository() {
+	public final void testMozkitoRepository() throws IOException {
 		final Properties properties = new Properties();
 		properties.put("database.host", "");
 		properties.put("database.name", "mozkitoversionsintegrationtest");

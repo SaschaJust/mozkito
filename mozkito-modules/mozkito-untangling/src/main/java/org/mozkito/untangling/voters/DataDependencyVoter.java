@@ -23,6 +23,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -209,11 +210,14 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 			        "-Dout=" + eclipseOutFile.getAbsolutePath() };
 			
 			// run the data dependency eclipse app on that file
-			final Tuple<Integer, List<String>> response = CommandExecutor.execute(this.eclipseDir.getAbsolutePath()
-			                                                                              + FileUtils.fileSeparator
-			                                                                              + "eclipse", arguments,
-			                                                                      this.eclipseDir, null,
-			                                                                      new HashMap<String, String>());
+			Tuple<Integer, List<String>> response;
+			try {
+				response = CommandExecutor.execute(this.eclipseDir.getAbsolutePath() + FileUtils.fileSeparator
+				        + "eclipse", arguments, this.eclipseDir, null, new HashMap<String, String>());
+			} catch (final IOException e1) {
+				response = new Tuple<Integer, List<String>>(-1, new LinkedList<String>());
+			}
+			
 			if (response.getFirst() != 0) {
 				if (Logger.logError()) {
 					final StringBuilder sb = new StringBuilder();

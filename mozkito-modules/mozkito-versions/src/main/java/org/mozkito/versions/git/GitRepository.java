@@ -129,14 +129,21 @@ public class GitRepository extends DistributedCommandLineRepository {
 	 */
 	@Override
 	public List<AnnotationEntry> annotate(final String filePath,
-	                                      final String revision) {
+	                                      final String revision) throws RepositoryOperationException {
 		Condition.notNull(filePath, "Annotation of null path not possible");
 		Condition.notNull(revision, "Annotation requires revision");
 		
 		final List<AnnotationEntry> result = new ArrayList<AnnotationEntry>();
 		final String firstRev = getFirstRevisionId();
-		final Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "blame", "-lf",
-		        revision, "--", filePath }, this.cloneDir, null, new HashMap<String, String>());
+		Tuple<Integer, List<String>> response;
+		
+		try {
+			response = CommandExecutor.execute("git", new String[] { "blame", "-lf", revision, "--", filePath },
+			                                   this.cloneDir, null, new HashMap<String, String>());
+		} catch (final IOException e) {
+			throw new RepositoryOperationException(e);
+		}
+		
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -186,8 +193,13 @@ public class GitRepository extends DistributedCommandLineRepository {
 		Condition.notNull(revision, "Checking ut requries revision");
 		
 		if ((this.currentRevision == null) || (!revision.equals(this.currentRevision))) {
-			final Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "checkout",
-			        revision }, this.cloneDir, null, new HashMap<String, String>());
+			Tuple<Integer, List<String>> response;
+			try {
+				response = CommandExecutor.execute("git", new String[] { "checkout", revision }, this.cloneDir, null,
+				                                   new HashMap<String, String>());
+			} catch (final IOException e) {
+				throw new RepositoryOperationException(e);
+			}
 			if (response.getFirst() != 0) {
 				return null;
 			}
@@ -210,17 +222,22 @@ public class GitRepository extends DistributedCommandLineRepository {
 	 * @param destDir
 	 *            the dest dir
 	 * @return true, if successful
+	 * @throws RepositoryOperationException
 	 */
 	private boolean clone(final InputStream inputStream,
-	                      final String destDir) {
+	                      final String destDir) throws RepositoryOperationException {
 		Condition.notNull(destDir, "[clone] `destDir` should not be null.");
 		
-		final Tuple<Integer, List<String>> returnValue = CommandExecutor.execute("git",
-		                                                                         new String[] { "clone", "-n", "-q",
-		                                                                                 URIUtils.Uri2String(getUri()),
-		                                                                                 destDir }, this.cloneDir,
-		                                                                         inputStream,
-		                                                                         new HashMap<String, String>());
+		Tuple<Integer, List<String>> returnValue;
+		try {
+			returnValue = CommandExecutor.execute("git",
+			                                      new String[] { "clone", "-n", "-q", URIUtils.Uri2String(getUri()),
+			                                              destDir }, this.cloneDir, inputStream,
+			                                      new HashMap<String, String>());
+		} catch (final IOException e) {
+			throw new RepositoryOperationException(e);
+		}
+		
 		if (returnValue.getFirst() == 0) {
 			
 			this.cloneDir = new File(destDir);
@@ -260,7 +277,7 @@ public class GitRepository extends DistributedCommandLineRepository {
 	@Override
 	public Collection<Delta> diff(final String filePath,
 	                              final String baseRevision,
-	                              final String revisedRevision) {
+	                              final String revisedRevision) throws RepositoryOperationException {
 		Condition.notNull(filePath, "Cannot diff NULL path");
 		Condition.notNull(baseRevision, "cannot compare to NULL revision");
 		Condition.notNull(revisedRevision, "cannot compare to NULL revision");
@@ -271,8 +288,14 @@ public class GitRepository extends DistributedCommandLineRepository {
 		}
 		
 		// get the old version
-		Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "show",
-		        baseRevision + ":" + diffPath }, this.cloneDir, null, new HashMap<String, String>());
+		Tuple<Integer, List<String>> response;
+		try {
+			response = CommandExecutor.execute("git", new String[] { "show", baseRevision + ":" + diffPath },
+			                                   this.cloneDir, null, new HashMap<String, String>());
+		} catch (final IOException e) {
+			throw new RepositoryOperationException(e);
+		}
+		
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -280,8 +303,14 @@ public class GitRepository extends DistributedCommandLineRepository {
 		
 		// get the new version
 		List<String> newContent = new ArrayList<String>(0);
-		response = CommandExecutor.execute("git", new String[] { "show", revisedRevision + ":" + diffPath },
-		                                   this.cloneDir, null, new HashMap<String, String>());
+		
+		try {
+			response = CommandExecutor.execute("git", new String[] { "show", revisedRevision + ":" + diffPath },
+			                                   this.cloneDir, null, new HashMap<String, String>());
+		} catch (final IOException e) {
+			throw new RepositoryOperationException(e);
+		}
+		
 		if (response.getFirst() == 0) {
 			newContent = response.getSecond();
 		}
@@ -303,7 +332,7 @@ public class GitRepository extends DistributedCommandLineRepository {
 	 * @see org.mozkito.versions.DistributedCommandLineRepository#executeLog(java.lang.String)
 	 */
 	@Override
-	public Tuple<Integer, List<String>> executeLog(@MinLength (min = 4) @NotNull final String revision) {
+	public Tuple<Integer, List<String>> executeLog(@MinLength (min = 4) @NotNull final String revision) throws RepositoryOperationException {
 		return gitLog(revision);
 	}
 	
@@ -314,7 +343,7 @@ public class GitRepository extends DistributedCommandLineRepository {
 	@Override
 	@NoneNull
 	public Tuple<Integer, List<String>> executeLog(@MinLength (min = 4) final String fromRevision,
-	                                               @MinLength (min = 4) final String toRevision) {
+	                                               @MinLength (min = 4) final String toRevision) throws RepositoryOperationException {
 		final StringBuilder revisionSelectionBuilder = new StringBuilder();
 		revisionSelectionBuilder.append(fromRevision);
 		revisionSelectionBuilder.append("^..");
@@ -334,8 +363,13 @@ public class GitRepository extends DistributedCommandLineRepository {
 	@Override
 	public String gatherToolInformation() {
 		final StringBuilder builder = new StringBuilder();
-		final Tuple<Integer, List<String>> execute = CommandExecutor.execute("git", new String[] { "--version" },
-		                                                                     FileUtils.tmpDir, null, null);
+		Tuple<Integer, List<String>> execute;
+		try {
+			execute = CommandExecutor.execute("git", new String[] { "--version" }, FileUtils.tmpDir, null, null);
+		} catch (final IOException e) {
+			execute = new Tuple<Integer, List<String>>(-1, new LinkedList<String>());
+		}
+		
 		if (execute.getFirst() != 0) {
 			builder.append(getClassName()).append(" could not determine `git` version. (Error code: ")
 			       .append(execute.getFirst()).append(").");
@@ -370,12 +404,13 @@ public class GitRepository extends DistributedCommandLineRepository {
 	public Map<String, ChangeType> getChangedPaths(final String revision) throws RepositoryOperationException {
 		Condition.notNull(revision, "Cannot get changed paths for null revision");
 		
-		final Tuple<Integer, List<String>> response = CommandExecutor.execute("git",
-		                                                                      new String[] { "log",
-		                                                                              "--pretty=format:%H",
-		                                                                              "--name-status", "-n1", revision },
-		                                                                      this.cloneDir, null,
-		                                                                      new HashMap<String, String>());
+		Tuple<Integer, List<String>> response;
+		try {
+			response = CommandExecutor.execute("git", new String[] { "log", "--pretty=format:%H", "--name-status",
+			        "-n1", revision }, this.cloneDir, null, new HashMap<String, String>());
+		} catch (final IOException e) {
+			throw new RepositoryOperationException(e);
+		}
 		
 		if (response.getFirst() != 0) {
 			return new HashMap<String, ChangeType>();
@@ -434,9 +469,16 @@ public class GitRepository extends DistributedCommandLineRepository {
 	 * @see org.mozkito.versions.Repository#getTransactionCount()
 	 */
 	@Override
-	public long getChangeSetCount() {
+	public long getChangeSetCount() throws RepositoryOperationException {
 		final String[] args = new String[] { "log", "--branches", "--remotes", "--pretty=format:''" };
-		final Tuple<Integer, List<String>> response = CommandExecutor.execute("git", args, this.cloneDir, null, null);
+		Tuple<Integer, List<String>> response;
+		
+		try {
+			response = CommandExecutor.execute("git", args, this.cloneDir, null, null);
+		} catch (final IOException e) {
+			throw new RepositoryOperationException(e);
+		}
+		
 		if (response.getFirst() != 0) {
 			return -1;
 		}
@@ -465,7 +507,7 @@ public class GitRepository extends DistributedCommandLineRepository {
 	 * @see org.mozkito.versions.Repository#getTransactionIndex(java.lang.String)
 	 */
 	@Override
-	public long getChangeSetIndex(final String changeSetId) {
+	public long getChangeSetIndex(final String changeSetId) throws RepositoryOperationException {
 		if ("HEAD".equals(changeSetId.toUpperCase()) || "TIP".equals(changeSetId.toUpperCase())) {
 			return this.changeSetIds.indexOf(getHEADRevisionId());
 		}
@@ -477,14 +519,16 @@ public class GitRepository extends DistributedCommandLineRepository {
 	 * @see org.mozkito.versions.Repository#getFirstRevisionId()
 	 */
 	@Override
-	public String getFirstRevisionId() {
+	public String getFirstRevisionId() throws RepositoryOperationException {
 		if (getStartRevision() == null) {
-			final Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "log",
-			                                                                              "--branches", "--remotes",
-			                                                                              "--pretty=format:%H",
-			                                                                              "--topo-order" },
-			                                                                      this.cloneDir, null,
-			                                                                      new HashMap<String, String>());
+			Tuple<Integer, List<String>> response;
+			try {
+				response = CommandExecutor.execute("git", new String[] { "log", "--branches", "--remotes",
+				        "--pretty=format:%H", "--topo-order" }, this.cloneDir, null, new HashMap<String, String>());
+			} catch (final IOException e) {
+				throw new RepositoryOperationException(e);
+			}
+			
 			if (response.getFirst() != 0) {
 				return null;
 			}
@@ -504,13 +548,20 @@ public class GitRepository extends DistributedCommandLineRepository {
 	 */
 	@Override
 	public String getFormerPathName(final String revision,
-	                                final String pathName) {
+	                                final String pathName) throws RepositoryOperationException {
 		Condition.notNull(revision, "Cannot get former path name of null revision");
 		Condition.notNull(pathName, "Cannot get former path name for null path");
 		
 		final String[] args = new String[] { "log", "--branches", "--remotes", "-r", revision + "^.." + revision, "-M",
 		        "-C", "--name-status", "--diff-filter=R,C" };
-		final Tuple<Integer, List<String>> response = CommandExecutor.execute("git", args, this.cloneDir, null, null);
+		Tuple<Integer, List<String>> response;
+		
+		try {
+			response = CommandExecutor.execute("git", args, this.cloneDir, null, null);
+		} catch (final IOException e) {
+			throw new RepositoryOperationException(e);
+		}
+		
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -534,9 +585,15 @@ public class GitRepository extends DistributedCommandLineRepository {
 	 * @see org.mozkito.versions.Repository#getLastRevisionId()
 	 */
 	@Override
-	public String getHEADRevisionId() {
-		final Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "rev-list",
-		        getMainBranchName(), "--branches", "--remotes" }, this.cloneDir, null, new HashMap<String, String>());
+	public String getHEADRevisionId() throws RepositoryOperationException {
+		Tuple<Integer, List<String>> response;
+		try {
+			response = CommandExecutor.execute("git", new String[] { "rev-list", getMainBranchName(), "--branches",
+			        "--remotes" }, this.cloneDir, null, new HashMap<String, String>());
+		} catch (final IOException e) {
+			throw new RepositoryOperationException(e);
+		}
+		
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -560,12 +617,17 @@ public class GitRepository extends DistributedCommandLineRepository {
 	 * Gets the ls remote.
 	 * 
 	 * @return the ls remote
+	 * @throws RepositoryOperationException
 	 */
-	public List<String> getLsRemote() {
-		final Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "ls-remote", "." },
-		                                                                      this.cloneDir, null,
-		                                                                      new HashMap<String, String>(),
-		                                                                      GitRepository.charset);
+	public List<String> getLsRemote() throws RepositoryOperationException {
+		Tuple<Integer, List<String>> response;
+		try {
+			response = CommandExecutor.execute("git", new String[] { "ls-remote", "." }, this.cloneDir, null,
+			                                   new HashMap<String, String>(), GitRepository.charset);
+		} catch (final IOException e) {
+			throw new RepositoryOperationException(e);
+		}
+		
 		if (response.getFirst() != 0) {
 			throw new UnrecoverableError("Could not get ls-remote.");
 		}
@@ -683,15 +745,19 @@ public class GitRepository extends DistributedCommandLineRepository {
 	 * Gets the rev list parents.
 	 * 
 	 * @return the rev list parents
+	 * @throws RepositoryOperationException
 	 */
-	public List<String> getRevListParents() {
-		final Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "rev-list",
-		                                                                              "--encoding=UTF-8", "--parents",
-		                                                                              "--branches", "--remotes",
-		                                                                              "--topo-order" }, this.cloneDir,
-		                                                                      null,
-		                                                                      new HashMap<String, String>(),
-		                                                                      GitRepository.charset);
+	public List<String> getRevListParents() throws RepositoryOperationException {
+		Tuple<Integer, List<String>> response;
+		try {
+			response = CommandExecutor.execute("git", new String[] { "rev-list", "--encoding=UTF-8", "--parents",
+			                                           "--branches", "--remotes", "--topo-order" }, this.cloneDir,
+			                                   null, new HashMap<String, String>(),
+			                                   GitRepository.charset);
+		} catch (final IOException e) {
+			throw new RepositoryOperationException(e);
+		}
+		
 		if (response.getFirst() != 0) {
 			throw new UnrecoverableError("Could not get rev-list --children.");
 		}
@@ -717,15 +783,20 @@ public class GitRepository extends DistributedCommandLineRepository {
 	 * @param revisionSelection
 	 *            the revision selection
 	 * @return the tuple
+	 * @throws RepositoryOperationException
 	 */
-	private Tuple<Integer, List<String>> gitLog(@MinLength (min = 4) @NotNull final String revisionSelection) {
+	private Tuple<Integer, List<String>> gitLog(@MinLength (min = 4) @NotNull final String revisionSelection) throws RepositoryOperationException {
 		if (Logger.logDebug()) {
 			Logger.debug("############# git log --pretty=fuller --branches --remotes --topo-order %s.",
 			             revisionSelection);
 		}
 		
-		return CommandExecutor.execute("git", new String[] { "log", "--pretty=fuller", "--branches", "--remotes",
-		        "--topo-order", revisionSelection }, this.cloneDir, null, new HashMap<String, String>());
+		try {
+			return CommandExecutor.execute("git", new String[] { "log", "--pretty=fuller", "--branches", "--remotes",
+			        "--topo-order", revisionSelection }, this.cloneDir, null, new HashMap<String, String>());
+		} catch (final IOException e) {
+			throw new RepositoryOperationException(e);
+		}
 	}
 	
 	/*
