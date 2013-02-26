@@ -18,7 +18,7 @@
 	</parent>
 	<artifactId>mozkito-mappings-settings</artifactId>
 	<packaging>jar</packaging>
-	<name>(settings) mappings</name>
+	<name>mappings [settings]</name>
 	<description>TODO</description>
 	<dependencies>
 		<dependency>

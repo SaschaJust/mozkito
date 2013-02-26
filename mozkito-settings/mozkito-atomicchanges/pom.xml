@@ -18,7 +18,7 @@
 	</parent>
 	<artifactId>mozkito-atomicchanges-settings</artifactId>
 	<packaging>jar</packaging>
-	<name>(settings) atomicchanges</name>
+	<name>atomicchanges [settings]</name>
 	<description>TODO</description>
 	<dependencies>
 		<dependency>

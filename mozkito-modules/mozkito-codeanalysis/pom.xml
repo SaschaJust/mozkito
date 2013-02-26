@@ -8,7 +8,7 @@
 	</parent>
 	<artifactId>mozkito-codeanalysis</artifactId>
 	<packaging>jar</packaging>
-	<name>(module) codeanalysis</name>
+	<name>codeanalysis [module]</name>
 	<description>TODO</description>
 	<dependencies>
 		<dependency>

@@ -8,7 +8,7 @@
 	</parent>
 	<artifactId>mozkito-issues</artifactId>
 	<packaging>jar</packaging>
-	<name>(module) issues</name>
+	<name>issues [module]</name>
 	<description>TODO</description>
 	<dependencies>
 		<dependency>

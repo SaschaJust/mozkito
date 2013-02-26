@@ -9,7 +9,7 @@
 	</parent>
 	<artifactId>mozkito-untangling</artifactId>
 	<packaging>jar</packaging>
-	<name>(module) untangling</name>
+	<name>untangling [module]</name>
 	<description>TODO</description>
 	<dependencies>
 		<dependency>

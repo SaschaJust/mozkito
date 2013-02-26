@@ -8,7 +8,7 @@
 	</parent>
 	<artifactId>mozkito-callgraph-tool</artifactId>
 	<packaging>jar</packaging>
-	<name>(tool)   callgraph</name>
+	<name>callgraph [tool]</name>
 	<description>TODO</description>
 	<properties>
 		<mainClass>callgraph.Main</mainClass>

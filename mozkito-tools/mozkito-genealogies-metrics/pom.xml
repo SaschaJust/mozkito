@@ -9,7 +9,7 @@
 	</parent>
 	<artifactId>mozkito-genealogies-metrics-tool</artifactId>
 	<packaging>jar</packaging>
-	<name>(tool)   genealogies-metrics-tool</name>
+	<name>genealogies-metrics-tool [tool]</name>
 	<description>TODO</description>
 	<dependencies>
 		<dependency>

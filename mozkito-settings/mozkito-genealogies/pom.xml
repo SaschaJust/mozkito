@@ -18,7 +18,7 @@
 	</parent>
 	<artifactId>mozkito-genealogies-settings</artifactId>
 	<packaging>jar</packaging>
-	<name>(settings) genealogies</name>
+	<name>genealogies [settings]</name>
 	<description>TODO</description>
 	<dependencies>
 		<dependency>

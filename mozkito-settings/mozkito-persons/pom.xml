@@ -18,7 +18,7 @@
 	</parent>
 	<artifactId>mozkito-persons-settings</artifactId>
 	<packaging>jar</packaging>
-	<name>(settings) persons</name>
+	<name>persons [settings]</name>
 	<description>TODO</description>
 	<dependencies>
 		<dependency>

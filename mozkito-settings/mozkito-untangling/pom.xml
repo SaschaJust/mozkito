@@ -18,7 +18,7 @@
 	</parent>
 	<artifactId>mozkito-untangling-settings</artifactId>
 	<packaging>jar</packaging>
-	<name>(settings) untangling</name>
+	<name>untangling [settings]</name>
 	<description>TODO</description>
 	<dependencies>
 		<dependency>

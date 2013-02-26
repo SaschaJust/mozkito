@@ -8,7 +8,7 @@
 	</parent>
 	<artifactId>mozkito-versions-tool</artifactId>
 	<packaging>jar</packaging>
-	<name>(tool)   versions</name>
+	<name>versions [tool]</name>
 	<description>TODO</description>
 	<properties>
 		<mainClass>versions.Main</mainClass>

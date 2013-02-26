@@ -18,7 +18,7 @@
 	</parent>
 	<artifactId>mozkito-causeeffect-settings</artifactId>
 	<packaging>jar</packaging>
-	<name>(settings) causeeffect</name>
+	<name>causeeffect [settings]</name>
 	<description>TODO</description>
 	<dependencies>
 		<dependency>

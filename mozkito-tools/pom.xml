@@ -7,7 +7,7 @@
 		<version>0.4-SNAPSHOT</version>
 	</parent>
 	<artifactId>mozkito-tools</artifactId>
-	<name>(meta)   mozkito tools</name>
+	<name>mozkito tools [meta]</name>
 	<description>Data Mining and Analyzation for Various Repositories</description>
 	<packaging>pom</packaging>
 	<modules>

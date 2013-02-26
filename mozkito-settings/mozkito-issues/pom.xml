@@ -18,7 +18,7 @@
 	</parent>
 	<artifactId>mozkito-issues-settings</artifactId>
 	<packaging>jar</packaging>
-	<name>(settings) issues</name>
+	<name>issues [settings]</name>
 	<description>TODO</description>
 	<dependencies>
 		<dependency>

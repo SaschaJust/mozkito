@@ -8,7 +8,7 @@
 	</parent>
 	<artifactId>mozkito-causeeffect-tool</artifactId>
 	<packaging>jar</packaging>
-	<name>(tool)   causeeffect</name>
+	<name>causeeffect [tool]</name>
 	<description>TODO</description>
 	<properties>
 		<mainClass>causeeffect.Main</mainClass>

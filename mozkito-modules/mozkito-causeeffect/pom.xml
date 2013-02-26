@@ -9,7 +9,7 @@
 	</parent>
 	<artifactId>mozkito-causeeffect</artifactId>
 	<packaging>jar</packaging>
-	<name>(module) causeeffect</name>
+	<name>causeeffect [module]</name>
 	<description>TODO</description>
 	<dependencies>
 		<dependency>

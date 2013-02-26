@@ -25,7 +25,7 @@
 	</parent>
 	<artifactId>mozkito-mappings</artifactId>
 	<packaging>jar</packaging>
-	<name>(module) mappings</name>
+	<name>mappings [module]</name>
 	<description>TODO</description>
 	<dependencies>
 		<dependency>

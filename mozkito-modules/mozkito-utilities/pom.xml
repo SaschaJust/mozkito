@@ -8,7 +8,7 @@
 	</parent>
 	<artifactId>mozkito-utilities</artifactId>
 	<packaging>jar</packaging>
-	<name>(module) utilities</name>
+	<name>utilities [module]</name>
 	<dependencies>
 		<dependency>
 			<groupId>commons-lang</groupId>

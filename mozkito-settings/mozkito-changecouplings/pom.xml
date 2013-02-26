@@ -18,7 +18,7 @@
 	</parent>
 	<artifactId>mozkito-changecouplings-settings</artifactId>
 	<packaging>jar</packaging>
-	<name>(settings) changecouplings</name>
+	<name>changecouplings [settings]</name>
 	<description>TODO</description>
 	<dependencies>
 		<dependency>

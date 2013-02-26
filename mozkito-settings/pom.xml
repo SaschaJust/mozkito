@@ -7,7 +7,7 @@
 		<version>0.4-SNAPSHOT</version>
 	</parent>
 	<artifactId>mozkito-settings</artifactId>
-	<name>(meta)   mozkito settings</name>
+	<name>mozkito settings [meta]</name>
 	<description>Settings for mozkito tools</description>
 	<packaging>pom</packaging>
 	<modules>

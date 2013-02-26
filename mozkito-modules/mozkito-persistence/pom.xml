@@ -18,7 +18,7 @@
 	</parent>
 	<artifactId>mozkito-persistence</artifactId>
 	<packaging>jar</packaging>
-	<name>(module) persistence</name>
+	<name>persistence [module]</name>
 	<description>TODO</description>
 	<dependencies>
 		<dependency>

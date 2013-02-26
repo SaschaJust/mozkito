@@ -8,7 +8,7 @@
 	</parent>
 	<artifactId>mozkito-genealogies-tool</artifactId>
 	<packaging>jar</packaging>
-	<name>(tool)   callgraph</name>
+	<name>callgraph [tool]</name>
 	<description>TODO</description>
 	<properties>
 		<mainClass>genealogies.Main</mainClass>

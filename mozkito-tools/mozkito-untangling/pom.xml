@@ -8,7 +8,7 @@
 	</parent>
 	<artifactId>mozkito-untangling-tool</artifactId>
 	<packaging>jar</packaging>
-	<name>(tool)   untangling</name>
+	<name>untangling [tool]</name>
 	<description>TODO</description>
 	<properties>
 		<mainClass>untangling.Main</mainClass>

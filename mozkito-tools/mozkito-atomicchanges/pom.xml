@@ -9,7 +9,7 @@
 	</parent>
 	<artifactId>mozkito-atomicchanges-tool</artifactId>
 	<packaging>jar</packaging>
-	<name>(tool)   atomicchanges</name>
+	<name>atomicchanges [tool]</name>
 	<description>TODO</description>
 	<dependencies>
 		<dependency>

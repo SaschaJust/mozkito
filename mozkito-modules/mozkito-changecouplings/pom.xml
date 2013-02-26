@@ -8,7 +8,7 @@
 	</parent>
 	<artifactId>mozkito-changecouplings</artifactId>
 	<packaging>jar</packaging>
-	<name>(module) changecouplings</name>
+	<name>changecouplings [module]</name>
 	<description>TODO</description>
 	<dependencies>
 		<dependency>

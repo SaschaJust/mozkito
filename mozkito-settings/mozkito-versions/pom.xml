@@ -18,7 +18,7 @@
 	</parent>
 	<artifactId>mozkito-versions-settings</artifactId>
 	<packaging>jar</packaging>
-	<name>(settings) versions</name>
+	<name>versions [settings]</name>
 	<description>TODO</description>
 	<dependencies>
 		<dependency>
