@@ -1,5 +1,5 @@
-/*******************************************************************************
- * Copyright 2013 Kim Herzig, Sascha Just
+/***********************************************************************************************************************
+ * Copyright 2011 Kim Herzig, Sascha Just
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -9,7 +9,7 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ **********************************************************************************************************************/
 package org.mozkito.versions.model;
 
 import java.io.IOException;
@@ -49,6 +49,9 @@ import org.mozkito.versions.exceptions.NotComparableException;
 
 /**
  * The Class VersionArchive.
+ * 
+ * @author Sascha Just <sascha.just@mozkito.org>
+ * 
  */
 @Entity
 @Table (name = "version_archive")
@@ -58,7 +61,7 @@ public class VersionArchive implements Annotated {
 	private static final long serialVersionUID = -3701231007051514130L;
 	
 	/**
-	 * Load persisted VersionArchive from DB
+	 * Load persisted VersionArchive from DB.
 	 * 
 	 * @param persistenceUtil
 	 *            the persistence util
@@ -82,13 +85,26 @@ public class VersionArchive implements Annotated {
 	
 	/** The generated id. */
 	private long                   generatedId;
+	
+	/** The change sets. */
 	private Map<String, ChangeSet> changeSets;
 	
+	/** The mozkito version. */
 	private String                 mozkitoVersion;
+	
+	/** The mozkito hash. */
 	private String                 mozkitoHash;
+	
+	/** The used settings. */
 	private String                 usedSettings;
+	
+	/** The mining date. */
 	private DateTime               miningDate;
+	
+	/** The branches. */
 	private Map<String, Branch>    branches;
+	
+	/** The host info. */
 	private String                 hostInfo;
 	
 	/**
@@ -206,6 +222,11 @@ public class VersionArchive implements Annotated {
 	 * (non-Javadoc)
 	 * @see org.mozkito.persistence.Annotated#getHandle()
 	 */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.persistence.Annotated#getClassName()
+	 */
 	@Override
 	@Transient
 	public String getClassName() {
@@ -247,7 +268,7 @@ public class VersionArchive implements Annotated {
 	
 	/**
 	 * Gets DateTime representing the local time stamp in the system on which the mining process was performed at the
-	 * time the mining process was initiated
+	 * time the mining process was initiated.
 	 * 
 	 * @return the mining date
 	 */
@@ -314,6 +335,11 @@ public class VersionArchive implements Annotated {
 		return this.usedSettings;
 	}
 	
+	/**
+	 * Load rev dependency graph.
+	 * 
+	 * @return the rev dependency graph
+	 */
 	private RevDependencyGraph loadRevDependencyGraph() {
 		try {
 			if (this.revDepGraph == null) {
@@ -394,6 +420,12 @@ public class VersionArchive implements Annotated {
 		this.miningDate = miningDate;
 	}
 	
+	/**
+	 * Sets the mining java date.
+	 * 
+	 * @param date
+	 *            the new mining java date
+	 */
 	@SuppressWarnings ("unused")
 	private void setMiningJavaDate(final Date date) {
 		setMiningDate(date != null
