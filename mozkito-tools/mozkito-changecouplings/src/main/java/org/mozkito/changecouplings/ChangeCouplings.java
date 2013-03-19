@@ -97,10 +97,10 @@ public class ChangeCouplings {
 			                                                                                  Requirement.required));
 			
 			this.changeSetIdArgument = ArgumentFactory.create(new StringArgument.Options(
-			                                                                               settings.getRoot(),
-			                                                                               "transaction",
-			                                                                               "The transaction id to compute change couplings for.",
-			                                                                               null, Requirement.required));
+			                                                                             settings.getRoot(),
+			                                                                             "transaction",
+			                                                                             "The transaction id to compute change couplings for.",
+			                                                                             null, Requirement.required));
 			
 			this.minConfidenceArgument = ArgumentFactory.create(new DoubleArgument.Options(
 			                                                                               settings.getRoot(),
@@ -119,7 +119,6 @@ public class ChangeCouplings {
 			                                                                         "out",
 			                                                                         "Write the serialized change couplings to this file.",
 			                                                                         null, Requirement.required, true));
-			
 		} catch (final SettingsParseError e) {
 			throw new UnrecoverableError(e);
 		} catch (final ArgumentSetRegistrationException e) {
@@ -135,8 +134,12 @@ public class ChangeCouplings {
 	 * Run.
 	 */
 	public void run() {
-		final ChangeSet changeSet = this.persistenceUtil.loadById(this.changeSetIdArgument.getValue(),
-		                                                                    ChangeSet.class);
+		if (this.persistenceUtil == null) {
+			throw new net.ownhero.dev.andama.exceptions.Shutdown("You have to call setup() first.");
+			
+		}
+		
+		final ChangeSet changeSet = this.persistenceUtil.loadById(this.changeSetIdArgument.getValue(), ChangeSet.class);
 		
 		if (this.granularityArgument.getValue().equals(Level.FILE)) {
 			final LinkedList<FileChangeCoupling> fileChangeCouplings = ChangeCouplingRuleFactory.getFileChangeCouplings(changeSet,
