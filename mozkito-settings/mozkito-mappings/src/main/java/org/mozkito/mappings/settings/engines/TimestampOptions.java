@@ -84,7 +84,7 @@ public class TimestampOptions extends
 				Logger.info(Messages.getString("TimestampEngine.usingInterval") + " [", start + ", " + end + "]."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			}
 			
-			return new TimestampEngine(new Interval(start * TimestampEngine.MS_IN_SECONDS, end
+			return new TimestampEngine(new Interval((long) start * TimestampEngine.MS_IN_SECONDS, (long) end
 			        * TimestampEngine.MS_IN_SECONDS));
 		} finally {
 			// POSTCONDITIONS
