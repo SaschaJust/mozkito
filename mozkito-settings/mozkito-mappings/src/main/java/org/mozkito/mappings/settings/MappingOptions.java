@@ -248,6 +248,9 @@ public class MappingOptions extends ArgumentSetOptions<Finder, ArgumentSet<Finde
 			this.filterOptions = new FilterOptions(set, Requirement.required);
 			map.put(this.filterOptions.getName(), this.filterOptions);
 			
+			this.splitterOptions = new SplitterOptions(set, Requirement.required);
+			map.put(this.splitterOptions.getName(), this.splitterOptions);
+			
 			return map;
 		} finally {
 			// POSTCONDITIONS
