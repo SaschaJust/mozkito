@@ -92,7 +92,8 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 		this.cacheDir = cacheDir;
 		final String cacheFileName = this.changeset.getId() + ".dd";
 		this.cacheFile = new File(this.cacheDir.getAbsolutePath() + FileUtils.fileSeparator + cacheFileName);
-		if ((this.cacheDir != null) && (this.cacheFile.exists())) {
+		assert this.cacheFile != null;
+		if (this.cacheFile.exists()) {
 			try (final ObjectInputStream objIn = new ObjectInputStream(
 			                                                           new BufferedInputStream(
 			                                                                                   new FileInputStream(
