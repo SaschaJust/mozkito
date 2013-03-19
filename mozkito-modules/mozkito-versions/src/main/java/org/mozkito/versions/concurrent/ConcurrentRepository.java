@@ -356,7 +356,7 @@ public class ConcurrentRepository extends Repository {
 		final Thread thread = Thread.currentThread();
 		
 		try {
-			if (!this.threadToRevisionMap.containsKey(thread)) {
+			if (!this.threadToRevisionMap.containsKey(thread.getId())) {
 				cleanup();
 				final File dir = FileUtils.createRandomDir("mozkito_concurrent_" + this.repository.getClassName().toLowerCase() + "_" + thread.getId(), null, FileShutdownAction.DELETE); //$NON-NLS-1$ //$NON-NLS-2$
 				try {
