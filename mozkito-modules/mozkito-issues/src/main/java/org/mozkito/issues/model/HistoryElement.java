@@ -333,16 +333,25 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 		if (this == obj) {
 			return true;
 		}
+		
 		if (obj == null) {
 			return false;
 		}
+		
 		if (!(obj instanceof HistoryElement)) {
 			return false;
 		}
+		
 		final HistoryElement other = (HistoryElement) obj;
-		if (getBugId() != other.getBugId()) {
+		
+		if (getBugId() == null) {
+			if (other.getBugId() != null) {
+				return false;
+			}
+		} else if (!getBugId().equals(other.getBugId())) {
 			return false;
 		}
+		
 		if (getTimestamp() == null) {
 			if (other.getTimestamp() != null) {
 				return false;
@@ -350,6 +359,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 		} else if (!getTimestamp().equals(other.getTimestamp())) {
 			return false;
 		}
+		
 		return true;
 	}
 	
