@@ -321,13 +321,13 @@ public class RegexEngine extends Engine {
 			}
 			
 			for (final Matcher matcher : this.matchers) {
-				final String id = to.getId();
+				String id = to.getId();
 				
 				if (this.unpad != null) {
 					if (Logger.logDebug()) {
 						Logger.debug("Unpadding '%s' using [%s].", id, this.unpad); //$NON-NLS-1$
 					}
-					id.replaceAll("^[" + this.unpad + "]+", "[" + this.unpad + "]*"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+					id = id.replaceAll("^[" + this.unpad + "]+", "[" + this.unpad + "]*"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				}
 				
 				final Regex regex = matcher.getRegex(id);
