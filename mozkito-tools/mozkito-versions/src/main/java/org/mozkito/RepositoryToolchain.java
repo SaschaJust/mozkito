@@ -72,8 +72,9 @@ public class RepositoryToolchain extends Chain<Settings> {
 	 * 
 	 * @param settings
 	 *            the settings
+	 * @throws SettingsParseError
 	 */
-	public RepositoryToolchain(final Settings settings) {
+	public RepositoryToolchain(final Settings settings) throws SettingsParseError {
 		super(settings);
 		
 		try {
@@ -90,15 +91,13 @@ public class RepositoryToolchain extends Chain<Settings> {
 				if (Logger.logAlways()) {
 					Logger.always(getSettings().getHelpString());
 				}
-				throw new Shutdown();
+				throw new Shutdown("Help request.");
 			}
 			
 		} catch (final ArgumentRegistrationException e) {
 			throw new Shutdown(e.getMessage(), e);
 		} catch (final ArgumentSetRegistrationException e) {
 			throw new Shutdown(e.getMessage(), e);
-		} catch (final SettingsParseError e) {
-			throw new Shutdown();
 		}
 	}
 	
