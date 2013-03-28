@@ -609,8 +609,10 @@ public class SubversionRepository extends Repository {
 				                                      (entry.getAuthor() != null
 				                                                                ? new Person(entry.getAuthor(), null,
 				                                                                             null)
-				                                                                : null), entry.getMessage(),
-				                                      new DateTime(entry.getDate()), "");
+				                                                                : null),
+				                                      entry.getMessage() != null
+				                                                                ? entry.getMessage()
+				                                                                : "", new DateTime(entry.getDate()), "");
 				list.add(current);
 				buff = current;
 			}
