@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+	xmlns:versions="http://mozkito.org/schema/versions"
+	targetNamespace="http://mozkito.org/schema/versions" xmlns:persons="http://mozkito.org/schema/persons">
+	<import namespace="http://mozkito.org/schema/persons"
+		schemaLocation="http://users.own-hero.net/~methos/dropbox/persons.xsd" />
+
+	<element name="versionArchive" type="versions:VersionArchive"></element>
+
+	<complexType name="VersionArchive">
+		<sequence>
+			<element name="changeSets" type="versions:ChangeSets" maxOccurs="1" minOccurs="1"></element>
+			<element name="branches" type="versions:Branches" maxOccurs="1" minOccurs="1"></element>
+			<element name="hostInfo" type="string" maxOccurs="1" minOccurs="1"></element>
+			<element name="masterBranch" type="string" maxOccurs="1" minOccurs="1"></element>
+			<element name="miningDate" type="dateTime" maxOccurs="1" minOccurs="1"></element>
+			<element name="type" type="versions:VersionArchiveType" maxOccurs="1" minOccurs="1"></element>
+		</sequence>
+
+	</complexType>
+
+	<complexType name="Handle">
+		<sequence>
+			<element name="filename" type="string" maxOccurs="1"
+				minOccurs="1">
+			</element>
+			<element name="newName" type="string" maxOccurs="1"
+				minOccurs="0" nillable="true">
+			</element>
+		</sequence>
+	</complexType>
+
+	<complexType name="Revision">
+		<sequence>
+			<element name="changedFile" type="versions:Handle"></element>
+			<element name="changeType" type="versions:ChangeType"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="ChangeSet">
+		<sequence>
+			<element name="branchParent" type="versions:ChangeSetIdRef"
+				maxOccurs="1" minOccurs="1" nillable="true">
+			</element>
+			<element name="mergeParent" type="versions:ChangeSetIdRef"
+				maxOccurs="1" minOccurs="0">
+			</element>
+			<element name="children" type="versions:ChangeSetRefs"
+				maxOccurs="1" minOccurs="1">
+			</element>
+			<element name="message" type="string" maxOccurs="1"
+				minOccurs="1">
+			</element>
+			<element name="author" type="persons:PersonIdRef"
+				maxOccurs="1" minOccurs="1">
+			</element>
+			<element name="revisions" type="versions:Revisions"
+				maxOccurs="1" minOccurs="1">
+			</element>
+			<element name="timestamp" type="dateTime" maxOccurs="1"
+				minOccurs="1">
+			</element>
+			<element name="tags" type="versions:Tags" maxOccurs="1"
+				minOccurs="0">
+			</element>
+		</sequence>
+		<attribute name="id" type="versions:ChangeSetId"></attribute>
+		<attribute name="originalId" type="string"></attribute>
+	</complexType>
+
+	<complexType name="Branch">
+		<sequence>
+			<element name="head" type="versions:ChangeSetId"></element>
+			<sequence>
+				<element name="mergedIn" type="string"></element>
+			</sequence>
+			<element name="name" type="string"></element>
+		</sequence>
+	</complexType>
+
+
+	<simpleType name="ChangeType">
+		<restriction base="string">
+			<enumeration value="Added"></enumeration>
+			<enumeration value="Deleted"></enumeration>
+			<enumeration value="Modified"></enumeration>
+			<enumeration value="Renamed"></enumeration>
+			<enumeration value="All"></enumeration>
+		</restriction>
+	</simpleType>
+
+	<simpleType name="ChangeSetId">
+		<restriction base="ID">
+			<minLength value="2"></minLength>
+			<whiteSpace value="collapse"></whiteSpace>
+			<maxLength value="41"></maxLength>
+			<pattern value="r[0-9a-fA-F]+"></pattern>
+		</restriction>
+	</simpleType>
+
+	<simpleType name="ChangeSetIdRef">
+		<restriction base="IDREF"></restriction>
+	</simpleType>
+
+
+	<simpleType name="VersionArchiveType">
+		<restriction base="string">
+			<enumeration value="GIT"></enumeration>
+			<enumeration value="HG"></enumeration>
+			<enumeration value="PERFORCE"></enumeration>
+			<enumeration value="CVS"></enumeration>
+			<enumeration value="SVN"></enumeration>
+			<enumeration value="DARCS"></enumeration>
+			<enumeration value="BAZAAR"></enumeration>
+		</restriction>
+	</simpleType>
+
+
+
+	<complexType name="ChangeSets">
+		<sequence>
+			<element name="changeSet" type="versions:ChangeSet"
+				maxOccurs="unbounded" minOccurs="0">
+			</element>
+		</sequence>
+	</complexType>
+
+	<complexType name="Branches">
+		<sequence>
+			<element name="branch" type="versions:Branch"
+				maxOccurs="unbounded" minOccurs="0">
+			</element>
+		</sequence>
+	</complexType>
+
+	<complexType name="Revisions">
+		<sequence>
+			<element name="revision" type="versions:Revision"
+				maxOccurs="unbounded" minOccurs="0">
+			</element>
+		</sequence>
+	</complexType>
+
+	<complexType name="ChangeSetRefs">
+		<sequence>
+			<element name="changeSetId" type="versions:ChangeSetIdRef"
+				maxOccurs="unbounded" minOccurs="0">
+			</element>
+		</sequence>
+	</complexType>
+
+	<complexType name="Tags">
+		<sequence>
+			<element name="tag" type="string" maxOccurs="unbounded" minOccurs="0"></element>
+		</sequence>
+	</complexType>
+
+
+</schema>

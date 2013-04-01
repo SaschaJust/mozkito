@@ -19,7 +19,7 @@ import org.mozkito.issues.model.Comment;
 import org.mozkito.issues.model.HistoryElement;
 import org.mozkito.issues.model.IssueTracker;
 import org.mozkito.issues.model.Report;
-import org.mozkito.persistence.model.Person;
+import org.mozkito.persons.model.Person;
 import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
 

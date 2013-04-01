@@ -23,10 +23,10 @@ import java.util.Set;
 import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.persistence.model.Person;
-import org.mozkito.persistence.model.PersonContainer;
 import org.mozkito.persons.elements.PersonBucket;
 import org.mozkito.persons.engine.MergingEngine;
+import org.mozkito.persons.model.Person;
+import org.mozkito.persons.model.PersonContainer;
 
 /**
  * The Class MergingProcessor.

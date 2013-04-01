@@ -11,37 +11,18 @@
  * specific language governing permissions and limitations under the License.
  **********************************************************************************************************************/
 
-package org.mozkito.issues.model;
-
-import java.util.Date;
+package org.mozkito.persons.model;
 
 import javax.persistence.metamodel.SingularAttribute;
 
-import org.mozkito.persons.model.PersonContainer;
-
 /**
- * The Class Comment_.
+ * The Class PersonTuple_.
  */
-@javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.issues.model.Comment.class)
+@javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.persons.model.PersonTuple.class)
 @javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
-                             date = "Mon May 07 15:41:49 CEST 2012")
-public class Comment_ {
+                             date = "Mon Jan 07 15:24:20 CET 2013")
+public class PersonTuple_ {
 	
-	/** The bug report. */
-	public static volatile SingularAttribute<Comment, Report>          bugReport;
-	
-	/** The generated id. */
-	public static volatile SingularAttribute<Comment, Long>            generatedId;
-	
-	/** The id. */
-	public static volatile SingularAttribute<Comment, Integer>         id;
-	
-	/** The java timestamp. */
-	public static volatile SingularAttribute<Comment, Date>            javaTimestamp;
-	
-	/** The message. */
-	public static volatile SingularAttribute<Comment, String>          message;
-	
-	/** The person container. */
-	public static volatile SingularAttribute<Comment, PersonContainer> personContainer;
+	/** The container. */
+	public static volatile SingularAttribute<PersonTuple, PersonContainer> container;
 }

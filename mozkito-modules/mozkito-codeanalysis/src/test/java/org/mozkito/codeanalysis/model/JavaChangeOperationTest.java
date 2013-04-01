@@ -22,7 +22,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import org.mozkito.persistence.ModelStorage;
-import org.mozkito.persistence.model.Person;
+import org.mozkito.persons.model.Person;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.RevDependencyGraph;
 import org.mozkito.versions.model.Branch;

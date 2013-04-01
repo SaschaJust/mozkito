@@ -19,9 +19,9 @@ import java.util.List;
 
 import net.ownhero.dev.ioda.JavaUtils;
 
-import org.mozkito.persistence.model.Person;
-import org.mozkito.persistence.model.PersonContainer;
 import org.mozkito.persons.elements.PersonBucket;
+import org.mozkito.persons.model.Person;
+import org.mozkito.persons.model.PersonContainer;
 import org.mozkito.persons.processing.PersonManager;
 
 /**

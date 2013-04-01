@@ -11,22 +11,28 @@
  * specific language governing permissions and limitations under the License.
  **********************************************************************************************************************/
 
-package org.mozkito.persistence.model;
+package org.mozkito.persons.model;
 
-import javax.persistence.metamodel.MapAttribute;
+import javax.persistence.metamodel.SetAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 
 /**
- * The Class PersonContainer_.
+ * The Class Person_.
  */
-@javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.persistence.model.PersonContainer.class)
+@javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.persons.model.Person.class)
 @javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
                              date = "Mon Jan 07 15:24:20 CET 2013")
-public class PersonContainer_ {
+public class Person_ {
+	
+	/** The email addresses. */
+	public static volatile SetAttribute<Person, String>    emailAddresses;
+	
+	/** The fullnames. */
+	public static volatile SetAttribute<Person, String>    fullnames;
 	
 	/** The generated id. */
-	public static volatile SingularAttribute<PersonContainer, Long>      generatedId;
+	public static volatile SingularAttribute<Person, Long> generatedId;
 	
-	/** The map. */
-	public static volatile MapAttribute<PersonContainer, String, Person> map;
+	/** The usernames. */
+	public static volatile SetAttribute<Person, String>    usernames;
 }

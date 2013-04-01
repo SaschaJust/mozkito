@@ -19,7 +19,7 @@ import net.ownhero.dev.kisa.Logger;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.joda.time.DateTime;
 
-import org.mozkito.persistence.model.Person;
+import org.mozkito.persons.model.Person;
 
 /**
  * The Class LogEntry.

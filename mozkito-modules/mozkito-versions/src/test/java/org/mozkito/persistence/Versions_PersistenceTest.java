@@ -21,9 +21,11 @@ import java.io.IOException;
 import java.util.List;
 
 import org.joda.time.DateTime;
+import org.junit.Before;
 import org.junit.Test;
 
-import org.mozkito.persistence.model.Person;
+import org.mozkito.persons.elements.PersonFactory;
+import org.mozkito.persons.model.Person;
 import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
 import org.mozkito.versions.elements.ChangeType;
@@ -42,6 +44,17 @@ import org.mozkito.versions.model.VersionArchive;
 @DatabaseSettings (unit = "versions", options = ConnectOptions.DROP_AND_CREATE_DATABASE)
 public class Versions_PersistenceTest extends DatabaseTest {
 	
+	private PersonFactory personFactory;
+	
+	/**
+	 * Setup.
+	 */
+	@Before
+	public void setup() {
+		this.personFactory = new PersonFactory();
+		
+	}
+	
 	/**
 	 * Test rcs branch.
 	 * 
@@ -58,12 +71,14 @@ public class Versions_PersistenceTest extends DatabaseTest {
 		final VersionArchive versionArchive = new VersionArchive(revDepGraph);
 		
 		final ChangeSet beginTransaction = new ChangeSet(versionArchive, "000000000000000", "committed begin",
-		                                                 new DateTime(), new Person("just", "Sascha Just",
-		                                                                            "sascha.just@mozkito.org"),
+		                                                 new DateTime(),
+		                                                 this.personFactory.get("just", "Sascha Just",
+		                                                                        "sascha.just@mozkito.org"),
 		                                                 "000000000000000");
 		final ChangeSet endTransaction = new ChangeSet(versionArchive, "0123456789abcde", "committed end",
-		                                               new DateTime(), new Person("just", "Sascha Just",
-		                                                                          "sascha.just@mozkito.org"),
+		                                               new DateTime(),
+		                                               this.personFactory.get("just", "Sascha Just",
+		                                                                      "sascha.just@mozkito.org"),
 		                                               "0123456789abcde");
 		final Branch testBranch = versionArchive.getBranch("testBranch");
 		testBranch.setHead(endTransaction);
@@ -102,7 +117,7 @@ public class Versions_PersistenceTest extends DatabaseTest {
 		
 		final VersionArchive versionArchive = new VersionArchive(revDepGraph);
 		
-		final Person person = new Person("just", null, null);
+		final Person person = this.personFactory.get("just", null, null);
 		final ChangeSet changeset = new ChangeSet(versionArchive, "0", "", new DateTime(), person, "");
 		final Handle handle = new Handle(versionArchive);
 		final Revision revision = new Revision(changeset, handle, ChangeType.Added);
@@ -176,7 +191,7 @@ public class Versions_PersistenceTest extends DatabaseTest {
 		
 		final VersionArchive versionArchive = new VersionArchive(revDepGraph);
 		
-		final Person person = new Person("kim", null, null);
+		final Person person = this.personFactory.get("kim", null, null);
 		final ChangeSet changeset = new ChangeSet(versionArchive, "0", "", new DateTime(), person, "");
 		
 		final Handle handle = new Handle(versionArchive);

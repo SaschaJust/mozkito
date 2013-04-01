@@ -29,12 +29,14 @@ import net.ownhero.dev.kisa.Logger;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.joda.time.DateTime;
+import org.junit.Before;
 import org.junit.Test;
 
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.persistence.model.Person;
-import org.mozkito.persistence.model.PersonContainer;
+import org.mozkito.persons.elements.PersonFactory;
+import org.mozkito.persons.model.Person;
+import org.mozkito.persons.model.PersonContainer;
 import org.mozkito.persons.processing.PersonManager;
 import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
@@ -51,6 +53,17 @@ import org.mozkito.versions.model.VersionArchive;
  */
 @DatabaseSettings (unit = "versions")
 public class Merge_NetTest extends DatabaseTest {
+	
+	/** The person factory. */
+	private PersonFactory personFactory;
+	
+	/**
+	 * Setup.
+	 */
+	@Before
+	public void setup() {
+		this.personFactory = new PersonFactory();
+	}
 	
 	/**
 	 * Test for {@link Person}, {@link PersonContainer}, {@link PersonManager}.
@@ -71,10 +84,11 @@ public class Merge_NetTest extends DatabaseTest {
 		List<Person> list = persistenceUtil.load(criteria);
 		list.size();
 		
-		final Person[] persons = new Person[] { new Person("just", null, null),
-		        new Person(null, null, "sascha.just@mozkito.org"), new Person(null, "Sascha Just", null),
-		        new Person("just", "Sascha Just", null), new Person(null, "Sascha Just", "sascha.just@mozkito.org"),
-		        new Person("just", null, "sascha.just@mozkito.org") };
+		final Person[] persons = new Person[] { this.personFactory.get("just", null, null),
+		        this.personFactory.get(null, null, "sascha.just@mozkito.org"),
+		        this.personFactory.get(null, "Sascha Just", null), this.personFactory.get("just", "Sascha Just", null),
+		        this.personFactory.get(null, "Sascha Just", "sascha.just@mozkito.org"),
+		        this.personFactory.get("just", null, "sascha.just@mozkito.org") };
 		
 		final RevDependencyGraph revDepGraph = new RevDependencyGraph();
 		revDepGraph.addBranch(Branch.MASTER_BRANCH_NAME, "" + (persons.length - 1));

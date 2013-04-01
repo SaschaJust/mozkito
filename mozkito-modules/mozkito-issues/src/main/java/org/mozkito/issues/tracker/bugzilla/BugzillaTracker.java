@@ -27,6 +27,7 @@ import org.mozkito.issues.model.IssueTracker;
 import org.mozkito.issues.tracker.Parser;
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.issues.tracker.Tracker;
+import org.mozkito.persons.elements.PersonFactory;
 
 /**
  * The Class BugzillaTracker.
@@ -65,9 +66,11 @@ public class BugzillaTracker extends Tracker {
 	 * 
 	 * @param issueTracker
 	 *            the issue tracker
+	 * @param personFactory
+	 *            the person factory
 	 */
-	public BugzillaTracker(final IssueTracker issueTracker) {
-		super(issueTracker);
+	public BugzillaTracker(final IssueTracker issueTracker, final PersonFactory personFactory) {
+		super(issueTracker, personFactory);
 	}
 	
 	/*
@@ -97,7 +100,7 @@ public class BugzillaTracker extends Tracker {
 			}
 			
 			// get the correct parser and set tracker.
-			return BugzillaParser.getParser(this.bugzillaVersion);
+			return BugzillaParser.getParser(this.bugzillaVersion, getPersonFactory());
 			
 		} finally {
 			// POSTCONDITIONS

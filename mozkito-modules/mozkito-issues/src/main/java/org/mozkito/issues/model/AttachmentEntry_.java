@@ -19,7 +19,7 @@ import javax.persistence.metamodel.SingularAttribute;
 
 import org.joda.time.DateTime;
 
-import org.mozkito.persistence.model.PersonContainer;
+import org.mozkito.persons.model.PersonContainer;
 
 /**
  * The Class AttachmentEntry_.

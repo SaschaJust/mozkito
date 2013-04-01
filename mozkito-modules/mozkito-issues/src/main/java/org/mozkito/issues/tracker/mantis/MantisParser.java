@@ -71,7 +71,8 @@ import org.mozkito.issues.tracker.Parser;
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.issues.tracker.Tracker;
 import org.mozkito.issues.tracker.XmlReport;
-import org.mozkito.persistence.model.Person;
+import org.mozkito.persons.elements.PersonFactory;
+import org.mozkito.persons.model.Person;
 
 /**
  * The Class MantisParser.
@@ -237,6 +238,9 @@ public class MantisParser implements Parser {
 		}
 	}
 	
+	/** The person factory. */
+	private PersonFactory                   personFactory;
+	
 	/** The document. */
 	private Document                        document;
 	
@@ -284,6 +288,27 @@ public class MantisParser implements Parser {
 	private Report                          report;
 	
 	/**
+	 * Instantiates a new mantis parser.
+	 * 
+	 * @param personFactory
+	 *            the person factory
+	 */
+	public MantisParser(final PersonFactory personFactory) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			// body
+			this.personFactory = personFactory;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
 	 * Adds the change field.
 	 * 
 	 * @param historyElement
@@ -325,13 +350,13 @@ public class MantisParser implements Parser {
 					historyElement.addChangedValue(field, getSeverity(oldValue), getSeverity(newValue));
 					break;
 				case "assigned to":
-					Person oldPerson = new Person(oldValue, null, null);
+					Person oldPerson = getPersonFactory().get(oldValue, null, null);
 					if ((oldValue == null) || oldValue.isEmpty()) {
-						oldPerson = Tracker.UNKNOWN_PERSON;
+						oldPerson = getPersonFactory().getUnknown();
 					}
-					Person newPerson = new Person(newValue, null, null);
+					Person newPerson = getPersonFactory().get(newValue, null, null);
 					if ((newValue == null) || newValue.isEmpty()) {
-						newPerson = Tracker.UNKNOWN_PERSON;
+						newPerson = getPersonFactory().getUnknown();
 					}
 					historyElement.addChangedValue("assignedto", oldPerson, newPerson);
 					break;
@@ -439,11 +464,11 @@ public class MantisParser implements Parser {
 		return null;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#getCategory()
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.issues.tracker.Parser#getAssignedTo()
 	 */
-	
 	@Override
 	public Person getAssignedTo() {
 		// PRECONDITIONS
@@ -455,9 +480,9 @@ public class MantisParser implements Parser {
 			}
 			final String username = td.text().trim();
 			if (username.isEmpty()) {
-				return Tracker.UNKNOWN_PERSON;
+				return getPersonFactory().getUnknown();
 			}
-			return new Person(td.text(), null, null);
+			return getPersonFactory().get(td.text(), null, null);
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -465,9 +490,14 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#getComment(int)
+	 * @see org.mozkito.bugs.tracker.Parser#getCategory()
 	 */
 	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.issues.tracker.Parser#getAttachmentEntries()
+	 */
 	@Override
 	public List<AttachmentEntry> getAttachmentEntries() {
 		// PRECONDITIONS
@@ -575,7 +605,7 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#getComponent()
+	 * @see org.mozkito.bugs.tracker.Parser#getComment(int)
 	 */
 	
 	/**
@@ -589,7 +619,7 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#getCreationTimestamp()
+	 * @see org.mozkito.bugs.tracker.Parser#getComponent()
 	 */
 	
 	/*
@@ -607,9 +637,14 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#getDescription()
+	 * @see org.mozkito.bugs.tracker.Parser#getCreationTimestamp()
 	 */
 	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.issues.tracker.Parser#getCategory()
+	 */
 	@Override
 	public String getCategory() {
 		// PRECONDITIONS
@@ -624,9 +659,14 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#getHistoryLength()
+	 * @see org.mozkito.bugs.tracker.Parser#getDescription()
 	 */
 	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.issues.tracker.Parser#getComments()
+	 */
 	@Override
 	public SortedSet<Comment> getComments() {
 		// PRECONDITIONS
@@ -667,9 +707,9 @@ public class MantisParser implements Parser {
 					}
 					
 					final String developerString = developerTag.text().trim();
-					Person author = new Person(developerString, null, null);
+					Person author = getPersonFactory().get(developerString, null, null);
 					if (developerString.isEmpty()) {
-						author = Tracker.UNKNOWN_PERSON;
+						author = getPersonFactory().getUnknown();
 					}
 					
 					final Element spanTag = developerTag.nextElementSibling();
@@ -704,9 +744,14 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#getId()
+	 * @see org.mozkito.bugs.tracker.Parser#getHistoryLength()
 	 */
 	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.issues.tracker.Parser#getComponent()
+	 */
 	@Override
 	public String getComponent() {
 		// PRECONDITIONS
@@ -724,9 +769,14 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#getNumberOfAttachments()
+	 * @see org.mozkito.bugs.tracker.Parser#getId()
 	 */
 	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.issues.tracker.Parser#getCreationTimestamp()
+	 */
 	@Override
 	public DateTime getCreationTimestamp() {
 		// PRECONDITIONS
@@ -741,9 +791,14 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#getNumberOfComments()
+	 * @see org.mozkito.bugs.tracker.Parser#getNumberOfAttachments()
 	 */
 	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.issues.tracker.Parser#getDescription()
+	 */
 	@Override
 	public String getDescription() {
 		// PRECONDITIONS
@@ -764,9 +819,14 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#getPriority()
+	 * @see org.mozkito.bugs.tracker.Parser#getNumberOfComments()
 	 */
 	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.issues.tracker.Parser#getFetchTime()
+	 */
 	@Override
 	public DateTime getFetchTime() {
 		// PRECONDITIONS
@@ -780,7 +840,17 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see org.mozkito.bugs.tracker.Parser#getPriority()
+	 */
+	
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.bugs.tracker.Parser#getHistoryElements()
+	 */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.issues.tracker.Parser#getId()
 	 */
 	@Override
 	public String getId() {
@@ -796,12 +866,12 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#getResolver()
-	 */
-	
-	/*
-	 * (non-Javadoc)
 	 * @see org.mozkito.bugs.tracker.Parser#getKeywords()
+	 */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.issues.tracker.Parser#getKeywords()
 	 */
 	@Override
 	public Set<String> getKeywords() {
@@ -825,6 +895,16 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see org.mozkito.bugs.tracker.Parser#getResolver()
+	 */
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.issues.tracker.Parser#getLastUpdateTimestamp()
+	 */
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see org.mozkito.issues.tracker.Parser#getLastUpdateTimestamp()
 	 */
 	@Override
@@ -838,11 +918,6 @@ public class MantisParser implements Parser {
 			// POSTCONDITIONS
 		}
 	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#getSeverity()
-	 */
 	
 	/**
 	 * Gets the main table cell.
@@ -870,7 +945,7 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#getSiblings()
+	 * @see org.mozkito.bugs.tracker.Parser#getSeverity()
 	 */
 	
 	/**
@@ -905,12 +980,42 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#getStatus()
+	 * @see org.mozkito.bugs.tracker.Parser#getSiblings()
 	 */
 	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.issues.tracker.Parser#getMd5()
+	 */
 	@Override
 	public final byte[] getMd5() {
 		return this.md5;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.bugs.tracker.Parser#getStatus()
+	 */
+	
+	/**
+	 * Gets the person factory.
+	 * 
+	 * @return the personFactory
+	 */
+	public final PersonFactory getPersonFactory() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.personFactory;
+		} finally {
+			POSTCONDITIONS: {
+				Condition.notNull(this.personFactory,
+				                  "Field '%s' in '%s'.", "personFactory", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
 	}
 	
 	/*
@@ -921,6 +1026,11 @@ public class MantisParser implements Parser {
 	/*
 	 * (non-Javadoc)
 	 * @see org.mozkito.bugs.tracker.Parser#getResolutionTimestamp()
+	 */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.issues.tracker.Parser#getPriority()
 	 */
 	@Override
 	public Priority getPriority() {
@@ -939,6 +1049,11 @@ public class MantisParser implements Parser {
 	 * @see org.mozkito.bugs.tracker.Parser#getSummary()
 	 */
 	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.issues.tracker.Parser#getProduct()
+	 */
 	@Override
 	public String getProduct() {
 		// PRECONDITIONS
@@ -967,6 +1082,11 @@ public class MantisParser implements Parser {
 	 * (non-Javadoc)
 	 * @see org.mozkito.issues.tracker.Parser#getResolution()
 	 */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.issues.tracker.Parser#getResolution()
+	 */
 	@Override
 	public Resolution getResolution() {
 		// PRECONDITIONS
@@ -982,6 +1102,11 @@ public class MantisParser implements Parser {
 	/*
 	 * (non-Javadoc)
 	 * @see org.mozkito.bugs.tracker.Parser#getResolutionTimestamp()
+	 */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.issues.tracker.Parser#getResolutionTimestamp()
 	 */
 	@Override
 	public DateTime getResolutionTimestamp() {
@@ -1000,6 +1125,11 @@ public class MantisParser implements Parser {
 	 * @see org.mozkito.bugs.tracker.Parser#getVersion()
 	 */
 	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.issues.tracker.Parser#getResolver()
+	 */
 	@Override
 	public Person getResolver() {
 		// PRECONDITIONS
@@ -1017,6 +1147,11 @@ public class MantisParser implements Parser {
 	 * @see org.mozkito.bugs.tracker.Parser#setTracker(org.mozkito.bugs.tracker.Tracker)
 	 */
 	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.issues.tracker.Parser#getScmFixVersion()
+	 */
 	@Override
 	public String getScmFixVersion() {
 		// PRECONDITIONS
@@ -1042,6 +1177,11 @@ public class MantisParser implements Parser {
 	 * (non-Javadoc)
 	 * @see org.mozkito.issues.tracker.Parser#getSeverity()
 	 */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.issues.tracker.Parser#getSeverity()
+	 */
 	@Override
 	public Severity getSeverity() {
 		// PRECONDITIONS
@@ -1057,6 +1197,11 @@ public class MantisParser implements Parser {
 	/*
 	 * (non-Javadoc)
 	 * @see org.mozkito.bugs.tracker.Parser#getSiblings()
+	 */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.issues.tracker.Parser#getSiblings()
 	 */
 	@Override
 	public Set<String> getSiblings() {
@@ -1130,6 +1275,11 @@ public class MantisParser implements Parser {
 	 * (non-Javadoc)
 	 * @see org.mozkito.bugs.tracker.Parser#getStatus()
 	 */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.issues.tracker.Parser#getStatus()
+	 */
 	@Override
 	public Status getStatus() {
 		// PRECONDITIONS
@@ -1145,6 +1295,11 @@ public class MantisParser implements Parser {
 	/*
 	 * (non-Javadoc)
 	 * @see org.mozkito.bugs.tracker.Parser#getSubject()
+	 */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.issues.tracker.Parser#getSubject()
 	 */
 	@Override
 	public String getSubject() {
@@ -1162,6 +1317,11 @@ public class MantisParser implements Parser {
 	 * (non-Javadoc)
 	 * @see org.mozkito.bugs.tracker.Parser#getSubmitter()
 	 */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.issues.tracker.Parser#getSubmitter()
+	 */
 	@Override
 	public Person getSubmitter() {
 		// PRECONDITIONS
@@ -1170,9 +1330,9 @@ public class MantisParser implements Parser {
 			final Element cell = getMainTableCell("Reporter", 1);
 			final String username = cell.text().trim();
 			if (username.isEmpty()) {
-				return Tracker.UNKNOWN_PERSON;
+				return getPersonFactory().getUnknown();
 			}
-			return new Person(cell.text().trim(), null, null);
+			return getPersonFactory().get(cell.text().trim(), null, null);
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -1181,6 +1341,11 @@ public class MantisParser implements Parser {
 	/*
 	 * (non-Javadoc)
 	 * @see org.mozkito.bugs.tracker.Parser#getSummary()
+	 */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.issues.tracker.Parser#getSummary()
 	 */
 	@Override
 	public String getSummary() {
@@ -1198,6 +1363,11 @@ public class MantisParser implements Parser {
 	 * (non-Javadoc)
 	 * @see org.mozkito.bugs.tracker.Parser#getType()
 	 */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.issues.tracker.Parser#getType()
+	 */
 	@Override
 	public Type getType() {
 		// PRECONDITIONS
@@ -1213,6 +1383,11 @@ public class MantisParser implements Parser {
 	/*
 	 * (non-Javadoc)
 	 * @see org.mozkito.bugs.tracker.Parser#getVersion()
+	 */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.issues.tracker.Parser#getVersion()
 	 */
 	@Override
 	public String getVersion() {
@@ -1232,6 +1407,11 @@ public class MantisParser implements Parser {
 	/*
 	 * (non-Javadoc)
 	 * @see org.mozkito.issues.tracker.Parser#parseHistoryElements(org.mozkito.issues.tracker.model.History)
+	 */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.issues.tracker.Parser#parseHistoryElements(org.mozkito.issues.model.History)
 	 */
 	@Override
 	public void parseHistoryElements(final History history) {
@@ -1274,9 +1454,9 @@ public class MantisParser implements Parser {
 				
 				if ((result.isEmpty()) || (!result.last().getTimestamp().isEqual(timestamp))) {
 					final String authorString = authorChild.text().trim();
-					Person author = new Person(authorString, null, null);
+					Person author = getPersonFactory().get(authorString, null, null);
 					if ((authorString == null) || authorString.isEmpty()) {
-						author = Tracker.UNKNOWN_PERSON;
+						author = getPersonFactory().getUnknown();
 					}
 					result.add(new HistoryElement(this.report.getHistory(), author, timestamp));
 				}
@@ -1302,6 +1482,12 @@ public class MantisParser implements Parser {
 	/*
 	 * (non-Javadoc)
 	 * @see org.mozkito.bugs.tracker.Parser#setURI(org.mozkito.bugs.tracker.ReportLink)
+	 */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.issues.tracker.Parser#setContext(org.mozkito.issues.model.IssueTracker,
+	 *      org.mozkito.issues.tracker.ReportLink)
 	 */
 	@Override
 	@NoneNull
@@ -1360,6 +1546,11 @@ public class MantisParser implements Parser {
 	/*
 	 * (non-Javadoc)
 	 * @see org.mozkito.bugs.tracker.Parser#setTracker(org.mozkito.bugs.tracker.Tracker)
+	 */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.issues.tracker.Parser#setTracker(org.mozkito.issues.tracker.Tracker)
 	 */
 	@Override
 	public void setTracker(final Tracker tracker) {

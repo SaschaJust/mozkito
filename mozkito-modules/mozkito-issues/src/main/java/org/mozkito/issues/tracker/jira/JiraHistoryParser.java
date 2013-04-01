@@ -20,6 +20,7 @@ import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.ioda.container.RawContent;
 import net.ownhero.dev.ioda.exceptions.FetchException;
 import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
+import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.MultiMatch;
 import net.ownhero.dev.regex.Regex;
@@ -33,7 +34,8 @@ import org.jsoup.select.Elements;
 import org.mozkito.issues.elements.Resolution;
 import org.mozkito.issues.model.History;
 import org.mozkito.issues.model.HistoryElement;
-import org.mozkito.persistence.model.Person;
+import org.mozkito.persons.elements.PersonFactory;
+import org.mozkito.persons.model.Person;
 
 /**
  * The Class JiraHistoryParser.
@@ -43,34 +45,60 @@ import org.mozkito.persistence.model.Person;
 public class JiraHistoryParser {
 	
 	/** The Constant MIN_CHILD_NODE_SIZE. */
-	private static final int MIN_CHILD_NODE_SIZE       = 3;
+	private static final int    MIN_CHILD_NODE_SIZE       = 3;
 	
 	/** The Constant NAME_TAG_LENGTH. */
-	private static final int NAME_TAG_LENGTH           = 5;
+	private static final int    NAME_TAG_LENGTH           = 5;
 	
 	/** The skip regex. */
-	private static Regex     skipRegex                 = new Regex("The issue you are trying to view does not exist");
+	private static Regex        skipRegex                 = new Regex("The issue you are trying to view does not exist");
 	
 	/** The history. */
-	private boolean          parsed                    = false;
+	private boolean             parsed                    = false;
 	
 	/** The uri. */
-	private final URI        uri;
+	private final URI           uri;
 	
 	/** The resolver. */
-	private Person           resolver                  = null;
+	private Person              resolver                  = null;
+	
+	/** The person factory. */
+	private final PersonFactory personFactory;
 	
 	/** The history date time pattern. */
-	public static String     HISTORY_DATE_TIME_PATTERN = "({yyyy}\\d{4})[-:/_]({MM}[0-2]\\d)[-:/_]({dd}[0-3]\\d)T({HH}[0-2]\\d)[-:/_]({mm}[0-5]\\d)([-:/_]({ss}[0-5]\\d))?({Z}[+-]\\d{4})?";
+	public static String        HISTORY_DATE_TIME_PATTERN = "({yyyy}\\d{4})[-:/_]({MM}[0-2]\\d)[-:/_]({dd}[0-3]\\d)T({HH}[0-2]\\d)[-:/_]({mm}[0-5]\\d)([-:/_]({ss}[0-5]\\d))?({Z}[+-]\\d{4})?";
 	
 	/**
 	 * Instantiates a new jira history parser.
 	 * 
 	 * @param uri
 	 *            the uri
+	 * @param personFactory
+	 *            the person factory
 	 */
-	public JiraHistoryParser(final URI uri) {
+	public JiraHistoryParser(final URI uri, final PersonFactory personFactory) {
+		this.personFactory = personFactory;
 		this.uri = uri;
+	}
+	
+	/**
+	 * Gets the person factory.
+	 * 
+	 * @return the personFactory
+	 */
+	public final PersonFactory getPersonFactory() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.personFactory;
+		} finally {
+			POSTCONDITIONS: {
+				Condition.notNull(this.personFactory,
+				                  "Field '%s' in '%s'.", "personFactory", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
 	}
 	
 	/**
@@ -158,7 +186,7 @@ public class JiraHistoryParser {
 								}
 							}
 							final String fullname = aTag.text();
-							who = new Person(username, fullname, null);
+							who = getPersonFactory().get(username, fullname, null);
 						}
 					}
 					DateTime when = null;

@@ -29,6 +29,7 @@ import org.mozkito.issues.model.IssueTracker;
 import org.mozkito.issues.model.Report;
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.persons.model.Person;
 import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.TestEnum;
 import org.mozkito.testing.annotation.DatabaseSettings;

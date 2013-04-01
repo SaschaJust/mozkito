@@ -46,7 +46,7 @@ import org.mozkito.issues.model.HistoryElement;
 import org.mozkito.issues.model.IssueTracker;
 import org.mozkito.issues.model.Report;
 import org.mozkito.issues.tracker.ReportLink;
-import org.mozkito.persistence.model.PersonTuple;
+import org.mozkito.persons.model.PersonTuple;
 
 /**
  * The Class MantisParserTest.

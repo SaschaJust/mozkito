@@ -36,8 +36,8 @@ import org.mozkito.issues.model.IssueTracker;
 import org.mozkito.issues.model.Report;
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.persistence.model.EnumTuple;
-import org.mozkito.persistence.model.Person;
 import org.mozkito.persistence.model.StringTuple;
+import org.mozkito.persons.model.Person;
 
 /**
  * The Class JiraParserLUCENE2222_NetTest.

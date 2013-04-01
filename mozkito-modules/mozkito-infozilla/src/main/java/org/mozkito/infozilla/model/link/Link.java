@@ -20,7 +20,7 @@ import org.mozkito.infozilla.model.Attachable;
 import org.mozkito.infozilla.model.Inlineable;
 import org.mozkito.infozilla.model.attachment.Attachment;
 import org.mozkito.issues.elements.TextElement;
-import org.mozkito.persistence.model.Person;
+import org.mozkito.persons.model.Person;
 
 /**
  * The Class Link.

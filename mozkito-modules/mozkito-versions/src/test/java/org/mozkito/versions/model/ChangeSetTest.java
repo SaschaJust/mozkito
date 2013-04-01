@@ -1,5 +1,5 @@
-/*******************************************************************************
- * Copyright 2013 Kim Herzig, Sascha Just
+/***********************************************************************************************************************
+ * Copyright 2011 Kim Herzig, Sascha Just
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -9,7 +9,7 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ **********************************************************************************************************************/
 package org.mozkito.versions.model;
 
 import static org.junit.Assert.assertEquals;
@@ -19,9 +19,11 @@ import java.io.IOException;
 import java.util.Collection;
 
 import org.joda.time.DateTime;
+import org.junit.Before;
 import org.junit.Test;
 
-import org.mozkito.persistence.model.Person;
+import org.mozkito.persons.elements.PersonFactory;
+import org.mozkito.persons.model.Person;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.RevDependencyGraph;
 import org.mozkito.versions.elements.RevDependencyGraph.EdgeType;
@@ -31,6 +33,16 @@ import org.mozkito.versions.elements.RevDependencyGraph.EdgeType;
  */
 public class ChangeSetTest {
 	
+	private PersonFactory personFactory;
+	
+	/**
+	 * Setup.
+	 */
+	@Before
+	public void setup() {
+		this.personFactory = new PersonFactory();
+	}
+	
 	/**
 	 * Test get changed files.
 	 * 
@@ -38,7 +50,7 @@ public class ChangeSetTest {
 	 */
 	@Test
 	public void testGetChangedFiles() throws IOException {
-		final Person person = new Person("kim", "", "");
+		final Person person = this.personFactory.get("kim", "", "");
 		final RevDependencyGraph revDepGraph = new RevDependencyGraph();
 		revDepGraph.addBranch(Branch.MASTER_BRANCH_NAME, "0");
 		final VersionArchive versionArchive = new VersionArchive(revDepGraph);
@@ -78,7 +90,7 @@ public class ChangeSetTest {
 		
 		//@formatter:on
 		
-		final Person person = new Person("kim", "", "");
+		final Person person = this.personFactory.get("kim", "", "");
 		
 		final RevDependencyGraph revDepGraph = new RevDependencyGraph();
 		revDepGraph.addBranch(Branch.MASTER_BRANCH_NAME, "5");

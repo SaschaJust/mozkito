@@ -24,7 +24,7 @@ import org.mozkito.issues.elements.Resolution;
 import org.mozkito.issues.elements.Severity;
 import org.mozkito.issues.elements.Status;
 import org.mozkito.issues.elements.Type;
-import org.mozkito.persistence.model.PersonContainer;
+import org.mozkito.persons.model.PersonContainer;
 import org.mozkito.versions.model.ChangeSet;
 
 /**

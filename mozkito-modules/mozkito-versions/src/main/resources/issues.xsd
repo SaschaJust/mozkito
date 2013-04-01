@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+	xmlns:issues="http://mozkito.org/schema/issues"
+	targetNamespace="http://mozkito.org/schema/issues" xmlns:persons="http://mozkito.org/schema/persons">
+	<import namespace="http://mozkito.org/schema/persons"
+		schemaLocation="http://users.own-hero.net/~methos/dropbox/persons.xsd" />
+
+	<complexType name="IssueTracker">
+		<sequence>
+			<element name="hostInfo" type="string" maxOccurs="1" minOccurs="1"></element>
+			<element name="miningDate" type="dateTime" maxOccurs="1" minOccurs="1"></element>
+			<element name="reports" type="issues:Reports" maxOccurs="1" minOccurs="1"></element>
+		</sequence>
+		<attribute name="type" type="issues:IssueTrackerType"></attribute>
+	</complexType>
+
+	<element name="issueTracker" type="issues:IssueTracker"></element>
+
+    <simpleType name="IssueTrackerType">
+    	<restriction base="string">
+    		<enumeration value="BUGZILLA"></enumeration>
+    		<enumeration value="JIRA"></enumeration>
+    		<enumeration value="ISSUEZILLA"></enumeration>
+    		<enumeration value="MANTIS"></enumeration>
+    		<enumeration value="SOURCEFORGE"></enumeration>
+    		<enumeration value="GOOGLECODE"></enumeration>
+    		<enumeration value="REDMINE"></enumeration>
+    		<enumeration value="TRAC"></enumeration>
+    	</restriction>
+    </simpleType>
+
+    <complexType name="Reports">
+    	<sequence>
+    		<element name="report" type="issues:Report" maxOccurs="unbounded" minOccurs="1"></element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="Report">
+    	<sequence>
+    		<element name="assigned" type="persons:PersonIdRef"></element>
+    		<element name="attachments" type="issues:Attachments"></element>
+    		<element name="category" type="string"></element>
+    		<element name="comments" type="issues:Comments"></element>
+    		<element name="component" type="string"></element>
+    		<element name="created" type="dateTime"></element>
+    		<element name="description" type="string"></element>
+    		<element name="hash">
+    			<simpleType>
+    				<restriction base="string">
+    					<length value="32"></length>
+    					<whiteSpace value="collapse"></whiteSpace>
+    					<pattern value="[0-9a-fA-F]+"></pattern>
+    				</restriction>
+    			</simpleType>
+    		</element>
+    		<element name="history" type="issues:History"></element>
+    		<element name="fetched" type="dateTime"></element>
+    		<element name="lastUpdate" type="dateTime"></element>
+    		<element name="priority" type="issues:Priority"></element>
+    		<element name="product" type="string"></element>
+    		<element name="resolution" type="issues:Resolution"></element>
+    		<element name="resolutionTimestamp" type="dateTime"></element>
+    		<element name="resolver" type="persons:PersonIdRef"></element>
+    		<element name="fixVersion" type="string"></element>
+    		<element name="severity" type="issues:Severity"></element>
+    		<element name="siblings" type="issues:ReportIdRefs"></element>
+    		<element name="status" type="issues:Status"></element>
+    		<element name="subject" type="string"></element>
+    		<element name="submitter" type="persons:PersonIdRef"></element>
+    		<element name="summary" type="string"></element>
+    		<element name="type" type="issues:Type"></element>
+    		<element name="version" type="string"></element>
+    	</sequence>
+    	<attribute name="id" type="issues:ReportId"></attribute>
+    </complexType>
+    
+    <complexType name="Attachments">
+    	<sequence>
+    		<element name="attachment" type="issues:Attachment"></element>
+    	</sequence>
+    </complexType>
+    
+    
+    <complexType name="Comments">
+    	<sequence>
+    		<element name="comment" type="issues:Comment" maxOccurs="unbounded" minOccurs="0"></element>
+    	</sequence>
+    </complexType>
+    
+    <complexType name="History">
+    	<sequence>
+    		<element name="entry" type="issues:HistoryElement" maxOccurs="unbounded" minOccurs="0"></element>
+    	</sequence>
+    </complexType>
+    
+
+
+    <simpleType name="Severity">
+    	<restriction base="string">
+    		<enumeration value="ENHANCEMENT"></enumeration>
+    		<enumeration value="TRIVIAL"></enumeration>
+    		<enumeration value="MINOR"></enumeration>
+    		<enumeration value="NORMAL"></enumeration>
+    		<enumeration value="MAJOR"></enumeration>
+    		<enumeration value="CRITICAL"></enumeration>
+    		<enumeration value="BLOCKER"></enumeration>
+    	</restriction>
+    </simpleType>
+
+    <simpleType name="ReportIdRefs">
+    	<restriction base="IDREFS"></restriction>
+    </simpleType>
+
+    <simpleType name="Status">
+    	<restriction base="string">
+    		<enumeration value="UNKNOWN"></enumeration>
+    		<enumeration value="UNCONFIRMED"></enumeration>
+    		<enumeration value="NEW"></enumeration>
+    		<enumeration value="ASSIGNED"></enumeration>
+    		<enumeration value="IN_PROGRESS"></enumeration>
+    		<enumeration value="FEEDBACK"></enumeration>
+    		<enumeration value="REOPENED"></enumeration>
+    		<enumeration value="REVIEWPENDING"></enumeration>
+    		<enumeration value="VERIFIED"></enumeration>
+    		<enumeration value="CLOSED"></enumeration>
+    		<enumeration value="ACKNOWLEDGED"></enumeration>
+    	</restriction>
+    </simpleType>
+    
+    <simpleType name="Type">
+    	<restriction base="string">
+    		<enumeration value="BUG"></enumeration>
+    		<enumeration value="RFE"></enumeration>
+    		<enumeration value="TASK"></enumeration>
+    		<enumeration value="TEST"></enumeration>
+    		<enumeration value="OTHER"></enumeration>
+    		<enumeration value="UNKNOWN"></enumeration>
+    		<enumeration value="DESIGN_DEFECT"></enumeration>
+    		<enumeration value="BACKPORT"></enumeration>
+    		<enumeration value="CLEANUP"></enumeration>
+    		<enumeration value="IMPROVEMENT"></enumeration>
+    		<enumeration value="REFACTORING"></enumeration>
+    		<enumeration value="SPEC"></enumeration>
+    		<enumeration value="DOCUMENTATION"></enumeration>
+    		<enumeration value="BUILD_SYSTEM"></enumeration>
+    	</restriction>
+    </simpleType>
+    
+    <simpleType name="Priority">
+    	<restriction base="string">
+    		<enumeration value="UNKNOWN"></enumeration>
+    		<enumeration value="VERY_LOW"></enumeration>
+    		<enumeration value="LOW"></enumeration>
+    		<enumeration value="NORMAL"></enumeration>
+    		<enumeration value="HIGH"></enumeration>
+    		<enumeration value="VERY_HIGH"></enumeration>
+    	</restriction>
+    </simpleType>
+
+    <simpleType name="Resolution">
+    	<restriction base="string">
+    		<enumeration value="UNKNOWN"></enumeration>
+    		<enumeration value="UNRESOLVED"></enumeration>
+    		<enumeration value="DUPLICATE"></enumeration>
+    		<enumeration value="RESOLVED"></enumeration>
+    		<enumeration value="INVALID"></enumeration>
+    		<enumeration value="WONT_FIX"></enumeration>
+    		<enumeration value="WORKS_FOR_ME"></enumeration>
+    	</restriction>
+    </simpleType>
+
+    <simpleType name="ReportId">
+    	<restriction base="ID"></restriction>
+    </simpleType>
+
+    <complexType name="HistoryElement">
+    	<sequence>
+    		<element name="author" type="persons:PersonIdRef"
+    			maxOccurs="1" minOccurs="1">
+    		</element>
+            <element name="timestamp" type="dateTime" maxOccurs="1" minOccurs="1"></element>
+            <element name="changes" type="issues:FieldChanges"
+    			maxOccurs="1" minOccurs="1">
+    		</element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="FieldChanges">
+    	<sequence>
+    		<element name="change" type="issues:FieldChange" maxOccurs="unbounded" minOccurs="1"></element>
+    	</sequence>
+    </complexType>
+
+
+    <complexType name="FieldChange">
+    	<attribute name="field" type="string"></attribute>
+    	<attribute name="oldValue" type="string"></attribute>
+    	<attribute name="newValue" type="string"></attribute>
+    </complexType>
+
+    <complexType name="Comment">
+    	<sequence>
+    		<element name="author" type="persons:PersonIdRef" maxOccurs="1" minOccurs="1"></element>
+    		<element name="timestamp" type="dateTime" maxOccurs="1" minOccurs="1"></element>
+    		<element name="message" type="string" maxOccurs="1" minOccurs="1"></element>
+    	</sequence>
+    	<attribute name="id" type="int"></attribute>
+    </complexType>
+
+    <complexType name="Attachment">
+    	<sequence>
+    		<element name="size" maxOccurs="1" minOccurs="1">
+    			<simpleType>
+    				<restriction base="int">
+    					<whiteSpace value="collapse"></whiteSpace>
+    				</restriction>
+    			</simpleType>
+    		</element>
+    		<element name="timestamp" type="dateTime" maxOccurs="1" minOccurs="1"></element>
+    		<element name="description" type="string" maxOccurs="1" minOccurs="0"></element>
+    		<element name="filename" type="string" maxOccurs="1" minOccurs="1"></element>
+    		<element name="link" type="string" maxOccurs="1" minOccurs="1"></element>
+    	</sequence>
+    	<attribute name="id" type="string"></attribute>
+    </complexType>
+
+    <complexType name="ExtractedInformation"></complexType>
+</schema>

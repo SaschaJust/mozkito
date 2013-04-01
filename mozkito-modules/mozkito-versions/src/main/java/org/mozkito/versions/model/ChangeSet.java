@@ -48,8 +48,8 @@ import org.apache.openjpa.persistence.jdbc.Index;
 import org.joda.time.DateTime;
 
 import org.mozkito.persistence.Annotated;
-import org.mozkito.persistence.model.Person;
-import org.mozkito.persistence.model.PersonContainer;
+import org.mozkito.persons.model.Person;
+import org.mozkito.persons.model.PersonContainer;
 import org.mozkito.versions.exceptions.NoSuchHandleException;
 
 /**
@@ -235,9 +235,8 @@ public class ChangeSet implements Annotated {
 	 */
 	@Transient
 	public Person getAuthor() {
-		return getPersons() != null
-		                           ? getPersons().get("author") //$NON-NLS-1$
-		                           : new Person("unknown", null, null); //$NON-NLS-1$
+		assert getPersons() != null;
+		return getPersons().get("author"); //$NON-NLS-1$
 	}
 	
 	/**

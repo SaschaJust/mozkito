@@ -21,6 +21,7 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.string.MinLength;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
+import org.mozkito.persons.elements.PersonFactory;
 import org.mozkito.versions.elements.LogEntry;
 import org.mozkito.versions.exceptions.RepositoryOperationException;
 
@@ -31,6 +32,24 @@ public abstract class DistributedCommandLineRepository extends Repository {
 	
 	/** The log cache. */
 	private final HashMap<String, LogEntry> logCache = new HashMap<String, LogEntry>();
+	
+	/**
+	 * @param personFactory
+	 */
+	public DistributedCommandLineRepository(final PersonFactory personFactory) {
+		super(personFactory);
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			// body
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
 	
 	/**
 	 * Execute log.

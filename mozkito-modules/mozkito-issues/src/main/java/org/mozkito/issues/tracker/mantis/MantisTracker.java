@@ -26,6 +26,7 @@ import org.mozkito.issues.model.IssueTracker;
 import org.mozkito.issues.tracker.Parser;
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.issues.tracker.Tracker;
+import org.mozkito.persons.elements.PersonFactory;
 
 /**
  * The Class MantisTracker.
@@ -44,9 +45,11 @@ public class MantisTracker extends Tracker {
 	 * 
 	 * @param issueTracker
 	 *            the issue tracker
+	 * @param personFactory
+	 *            the person factory
 	 */
-	public MantisTracker(final IssueTracker issueTracker) {
-		super(issueTracker);
+	public MantisTracker(final IssueTracker issueTracker, final PersonFactory personFactory) {
+		super(issueTracker, personFactory);
 	}
 	
 	/*
@@ -58,7 +61,7 @@ public class MantisTracker extends Tracker {
 		// PRECONDITIONS
 		
 		try {
-			return new MantisParser();
+			return new MantisParser(getPersonFactory());
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -86,7 +89,7 @@ public class MantisTracker extends Tracker {
 				}
 				return links;
 			}
-			final MantisOverviewParser overviewParser = new MantisOverviewParser(this);
+			final MantisOverviewParser overviewParser = new MantisOverviewParser(getUri(), getPersonFactory());
 			if (!overviewParser.parseOverview()) {
 				throw new UnrecoverableError("Could not parse overview to extract bug report IDs. See earlier error.");
 			}

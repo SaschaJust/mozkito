@@ -38,6 +38,7 @@ import org.mozkito.issues.tracker.OverviewParser;
 import org.mozkito.issues.tracker.Parser;
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.issues.tracker.Tracker;
+import org.mozkito.persons.elements.PersonFactory;
 
 /**
  * The Class JiraTracker.
@@ -57,9 +58,11 @@ public class JiraTracker extends Tracker implements OverviewParser {
 	 * 
 	 * @param issueTracker
 	 *            the issue tracker
+	 * @param personFactory
+	 *            the person factory
 	 */
-	public JiraTracker(final IssueTracker issueTracker) {
-		super(issueTracker);
+	public JiraTracker(final IssueTracker issueTracker, final PersonFactory personFactory) {
+		super(issueTracker, personFactory);
 	}
 	
 	/**
@@ -86,7 +89,7 @@ public class JiraTracker extends Tracker implements OverviewParser {
 		// PRECONDITIONS
 		
 		try {
-			return new JiraParser();
+			return new JiraParser(getPersonFactory());
 		} finally {
 			// POSTCONDITIONS
 		}

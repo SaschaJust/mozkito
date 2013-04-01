@@ -31,7 +31,7 @@ import org.mozkito.changecouplings.model.FileChangeCoupling;
 import org.mozkito.persistence.ConnectOptions;
 import org.mozkito.persistence.DatabaseType;
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.persistence.model.Person;
+import org.mozkito.persons.model.Person;
 import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
 import org.mozkito.versions.elements.ChangeType;

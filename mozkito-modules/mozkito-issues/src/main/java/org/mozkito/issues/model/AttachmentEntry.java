@@ -36,8 +36,8 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import org.joda.time.DateTime;
 
 import org.mozkito.persistence.Annotated;
-import org.mozkito.persistence.model.Person;
-import org.mozkito.persistence.model.PersonContainer;
+import org.mozkito.persons.model.Person;
+import org.mozkito.persons.model.PersonContainer;
 
 /**
  * The Class AttachmentEntry.

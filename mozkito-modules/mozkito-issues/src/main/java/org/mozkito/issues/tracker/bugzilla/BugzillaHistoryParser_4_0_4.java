@@ -20,6 +20,7 @@ import net.ownhero.dev.ioda.DateTimeUtils;
 import net.ownhero.dev.ioda.IOUtils;
 import net.ownhero.dev.ioda.container.RawContent;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.MultiMatch;
 import net.ownhero.dev.regex.Regex;
@@ -30,11 +31,12 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
 import org.mozkito.issues.elements.Resolution;
 import org.mozkito.issues.model.History;
 import org.mozkito.issues.model.HistoryElement;
-import org.mozkito.issues.tracker.Tracker;
-import org.mozkito.persistence.model.Person;
+import org.mozkito.persons.elements.PersonFactory;
+import org.mozkito.persons.model.Person;
 
 /**
  * The Class BugzillaHistoryParser.
@@ -70,6 +72,8 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 	/** The parsed. */
 	private boolean                         parsed                            = false;
 	
+	private final PersonFactory             personFactory;
+	
 	/** The skip regex. */
 	private static Regex                    skipRegex                         = new Regex(
 	                                                                                      "No changes have been made to this bug yet.");
@@ -81,8 +85,10 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 	 *            the history uri
 	 * @param reportId
 	 *            the report id
+	 * @param personFactory
 	 */
-	public BugzillaHistoryParser_4_0_4(final URI historyUri, final String reportId) {
+	public BugzillaHistoryParser_4_0_4(final URI historyUri, final String reportId, final PersonFactory personFactory) {
+		this.personFactory = personFactory;
 		this.historyUri = historyUri;
 		this.reportId = reportId;
 		
@@ -96,6 +102,24 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 	@Override
 	public SortedSet<HistoryElement> getHistory() {
 		return this.history;
+	}
+	
+	/**
+	 * @return the personFactory
+	 */
+	public final PersonFactory getPersonFactory() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.personFactory;
+		} finally {
+			POSTCONDITIONS: {
+				Condition.notNull(this.personFactory,
+				                  "Field '%s' in '%s'.", "personFactory", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
 	}
 	
 	/**
@@ -208,9 +232,9 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 					
 					// get who
 					final String whoString = tds.get(0).text().trim();
-					Person who = new Person(whoString, null, null);
+					Person who = getPersonFactory().get(whoString, null, null);
 					if (whoString.isEmpty()) {
-						who = Tracker.UNKNOWN_PERSON;
+						who = getPersonFactory().getUnknown();
 					}
 					
 					// get when
@@ -258,8 +282,8 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 						break;
 					case "assignee":
 						field = ("assignedTo");
-						final Person oldValue = new Person(removed, null, null);
-						final Person newValue = new Person(added, null, null);
+						final Person oldValue = getPersonFactory().get(removed, null, null);
+						final Person newValue = getPersonFactory().get(added, null, null);
 						hElement.addChangedValue(field, oldValue, newValue);
 						break;
 					case "component":

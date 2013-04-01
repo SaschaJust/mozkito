@@ -20,8 +20,12 @@ import java.util.List;
 import java.util.Map;
 
 import net.ownhero.dev.ioda.JavaUtils;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.conditions.Condition;
 import difflib.Delta;
 
+import org.mozkito.persons.elements.PersonFactory;
+import org.mozkito.persons.model.Person;
 import org.mozkito.versions.elements.AnnotationEntry;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.LogEntry;
@@ -38,31 +42,38 @@ import org.mozkito.versions.model.ChangeSet;
  * @author Kim Herzig <herzig@mozkito.org>
  * 
  */
-/**
- * @author Sascha Just <sascha.just@mozkito.org>
- * 
- */
 public abstract class Repository {
 	
 	/** The uri. */
-	private URI       uri;
+	private URI                 uri;
 	
 	/** The start revision. */
-	private String    startRevision;
+	private String              startRevision;
 	
 	/** The end revision. */
-	private String    endRevision;
+	private String              endRevision;
 	
 	/** The start transaction. */
-	private ChangeSet startTransaction = null;
+	private ChangeSet           startTransaction = null;
 	
 	/** The main branch name. */
-	private String    mainBranchName;
+	private String              mainBranchName;
+	
+	private final PersonFactory personFactory;
+	
+	/** The Constant unknownPerson. */
+	public final Person         UNKNOWN_PERSON;
 	
 	/**
 	 * Instantiates a new repository.
+	 * 
+	 * @param personFactory
+	 *            the person factory
 	 */
-	public Repository() {
+	public Repository(@NotNull final PersonFactory personFactory) {
+		this.personFactory = personFactory;
+		assert this.personFactory != null;
+		this.UNKNOWN_PERSON = this.personFactory.get("<unknown>", null, null); //$NON-NLS-1$
 	}
 	
 	/**
@@ -234,6 +245,24 @@ public abstract class Repository {
 	}
 	
 	/**
+	 * @return the personFactory
+	 */
+	public final PersonFactory getPersonFactory() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.personFactory;
+		} finally {
+			POSTCONDITIONS: {
+				Condition.notNull(this.personFactory,
+				                  "Field '%s' in '%s'.", "personFactory", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
+	}
+	
+	/**
 	 * Gets the repository type.
 	 * 
 	 * @return the {@link RepositoryType} of the connector class determined by naming convention. See the java-doc of
@@ -272,6 +301,24 @@ public abstract class Repository {
 	 */
 	public ChangeSet getStartTransaction() {
 		return this.startTransaction;
+	}
+	
+	/**
+	 * @return the uNKNOWN_PERSON
+	 */
+	public final Person getUNKNOWN_PERSON() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.UNKNOWN_PERSON;
+		} finally {
+			POSTCONDITIONS: {
+				Condition.notNull(this.UNKNOWN_PERSON,
+				                  "Field '%s' in '%s'.", "UNKNOWN_PERSON", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
 	}
 	
 	/**

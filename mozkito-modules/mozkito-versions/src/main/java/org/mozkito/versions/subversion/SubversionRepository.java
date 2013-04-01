@@ -66,7 +66,7 @@ import difflib.Delta;
 import difflib.DiffUtils;
 import difflib.Patch;
 
-import org.mozkito.persistence.model.Person;
+import org.mozkito.persons.elements.PersonFactory;
 import org.mozkito.versions.ProtocolType;
 import org.mozkito.versions.Repository;
 import org.mozkito.versions.elements.AnnotationEntry;
@@ -126,9 +126,12 @@ public class SubversionRepository extends Repository {
 	
 	/**
 	 * Instantiates a new subversion repository.
+	 * 
+	 * @param personFactory
+	 *            the person factory
 	 */
-	public SubversionRepository() {
-		super();
+	public SubversionRepository(final PersonFactory personFactory) {
+		super(personFactory);
 	}
 	
 	/**
@@ -605,11 +608,14 @@ public class SubversionRepository extends Repository {
 			                                                         toSVNRevision.getNumber(), true, true);
 			LogEntry buff = null;
 			for (final SVNLogEntry entry : logs) {
-				final LogEntry current = new LogEntry(entry.getRevision() + "", buff,
+				final LogEntry current = new LogEntry(
+				                                      entry.getRevision() + "",
+				                                      buff,
 				                                      (entry.getAuthor() != null
-				                                                                ? new Person(entry.getAuthor(), null,
-				                                                                             null)
-				                                                                : null),
+				                                                                ? getPersonFactory().get(entry.getAuthor(),
+				                                                                                         null, null)
+				                                                                : getPersonFactory().get("<unknown>",
+				                                                                                         null, null)),
 				                                      entry.getMessage() != null
 				                                                                ? entry.getMessage()
 				                                                                : "", new DateTime(entry.getDate()), "");

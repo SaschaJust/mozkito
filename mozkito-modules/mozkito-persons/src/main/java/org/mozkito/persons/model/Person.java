@@ -13,7 +13,7 @@
 /**
  * 
  */
-package org.mozkito.persistence.model;
+package org.mozkito.persons.model;
 
 import java.util.Collection;
 import java.util.Set;
@@ -103,12 +103,6 @@ public class Person implements Annotated {
 	private Set<String> fullnames      = new TreeSet<String>();
 	
 	/**
-	 * Default constructor used by persistence middleware.
-	 */
-	protected Person() {
-	}
-	
-	/**
 	 * Instantiates a new person.
 	 * 
 	 * @param username
@@ -118,7 +112,7 @@ public class Person implements Annotated {
 	 * @param email
 	 *            the email
 	 */
-	public Person(@Trimmed final String username, @Trimmed final String fullname, @Trimmed final String email) {
+	private Person(@Trimmed final String username, @Trimmed final String fullname, @Trimmed final String email) {
 		Condition.check((username != null) || (fullname != null) || (email != null),
 		                "Creating a person with only (null) values makes no sense."); //$NON-NLS-1$
 		addUsername(username);

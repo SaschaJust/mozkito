@@ -22,7 +22,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.mozkito.persistence.model.Person;
+import org.mozkito.persons.elements.PersonFactory;
+import org.mozkito.persons.model.Person;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.RevDependencyGraph;
 import org.mozkito.versions.elements.RevDependencyGraph.EdgeType;
@@ -62,6 +63,8 @@ public class HandleTest {
 	/** The rev dep graph. */
 	private RevDependencyGraph revDepGraph;
 	
+	private PersonFactory      personFactory;
+	
 	/**
 	 * After.
 	 */
@@ -77,7 +80,8 @@ public class HandleTest {
 	 */
 	@Before
 	public void setup() throws IOException {
-		this.person = new Person("kim", "", "");
+		this.personFactory = new PersonFactory();
+		this.person = this.personFactory.get("kim", "", "");
 		
 		this.revDepGraph = new RevDependencyGraph();
 		this.revDepGraph.addBranch(Branch.MASTER_BRANCH_NAME, "5");

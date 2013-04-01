@@ -21,9 +21,9 @@ import java.util.List;
 import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kisa.Logger;
 
-import org.mozkito.persistence.model.Person;
-import org.mozkito.persistence.model.PersonContainer;
 import org.mozkito.persons.messages.Messages;
+import org.mozkito.persons.model.Person;
+import org.mozkito.persons.model.PersonContainer;
 import org.mozkito.persons.processing.PersonManager;
 
 /**

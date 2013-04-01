@@ -24,6 +24,7 @@ import net.ownhero.dev.ioda.IOUtils;
 import net.ownhero.dev.ioda.container.RawContent;
 import net.ownhero.dev.ioda.exceptions.FetchException;
 import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
+import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Group;
 import net.ownhero.dev.regex.Match;
@@ -34,9 +35,9 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import org.mozkito.issues.model.IssueTracker;
 import org.mozkito.issues.tracker.OverviewParser;
 import org.mozkito.issues.tracker.ReportLink;
+import org.mozkito.persons.elements.PersonFactory;
 
 /**
  * The Class MantisOverviewParser.
@@ -77,9 +78,6 @@ public class MantisOverviewParser implements OverviewParser {
 		return new ReportLink(new URI(sb.toString()), bugIdBuilder.toString());
 	}
 	
-	/** The tracker uri. */
-	private final MantisTracker   tracker;
-	
 	/** The report links. */
 	private final Set<ReportLink> reportLinks = new HashSet<ReportLink>();
 	
@@ -89,32 +87,21 @@ public class MantisOverviewParser implements OverviewParser {
 	/** The report regex. */
 	private final Regex           reportRegex = new Regex("view.php\\?id=({bugid}\\d+)");
 	
-	/**
-	 * Instantiates a new mantis overview parser.
-	 * 
-	 * @param tracker
-	 *            the tracker
-	 */
-	public MantisOverviewParser(final MantisTracker tracker) {
-		this.tracker = tracker;
-	}
+	private final URI             uri;
+	
+	private final PersonFactory   personFactory;
 	
 	/**
 	 * Instantiates a new mantis overview parser.
 	 * 
 	 * @param uri
 	 *            the uri
+	 * @param personFactory
+	 *            the person factory
 	 */
-	protected MantisOverviewParser(final URI uri, final IssueTracker issueTracker) {
-		// PRECONDITIONS
-		
-		try {
-			this.tracker = new MantisTracker(issueTracker);
-			this.tracker.setUri(uri);
-			
-		} finally {
-			// POSTCONDITIONS
-		}
+	public MantisOverviewParser(final URI uri, final PersonFactory personFactory) {
+		this.uri = uri;
+		this.personFactory = personFactory;
 	}
 	
 	/**
@@ -191,7 +178,7 @@ public class MantisOverviewParser implements OverviewParser {
 		// PRECONDITIONS
 		
 		try {
-			return getLinkFromId(this.tracker.getUri(), bugId);
+			return getLinkFromId(getUri(), bugId);
 		} catch (final URISyntaxException e) {
 			if (Logger.logError()) {
 				Logger.error(e);
@@ -199,6 +186,24 @@ public class MantisOverviewParser implements OverviewParser {
 			return null;
 		} finally {
 			// POSTCONDITIONS
+		}
+	}
+	
+	/**
+	 * @return the personFactory
+	 */
+	public final PersonFactory getPersonFactory() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.personFactory;
+		} finally {
+			POSTCONDITIONS: {
+				Condition.notNull(this.personFactory,
+				                  "Field '%s' in '%s'.", "personFactory", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 		}
 	}
 	
@@ -214,6 +219,23 @@ public class MantisOverviewParser implements OverviewParser {
 			return this.reportLinks;
 		} finally {
 			// POSTCONDITIONS
+		}
+	}
+	
+	/**
+	 * @return the uri
+	 */
+	public final URI getUri() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.uri;
+		} finally {
+			POSTCONDITIONS: {
+				Condition.notNull(this.uri, "Field '%s' in '%s'.", "uri", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 		}
 	}
 	
@@ -270,10 +292,10 @@ public class MantisOverviewParser implements OverviewParser {
 							}
 							bugIdBuilder.append(bugId);
 							if (Logger.logDebug()) {
-								Logger.debug("Creating ReportLink with uri %s and bugId %s",
-								             this.tracker.getUri().toASCIIString() + href, bugIdBuilder.toString());
+								Logger.debug("Creating ReportLink with uri %s and bugId %s", getUri().toASCIIString()
+								        + href, bugIdBuilder.toString());
 							}
-							result.add(getLinkFromId(this.tracker.getUri(), bugIdBuilder.toString()));
+							result.add(getLinkFromId(getUri(), bugIdBuilder.toString()));
 							break;
 						}
 					}
@@ -314,7 +336,7 @@ public class MantisOverviewParser implements OverviewParser {
 			
 			// determine the number of pages
 			StringBuilder sb = new StringBuilder();
-			sb.append(this.tracker.getUri().toASCIIString());
+			sb.append(getUri().toASCIIString());
 			sb.append("/");
 			sb.append(firstPage);
 			final int numPages = determineNumPages(new URI(sb.toString()));
@@ -322,7 +344,7 @@ public class MantisOverviewParser implements OverviewParser {
 			// handle each page
 			for (int page = 1; page <= numPages; ++page) {
 				sb = new StringBuilder();
-				sb.append(this.tracker.getUri().toASCIIString());
+				sb.append(getUri().toASCIIString());
 				sb.append("/");
 				sb.append(firstPage);
 				sb.append("?page_number=");

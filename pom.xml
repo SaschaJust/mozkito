@@ -22,11 +22,11 @@
 	</licenses>
 	<issueManagement>
 		<system>Jira</system>
-		<url>http://mozkito.org:8080/jira</url>
+		<url>https://issues.mozkito.org/jira</url>
 	</issueManagement>
 	<ciManagement>
 		<system>bamboo</system>
-		<url>http://mozkito.org:8080/bamboo</url>
+		<url>https://ci.mozkito.org</url>
 	</ciManagement>
 	<developers>
 		<developer>
@@ -110,34 +110,34 @@
 		<repository>
 			<id>own-hero.net-public</id>
 			<name>own-hero.net Public Repositories</name>
-			<url>http://mozkito.org:8080/nexus/content/groups/public</url>
+			<url>http://mozkito.org:8089/nexus/content/groups/public</url>
 		</repository>
 		<repository>
 			<id>own-hero.net-private</id>
 			<name>own-hero.net Private Repositories</name>
-			<url>http://mozkito.org:8080/nexus/content/groups/private</url>
+			<url>http://mozkito.org:8089/nexus/content/groups/private</url>
 		</repository>
 		<repository>
 			<id>own-hero.net-proxy</id>
 			<name>own-hero.net Proxy Repositories</name>
-			<url>http://mozkito.org:8080/nexus/content/groups/proxy</url>
+			<url>http://mozkito.org:8089/nexus/content/groups/proxy</url>
 		</repository>
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
 			<id>own-hero.net-public</id>
 			<name>own-hero.net Public Repositories</name>
-			<url>http://mozkito.org:8080/nexus/content/groups/public</url>
+			<url>http://mozkito.org:8089/nexus/content/groups/public</url>
 		</pluginRepository>
 		<pluginRepository>
 			<id>own-hero.net-private</id>
 			<name>own-hero.net Private Repositories</name>
-			<url>http://mozkito.org:8080/nexus/content/groups/private</url>
+			<url>http://mozkito.org:8089/nexus/content/groups/private</url>
 		</pluginRepository>
 		<pluginRepository>
 			<id>own-hero.net-proxy</id>
 			<name>own-hero.net Proxy Repositories</name>
-			<url>http://mozkito.org:8080/nexus/content/groups/proxy</url>
+			<url>http://mozkito.org:8089/nexus/content/groups/proxy</url>
 		</pluginRepository>
 	</pluginRepositories>
 	<distributionManagement>
@@ -145,13 +145,13 @@
 		<snapshotRepository>
 			<id>mozkito-dev</id>
 			<name>mozkito-dev</name>
-			<url>http://mozkito.org:8080/nexus/content/repositories/mozkito-dev</url>
+			<url>http://mozkito.org:8089/nexus/content/repositories/mozkito-dev</url>
 		</snapshotRepository>
 		<!-- deploy releases to this repository -->
 		<repository>
 			<id>mozkito</id>
 			<name>mozkito</name>
-			<url>http://mozkito.org:8080/nexus/content/repositories/mozkito/</url>
+			<url>http://mozkito.org:8089/nexus/content/repositories/mozkito/</url>
 		</repository>
 		<!-- configure upload of maven site -->
 		<site>
@@ -387,7 +387,7 @@
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<sonar.clover.reportPath>${basedir}/target/site/clover/clover.xml</sonar.clover.reportPath>
 		<sonar.language>java</sonar.language>
-		<sonar.host.url>http://mozkito.org:8080/sonar</sonar.host.url>
+		<sonar.host.url>http://mozkito.org:8089/sonar</sonar.host.url>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>

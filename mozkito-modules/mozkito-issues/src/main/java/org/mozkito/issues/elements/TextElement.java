@@ -14,7 +14,7 @@ package org.mozkito.issues.elements;
 
 import org.joda.time.DateTime;
 
-import org.mozkito.persistence.model.Person;
+import org.mozkito.persons.model.Person;
 
 /**
  * The Interface TextElement.

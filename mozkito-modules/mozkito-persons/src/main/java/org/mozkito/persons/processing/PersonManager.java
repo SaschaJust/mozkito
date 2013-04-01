@@ -27,8 +27,8 @@ import java.util.TreeSet;
 import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.persistence.model.Person;
 import org.mozkito.persons.elements.PersonBucket;
+import org.mozkito.persons.model.Person;
 
 /**
  * The Class PersonManager.

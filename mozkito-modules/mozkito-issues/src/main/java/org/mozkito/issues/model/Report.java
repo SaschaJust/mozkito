@@ -61,8 +61,8 @@ import org.mozkito.issues.elements.Status;
 import org.mozkito.issues.elements.Type;
 import org.mozkito.issues.model.comparators.CommentComparator;
 import org.mozkito.persistence.Annotated;
-import org.mozkito.persistence.model.Person;
-import org.mozkito.persistence.model.PersonContainer;
+import org.mozkito.persons.model.Person;
+import org.mozkito.persons.model.PersonContainer;
 
 /**
  * The Class Report.
@@ -123,14 +123,13 @@ public class Report implements Annotated, Comparable<Report> {
 	
 	/** The last fetch. */
 	private DateTime              lastFetch;
+	
 	/** The last update timestamp. */
 	private DateTime              lastUpdateTimestamp;
 	
-	// assignedTo
-	// submitter
-	// resolver
 	/** The person container. */
 	private PersonContainer       personContainer   = new PersonContainer();
+	
 	/** The priority. */
 	private Priority              priority          = Priority.UNKNOWN;
 	

@@ -27,7 +27,7 @@ import javax.persistence.Transient;
 import org.mozkito.mappings.engines.AuthorEqualityEngineTest;
 import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.mappings.mappable.model.MappableEntity;
-import org.mozkito.persistence.model.Person;
+import org.mozkito.persons.model.Person;
 
 /**
  * The Class Dummy.
