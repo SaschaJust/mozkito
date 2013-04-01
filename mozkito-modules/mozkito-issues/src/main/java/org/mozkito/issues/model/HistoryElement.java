@@ -20,13 +20,13 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -42,7 +42,6 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
 
 import org.joda.time.DateTime;
-
 import org.mozkito.issues.elements.TextElement;
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persistence.model.DateTimeTuple;
@@ -419,7 +418,8 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	 */
 	// @ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	// @ManyToMany (cascade = CascadeType.ALL)
-	@ElementCollection
+	// @ElementCollection
+	@OneToMany (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, targetEntity = DateTimeTuple.class)
 	public Map<String, DateTimeTuple> getChangedDateValues() {
 		return this.changedDateValues;
 	}
@@ -431,7 +431,8 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	 */
 	// @ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	// @ManyToMany (cascade = CascadeType.ALL)
-	@ElementCollection
+	// @ElementCollection
+	@OneToMany (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, targetEntity = EnumTuple.class)
 	public Map<String, EnumTuple> getChangedEnumValues() {
 		return this.changedEnumValues;
 	}
@@ -442,7 +443,8 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	 * @return the changedPersonValues
 	 */
 	// @ManyToMany (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@ElementCollection
+	// @ElementCollection
+	@OneToMany (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, targetEntity = PersonTuple.class)
 	public Map<String, PersonTuple> getChangedPersonValues() {
 		return this.changedPersonValues;
 	}
@@ -454,7 +456,8 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	 */
 	// @ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	// @ManyToMany (cascade = CascadeType.ALL)
-	@ElementCollection
+	// @ElementCollection
+	@OneToMany (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, targetEntity = StringTuple.class)
 	public Map<String, StringTuple> getChangedStringValues() {
 		return this.changedStringValues;
 	}
