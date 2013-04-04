@@ -24,12 +24,13 @@ import java.util.Map;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
+
 import org.mozkito.issues.model.HistoryElement;
 import org.mozkito.issues.model.IssueTracker;
 import org.mozkito.issues.model.Report;
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.persons.model.Person;
+import org.mozkito.persons.elements.PersonFactory;
 import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.TestEnum;
 import org.mozkito.testing.annotation.DatabaseSettings;
@@ -49,8 +50,9 @@ public class EnumTupleTest extends DatabaseTest {
 	public final void test() {
 		final PersistenceUtil util = getPersistenceUtil();
 		final Report report = new Report(new IssueTracker(), "abcdefg");
+		final PersonFactory personFactory = new PersonFactory();
 		final HistoryElement element = new HistoryElement(report.getHistory(),
-		                                                  new Person("me", "really me", "me@me.com"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
+		                                                  personFactory.get("me", "really me", "me@me.com"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
 		                                                  new DateTime());
 		
 		final EnumTuple tuple = new EnumTuple(TestEnum.ABC, TestEnum.GHI);

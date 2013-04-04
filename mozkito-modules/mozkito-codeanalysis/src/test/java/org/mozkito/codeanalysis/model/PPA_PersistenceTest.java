@@ -22,6 +22,7 @@ import org.joda.time.DateTime;
 import org.junit.Test;
 
 import org.mozkito.persistence.Criteria;
+import org.mozkito.persons.elements.PersonFactory;
 import org.mozkito.persons.model.Person;
 import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
@@ -51,8 +52,8 @@ public class PPA_PersistenceTest extends DatabaseTest {
 		final JavaElementLocationSet cache = new JavaElementLocationSet(elementFactory);
 		final JavaElementLocation classDefinition = cache.addClassDefinition("a.A", "a.java", 0, 30, 123, 5);
 		final DateTime now = new DateTime();
-		
-		final Person p = new Person("kim", "", "");
+		final PersonFactory personFactory = new PersonFactory();
+		final Person p = personFactory.get("kim", "", "");
 		final RevDependencyGraph revDependencyGraph = new RevDependencyGraph();
 		revDependencyGraph.addBranch(Branch.MASTER_BRANCH_NAME, "1");
 		final VersionArchive versionArchive = new VersionArchive(revDependencyGraph);

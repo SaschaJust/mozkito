@@ -20,11 +20,11 @@ import java.net.URISyntaxException;
 import net.ownhero.dev.ioda.FileUtils;
 
 import org.junit.Test;
+
 import org.mozkito.issues.exceptions.InvalidParameterException;
-import org.mozkito.issues.model.IssueTracker;
-import org.mozkito.issues.model.Report;
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.issues.tracker.bugzilla.BugzillaTracker;
+import org.mozkito.persons.elements.PersonFactory;
 import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
 
@@ -42,7 +42,7 @@ public class ReportPersistence_NetTest extends DatabaseTest {
 	@Test
 	public void testBugzilla() {
 		try {
-			final BugzillaTracker tracker = new BugzillaTracker(new IssueTracker());
+			final BugzillaTracker tracker = new BugzillaTracker(new IssueTracker(), new PersonFactory());
 			try {
 				tracker.setup(new URI("https://bugzilla.mozilla.org/"), null, null,
 				              this.getClass().getResource(FileUtils.fileSeparator + "bugzilla_eclipse_overview.html")

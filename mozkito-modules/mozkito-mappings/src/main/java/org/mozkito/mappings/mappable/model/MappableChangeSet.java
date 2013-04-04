@@ -14,8 +14,6 @@ package org.mozkito.mappings.mappable.model;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.DiscriminatorValue;
@@ -31,12 +29,8 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.collections.CollectionUtils;
 
-import org.mozkito.mappings.elements.RelationType;
 import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.mappings.messages.Messages;
-import org.mozkito.mappings.model.Mapping;
-import org.mozkito.persistence.Criteria;
-import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.model.ChangeSet;
 import org.mozkito.versions.model.Handle;
 
@@ -191,41 +185,6 @@ public class MappableChangeSet extends MappableEntity {
 	@Transient
 	public String getId() {
 		return getChangeSet().getId();
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * @see org.mozkito.mappings.mappable.model.MappableEntity#getRelated(org.mozkito.mappings.mappable.FieldKey,
-	 *      org.mozkito.mappings.elements.RelationType[])
-	 */
-	@Override
-	public <T> List<T> getRelated(@NotNull final PersistenceUtil util,
-	                              @NotNull final FieldKey key,
-	                              @NotNull final RelationType... types) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			final List<T> list = new LinkedList<>();
-			
-			final Criteria<Mapping> criteria = util.createCriteria(Mapping.class);
-			// TODO from or to equals this
-			// TODO relationTypes contains any of types
-			final List<Mapping> relations = util.load(criteria);
-			
-			// assume from for now
-			for (final Mapping mapping : relations) {
-				list.add(mapping.getFrom().<T> get(key));
-			}
-			
-			return list;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
 	}
 	
 	/*

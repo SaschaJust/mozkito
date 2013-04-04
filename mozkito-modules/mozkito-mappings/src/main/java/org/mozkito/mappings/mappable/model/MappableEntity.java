@@ -15,7 +15,6 @@ package org.mozkito.mappings.mappable.model;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -36,10 +35,8 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.apache.commons.collections.CollectionUtils;
 
-import org.mozkito.mappings.elements.RelationType;
 import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.persistence.Annotated;
-import org.mozkito.persistence.PersistenceUtil;
 
 /**
  * Superclass that is used to wrap around classes that shall be mapped. Since inheritance based annotations do not work
@@ -240,23 +237,6 @@ public abstract class MappableEntity implements Annotated {
 	 */
 	@Transient
 	public abstract String getId();
-	
-	/**
-	 * Gets the fields of all related entities.
-	 * 
-	 * @param <T>
-	 *            the generic type
-	 * @param util
-	 *            the util
-	 * @param key
-	 *            the key
-	 * @param types
-	 *            the types
-	 * @return the related
-	 */
-	public abstract <T> List<T> getRelated(PersistenceUtil util,
-	                                       FieldKey key,
-	                                       RelationType... types);
 	
 	/**
 	 * Gets the size.

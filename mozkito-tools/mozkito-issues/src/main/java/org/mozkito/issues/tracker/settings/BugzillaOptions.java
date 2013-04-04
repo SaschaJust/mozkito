@@ -34,6 +34,7 @@ import org.mozkito.issues.exceptions.InvalidParameterException;
 import org.mozkito.issues.model.IssueTracker;
 import org.mozkito.issues.tracker.Tracker;
 import org.mozkito.issues.tracker.bugzilla.BugzillaTracker;
+import org.mozkito.persons.elements.PersonFactory;
 
 /**
  * The Class BugzillaOptions.
@@ -192,7 +193,7 @@ public class BugzillaOptions extends ArgumentSetOptions<Boolean, ArgumentSet<Boo
 		
 		try {
 			getSettings().getArgumentSet(this).getValue();
-			final BugzillaTracker bugzillaTracker = new BugzillaTracker(issueTracker);
+			final BugzillaTracker bugzillaTracker = new BugzillaTracker(issueTracker, new PersonFactory());
 			bugzillaTracker.setup(trackerUri, trackerUser, trackerPassword, this.overviewArgument.getValue(),
 			                      this.bugzillaVersionArgument.getValue());
 			return bugzillaTracker;

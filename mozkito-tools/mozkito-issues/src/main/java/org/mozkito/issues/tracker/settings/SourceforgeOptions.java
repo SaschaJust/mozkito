@@ -32,6 +32,7 @@ import org.mozkito.issues.exceptions.InvalidParameterException;
 import org.mozkito.issues.model.IssueTracker;
 import org.mozkito.issues.tracker.Tracker;
 import org.mozkito.issues.tracker.sourceforge.SourceforgeTracker;
+import org.mozkito.persons.elements.PersonFactory;
 
 /**
  * The Class SourceforgeOptions.
@@ -200,7 +201,7 @@ public class SourceforgeOptions extends ArgumentSetOptions<Boolean, ArgumentSet<
 		
 		try {
 			getSettings().getArgumentSet(this).getValue();
-			final SourceforgeTracker tracker = new SourceforgeTracker(issueTracker);
+			final SourceforgeTracker tracker = new SourceforgeTracker(issueTracker, new PersonFactory());
 			tracker.setup(trackerUri, trackerUser, trackerPassword, this.groupIdArgument.getValue(),
 			              this.atIdArgument.getValue(), this.bugTypeArgument.getValue());
 			return tracker;

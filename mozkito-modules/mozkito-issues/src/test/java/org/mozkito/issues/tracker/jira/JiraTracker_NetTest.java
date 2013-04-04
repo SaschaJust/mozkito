@@ -23,11 +23,12 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.junit.Before;
 import org.junit.Test;
+
 import org.mozkito.issues.exceptions.InvalidParameterException;
 import org.mozkito.issues.model.IssueTracker;
 import org.mozkito.issues.tracker.ReportLink;
+import org.mozkito.persons.elements.PersonFactory;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class JiraTracker_NetTest.
  * 
@@ -46,7 +47,7 @@ public class JiraTracker_NetTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		this.tracker = new JiraTracker(new IssueTracker());
+		this.tracker = new JiraTracker(new IssueTracker(), new PersonFactory());
 		try {
 			this.tracker.setup(new URI("http://jira.codehaus.org"), null, null, "XPR");
 		} catch (final InvalidParameterException e) {

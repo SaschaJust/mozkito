@@ -37,6 +37,7 @@ import org.mozkito.issues.exceptions.InvalidParameterException;
 import org.mozkito.issues.model.IssueTracker;
 import org.mozkito.issues.tracker.Tracker;
 import org.mozkito.issues.tracker.mantis.MantisTracker;
+import org.mozkito.persons.elements.PersonFactory;
 
 /**
  * The Class MantisOptions.
@@ -165,7 +166,7 @@ public class MantisOptions extends ArgumentSetOptions<Boolean, ArgumentSet<Boole
 		
 		try {
 			getSettings().getArgumentSet(this).getValue();
-			final MantisTracker tracker = new MantisTracker(issueTracker);
+			final MantisTracker tracker = new MantisTracker(issueTracker, new PersonFactory());
 			if (this.links != null) {
 				tracker.setReportIds(this.links);
 			}

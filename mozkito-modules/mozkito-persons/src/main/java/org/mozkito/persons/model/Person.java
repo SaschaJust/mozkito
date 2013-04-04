@@ -112,7 +112,7 @@ public class Person implements Annotated {
 	 * @param email
 	 *            the email
 	 */
-	private Person(@Trimmed final String username, @Trimmed final String fullname, @Trimmed final String email) {
+	protected Person(@Trimmed final String username, @Trimmed final String fullname, @Trimmed final String email) {
 		Condition.check((username != null) || (fullname != null) || (email != null),
 		                "Creating a person with only (null) values makes no sense."); //$NON-NLS-1$
 		addUsername(username);

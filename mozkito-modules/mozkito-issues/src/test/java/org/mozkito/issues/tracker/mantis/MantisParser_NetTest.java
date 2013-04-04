@@ -28,9 +28,11 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.junit.Before;
 import org.junit.Test;
+
 import org.mozkito.issues.model.AttachmentEntry;
 import org.mozkito.issues.model.IssueTracker;
 import org.mozkito.issues.tracker.ReportLink;
+import org.mozkito.persons.elements.PersonFactory;
 
 /**
  * The Class MantisParser_NetTest.
@@ -61,7 +63,7 @@ public class MantisParser_NetTest {
 	public void testAttachments19810() {
 		
 		final IssueTracker issueTracker = new IssueTracker();
-		final MantisTracker tracker = new MantisTracker(issueTracker);
+		final MantisTracker tracker = new MantisTracker(issueTracker, new PersonFactory());
 		try {
 			tracker.setUri(new URI("https://issues.openbravo.com/"));
 		} catch (final URISyntaxException e) {
@@ -71,7 +73,7 @@ public class MantisParser_NetTest {
 			fail();
 		}
 		
-		final MantisParser parser = new MantisParser();
+		final MantisParser parser = (MantisParser) tracker.getParser();
 		parser.setTracker(tracker);
 		parser.setContext(issueTracker, new ReportLink(this.report19810.getUri(), "19810"));
 		final List<AttachmentEntry> attachments = parser.getAttachmentEntries();

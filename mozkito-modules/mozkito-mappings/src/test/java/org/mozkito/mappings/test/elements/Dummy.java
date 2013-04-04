@@ -27,6 +27,7 @@ import javax.persistence.Transient;
 import org.mozkito.mappings.engines.AuthorEqualityEngineTest;
 import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.mappings.mappable.model.MappableEntity;
+import org.mozkito.persons.elements.PersonFactory;
 import org.mozkito.persons.model.Person;
 
 /**
@@ -45,6 +46,8 @@ public class Dummy extends MappableEntity {
 	private static final Map<String, Person> persons          = new HashMap<>();
 	
 	private MappableEntity                   entity           = null;
+	
+	private final PersonFactory              personFactory    = new PersonFactory();
 	
 	/**
 	 * Instantiates a new dummy.
@@ -86,7 +89,7 @@ public class Dummy extends MappableEntity {
 						final String[] entries = value.split(",");
 						assert entries.length == 3;
 						if (!persons.containsKey(entries[0])) {
-							persons.put(entries[0], new Person(entries[0], entries[2], entries[1]));
+							persons.put(entries[0], this.personFactory.get(entries[0], entries[2], entries[1]));
 						}
 						
 						return (T) persons.get(entries[0]);

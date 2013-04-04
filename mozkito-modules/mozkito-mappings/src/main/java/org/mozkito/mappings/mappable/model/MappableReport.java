@@ -14,7 +14,6 @@ package org.mozkito.mappings.mappable.model;
 
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Access;
@@ -25,8 +24,6 @@ import javax.persistence.FetchType;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
-import com.sun.syndication.feed.atom.Person;
-
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.Logger;
@@ -36,11 +33,10 @@ import org.jsoup.Jsoup;
 import org.mozkito.issues.model.Comment;
 import org.mozkito.issues.model.HistoryElement;
 import org.mozkito.issues.model.Report;
-import org.mozkito.mappings.elements.RelationType;
 import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.persistence.Annotated;
-import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.persons.model.Person;
 
 /**
  * Class that wraps {@link Report} to be mapped.
@@ -214,31 +210,6 @@ public class MappableReport extends MappableEntity implements Annotated {
 	public String getId() {
 		// TODO: access mapping.selectors.reportRegex.tag to strip everything but the id number
 		return getReport().getId().replaceAll("[^0-9]", ""); //$NON-NLS-1$ //$NON-NLS-2$
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * @see org.mozkito.mappings.mappable.model.MappableEntity#getRelated(org.mozkito.persistence.PersistenceUtil,
-	 *      org.mozkito.mappings.mappable.FieldKey, org.mozkito.mappings.elements.RelationType[])
-	 */
-	@Override
-	public <T> List<T> getRelated(final PersistenceUtil util,
-	                              final FieldKey key,
-	                              final RelationType... types) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			// TODO Auto-generated method stub
-			// return null;
-			throw new RuntimeException("Method 'getRelated' has not yet been implemented."); //$NON-NLS-1$
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
 	}
 	
 	/**

@@ -35,6 +35,7 @@ import net.ownhero.dev.regex.Regex;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
+
 import org.mozkito.issues.elements.Priority;
 import org.mozkito.issues.elements.Resolution;
 import org.mozkito.issues.elements.Severity;
@@ -46,6 +47,7 @@ import org.mozkito.issues.model.HistoryElement;
 import org.mozkito.issues.model.IssueTracker;
 import org.mozkito.issues.model.Report;
 import org.mozkito.issues.tracker.ReportLink;
+import org.mozkito.persons.elements.PersonFactory;
 import org.mozkito.persons.model.PersonTuple;
 
 /**
@@ -90,7 +92,7 @@ public class MantisParserTest {
 	@Test
 	public void testAttachmentIdRegex() {
 		final String url = "https://issues.openbravo.com/file_download.php?file_id=5008&amp;type=bug";
-		final MantisParser mantisParser = new MantisParser();
+		final MantisParser mantisParser = new MantisParser(new PersonFactory());
 		final Regex idRegex = mantisParser.getAttachmentIdRegex();
 		final MultiMatch findAll = idRegex.findAll(url);
 		assertEquals(1, findAll.size());
@@ -105,7 +107,7 @@ public class MantisParserTest {
 	@Test
 	public void testAttachmentRegex() {
 		final String s = "Selection_031.png (37,363) 2012-02-20 10:39 https://issues.openbravo.com/file_download.php?file_id=5008&type=bug  Selection_032.png (150,567) 2012-02-20 10:40 https://issues.openbravo.com/file_download.php?file_id=5009&type=bug  test.html (1,073) 2012-02-20 10:40 https://issues.openbravo.com/file_download.php?file_id=5010&type=bug";
-		final MantisParser mantisParser = new MantisParser();
+		final MantisParser mantisParser = new MantisParser(new PersonFactory());
 		final Regex regex = mantisParser.getAttachmentRegex();
 		final MultiMatch findAll = regex.findAll(s);
 		assert (findAll != null);
@@ -144,7 +146,7 @@ public class MantisParserTest {
 	 */
 	@Test
 	public void testAttachments18828() {
-		final MantisParser parser = new MantisParser();
+		final MantisParser parser = new MantisParser(new PersonFactory());
 		final Report report = parser.setContext(this.issueTracker, new ReportLink(this.report18828.getUri(), "18828"));
 		assertNotNull(report);
 		final List<AttachmentEntry> attachments = parser.getAttachmentEntries();
@@ -156,7 +158,7 @@ public class MantisParserTest {
 	 */
 	@Test
 	public void testKeywords() {
-		final MantisParser parser = new MantisParser();
+		final MantisParser parser = new MantisParser(new PersonFactory());
 		final Report report = parser.setContext(this.issueTracker, new ReportLink(this.report8468.getUri(), "8468"));
 		assertNotNull(report);
 		final Set<String> keywords = parser.getKeywords();
@@ -171,7 +173,7 @@ public class MantisParserTest {
 	@Test
 	public void testParse() {
 		
-		final MantisParser parser = new MantisParser();
+		final MantisParser parser = new MantisParser(new PersonFactory());
 		final Report report = parser.setContext(this.issueTracker, new ReportLink(this.report19810.getUri(), "19810"));
 		assertNotNull(report);
 		assertEquals("0019810", parser.getId());
@@ -288,7 +290,7 @@ public class MantisParserTest {
 	 */
 	@Test
 	public void testSiblings() {
-		final MantisParser parser = new MantisParser();
+		final MantisParser parser = new MantisParser(new PersonFactory());
 		final Report report = parser.setContext(this.issueTracker, new ReportLink(this.report18828.getUri(), "18828"));
 		assertNotNull(report);
 		final Set<String> siblings = parser.getSiblings();

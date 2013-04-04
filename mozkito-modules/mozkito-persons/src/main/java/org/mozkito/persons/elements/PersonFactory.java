@@ -13,14 +13,24 @@
 
 package org.mozkito.persons.elements;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Set;
 
+import javax.persistence.Transient;
+
+import net.ownhero.dev.kanuni.annotations.simple.NoneNull;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.annotations.string.Trimmed;
+import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
-import net.ownhero.dev.kisa.Logger;
 
+import org.joda.time.DateTime;
+
+import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.persons.model.Person;
 
 /**
@@ -30,20 +40,259 @@ import org.mozkito.persons.model.Person;
  */
 public class PersonFactory {
 	
+	/**
+	 * The Class ImmutablePerson.
+	 * 
+	 * @author Sascha Just <sascha.just@mozkito.org>
+	 */
+	public class ImmutablePerson extends Person {
+		
+		/**
+         * 
+         */
+		private static final long serialVersionUID = -5383315749112305436L;
+		
+		/**
+		 * Instantiates a new immutable person.
+		 * 
+		 * @param username
+		 *            the username
+		 * @param fullname
+		 *            the fullname
+		 * @param email
+		 *            the email
+		 */
+		public ImmutablePerson(@Trimmed final String username, @Trimmed final String fullname,
+		        @Trimmed final String email) {
+			super(username, fullname, email);
+			
+			PRECONDITIONS: {
+				// none
+			}
+			
+			try {
+				// body
+			} finally {
+				POSTCONDITIONS: {
+					// none
+				}
+			}
+		}
+		
+		/**
+		 * {@inheritDoc}
+		 * 
+		 * @see org.mozkito.persons.model.Person#addAllEmails(java.util.Set)
+		 */
+		@Override
+		@Transient
+		public boolean addAllEmails(@NotNull @NoneNull final Set<String> emails) {
+			PRECONDITIONS: {
+				// none
+			}
+			
+			try {
+				throw new UnsupportedOperationException("The object '" + this + "' is immutable.");
+			} finally {
+				POSTCONDITIONS: {
+					// none
+				}
+			}
+		}
+		
+		/**
+		 * {@inheritDoc}
+		 * 
+		 * @see org.mozkito.persons.model.Person#addAllFullnames(java.util.Set)
+		 */
+		@Override
+		@Transient
+		public boolean addAllFullnames(@NotNull @NoneNull final Set<String> fullnames) {
+			PRECONDITIONS: {
+				// none
+			}
+			
+			try {
+				throw new UnsupportedOperationException("The object '" + this + "' is immutable.");
+			} finally {
+				POSTCONDITIONS: {
+					// none
+				}
+			}
+		}
+		
+		/**
+		 * {@inheritDoc}
+		 * 
+		 * @see org.mozkito.persons.model.Person#addAllUsernames(java.util.Set)
+		 */
+		@Override
+		@Transient
+		public boolean addAllUsernames(@NotNull final Set<String> usernames) {
+			PRECONDITIONS: {
+				// none
+			}
+			
+			try {
+				throw new UnsupportedOperationException("The object '" + this + "' is immutable.");
+			} finally {
+				POSTCONDITIONS: {
+					// none
+				}
+			}
+		}
+		
+		/**
+		 * {@inheritDoc}
+		 * 
+		 * @see org.mozkito.persons.model.Person#addEmail(java.lang.String)
+		 */
+		@Override
+		@Transient
+		public boolean addEmail(@Trimmed final String email) {
+			PRECONDITIONS: {
+				// none
+			}
+			
+			try {
+				throw new UnsupportedOperationException("The object '" + this + "' is immutable.");
+			} finally {
+				POSTCONDITIONS: {
+					// none
+				}
+			}
+		}
+		
+		/**
+		 * {@inheritDoc}
+		 * 
+		 * @see org.mozkito.persons.model.Person#addFullname(java.lang.String)
+		 */
+		@Override
+		@Transient
+		public boolean addFullname(final String fullname) {
+			PRECONDITIONS: {
+				// none
+			}
+			
+			try {
+				throw new UnsupportedOperationException("The object '" + this + "' is immutable.");
+			} finally {
+				POSTCONDITIONS: {
+					// none
+				}
+			}
+		}
+		
+		/**
+		 * {@inheritDoc}
+		 * 
+		 * @see org.mozkito.persons.model.Person#addUsername(java.lang.String)
+		 */
+		@Override
+		@Transient
+		public boolean addUsername(final String username) {
+			PRECONDITIONS: {
+				// none
+			}
+			
+			try {
+				throw new UnsupportedOperationException("The object '" + this + "' is immutable.");
+			} finally {
+				POSTCONDITIONS: {
+					// none
+				}
+			}
+		}
+		
+	}
+	
+	/**
+	 * The Class PersonEntry.
+	 * 
+	 * @author Sascha Just <sascha.just@mozkito.org>
+	 */
+	private static final class PersonEntry implements Comparable<PersonEntry> {
+		
+		/** The latest used. */
+		public int    latestUsed;
+		/** The person. */
+		public Person person;
+		
+		/**
+		 * Instantiates a new person entry.
+		 * 
+		 * @param person
+		 *            the person
+		 * @param used
+		 *            the used
+		 */
+		public PersonEntry(final Person person, final int used) {
+			PRECONDITIONS: {
+				// none
+			}
+			
+			try {
+				// body
+				this.latestUsed = used;
+				this.person = person;
+			} finally {
+				POSTCONDITIONS: {
+					// none
+				}
+			}
+		}
+		
+		/**
+		 * {@inheritDoc}
+		 * 
+		 * @see java.lang.Comparable#compareTo(java.lang.Object)
+		 */
+		@Override
+		public int compareTo(final PersonEntry o) {
+			PRECONDITIONS: {
+				// none
+			}
+			
+			try {
+				return Integer.compare(o.latestUsed, this.latestUsed);
+			} finally {
+				POSTCONDITIONS: {
+					// none
+				}
+			}
+		}
+	}
+	
 	/** The username to user. */
-	private final Map<String, Person> usernameToUser = new HashMap<>();
+	private final Map<String, Person>        usernameToUser    = new HashMap<>();
 	
 	/** The fullname to user. */
-	private final Map<String, Person> fullnameToUser = new HashMap<>();
+	private final Map<String, Person>        fullnameToUser    = new HashMap<>();
 	
 	/** The email to user. */
-	private final Map<String, Person> emailToUser    = new HashMap<>();
-	
-	/** The constructor. */
-	private Constructor<Person>       constructor;
+	private final Map<String, Person>        emailToUser       = new HashMap<>();
 	
 	/** The unknown. */
-	private final Person              UNKNOWN;
+	private final Person                     UNKNOWN;
+	
+	/** The persistence util. */
+	private PersistenceUtil                  persistenceUtil   = null;
+	
+	/** The threshold. */
+	private long                             threshold         = 200l;
+	
+	/** The max TTL (in seconds). */
+	private final int                        maxTTL            = 600;
+	
+	/** The load. */
+	private long                             load              = 0;
+	
+	/** The created. */
+	private final DateTime                   created           = new DateTime();
+	
+	/** The least recently used. */
+	private final PriorityQueue<PersonEntry> leastRecentlyUsed = new PriorityQueue<>();
 	
 	/**
 	 * Instantiates a new person manager.
@@ -60,14 +309,6 @@ public class PersonFactory {
 		
 		try {
 			// body
-			try {
-				this.constructor = Person.class.getConstructor(String.class, String.class, String.class);
-			} catch (NoSuchMethodException | SecurityException e) {
-				if (Logger.logError()) {
-					Logger.error("%s constructor got changed. Please fix the %s class.",
-					             Person.class.getCanonicalName(), PersonFactory.class.getCanonicalName());
-				}
-			}
 			
 			this.UNKNOWN = create("<unknown>", null, null);
 		} finally {
@@ -78,8 +319,28 @@ public class PersonFactory {
 				                  "Field '%s' in '%s'.", "fullnameToUser", PersonFactory.class.getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
 				Condition.notNull(this.emailToUser,
 				                  "Field '%s' in '%s'.", "emailToUser", PersonFactory.class.getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
-				Condition.notNull(this.constructor,
-				                  "Field '%s' in '%s'.", "constructor", PersonFactory.class.getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
+	}
+	
+	/**
+	 * Instantiates a new person factory.
+	 * 
+	 * @param persistenceUtil
+	 *            the persistence util
+	 * @param threshold
+	 *            the threshold
+	 */
+	public PersonFactory(@NotNull final PersistenceUtil persistenceUtil, final long threshold) {
+		this();
+		
+		try {
+			this.persistenceUtil = persistenceUtil;
+			this.threshold = threshold;
+		} finally {
+			POSTCONDITIONS: {
+				Condition.notNull(this.persistenceUtil,
+				                  "Field '%s' in '%s'.", "persistenceUtil", PersonFactory.class.getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 	}
@@ -98,15 +359,14 @@ public class PersonFactory {
 	private Person create(final String username,
 	                      final String fullname,
 	                      final String email) {
-		try {
-			return this.constructor.newInstance(username, fullname, email);
-		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			if (Logger.logError()) {
-				Logger.error(e, "%s constructor got changed. Please fix the %s class. Creation process failed.",
-				             Person.class.getCanonicalName(), PersonFactory.class.getCanonicalName());
-			}
-			return null;
+		final ImmutablePerson person = new ImmutablePerson(username, fullname, email);
+		final int use = (int) new DateTime().minus(this.created.getMillis()).getMillis() / 1000;
+		this.leastRecentlyUsed.add(new PersonEntry(person, use));
+		++this.load;
+		if ((this.load > this.threshold) && (this.persistenceUtil != null)) {
+			prune();
 		}
+		return person;
 	}
 	
 	/**
@@ -149,11 +409,153 @@ public class PersonFactory {
 	}
 	
 	/**
+	 * Gets the load.
+	 * 
+	 * @return the load
+	 */
+	public final long getLoad() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.load;
+		} finally {
+			POSTCONDITIONS: {
+				CompareCondition.notNegative(this.load, "Field '%s' in '%s'.", "load", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
+	}
+	
+	/**
+	 * Gets the max ttl.
+	 * 
+	 * @return the maxTTL
+	 */
+	public final int getMaxTTL() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.maxTTL;
+		} finally {
+			POSTCONDITIONS: {
+				CompareCondition.positive(this.maxTTL, "Field '%s' in '%s'.", "maxTTL", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
+	}
+	
+	/**
+	 * Gets the threshold.
+	 * 
+	 * @return the threshold
+	 */
+	public final long getThreshold() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.threshold;
+		} finally {
+			POSTCONDITIONS: {
+				Condition.notNull(this.threshold, "Field '%s' in '%s'.", "threshold", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
+	}
+	
+	/**
 	 * Gets the unknown.
 	 * 
 	 * @return the unknown
 	 */
 	public Person getUnknown() {
 		return this.UNKNOWN;
+	}
+	
+	/**
+	 * Prune.
+	 */
+	private void prune() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			final List<PersonEntry> list = new LinkedList<>();
+			assert !this.leastRecentlyUsed.isEmpty();
+			assert this.persistenceUtil != null;
+			final int now = (int) new DateTime().minus(this.created.getMillis()).getMillis() / 1000;
+			
+			do {
+				final PersonEntry entry = this.leastRecentlyUsed.poll();
+				list.add(entry);
+			} while (!this.leastRecentlyUsed.isEmpty()
+			        && ((now - this.leastRecentlyUsed.iterator().next().latestUsed) > this.maxTTL));
+			
+			this.persistenceUtil.beginTransaction();
+			
+			for (final PersonEntry entry : list) {
+				this.persistenceUtil.save(entry.person);
+				if (!entry.person.getUsernames().isEmpty()) {
+					this.usernameToUser.remove(entry.person.getUsernames().iterator().next());
+				} else if (!entry.person.getFullnames().isEmpty()) {
+					this.fullnameToUser.remove(entry.person.getFullnames().iterator().next());
+				} else {
+					assert !entry.person.getEmailAddresses().isEmpty();
+					this.emailToUser.remove(entry.person.getEmailAddresses().iterator().next());
+				}
+				--this.load;
+			}
+			
+			this.persistenceUtil.commitTransaction();
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Sets the persistence util.
+	 * 
+	 * @param persistenceUtil
+	 *            the persistenceUtil to set
+	 */
+	public final void setPersistenceUtil(final PersistenceUtil persistenceUtil) {
+		PRECONDITIONS: {
+			Condition.notNull(persistenceUtil, "Argument '%s' in '%s'.", "persistenceUtil", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		
+		try {
+			this.persistenceUtil = persistenceUtil;
+		} finally {
+			POSTCONDITIONS: {
+				CompareCondition.equals(this.persistenceUtil, persistenceUtil,
+				                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter."); //$NON-NLS-1$
+			}
+		}
+	}
+	
+	/**
+	 * Sets the threshold.
+	 * 
+	 * @param threshold
+	 *            the threshold to set
+	 */
+	public final void setThreshold(final long threshold) {
+		PRECONDITIONS: {
+			Condition.notNull(threshold, "Argument '%s' in '%s'.", "threshold", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		
+		try {
+			this.threshold = threshold;
+		} finally {
+			POSTCONDITIONS: {
+				CompareCondition.equals(this.threshold, threshold,
+				                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter."); //$NON-NLS-1$
+			}
+		}
 	}
 }
