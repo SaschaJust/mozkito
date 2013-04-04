@@ -31,7 +31,8 @@ import org.mozkito.changecouplings.model.FileChangeCoupling;
 import org.mozkito.persistence.ConnectOptions;
 import org.mozkito.persistence.DatabaseType;
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.persistence.model.Person;
+import org.mozkito.persons.elements.PersonFactory;
+import org.mozkito.persons.model.Person;
 import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
 import org.mozkito.versions.elements.ChangeType;
@@ -107,7 +108,8 @@ public class ChangeCouplingRuleFactory_PostgresTest extends DatabaseTest {
 	public void testChangeCouplings() throws IOException {
 		
 		ChangeCouplingRuleFactory_PostgresTest.persistenceUtil.beginTransaction();
-		final Person person = new Person("kim", "", "");
+		final PersonFactory personFactory = new PersonFactory();
+		final Person person = personFactory.get("kim", "", "");
 		final DateTime now = new DateTime();
 		
 		final RevDependencyGraph revDepGraph = new RevDependencyGraph();

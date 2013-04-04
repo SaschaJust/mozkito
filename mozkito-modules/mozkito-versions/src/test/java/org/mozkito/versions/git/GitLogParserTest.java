@@ -18,14 +18,28 @@ import net.ownhero.dev.regex.Group;
 import net.ownhero.dev.regex.Match;
 import net.ownhero.dev.regex.Regex;
 
+import org.junit.Before;
 import org.junit.Test;
 
-import org.mozkito.persistence.model.Person;
+import org.mozkito.persons.elements.PersonFactory;
+import org.mozkito.persons.model.Person;
 
 /**
  * The Class GitLogParserTest.
  */
 public class GitLogParserTest {
+	
+	private PersonFactory personFactory;
+	private GitLogParser  gitLogParser;
+	
+	/**
+	 * Setup.
+	 */
+	@Before
+	public void setup() {
+		this.personFactory = new PersonFactory();
+		this.gitLogParser = new GitLogParser(this.personFactory);
+	}
 	
 	/**
 	 * Test author reg exp.
@@ -34,7 +48,7 @@ public class GitLogParserTest {
 	public void testAuthorRegExp() {
 		final String author1 = "Author: Carsten Nielsen <heycarsten@gmail.com>";
 		
-		Person author = GitLogParser.getAuthor(author1, 0);
+		Person author = this.gitLogParser.getAuthor(author1, 0);
 		assertTrue(author.getFullnames() != null);
 		assertEquals(1, author.getFullnames().size());
 		assertTrue(author.getFullnames().contains("Carsten Nielsen"));
@@ -45,7 +59,7 @@ public class GitLogParserTest {
 		assertEquals(0, author.getUsernames().size());
 		
 		final String author2 = "Author: tinogomes <tinorj@gmail.com>";
-		author = GitLogParser.getAuthor(author2, 0);
+		author = this.gitLogParser.getAuthor(author2, 0);
 		assertTrue(author.getFullnames() != null);
 		assertEquals(0, author.getFullnames().size());
 		assertTrue(author.getEmailAddresses() != null);
@@ -56,7 +70,7 @@ public class GitLogParserTest {
 		assertTrue(author.getUsernames().contains("tinogomes"));
 		
 		final String author3 = "Author: <tinorj@gmail.com>";
-		author = GitLogParser.getAuthor(author3, 0);
+		author = this.gitLogParser.getAuthor(author3, 0);
 		assertTrue(author.getFullnames() != null);
 		assertEquals(0, author.getFullnames().size());
 		assertTrue(author.getEmailAddresses() != null);
@@ -66,7 +80,7 @@ public class GitLogParserTest {
 		assertEquals(0, author.getUsernames().size());
 		
 		final String author4 = "Author: tinogomes";
-		author = GitLogParser.getAuthor(author4, 0);
+		author = this.gitLogParser.getAuthor(author4, 0);
 		assertTrue(author.getFullnames() != null);
 		assertEquals(0, author.getFullnames().size());
 		assertTrue(author.getEmailAddresses() != null);
@@ -76,7 +90,7 @@ public class GitLogParserTest {
 		assertTrue(author.getUsernames().contains("tinogomes"));
 		
 		final String author5 = "Author: just <just@b3cd8044-6b0a-409c-a07a-9925dc373c42>";
-		author = GitLogParser.getAuthor(author5, 0);
+		author = this.gitLogParser.getAuthor(author5, 0);
 		assertTrue(author.getFullnames() != null);
 		assertEquals(0, author.getFullnames().size());
 		assertTrue(author.getEmailAddresses() != null);
@@ -87,7 +101,7 @@ public class GitLogParserTest {
 		assertTrue(author.getUsernames().contains("just"));
 		
 		final String author6 = "Author: just <just>";
-		author = GitLogParser.getAuthor(author6, 0);
+		author = this.gitLogParser.getAuthor(author6, 0);
 		assertTrue(author.getFullnames() != null);
 		assertEquals(0, author.getFullnames().size());
 		assertTrue(author.getEmailAddresses() != null);

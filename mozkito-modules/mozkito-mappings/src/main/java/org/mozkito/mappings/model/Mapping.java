@@ -13,8 +13,10 @@
 package org.mozkito.mappings.model;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -27,6 +29,7 @@ import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
+import org.mozkito.mappings.elements.RelationType;
 import org.mozkito.mappings.filters.Filter;
 import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.persistence.Annotated;
@@ -48,6 +51,9 @@ public class Mapping implements Annotated {
 	
 	/** The filters. */
 	private Map<String, Boolean> filters          = new HashMap<>();
+	
+	/** The relation types. */
+	private Set<RelationType>    relationTypes    = new HashSet<>();
 	
 	/**
 	 * Instantiates a new mapping.
@@ -244,10 +250,25 @@ public class Mapping implements Annotated {
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.mappings.model.IMapping#getTo()
+	/**
+	 * @return the relationTypes
 	 */
+	@ElementCollection (fetch = FetchType.EAGER)
+	public final Set<RelationType> getRelationTypes() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.relationTypes;
+		} finally {
+			POSTCONDITIONS: {
+				Condition.notNull(this.relationTypes,
+				                  "Field '%s' in '%s'.", "relationTypes", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
+	}
+	
 	/**
 	 * Gets the to.
 	 * 
@@ -300,6 +321,24 @@ public class Mapping implements Annotated {
 		
 		this.filters = filters;
 		
+	}
+	
+	/**
+	 * @param relationTypes
+	 *            the relationTypes to set
+	 */
+	public final void setRelationTypes(final Set<RelationType> relationTypes) {
+		PRECONDITIONS: {
+			// none, we even allow null here, since this is a JPA setter.
+		}
+		
+		try {
+			this.relationTypes = relationTypes;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/*

@@ -31,6 +31,7 @@ import org.mozkito.issues.exceptions.InvalidParameterException;
 import org.mozkito.issues.model.IssueTracker;
 import org.mozkito.issues.tracker.Tracker;
 import org.mozkito.issues.tracker.jira.JiraTracker;
+import org.mozkito.persons.elements.PersonFactory;
 
 /**
  * The Class JiraOptions.
@@ -140,7 +141,7 @@ public class JiraOptions extends ArgumentSetOptions<Boolean, ArgumentSet<Boolean
 		
 		try {
 			getSettings().getArgumentSet(this).getValue();
-			final JiraTracker tracker = new JiraTracker(issueTracker);
+			final JiraTracker tracker = new JiraTracker(issueTracker, new PersonFactory());
 			tracker.setup(trackerUri, trackerUser, trackerPassword, this.projectName);
 			return tracker;
 		} catch (final InvalidParameterException e) {

@@ -18,10 +18,10 @@ package org.mozkito.persons.engine;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.mozkito.persistence.model.Person;
-import org.mozkito.persistence.model.PersonContainer;
 import org.mozkito.persons.elements.PersonBucket;
 import org.mozkito.persons.messages.Messages;
+import org.mozkito.persons.model.Person;
+import org.mozkito.persons.model.PersonContainer;
 import org.mozkito.persons.processing.PersonManager;
 
 /**

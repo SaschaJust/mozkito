@@ -13,7 +13,7 @@
 /**
  * 
  */
-package org.mozkito.persistence.model;
+package org.mozkito.persons.model;
 
 import java.util.Collection;
 import java.util.HashMap;

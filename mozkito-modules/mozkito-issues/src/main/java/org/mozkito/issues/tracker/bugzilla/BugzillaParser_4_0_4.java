@@ -48,9 +48,9 @@ import org.mozkito.issues.elements.Type;
 import org.mozkito.issues.model.AttachmentEntry;
 import org.mozkito.issues.model.Comment;
 import org.mozkito.issues.model.History;
-import org.mozkito.issues.tracker.Tracker;
 import org.mozkito.issues.tracker.XmlReport;
-import org.mozkito.persistence.model.Person;
+import org.mozkito.persons.elements.PersonFactory;
+import org.mozkito.persons.model.Person;
 
 /**
  * The Class BugzillaParser.
@@ -65,9 +65,11 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 	/**
 	 * Instantiates a new bugzilla parser.
 	 * 
+	 * @param personFactory
+	 *            the person factory
 	 */
-	public BugzillaParser_4_0_4() {
-		super(new HashSet<String>(Arrays.asList(new String[] { "4.0.4", "4.0.5+" })));
+	public BugzillaParser_4_0_4(final PersonFactory personFactory) {
+		super(personFactory, new HashSet<String>(Arrays.asList(new String[] { "4.0.4", "4.0.5+" })));
 	}
 	
 	/*
@@ -85,7 +87,7 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 			}
 			final String name = assignedTo.getName().getStringValue();
 			final String username = assignedTo.getDomNode().getFirstChild().getNodeValue().toString();
-			return new Person(username, name, null);
+			return getPersonFactory().get(username, name, null);
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -105,7 +107,7 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 			final Attachment[] attachmentArray = getXmlBug().getAttachmentArray();
 			for (final Attachment attachment : attachmentArray) {
 				final AttachmentEntry attachmentEntry = new AttachmentEntry();
-				attachmentEntry.setAuthor(new Person(attachment.getAttacher(), null, null));
+				attachmentEntry.setAuthor(getPersonFactory().get(attachment.getAttacher(), null, null));
 				attachmentEntry.setDeltaTS(DateTimeUtils.parseDate(attachment.getDeltaTs()));
 				attachmentEntry.setDescription(attachment.getDesc());
 				attachmentEntry.setFilename(attachment.getFilename());
@@ -186,9 +188,9 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 					final DateTime timestamp = DateTimeUtils.parseDate(longDesc.getBugWhen());
 					Person person = null;
 					if ((username == null) && (name == null)) {
-						person = Tracker.UNKNOWN_PERSON;
+						person = getPersonFactory().getUnknown();
 					} else {
-						person = new Person(username, name, null);
+						person = getPersonFactory().get(username, name, null);
 					}
 					final Comment comment = new Comment(id, person, timestamp, longDesc.getThetext().trim());
 					result.add(comment);
@@ -277,7 +279,7 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 				                                       .replace("show_bug.cgi", "show_activity.cgi");
 				try {
 					final URI historyUri = new URI(uriString);
-					this.historyParser = new BugzillaHistoryParser_4_0_4(historyUri, getId());
+					this.historyParser = new BugzillaHistoryParser_4_0_4(historyUri, getId(), getPersonFactory());
 				} catch (final Exception e) {
 					if (Logger.logError()) {
 						Logger.error("Could not fetch bug history from URI `" + uriString + "`.");
@@ -596,7 +598,7 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 			}
 			final String name = reporter.getName().getStringValue();
 			final String username = reporter.getDomNode().getFirstChild().getNodeValue().toString();
-			return new Person(username, name, null);
+			return getPersonFactory().get(username, name, null);
 		} finally {
 			// POSTCONDITIONS
 		}

@@ -11,28 +11,24 @@
  * specific language governing permissions and limitations under the License.
  **********************************************************************************************************************/
 
-package org.mozkito.persistence.model;
-
-import javax.persistence.metamodel.SetAttribute;
-import javax.persistence.metamodel.SingularAttribute;
+package org.mozkito.mappings.elements;
 
 /**
- * The Class Person_.
+ * The Enum RelationType.
+ * 
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
-@javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.persistence.model.Person.class)
-@javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
-                             date = "Mon Jan 07 15:24:20 CET 2013")
-public class Person_ {
+public enum RelationType {
 	
-	/** The email addresses. */
-	public static volatile SetAttribute<Person, String>    emailAddresses;
+	/** The related topic. */
+	RELATED_CONTENT,
 	
-	/** The fullnames. */
-	public static volatile SetAttribute<Person, String>    fullnames;
+	/** The duplicate. */
+	DUPLICATE,
 	
-	/** The generated id. */
-	public static volatile SingularAttribute<Person, Long> generatedId;
+	/** The bug and fix. */
+	BUG_AND_FIX,
 	
-	/** The usernames. */
-	public static volatile SetAttribute<Person, String>    usernames;
+	/** The RFE and implementation. */
+	RFE_AND_IMPLEMENTATION;
 }

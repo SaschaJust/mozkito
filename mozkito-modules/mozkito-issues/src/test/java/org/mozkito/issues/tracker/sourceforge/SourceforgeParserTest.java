@@ -31,6 +31,7 @@ import net.ownhero.dev.regex.Regex;
 import org.joda.time.DateTime;
 import org.junit.Ignore;
 import org.junit.Test;
+
 import org.mozkito.issues.elements.Priority;
 import org.mozkito.issues.elements.Resolution;
 import org.mozkito.issues.elements.Status;
@@ -42,7 +43,8 @@ import org.mozkito.issues.model.HistoryElement;
 import org.mozkito.issues.model.IssueTracker;
 import org.mozkito.issues.model.Report;
 import org.mozkito.issues.tracker.ReportLink;
-import org.mozkito.persistence.model.Person;
+import org.mozkito.persons.elements.PersonFactory;
+import org.mozkito.persons.model.Person;
 
 /**
  * The Class SourceforgeParserTest.
@@ -91,7 +93,7 @@ public class SourceforgeParserTest {
 		try {
 			final IssueTracker issueTracker = new IssueTracker();
 			final Report report = new Report(issueTracker, "0");
-			final SourceforgeParser parser = new SourceforgeParser(Type.BUG);
+			final SourceforgeParser parser = new SourceforgeParser(Type.BUG, new PersonFactory());
 			parser.setContext(issueTracker,
 			                  new ReportLink(
 			                                 getClass().getResource(FileUtils.fileSeparator
@@ -267,10 +269,10 @@ public class SourceforgeParserTest {
 	public void testIssueParser() throws InvalidParameterException {
 		try {
 			final IssueTracker issueTracker = new IssueTracker();
-			final SourceforgeTracker tracker = new SourceforgeTracker(issueTracker);
+			final SourceforgeTracker tracker = new SourceforgeTracker(issueTracker, new PersonFactory());
 			tracker.setUri(getClass().getResource(FileUtils.fileSeparator).toURI());
 			
-			final SourceforgeParser parser = new SourceforgeParser(Type.BUG);
+			final SourceforgeParser parser = (SourceforgeParser) tracker.getParser();
 			parser.setTracker(tracker);
 			parser.setContext(issueTracker,
 			                  new ReportLink(

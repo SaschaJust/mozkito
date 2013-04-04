@@ -46,10 +46,10 @@ import org.mozkito.issues.elements.TextElement;
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persistence.model.DateTimeTuple;
 import org.mozkito.persistence.model.EnumTuple;
-import org.mozkito.persistence.model.Person;
-import org.mozkito.persistence.model.PersonContainer;
-import org.mozkito.persistence.model.PersonTuple;
 import org.mozkito.persistence.model.StringTuple;
+import org.mozkito.persons.model.Person;
+import org.mozkito.persons.model.PersonContainer;
+import org.mozkito.persons.model.PersonTuple;
 
 /**
  * The Class HistoryElement.

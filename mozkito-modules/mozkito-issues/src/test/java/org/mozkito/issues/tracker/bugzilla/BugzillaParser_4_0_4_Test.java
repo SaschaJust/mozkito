@@ -31,6 +31,7 @@ import net.ownhero.dev.ioda.container.RawContent;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
+
 import org.mozkito.issues.elements.Priority;
 import org.mozkito.issues.elements.Resolution;
 import org.mozkito.issues.elements.Severity;
@@ -42,6 +43,7 @@ import org.mozkito.issues.model.IssueTracker;
 import org.mozkito.issues.model.Report;
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.issues.tracker.XmlReport;
+import org.mozkito.persons.elements.PersonFactory;
 
 /**
  * The Class BugzillaParser_4_0_4_Test.
@@ -86,8 +88,8 @@ public class BugzillaParser_4_0_4_Test {
 		this.uri153429 = getClass().getResource(FileUtils.fileSeparator + "bugzilla_153429.xml").toURI();
 		this.uri642368 = getClass().getResource(FileUtils.fileSeparator + "bugzilla_642368.xml").toURI();
 		this.fetchURI = new URI("https://issues.eclipse.org/issues/");
-		this.parser = new BugzillaParser_4_0_4();
-		final BugzillaTracker tracker = new BugzillaTracker(new IssueTracker());
+		this.parser = new BugzillaParser_4_0_4(new PersonFactory());
+		final BugzillaTracker tracker = new BugzillaTracker(new IssueTracker(), this.parser.getPersonFactory());
 		tracker.setUri(this.fetchURI);
 		this.parser.setTracker(tracker);
 	}

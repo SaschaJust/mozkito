@@ -32,6 +32,7 @@ import net.ownhero.dev.ioda.exceptions.FetchException;
 import net.ownhero.dev.ioda.exceptions.MIMETypeDeterminationException;
 import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Group;
 import net.ownhero.dev.regex.Match;
@@ -59,7 +60,8 @@ import org.mozkito.issues.model.Report;
 import org.mozkito.issues.tracker.Parser;
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.issues.tracker.Tracker;
-import org.mozkito.persistence.model.Person;
+import org.mozkito.persons.elements.PersonFactory;
+import org.mozkito.persons.model.Person;
 
 /**
  * The Class SourceForgeParser.
@@ -295,15 +297,21 @@ public class SourceforgeParser implements Parser {
 	/** The report. */
 	private Report                                    report;
 	
+	/** The person factory. */
+	private final PersonFactory                       personFactory;
+	
 	/**
 	 * Instantiates a new sourceforge parser.
 	 * 
 	 * @param bugType
 	 *            the bug type
+	 * @param personFactory
+	 *            the person factory
 	 */
 	@NoneNull
-	public SourceforgeParser(final Type bugType) {
+	public SourceforgeParser(final Type bugType, final PersonFactory personFactory) {
 		this.bugType = bugType;
+		this.personFactory = personFactory;
 	}
 	
 	/*
@@ -323,7 +331,7 @@ public class SourceforgeParser implements Parser {
 			for (final Element child : this.rightGBox.children()) {
 				if ("label".equals(child.tag().getName()) && "Assigned:".equals(child.text().trim())) {
 					final String name = child.nextElementSibling().text();
-					return new Person(null, name, null);
+					return getPersonFactory().get(null, name, null);
 				}
 			}
 			return null;
@@ -503,7 +511,7 @@ public class SourceforgeParser implements Parser {
 					if ((group.getName() != null) && ("timestamp".equals(group.getName()))) {
 						timestamp = DateTimeUtils.parseDate(group.getMatch());
 					} else if ((group.getName() != null) && ("username".equals(group.getName()))) {
-						sender = new Person(group.getMatch(), null, null);
+						sender = getPersonFactory().get(group.getMatch(), null, null);
 					}
 				}
 				if ((timestamp != null) || (sender != null)) {
@@ -702,6 +710,26 @@ public class SourceforgeParser implements Parser {
 	@Override
 	public final byte[] getMd5() {
 		return this.md5;
+	}
+	
+	/**
+	 * Gets the person factory.
+	 * 
+	 * @return the personFactory
+	 */
+	public final PersonFactory getPersonFactory() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.personFactory;
+		} finally {
+			POSTCONDITIONS: {
+				Condition.notNull(this.personFactory,
+				                  "Field '%s' in '%s'.", "personFactory", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
 	}
 	
 	/*
@@ -962,7 +990,7 @@ public class SourceforgeParser implements Parser {
 							}
 						}
 						if ((uname != null) || (name != null)) {
-							return new Person(uname, name, null);
+							return getPersonFactory().get(uname, name, null);
 						}
 					}
 				}
@@ -1070,7 +1098,7 @@ public class SourceforgeParser implements Parser {
 					final DateTime timestamp = DateTimeUtils.parseDate(tds.get(2).text().trim());
 					final int A_ELEMENT_INDEX = 3;
 					final Element aElem = tds.get(A_ELEMENT_INDEX).child(0);
-					final Person author = new Person(aElem.text().trim(), aElem.attr("title"), null);
+					final Person author = getPersonFactory().get(aElem.text().trim(), aElem.attr("title"), null);
 					
 					if (this.lastUpdateTimestamp == null) {
 						this.lastUpdateTimestamp = timestamp;
@@ -1091,9 +1119,9 @@ public class SourceforgeParser implements Parser {
 							break;
 						case "assigned_to":
 							if (assignedTo == null) {
-								assignedTo = Tracker.UNKNOWN_PERSON;
+								assignedTo = getPersonFactory().getUnknown();
 							}
-							final Person oldAssignedTo = new Person(oldValue, null, null);
+							final Person oldAssignedTo = getPersonFactory().get(oldValue, null, null);
 							lastHistoryElement.addChangedValue("assignedTo", oldAssignedTo, assignedTo);
 							assignedTo = oldAssignedTo;
 							break;

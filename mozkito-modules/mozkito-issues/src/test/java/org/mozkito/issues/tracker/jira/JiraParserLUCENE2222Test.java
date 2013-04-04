@@ -42,7 +42,8 @@ import org.mozkito.issues.model.Comment;
 import org.mozkito.issues.model.IssueTracker;
 import org.mozkito.issues.model.Report;
 import org.mozkito.issues.tracker.ReportLink;
-import org.mozkito.persistence.model.Person;
+import org.mozkito.persons.elements.PersonFactory;
+import org.mozkito.persons.model.Person;
 
 /**
  * The Class JiraParserLUCENE2222Test.
@@ -62,7 +63,7 @@ public class JiraParserLUCENE2222Test {
 		try {
 			final URI uri = JiraParserLUCENE2222Test.class.getResource(FileUtils.fileSeparator + "LUCENE-2222.xml")
 			                                              .toURI();
-			parser = new JiraParser();
+			parser = new JiraParser(new PersonFactory());
 			final IssueTracker issueTracker = new IssueTracker();
 			final Report report = parser.setContext(issueTracker, new ReportLink(uri, "LUCENE-2222"));
 			assertNotNull(report);

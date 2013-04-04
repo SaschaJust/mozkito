@@ -20,9 +20,9 @@ import javax.persistence.metamodel.SingularAttribute;
 
 import org.mozkito.persistence.model.DateTimeTuple;
 import org.mozkito.persistence.model.EnumTuple;
-import org.mozkito.persistence.model.PersonContainer;
-import org.mozkito.persistence.model.PersonTuple;
 import org.mozkito.persistence.model.StringTuple;
+import org.mozkito.persons.model.PersonContainer;
+import org.mozkito.persons.model.PersonTuple;
 
 /**
  * The Class HistoryElement_.

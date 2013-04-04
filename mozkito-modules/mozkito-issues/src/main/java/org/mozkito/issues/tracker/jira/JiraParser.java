@@ -38,6 +38,7 @@ import net.ownhero.dev.ioda.container.RawContent;
 import net.ownhero.dev.ioda.exceptions.FetchException;
 import net.ownhero.dev.ioda.exceptions.MIMETypeDeterminationException;
 import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
+import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.MultiMatch;
 import net.ownhero.dev.regex.Regex;
@@ -67,7 +68,8 @@ import org.mozkito.issues.tracker.Parser;
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.issues.tracker.Tracker;
 import org.mozkito.issues.tracker.XmlReport;
-import org.mozkito.persistence.model.Person;
+import org.mozkito.persons.elements.PersonFactory;
+import org.mozkito.persons.model.Person;
 
 /**
  * The Class JiraParser.
@@ -222,12 +224,40 @@ public class JiraParser implements Parser {
 	
 	private boolean            parsed            = false;
 	
+	private PersonFactory      personFactory;
+	
 	/** The Constant DATE_TIME_PATTERN. */
 	public static final String DATE_TIME_PATTERN = "({E}[A-Za-z]{3}),\\s+({dd}[0-3]?\\d)\\s+({MMM}[A-Za-z]{3,})\\s+({yyyy}\\d{4})\\s+({HH}[0-2]\\d):({mm}[0-5]\\d):({ss}[0-5]\\d)({Z}\\s[+-]\\d{4})";
 	
 	/*
 	 * (non-Javadoc)
 	 * @see org.mozkito.bugs.tracker.Parser#getComponent()
+	 */
+	
+	/**
+	 * Instantiates a new jira parser.
+	 * 
+	 * @param personFactory
+	 *            the person factory
+	 */
+	public JiraParser(final PersonFactory personFactory) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			// body
+			this.personFactory = personFactory;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.bugs.tracker.Parser#getCreationTimestamp()
 	 */
 	
 	/**
@@ -263,11 +293,6 @@ public class JiraParser implements Parser {
 			// POSTCONDITIONS
 		}
 	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#getCreationTimestamp()
-	 */
 	
 	/**
 	 * Creates the document.
@@ -324,7 +349,7 @@ public class JiraParser implements Parser {
 				if ("-1".equals(username)) {
 					return null;
 				}
-				return new Person(username, assignee.getTextContent(), null);
+				return getPersonFactory().get(username, assignee.getTextContent(), null);
 			}
 			return null;
 		} finally {
@@ -359,7 +384,7 @@ public class JiraParser implements Parser {
 				}
 				final AttachmentEntry attachmentEntry = new AttachmentEntry(idNode.getTextContent());
 				if (authorNode != null) {
-					attachmentEntry.setAuthor(new Person(authorNode.getTextContent(), null, null));
+					attachmentEntry.setAuthor(getPersonFactory().get(authorNode.getTextContent(), null, null));
 				}
 				final StringBuilder linkBuilder = new StringBuilder();
 				if (nameNode != null) {
@@ -453,9 +478,9 @@ public class JiraParser implements Parser {
 					final String authorString = authorNode.getTextContent();
 					final Regex emailRegex = new Regex(net.ownhero.dev.regex.util.Patterns.EMAIL_ADDRESS);
 					if (emailRegex.matches(authorString)) {
-						author = new Person(null, null, authorString);
+						author = getPersonFactory().get(null, null, authorString);
 					} else {
-						author = new Person(authorString, null, null);
+						author = getPersonFactory().get(authorString, null, null);
 					}
 				}
 				DateTime timestamp = null;
@@ -616,6 +641,24 @@ public class JiraParser implements Parser {
 		return this.md5;
 	}
 	
+	/**
+	 * @return the personFactory
+	 */
+	public final PersonFactory getPersonFactory() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.personFactory;
+		} finally {
+			POSTCONDITIONS: {
+				Condition.notNull(this.personFactory,
+				                  "Field '%s' in '%s'.", "personFactory", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see org.mozkito.bugs.tracker.Parser#getSeverity()
@@ -645,6 +688,11 @@ public class JiraParser implements Parser {
 			// POSTCONDITIONS
 		}
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.bugs.tracker.Parser#setTracker(org.mozkito.bugs.tracker.Tracker)
+	 */
 	
 	/*
 	 * (non-Javadoc)
@@ -690,7 +738,7 @@ public class JiraParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#setTracker(org.mozkito.bugs.tracker.Tracker)
+	 * @see org.mozkito.bugs.tracker.Parser#setXMLReport(org.mozkito.bugs.tracker.XmlReport )
 	 */
 	
 	/*
@@ -723,11 +771,6 @@ public class JiraParser implements Parser {
 			// POSTCONDITIONS
 		}
 	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Parser#setXMLReport(org.mozkito.bugs.tracker.XmlReport )
-	 */
 	
 	/*
 	 * (non-Javadoc)
@@ -820,7 +863,7 @@ public class JiraParser implements Parser {
 				if (usernameNode != null) {
 					username = usernameNode.getTextContent();
 				}
-				return new Person(username, name, null);
+				return getPersonFactory().get(username, name, null);
 			}
 			return null;
 		} finally {
@@ -899,7 +942,8 @@ public class JiraParser implements Parser {
 				if (Logger.logDebug()) {
 					Logger.debug("Fetching issue report history from %s", sb.toString());
 				}
-				final JiraHistoryParser historyParser = new JiraHistoryParser(new URI(sb.toString()));
+				final JiraHistoryParser historyParser = new JiraHistoryParser(new URI(sb.toString()),
+				                                                              getPersonFactory());
 				if (historyParser.parse(history)) {
 					this.resolver = historyParser.getResolver();
 					this.parsed = true;

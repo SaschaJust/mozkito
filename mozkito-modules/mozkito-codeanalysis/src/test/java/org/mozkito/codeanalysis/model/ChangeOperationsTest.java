@@ -22,7 +22,7 @@ import java.util.Collection;
 import org.joda.time.DateTime;
 import org.junit.Test;
 
-import org.mozkito.persistence.model.Person;
+import org.mozkito.persons.elements.PersonFactory;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.RevDependencyGraph;
 import org.mozkito.versions.model.Branch;
@@ -45,10 +45,11 @@ public class ChangeOperationsTest {
 	public void test() throws IOException {
 		
 		final RevDependencyGraph revDependencyGraph = new RevDependencyGraph();
+		final PersonFactory personFactory = new PersonFactory();
 		revDependencyGraph.addBranch(Branch.MASTER_BRANCH_NAME, "hash");
 		final VersionArchive versionArchive = new VersionArchive(revDependencyGraph);
 		final ChangeSet changeSet = new ChangeSet(versionArchive, "hash", "hubba hubba hopp!", new DateTime(),
-		                                          new Person("kim", null, null), "143");
+		                                          personFactory.get("kim", null, null), "143");
 		
 		final JavaTypeDefinition javaType = new JavaTypeDefinition("org.mozkito.codeanalysis.model.TestClass");
 		

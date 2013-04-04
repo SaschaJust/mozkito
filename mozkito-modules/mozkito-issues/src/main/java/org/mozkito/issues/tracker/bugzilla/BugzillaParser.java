@@ -26,6 +26,7 @@ import net.ownhero.dev.ioda.IOUtils;
 import net.ownhero.dev.ioda.container.RawContent;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
 import noNamespace.BugDocument.Bug;
@@ -50,6 +51,7 @@ import org.mozkito.issues.tracker.Parser;
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.issues.tracker.Tracker;
 import org.mozkito.issues.tracker.XmlReport;
+import org.mozkito.persons.elements.PersonFactory;
 
 /**
  * The Class BugzillaParser.
@@ -69,10 +71,13 @@ public abstract class BugzillaParser implements Parser {
 	 * 
 	 * @param bugzillaVersion
 	 *            the bugzilla version
+	 * @param personFactory
+	 *            the person factory
 	 * @return the parser. If no parser for version exists this method will return NULL.
 	 */
 	@NoneNull
-	public static BugzillaParser getParser(final String bugzillaVersion) {
+	public static BugzillaParser getParser(final String bugzillaVersion,
+	                                       final PersonFactory personFactory) {
 		if (!BugzillaParser.PARSER_VERSIONS.containsKey(bugzillaVersion)) {
 			if (Logger.logError()) {
 				Logger.error("Bugzilla version " + bugzillaVersion
@@ -203,36 +208,42 @@ public abstract class BugzillaParser implements Parser {
 	}
 	
 	/** The tracker. */
-	protected Tracker         tracker = null;
+	protected Tracker           tracker = null;
 	
 	/** The supported versions. */
-	private final Set<String> supportedVersions;
+	private final Set<String>   supportedVersions;
 	
 	/** The xml report. */
-	private XmlReport         xmlReport;
+	private XmlReport           xmlReport;
 	
 	/** The xml bug. */
-	private Bug               xmlBug;
+	private Bug                 xmlBug;
 	
 	/** The md5. */
-	private byte[]            md5;
+	private byte[]              md5;
 	
 	/** The report. */
-	private Report            report;
+	private Report              report;
+	
+	/** The person factory. */
+	private final PersonFactory personFactory;
 	
 	/**
 	 * Instantiates a new bugzilla parser.
 	 * 
+	 * @param personFactory
+	 *            the person factory
 	 * @param supportedVersions
 	 *            the supported versions
 	 */
-	public BugzillaParser(final Set<String> supportedVersions) {
+	public BugzillaParser(final PersonFactory personFactory, final Set<String> supportedVersions) {
 		this.supportedVersions = supportedVersions;
 		for (final String supportedVersion : supportedVersions) {
 			if (!BugzillaParser.PARSER_VERSIONS.containsKey(supportedVersion)) {
 				BugzillaParser.PARSER_VERSIONS.put(supportedVersion, this);
 			}
 		}
+		this.personFactory = personFactory;
 	}
 	
 	/*
@@ -362,6 +373,26 @@ public abstract class BugzillaParser implements Parser {
 	@Override
 	public final byte[] getMd5() {
 		return this.md5;
+	}
+	
+	/**
+	 * Gets the person factory.
+	 * 
+	 * @return the personFactory
+	 */
+	public final PersonFactory getPersonFactory() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.personFactory;
+		} finally {
+			POSTCONDITIONS: {
+				Condition.notNull(this.personFactory,
+				                  "Field '%s' in '%s'.", "personFactory", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
 	}
 	
 	/**

@@ -87,7 +87,10 @@ public class Main {
 			System.err.println(e.getMessage());
 			e.printStackTrace();
 		} catch (final Shutdown shutdown) {
-			System.err.println("Shutdown requested.");
+			System.err.println("Shutdown requested"
+			        + (shutdown.getMessage() != null
+			                                        ? " (" + shutdown.getMessage() + ")"
+			                                        : "") + ".");
 		}
 	}
 	

@@ -36,7 +36,7 @@ import org.mozkito.issues.model.Report;
 import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.persistence.Annotated;
-import org.mozkito.persistence.model.Person;
+import org.mozkito.persons.model.Person;
 
 /**
  * Class that wraps {@link Report} to be mapped.

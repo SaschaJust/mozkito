@@ -54,6 +54,7 @@ import difflib.Delta;
 import difflib.DiffUtils;
 import difflib.Patch;
 
+import org.mozkito.persons.elements.PersonFactory;
 import org.mozkito.versions.DistributedCommandLineRepository;
 import org.mozkito.versions.LogParser;
 import org.mozkito.versions.elements.AnnotationEntry;
@@ -118,9 +119,12 @@ public class GitRepository extends DistributedCommandLineRepository {
 	
 	/**
 	 * Instantiates a new git repository.
+	 * 
+	 * @param personFactory
+	 *            the person factory
 	 */
-	public GitRepository() {
-		
+	public GitRepository(final PersonFactory personFactory) {
+		super(personFactory);
 	}
 	
 	/*
@@ -610,7 +614,7 @@ public class GitRepository extends DistributedCommandLineRepository {
 	 */
 	@Override
 	protected LogParser getLogParser() {
-		return new GitLogParser();
+		return new GitLogParser(getPersonFactory());
 	}
 	
 	/**

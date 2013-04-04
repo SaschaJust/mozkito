@@ -167,7 +167,7 @@ public class RevDependencyGraph {
 	
 	/**
 	 * Adds the branch with the specified change set as branch head. Returns true if the branch was successfully added
-	 * and did not exist before. Returns false otherwise and leaves the datastructure unchanged.
+	 * and did not exist before. Returns false otherwise and leaves the data structure unchanged.
 	 * 
 	 * @param branchName
 	 *            the branch name
@@ -231,12 +231,6 @@ public class RevDependencyGraph {
 	 * @param edgeType
 	 *            the edge type
 	 * @return true, if successful
-	 */
-	/**
-	 * @param parent
-	 * @param child
-	 * @param edgeType
-	 * @return true if edge could be added; false otherwise
 	 */
 	@NoneNull
 	public boolean addEdge(@NotEmptyString final String parent,

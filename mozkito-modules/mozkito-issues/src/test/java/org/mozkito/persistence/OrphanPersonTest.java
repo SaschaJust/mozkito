@@ -14,12 +14,14 @@ package org.mozkito.persistence;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
+
 import org.mozkito.issues.elements.Status;
 import org.mozkito.issues.model.Comment;
 import org.mozkito.issues.model.HistoryElement;
 import org.mozkito.issues.model.IssueTracker;
 import org.mozkito.issues.model.Report;
-import org.mozkito.persistence.model.Person;
+import org.mozkito.persons.elements.PersonFactory;
+import org.mozkito.persons.model.Person;
 import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
 
@@ -38,11 +40,11 @@ public class OrphanPersonTest extends DatabaseTest {
 	public void testOrphanPerson() {
 		
 		final PersistenceUtil persistenceUtil = getPersistenceUtil();
-		
-		final Person submitter = new Person("yokolet", "Yoko Harada", null);
-		final Person historyAuthor1 = new Person("yokolet", null, null);
-		final Person historyAuthor2 = new Person(null, "Yoko Harada", null);
-		final Person commentAuthor2 = new Person("yokolet", null, null);
+		final PersonFactory personFactory = new PersonFactory();
+		final Person submitter = personFactory.get("yokolet", "Yoko Harada", null);
+		final Person historyAuthor1 = personFactory.get("yokolet", null, null);
+		final Person historyAuthor2 = personFactory.get(null, "Yoko Harada", null);
+		final Person commentAuthor2 = personFactory.get("yokolet", null, null);
 		
 		final IssueTracker issueTracker = new IssueTracker();
 		final Report report = new Report(issueTracker, "1");

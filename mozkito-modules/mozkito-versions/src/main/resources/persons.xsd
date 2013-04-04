@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:persons="http://mozkito.org/schema/persons" targetNamespace="http://mozkito.org/schema/persons">
+
+    <complexType name="Person">
+    	<sequence>
+    		<element name="usernames" type="persons:Usernames"></element>
+    		<element name="emails" type="persons:EmailAddresses"></element>
+    		<element name="fullnames" type="persons:Fullnames"></element>
+    	</sequence>
+    	<attribute name="id" type="persons:PersonId"></attribute>
+    </complexType>
+    
+    <simpleType name="PersonId">
+    	<restriction base="ID"></restriction>
+    </simpleType>
+
+    <complexType name="Usernames">
+    	<sequence>
+    		<element name="username" type="string"></element>
+    	</sequence>
+    </complexType>
+    
+    <complexType name="EmailAddresses">
+    	<sequence>
+    		<element name="emails" type="persons:EmailAddress"></element>
+    	</sequence>
+    </complexType>
+    
+    <complexType name="Fullnames">
+    	<sequence>
+    		<element name="fullname" type="string"></element>
+    	</sequence>
+    </complexType>
+
+    <simpleType name="EmailAddress">
+    	<restriction base="string">
+    		<pattern
+    			value=".+@.+">
+    		</pattern>
+    	</restriction>
+    </simpleType>
+
+    <simpleType name="PersonIdRef">
+    	<restriction base="IDREF"></restriction>
+    </simpleType>
+
+    <element name="persons" type="persons:Persons"></element>
+
+    <complexType name="Persons">
+    	<sequence>
+    		<element name="person" type="persons:Person" maxOccurs="unbounded" minOccurs="0"></element>
+    	</sequence>
+    </complexType>
+
+    <simpleType name="PersonIdRefs">
+    	<restriction base="IDREFS"></restriction>
+    </simpleType>
+</schema>

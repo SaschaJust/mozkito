@@ -32,7 +32,7 @@ import org.mozkito.issues.model.IssueTracker;
 import org.mozkito.issues.model.Report;
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.persistence.model.Person;
+import org.mozkito.persons.elements.PersonFactory;
 
 /**
  * The Class Tracker.
@@ -45,14 +45,14 @@ import org.mozkito.persistence.model.Person;
 public abstract class Tracker {
 	
 	/** The type. */
-	protected final TrackerType       type           = TrackerType.valueOf(this.getClass()
-	                                                                           .getSimpleName()
-	                                                                           .substring(0,
-	                                                                                      this.getClass()
-	                                                                                          .getSimpleName().length()
-	                                                                                              - Tracker.class.getSimpleName()
-	                                                                                                             .length())
-	                                                                           .toUpperCase());
+	protected final TrackerType       type        = TrackerType.valueOf(this.getClass()
+	                                                                        .getSimpleName()
+	                                                                        .substring(0,
+	                                                                                   this.getClass().getSimpleName()
+	                                                                                       .length()
+	                                                                                           - Tracker.class.getSimpleName()
+	                                                                                                          .length())
+	                                                                        .toUpperCase());
 	
 	/** The tracker uri. */
 	protected URI                     trackerURI;
@@ -64,22 +64,26 @@ public abstract class Tracker {
 	private String                    password;
 	
 	/** The report links. */
-	private BlockingQueue<ReportLink> reportLinks    = new LinkedBlockingQueue<ReportLink>();
+	private BlockingQueue<ReportLink> reportLinks = new LinkedBlockingQueue<ReportLink>();
 	
+	/** The issue tracker. */
 	private final IssueTracker        issueTracker;
 	
-	/** The Constant unknownPerson. */
-	public static final Person        UNKNOWN_PERSON = new Person("<unknown>", null, null);    //$NON-NLS-1$
-	                                                                                            
+	/** The person factory. */
+	private final PersonFactory       personFactory;
+	
 	/**
 	 * Instantiates a new tracker.
 	 * 
 	 * @param issueTracker
 	 *            the issue tracker
+	 * @param personFactory
+	 *            the person factory
 	 */
-	public Tracker(final IssueTracker issueTracker) {
+	public Tracker(final IssueTracker issueTracker, final PersonFactory personFactory) {
 		Condition.notNull(this.reportLinks, Messages.getString("Tracker.reportLinks_null")); //$NON-NLS-1$
 		this.issueTracker = issueTracker;
+		this.personFactory = personFactory;
 	}
 	
 	/**
@@ -122,6 +126,26 @@ public abstract class Tracker {
 	 */
 	public String getPassword() {
 		return this.password;
+	}
+	
+	/**
+	 * Gets the person factory.
+	 * 
+	 * @return the personFactory
+	 */
+	public final PersonFactory getPersonFactory() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.personFactory;
+		} finally {
+			POSTCONDITIONS: {
+				Condition.notNull(this.personFactory,
+				                  "Field '%s' in '%s'.", "personFactory", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
 	}
 	
 	/**

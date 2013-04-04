@@ -23,10 +23,10 @@ import net.ownhero.dev.ioda.FileUtils;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mozkito.issues.model.IssueTracker;
-import org.mozkito.issues.tracker.ReportLink;
 
-// TODO: Auto-generated Javadoc
+import org.mozkito.issues.tracker.ReportLink;
+import org.mozkito.persons.elements.PersonFactory;
+
 /**
  * The Class MantisOverviewParserTest.
  * 
@@ -52,7 +52,7 @@ public class MantisOverviewParserTest {
 		try {
 			this.trackerUri = getClass().getResource(FileUtils.fileSeparator).toURI();
 			this.overviewUri = getClass().getResource(FileUtils.fileSeparator + "mantis_overview.html").toURI();
-			this.parser = new MantisOverviewParser(this.trackerUri, new IssueTracker());
+			this.parser = new MantisOverviewParser(this.trackerUri, new PersonFactory());
 		} catch (final URISyntaxException e) {
 			e.printStackTrace();
 			fail();

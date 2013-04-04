@@ -39,7 +39,7 @@ import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.mozkito.issues.model.comparators.HistoryElementComparator;
 import org.mozkito.persistence.Annotated;
-import org.mozkito.persistence.model.Person;
+import org.mozkito.persons.model.Person;
 
 /**
  * The Class History.

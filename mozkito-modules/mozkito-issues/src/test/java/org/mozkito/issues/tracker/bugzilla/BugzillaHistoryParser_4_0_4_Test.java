@@ -27,11 +27,13 @@ import net.ownhero.dev.kisa.Logger;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
+
 import org.mozkito.issues.elements.Priority;
 import org.mozkito.issues.model.HistoryElement;
 import org.mozkito.issues.model.IssueTracker;
 import org.mozkito.issues.model.Report;
-import org.mozkito.persistence.model.Person;
+import org.mozkito.persons.elements.PersonFactory;
+import org.mozkito.persons.model.Person;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -73,7 +75,8 @@ public class BugzillaHistoryParser_4_0_4_Test {
 			// final URL historyURL = new URL("https://issues.eclipse.org/issues/show_activity.cgi?id=114562");
 			
 			final BugzillaHistoryParser_4_0_4 historyParser = new BugzillaHistoryParser_4_0_4(this.uri642368history,
-			                                                                                  "642368");
+			                                                                                  "642368",
+			                                                                                  new PersonFactory());
 			final Report report = new Report(new IssueTracker(), "642368");
 			if (!historyParser.parse(report.getHistory())) {
 				fail();
@@ -114,7 +117,7 @@ public class BugzillaHistoryParser_4_0_4_Test {
 	public void testParseHistory() {
 		
 		final BugzillaHistoryParser_4_0_4 historyParser = new BugzillaHistoryParser_4_0_4(this.uri114562history,
-		                                                                                  "114562");
+		                                                                                  "114562", new PersonFactory());
 		
 		try {
 			

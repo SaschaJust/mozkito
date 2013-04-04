@@ -20,6 +20,7 @@ import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.DateTimeUtils;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Match;
 import net.ownhero.dev.regex.Regex;
@@ -27,7 +28,8 @@ import net.ownhero.dev.regex.util.Patterns;
 
 import org.joda.time.DateTime;
 
-import org.mozkito.persistence.model.Person;
+import org.mozkito.persons.elements.PersonFactory;
+import org.mozkito.persons.model.Person;
 import org.mozkito.versions.LogParser;
 import org.mozkito.versions.elements.LogEntry;
 
@@ -57,6 +59,26 @@ class GitLogParser implements LogParser {
 	/** The original id regex. */
 	protected static Regex originalIdRegex       = new Regex(".*@({hit}\\d+)\\s+.*");
 	
+	private PersonFactory  personFactory;
+	
+	/**
+	 * @param personFactory
+	 */
+	public GitLogParser(final PersonFactory personFactory) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			// body
+			this.personFactory = personFactory;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
 	/**
 	 * Gets the author.
 	 * 
@@ -66,8 +88,8 @@ class GitLogParser implements LogParser {
 	 *            the line counter
 	 * @return the author
 	 */
-	protected static Person getAuthor(final String line,
-	                                  final int lineCounter) {
+	protected Person getAuthor(final String line,
+	                           final int lineCounter) {
 		String[] authorParts = line.split(":");
 		if (authorParts.length != 2) {
 			throw new UnrecoverableError("Found error in git log file: line " + lineCounter + ". Abort parsing.");
@@ -85,7 +107,7 @@ class GitLogParser implements LogParser {
 			if (Logger.logWarn()) {
 				Logger.warn("Found log entry woth empty author string.");
 			}
-			return new Person("<unknown>", null, null);
+			return getPersonFactory().getUnknown();
 		} else if (authorParts.length == 1) {
 			// can be email or username
 			final Match find = emailRegex.find(authorString);
@@ -147,7 +169,25 @@ class GitLogParser implements LogParser {
 		// if (regex.getGroup("email") != null) {
 		// email = regex.getGroup("email").trim();
 		// }
-		return new Person(username, fullname, email);
+		return getPersonFactory().get(username, fullname, email);
+	}
+	
+	/**
+	 * @return the personFactory
+	 */
+	public final PersonFactory getPersonFactory() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.personFactory;
+		} finally {
+			POSTCONDITIONS: {
+				Condition.notNull(this.personFactory,
+				                  "Field '%s' in '%s'.", "personFactory", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
 	}
 	
 	/**

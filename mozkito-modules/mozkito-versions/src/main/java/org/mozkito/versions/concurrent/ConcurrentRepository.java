@@ -70,11 +70,11 @@ public class ConcurrentRepository extends Repository {
 	 *            the repository
 	 */
 	public ConcurrentRepository(@NotNull final Repository repository) {
+		this(repository, DEFAULT_CLEANUP_COUNT);
 		// PRECONDITIONS
 		
 		try {
-			this.repository = repository;
-			this.cleanupThreshold = DEFAULT_CLEANUP_COUNT;
+			// body
 		} finally {
 			// POSTCONDITIONS
 			Condition.notNull(this.repository, "Field '%s' in '%s'.", "repository", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
@@ -90,6 +90,7 @@ public class ConcurrentRepository extends Repository {
 	 *            the cleanup threshold
 	 */
 	public ConcurrentRepository(@NotNull final Repository repository, final int cleanupThreshold) {
+		super(repository.getPersonFactory());
 		// PRECONDITIONS
 		
 		try {

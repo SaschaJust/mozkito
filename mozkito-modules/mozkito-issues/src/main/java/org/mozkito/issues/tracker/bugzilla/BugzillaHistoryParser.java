@@ -18,7 +18,7 @@ import org.joda.time.DateTime;
 
 import org.mozkito.issues.model.History;
 import org.mozkito.issues.model.HistoryElement;
-import org.mozkito.persistence.model.Person;
+import org.mozkito.persons.model.Person;
 
 /**
  * The Interface BugzillaHistoryParser.

@@ -23,7 +23,7 @@ import net.ownhero.dev.andama.threads.Sink;
 import net.ownhero.dev.hiari.settings.Settings;
 
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.persistence.model.PersonContainer;
+import org.mozkito.persons.model.PersonContainer;
 import org.mozkito.persons.processing.MergingProcessor;
 
 /**

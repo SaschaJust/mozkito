@@ -27,6 +27,7 @@ import net.ownhero.dev.regex.Regex;
 
 import org.junit.Before;
 import org.junit.Test;
+
 import org.mozkito.issues.elements.Resolution;
 import org.mozkito.issues.elements.Severity;
 import org.mozkito.issues.elements.Status;
@@ -36,8 +37,9 @@ import org.mozkito.issues.model.IssueTracker;
 import org.mozkito.issues.model.Report;
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.persistence.model.EnumTuple;
-import org.mozkito.persistence.model.Person;
 import org.mozkito.persistence.model.StringTuple;
+import org.mozkito.persons.elements.PersonFactory;
+import org.mozkito.persons.model.Person;
 
 /**
  * The Class JiraParserLUCENE2222_NetTest.
@@ -59,7 +61,7 @@ public class JiraParserLUCENE2222_NetTest {
 		try {
 			final URI uri = JiraParserLUCENE2222_NetTest.class.getResource(FileUtils.fileSeparator + "LUCENE-2222.xml")
 			                                                  .toURI();
-			JiraParserLUCENE2222_NetTest.parser = new JiraParser();
+			JiraParserLUCENE2222_NetTest.parser = new JiraParser(new PersonFactory());
 			issueTracker = new IssueTracker();
 			report = JiraParserLUCENE2222_NetTest.parser.setContext(issueTracker, new ReportLink(uri, "LUCENE-2222"));
 			assertNotNull(report);

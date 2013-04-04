@@ -24,6 +24,7 @@ import org.mozkito.issues.model.IssueTracker;
 import org.mozkito.issues.tracker.Parser;
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.issues.tracker.Tracker;
+import org.mozkito.persons.elements.PersonFactory;
 
 /**
  * The Class SourceforgeTracker.
@@ -48,8 +49,8 @@ public class SourceforgeTracker extends Tracker {
 	 * @param issueTracker
 	 *            the issue tracker
 	 */
-	public SourceforgeTracker(final IssueTracker issueTracker) {
-		super(issueTracker);
+	public SourceforgeTracker(final IssueTracker issueTracker, final PersonFactory personFactory) {
+		super(issueTracker, personFactory);
 	}
 	
 	/**
@@ -79,7 +80,7 @@ public class SourceforgeTracker extends Tracker {
 		// PRECONDITIONS
 		
 		try {
-			return new SourceforgeParser(this.bugType);
+			return new SourceforgeParser(this.bugType, getPersonFactory());
 		} finally {
 			// POSTCONDITIONS
 		}

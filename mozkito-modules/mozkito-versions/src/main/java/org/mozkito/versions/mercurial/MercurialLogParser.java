@@ -18,11 +18,14 @@ import java.util.List;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.mozkito.persistence.model.Person;
+
+import org.mozkito.persons.elements.PersonFactory;
+import org.mozkito.persons.model.Person;
 import org.mozkito.versions.LogParser;
 import org.mozkito.versions.elements.LogEntry;
 
@@ -60,6 +63,44 @@ public class MercurialLogParser implements LogParser {
 			}
 		}
 		return completeLines;
+	}
+	
+	private PersonFactory personFactory;
+	
+	/**
+	 * @param personFactory
+	 */
+	public MercurialLogParser(final PersonFactory personFactory) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			// body
+			this.personFactory = personFactory;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * @return the personFactory
+	 */
+	public final PersonFactory getPersonFactory() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.personFactory;
+		} finally {
+			POSTCONDITIONS: {
+				Condition.notNull(this.personFactory,
+				                  "Field '%s' in '%s'.", "personFactory", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
 	}
 	
 	/*
@@ -111,7 +152,7 @@ public class MercurialLogParser implements LogParser {
 			if (MercurialRepository.AUTHOR_REGEX.getGroup("email") != null) {
 				authorEmail = MercurialRepository.AUTHOR_REGEX.getGroup("email").trim();
 			}
-			final Person author = new Person(authorUsername, authorFullname, authorEmail);
+			final Person author = getPersonFactory().get(authorUsername, authorFullname, authorEmail);
 			
 			final String[] dateString = lineParts[2].split(" ");
 			

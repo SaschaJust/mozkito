@@ -11,7 +11,7 @@ import javax.persistence.metamodel.MapAttribute;
 import javax.persistence.metamodel.SetAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 
-import org.mozkito.persistence.model.PersonContainer;
+import org.mozkito.persons.model.PersonContainer;
 
 /**
  * The Class ChangeSet_.

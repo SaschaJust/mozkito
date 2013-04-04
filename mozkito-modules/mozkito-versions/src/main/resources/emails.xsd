@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://mozkito.org/schema/emails" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:emails="http://mozkito.org/schema/emails" xmlns:persons="http://mozkito.org/schema/persons">
+	<import namespace="http://mozkito.org/schema/persons"
+		schemaLocation="http://users.own-hero.net/~methos/dropbox/persons.xsd" />
+
+    <element name="emails" type="emails:Emails"></element>
+
+    <complexType name="Emails">
+    	<sequence>
+    		<element name="email" type="emails:Email" maxOccurs="unbounded" minOccurs="0"></element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="Email">
+    	<sequence>
+    		<element name="body" type="string" maxOccurs="1"
+    			minOccurs="1">
+    		</element>
+    		<element name="from" type="persons:PersonIdRef"
+    			maxOccurs="1" minOccurs="1">
+    		</element>
+    		<element name="to" type="persons:PersonIdRefs" maxOccurs="1"
+    			minOccurs="1">
+    		</element>
+    		<element name="cc" type="persons:PersonIdRefs" maxOccurs="1"
+    			minOccurs="0">
+    		</element>
+    		<element name="subject" type="string" maxOccurs="1"
+    			minOccurs="1">
+    		</element>
+    		<element name="inReplyTo" type="string" maxOccurs="1"
+    			minOccurs="0">
+    		</element>
+    		<element name="references" type="string" maxOccurs="1"
+    			minOccurs="0">
+    		</element>
+    		<element name="timestamp" type="dateTime" maxOccurs="1"
+    			minOccurs="1">
+    		</element>
+    	</sequence>
+    	<attribute name="id" type="string"></attribute>
+    </complexType>
+
+
+</schema>

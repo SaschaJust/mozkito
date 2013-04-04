@@ -12,6 +12,7 @@
  **********************************************************************************************************************/
 package org.mozkito.mappings.mappable.model;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -77,10 +78,7 @@ public abstract class MappableEntity implements Annotated {
 			return false;
 		}
 		final MappableEntity other = (MappableEntity) obj;
-		if (!getId().equals(other.getId())) {
-			return false;
-		}
-		if (getBaseType() != other.getBaseType()) {
+		if (this.generatedId != other.generatedId) {
 			return false;
 		}
 		return true;
@@ -250,6 +248,7 @@ public abstract class MappableEntity implements Annotated {
 	@Transient
 	public int getSize(final FieldKey key) {
 		final Object o = get(key);
+		assert o instanceof Collection;
 		return o != null
 		                ? CollectionUtils.size(o)
 		                : -1;
@@ -272,8 +271,7 @@ public abstract class MappableEntity implements Annotated {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = (prime * result) + (getId().hashCode() ^ (getId().hashCode() >>> 32));
-		result = (prime * result) + getBaseType().hashCode();
+		result = (prime * result) + (int) (this.generatedId ^ (this.generatedId >>> 32));
 		return result;
 	}
 	

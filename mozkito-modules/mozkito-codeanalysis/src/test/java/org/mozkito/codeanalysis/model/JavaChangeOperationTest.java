@@ -22,7 +22,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import org.mozkito.persistence.ModelStorage;
-import org.mozkito.persistence.model.Person;
+import org.mozkito.persons.elements.PersonFactory;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.RevDependencyGraph;
 import org.mozkito.versions.model.Branch;
@@ -62,6 +62,7 @@ public class JavaChangeOperationTest {
 	@Before
 	public void before() throws IOException {
 		final JavaTypeDefinition javaType = new JavaTypeDefinition("org.mozkito.codeanalysis.model.TestClass");
+		final PersonFactory personFactory = new PersonFactory();
 		
 		this.elementFactory = new JavaElementFactory();
 		this.set = new JavaElementLocationSet(this.elementFactory);
@@ -75,10 +76,8 @@ public class JavaChangeOperationTest {
 		
 		final VersionArchive versionArchive = new VersionArchive(revDependencyGraph);
 		
-		this.changeSet = new ChangeSet(versionArchive, "hash", "hubba hubba hopp!", new DateTime(), new Person("kim",
-		                                                                                                       null,
-		                                                                                                       null),
-		                               "143");
+		this.changeSet = new ChangeSet(versionArchive, "hash", "hubba hubba hopp!", new DateTime(),
+		                               personFactory.get("kim", null, null), "143");
 		
 		this.handle = new Handle(versionArchive);
 		final Revision revision = new Revision(this.changeSet, this.handle, ChangeType.Modified);

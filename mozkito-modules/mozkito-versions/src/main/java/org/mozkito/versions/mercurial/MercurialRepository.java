@@ -55,6 +55,7 @@ import difflib.Delta;
 import difflib.DiffUtils;
 import difflib.Patch;
 
+import org.mozkito.persons.elements.PersonFactory;
 import org.mozkito.versions.DistributedCommandLineRepository;
 import org.mozkito.versions.LogParser;
 import org.mozkito.versions.elements.AnnotationEntry;
@@ -89,11 +90,11 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	
 	/** The Constant HG_ANNOTATE_DATE_FORMAT. */
 	protected static final DateTimeFormatter HG_ANNOTATE_DATE_FORMAT      = DateTimeFormat.forPattern("EEE MMM dd HH:mm:ss yyyy Z");
+	
 	protected static final Regex             DATE_FORMAT_REGEX            = new Regex(
 	                                                                                  "({EEE}[A-Za-z]{3})\\s+({MMM}[A-Za-z]{3})\\s+({d}\\d{1,2})\\s+({HH}[0-2]\\d):({mm}[0-5]\\d):({ss}[0-5]\\d)\\s+({yyyy}\\d{4})\\s+({Z}[+-]\\d{4})");
 	// protected static DateTimeFormatter hgLogDateFormat =
 	// DateTimeFormat.forPattern("yyyy-MM-dd HH:mm Z");
-	
 	/** The Constant FORMER_PATH_REGEX. */
 	protected static final Regex             FORMER_PATH_REGEX            = new Regex("[^(]*\\(({result}[^(]+)\\)");
 	
@@ -148,6 +149,24 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	
 	/** The rev dep graph. */
 	private RevDependencyGraph revDepGraph;
+	
+	/**
+	 * @param personFactory
+	 */
+	public MercurialRepository(final PersonFactory personFactory) {
+		super(personFactory);
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			// body
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
 	
 	/*
 	 * (non-Javadoc)
@@ -694,7 +713,7 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	 */
 	@Override
 	protected LogParser getLogParser() {
-		return new MercurialLogParser();
+		return new MercurialLogParser(getPersonFactory());
 	}
 	
 	/*
