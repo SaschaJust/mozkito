@@ -155,7 +155,11 @@ public class PersonFactory {
 			}
 			
 			try {
-				throw new UnsupportedOperationException("The object '" + this + "' is immutable.");
+				if (!superCall()) {
+					throw new UnsupportedOperationException("The object '" + this + "' is immutable.");
+				} else {
+					return super.addEmail(email);
+				}
 			} finally {
 				POSTCONDITIONS: {
 					// none
@@ -176,7 +180,11 @@ public class PersonFactory {
 			}
 			
 			try {
-				throw new UnsupportedOperationException("The object '" + this + "' is immutable.");
+				if (!superCall()) {
+					throw new UnsupportedOperationException("The object '" + this + "' is immutable.");
+				} else {
+					return super.addFullname(fullname);
+				}
 			} finally {
 				POSTCONDITIONS: {
 					// none
@@ -197,11 +205,26 @@ public class PersonFactory {
 			}
 			
 			try {
-				throw new UnsupportedOperationException("The object '" + this + "' is immutable.");
+				if (!superCall()) {
+					throw new UnsupportedOperationException("The object '" + this + "' is immutable.");
+				} else {
+					return super.addUsername(username);
+				}
 			} finally {
 				POSTCONDITIONS: {
 					// none
 				}
+			}
+		}
+		
+		private boolean superCall() {
+			final Throwable t = new Throwable();
+			t.fillInStackTrace();
+			final StackTraceElement[] stackTrace = t.getStackTrace();
+			if (stackTrace.length > 2) {
+				return Person.class.getCanonicalName().equals(stackTrace[2].getClassName());
+			} else {
+				return false;
 			}
 		}
 		
