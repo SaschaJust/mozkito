@@ -18,13 +18,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
-import java.util.Set;
 
-import javax.persistence.Transient;
-
-import net.ownhero.dev.kanuni.annotations.simple.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
-import net.ownhero.dev.kanuni.annotations.string.Trimmed;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
@@ -39,196 +34,6 @@ import org.mozkito.persons.model.Person;
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class PersonFactory {
-	
-	/**
-	 * The Class ImmutablePerson.
-	 * 
-	 * @author Sascha Just <sascha.just@mozkito.org>
-	 */
-	public class ImmutablePerson extends Person {
-		
-		/**
-         * 
-         */
-		private static final long serialVersionUID = -5383315749112305436L;
-		
-		/**
-		 * Instantiates a new immutable person.
-		 * 
-		 * @param username
-		 *            the username
-		 * @param fullname
-		 *            the fullname
-		 * @param email
-		 *            the email
-		 */
-		public ImmutablePerson(@Trimmed final String username, @Trimmed final String fullname,
-		        @Trimmed final String email) {
-			super(username, fullname, email);
-			
-			PRECONDITIONS: {
-				// none
-			}
-			
-			try {
-				// body
-			} finally {
-				POSTCONDITIONS: {
-					// none
-				}
-			}
-		}
-		
-		/**
-		 * {@inheritDoc}
-		 * 
-		 * @see org.mozkito.persons.model.Person#addAllEmails(java.util.Set)
-		 */
-		@Override
-		@Transient
-		public boolean addAllEmails(@NotNull @NoneNull final Set<String> emails) {
-			PRECONDITIONS: {
-				// none
-			}
-			
-			try {
-				throw new UnsupportedOperationException("The object '" + this + "' is immutable.");
-			} finally {
-				POSTCONDITIONS: {
-					// none
-				}
-			}
-		}
-		
-		/**
-		 * {@inheritDoc}
-		 * 
-		 * @see org.mozkito.persons.model.Person#addAllFullnames(java.util.Set)
-		 */
-		@Override
-		@Transient
-		public boolean addAllFullnames(@NotNull @NoneNull final Set<String> fullnames) {
-			PRECONDITIONS: {
-				// none
-			}
-			
-			try {
-				throw new UnsupportedOperationException("The object '" + this + "' is immutable.");
-			} finally {
-				POSTCONDITIONS: {
-					// none
-				}
-			}
-		}
-		
-		/**
-		 * {@inheritDoc}
-		 * 
-		 * @see org.mozkito.persons.model.Person#addAllUsernames(java.util.Set)
-		 */
-		@Override
-		@Transient
-		public boolean addAllUsernames(@NotNull final Set<String> usernames) {
-			PRECONDITIONS: {
-				// none
-			}
-			
-			try {
-				throw new UnsupportedOperationException("The object '" + this + "' is immutable.");
-			} finally {
-				POSTCONDITIONS: {
-					// none
-				}
-			}
-		}
-		
-		/**
-		 * {@inheritDoc}
-		 * 
-		 * @see org.mozkito.persons.model.Person#addEmail(java.lang.String)
-		 */
-		@Override
-		@Transient
-		public boolean addEmail(@Trimmed final String email) {
-			PRECONDITIONS: {
-				// none
-			}
-			
-			try {
-				if (!superCall()) {
-					throw new UnsupportedOperationException("The object '" + this + "' is immutable.");
-				} else {
-					return super.addEmail(email);
-				}
-			} finally {
-				POSTCONDITIONS: {
-					// none
-				}
-			}
-		}
-		
-		/**
-		 * {@inheritDoc}
-		 * 
-		 * @see org.mozkito.persons.model.Person#addFullname(java.lang.String)
-		 */
-		@Override
-		@Transient
-		public boolean addFullname(final String fullname) {
-			PRECONDITIONS: {
-				// none
-			}
-			
-			try {
-				if (!superCall()) {
-					throw new UnsupportedOperationException("The object '" + this + "' is immutable.");
-				} else {
-					return super.addFullname(fullname);
-				}
-			} finally {
-				POSTCONDITIONS: {
-					// none
-				}
-			}
-		}
-		
-		/**
-		 * {@inheritDoc}
-		 * 
-		 * @see org.mozkito.persons.model.Person#addUsername(java.lang.String)
-		 */
-		@Override
-		@Transient
-		public boolean addUsername(final String username) {
-			PRECONDITIONS: {
-				// none
-			}
-			
-			try {
-				if (!superCall()) {
-					throw new UnsupportedOperationException("The object '" + this + "' is immutable.");
-				} else {
-					return super.addUsername(username);
-				}
-			} finally {
-				POSTCONDITIONS: {
-					// none
-				}
-			}
-		}
-		
-		private boolean superCall() {
-			final Throwable t = new Throwable();
-			t.fillInStackTrace();
-			final StackTraceElement[] stackTrace = t.getStackTrace();
-			if (stackTrace.length > 2) {
-				return Person.class.getCanonicalName().equals(stackTrace[2].getClassName());
-			} else {
-				return false;
-			}
-		}
-		
-	}
 	
 	/**
 	 * The Class PersonEntry.
@@ -382,7 +187,8 @@ public class PersonFactory {
 	private Person create(final String username,
 	                      final String fullname,
 	                      final String email) {
-		final ImmutablePerson person = new ImmutablePerson(username, fullname, email);
+		@SuppressWarnings ("deprecation")
+		final Person person = new Person(username, fullname, email);
 		final int use = (int) new DateTime().minus(this.created.getMillis()).getMillis() / 1000;
 		this.leastRecentlyUsed.add(new PersonEntry(person, use));
 		++this.load;

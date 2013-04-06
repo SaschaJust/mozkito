@@ -39,6 +39,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.openjpa.persistence.jdbc.Index;
 
 import org.mozkito.persistence.Annotated;
+import org.mozkito.persons.elements.PersonFactory;
 
 /**
  * The Class Person.
@@ -111,8 +112,10 @@ public class Person implements Annotated {
 	 *            the fullname
 	 * @param email
 	 *            the email
+	 * @deprecated Use {@link PersonFactory#get(String, String, String) instead.}
 	 */
-	protected Person(@Trimmed final String username, @Trimmed final String fullname, @Trimmed final String email) {
+	@Deprecated
+	public Person(@Trimmed final String username, @Trimmed final String fullname, @Trimmed final String email) {
 		Condition.check((username != null) || (fullname != null) || (email != null),
 		                "Creating a person with only (null) values makes no sense."); //$NON-NLS-1$
 		addUsername(username);
