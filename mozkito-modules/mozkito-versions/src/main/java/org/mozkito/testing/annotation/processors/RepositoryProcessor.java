@@ -253,8 +253,8 @@ public class RepositoryProcessor implements MozkitoSettingsProcessor {
 							assert parameterTypes.length == arguments.length;
 							
 							for (int i = 0; i < arguments.length; ++i) {
-								assert (arguments[i] == null)
-								        || parameterTypes[i].isAssignableFrom(arguments.getClass());
+								assert ((arguments[i] == null) || parameterTypes[i].isAssignableFrom(arguments[i].getClass())) : "Actual parameter has type '"
+								        + arguments[i].getClass() + "' but we expected '" + parameterTypes[i] + "'.";
 							}
 						}
 						

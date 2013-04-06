@@ -34,6 +34,7 @@ import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
+import org.mozkito.persons.elements.PersonFactory;
 import org.mozkito.versions.concurrent.ConcurrentRepository;
 import org.mozkito.versions.exceptions.UnregisteredRepositoryTypeException;
 
@@ -77,9 +78,9 @@ public final class RepositoryFactory {
 		}
 		
 		Method getRepositoryType = null;
-		final Class<?>[] constructorSignature = new Class<?>[0];
+		final Class<?>[] constructorSignature = new Class<?>[] { PersonFactory.class };
 		Constructor<? extends Repository> constructor = null;
-		final Object[] constructorArguments = new Object[0];
+		final Object[] constructorArguments = new Object[] { new PersonFactory() };
 		Repository repository = null;
 		RepositoryType repositoryType = null;
 		

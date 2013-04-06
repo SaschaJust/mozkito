@@ -10,7 +10,7 @@
 	<description>Data mining and analyzation for various types of software repositories</description>
 	<version>0.4-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<url>http://mozkito.org</url>
+	<url>https://mozkito.org</url>
 	<inceptionYear>2010</inceptionYear>
 	<licenses>
 		<license>
@@ -22,7 +22,7 @@
 	</licenses>
 	<issueManagement>
 		<system>Jira</system>
-		<url>https://issues.mozkito.org/jira</url>
+		<url>https://issues.mozkito.org</url>
 	</issueManagement>
 	<ciManagement>
 		<system>bamboo</system>
@@ -33,7 +33,7 @@
 			<id>kim</id>
 			<name>Kim Herzig</name>
 			<email>kim@mozkito.org</email>
-			<url>http://www.st.cs.uni-saarland.de/~kim/</url>
+			<url>http://kim-herzig.de</url>
 			<organization>Software Engineering Group at Saarland University</organization>
 			<organizationUrl>http://www.st.cs.uni-saarland.de/</organizationUrl>
 			<timezone>2</timezone>
@@ -45,7 +45,7 @@
 			<id>just</id>
 			<name>Sascha Just</name>
 			<email>sascha.just@mozkito.org</email>
-			<url>http://www.st.cs.uni-saarland.de/~just</url>
+			<url>http://sascha-just.com</url>
 			<organization>Software Engineering Group at Saarland University</organization>
 			<organizationUrl>http://www.st.cs.uni-saarland.de/</organizationUrl>
 			<roles>
@@ -58,9 +58,9 @@
 		</developer>
 	</developers>
 	<scm>
-		<connection>scm:git:http://mozkito.org:7990/scm/MOZKITO/mozkito.git</connection>
-		<developerConnection>scm:git:http://mozkito.org:7990/scm/MOZKITO/mozkito.git</developerConnection>
-		<url>http://mozkito.org:7990/projects/MOZKITO/repos/mozkito/browse</url>
+		<connection>scm:git:https://scm.mozkito.org/scm/MOZKITO/mozkito.git</connection>
+		<developerConnection>scm:git:https://scm.mozkito.org/scm/MOZKITO/mozkito.git</developerConnection>
+		<url>https://code.mozkito.org/project/MOZKITO</url>
 	</scm>
 	<organization>
 		<name>Software Engineering Group at Saarland University</name>
@@ -110,34 +110,34 @@
 		<repository>
 			<id>own-hero.net-public</id>
 			<name>own-hero.net Public Repositories</name>
-			<url>http://mozkito.org:8089/nexus/content/groups/public</url>
+			<url>https://nexus.mozkito.org/content/groups/public</url>
 		</repository>
 		<repository>
 			<id>own-hero.net-private</id>
 			<name>own-hero.net Private Repositories</name>
-			<url>http://mozkito.org:8089/nexus/content/groups/private</url>
+			<url>https://nexus.mozkito.org/content/groups/private</url>
 		</repository>
 		<repository>
 			<id>own-hero.net-proxy</id>
 			<name>own-hero.net Proxy Repositories</name>
-			<url>http://mozkito.org:8089/nexus/content/groups/proxy</url>
+			<url>https://nexus.mozkito.org/content/groups/proxy</url>
 		</repository>
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
 			<id>own-hero.net-public</id>
 			<name>own-hero.net Public Repositories</name>
-			<url>http://mozkito.org:8089/nexus/content/groups/public</url>
+			<url>https://nexus.mozkito.org/content/groups/public</url>
 		</pluginRepository>
 		<pluginRepository>
 			<id>own-hero.net-private</id>
 			<name>own-hero.net Private Repositories</name>
-			<url>http://mozkito.org:8089/nexus/content/groups/private</url>
+			<url>https://nexus.mozkito.org/content/groups/private</url>
 		</pluginRepository>
 		<pluginRepository>
 			<id>own-hero.net-proxy</id>
 			<name>own-hero.net Proxy Repositories</name>
-			<url>http://mozkito.org:8089/nexus/content/groups/proxy</url>
+			<url>https://nexus.mozkito.org/content/groups/proxy</url>
 		</pluginRepository>
 	</pluginRepositories>
 	<distributionManagement>
@@ -145,13 +145,13 @@
 		<snapshotRepository>
 			<id>mozkito-dev</id>
 			<name>mozkito-dev</name>
-			<url>http://mozkito.org:8089/nexus/content/repositories/mozkito-dev</url>
+			<url>https://nexus.mozkito.org/content/repositories/mozkito-dev</url>
 		</snapshotRepository>
 		<!-- deploy releases to this repository -->
 		<repository>
 			<id>mozkito</id>
 			<name>mozkito</name>
-			<url>http://mozkito.org:8089/nexus/content/repositories/mozkito/</url>
+			<url>https://nexus.mozkito.org/content/repositories/mozkito/</url>
 		</repository>
 		<!-- configure upload of maven site -->
 		<site>
@@ -387,7 +387,7 @@
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<sonar.clover.reportPath>${basedir}/target/site/clover/clover.xml</sonar.clover.reportPath>
 		<sonar.language>java</sonar.language>
-		<sonar.host.url>http://mozkito.org:8089/sonar</sonar.host.url>
+		<sonar.host.url>https://sonar.mozkito.org</sonar.host.url>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
