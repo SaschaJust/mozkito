@@ -16,6 +16,8 @@ package org.mozkito.testing.annotation.processors;
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -28,6 +30,7 @@ import net.ownhero.dev.ioda.CommandExecutor;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import net.ownhero.dev.ioda.IOUtils;
+import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.ioda.exceptions.FilePermissionException;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
@@ -38,6 +41,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 
 import org.mozkito.exceptions.TestSettingsError;
+import org.mozkito.persons.elements.PersonFactory;
 import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.VersionsTest;
 import org.mozkito.testing.annotation.RepositorySetting;
@@ -234,9 +238,54 @@ public class RepositoryProcessor implements MozkitoSettingsProcessor {
 					
 					Repository repository = null;
 					try {
-						repository = RepositoryFactory.getRepositoryHandler(repositorySetting.type()).newInstance();
+						
+						final Class<? extends Repository> repositoryHandler = RepositoryFactory.getRepositoryHandler(repositorySetting.type());
+						final int ln = new Throwable().getStackTrace()[0].getLineNumber();
+						final Class<?>[] parameterTypes = new Class<?>[] { PersonFactory.class };
+						final Object[] arguments = new Object[] { new PersonFactory() };
+						
+						SANITY: {
+							assert repositoryHandler != null;
+							
+							// make sure the two arrays above conform to each other.
+							assert parameterTypes != null;
+							assert arguments != null;
+							assert parameterTypes.length == arguments.length;
+							
+							for (int i = 0; i < arguments.length; ++i) {
+								assert (arguments[i] == null)
+								        || parameterTypes[i].isAssignableFrom(arguments.getClass());
+							}
+						}
+						
+						final Constructor<? extends Repository> repositoryConstructor = repositoryHandler.getConstructor(parameterTypes);
+						
+						if (repositoryConstructor != null) {
+							// create the repository instance
+							repository = repositoryConstructor.newInstance(arguments);
+							assert repository != null;
+						} else {
+							// handle error
+							final StringBuilder builder = new StringBuilder();
+							
+							builder.append("Tried to lookup constructor of '")
+							       .append(repositoryHandler.getCanonicalName()).append("' with parameter types ")
+							       .append(JavaUtils.arrayToString(parameterTypes))
+							       .append(", but wasn't able to do so. Please fix '")
+							       .append(getClass().getCanonicalName()).append(':').append(ln + 1).append('-')
+							       .append(ln + 2).append("' with one of the following alternatives: ");
+							
+							@SuppressWarnings ("unchecked")
+							final Constructor<? extends Repository>[] constructors = (Constructor<? extends Repository>[]) repositoryHandler.getConstructors();
+							for (final Constructor<? extends Repository> constructor : constructors) {
+								builder.append("Available constructor: ").append(constructor);
+								
+							}
+							throw new TestSettingsError(builder.toString());
+						}
 					} catch (final InstantiationException | IllegalAccessException
-					        | UnregisteredRepositoryTypeException e) {
+					        | UnregisteredRepositoryTypeException | IllegalArgumentException
+					        | InvocationTargetException | NoSuchMethodException | SecurityException e) {
 						throw new TestSettingsError(e);
 					}
 					

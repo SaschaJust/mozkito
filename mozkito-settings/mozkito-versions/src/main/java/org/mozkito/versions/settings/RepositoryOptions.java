@@ -12,10 +12,12 @@
  ******************************************************************************/
 package org.mozkito.versions.settings;
 
+import java.lang.reflect.Constructor;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.DirectoryArgument;
@@ -27,11 +29,13 @@ import net.ownhero.dev.hiari.settings.StringArgument.Options;
 import net.ownhero.dev.hiari.settings.URIArgument;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
+import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.persons.elements.PersonFactory;
 import org.mozkito.settings.DatabaseOptions;
 import org.mozkito.versions.Repository;
 import org.mozkito.versions.RepositoryFactory;
@@ -194,8 +198,50 @@ public class RepositoryOptions extends ArgumentSetOptions<Repository, ArgumentSe
 			}
 			
 			try {
-				final Class<? extends Repository> repositoryClass = RepositoryFactory.getRepositoryHandler(rcsType);
-				final Repository repository = repositoryClass.newInstance();
+				Repository repository = null;
+				
+				final Class<? extends Repository> repositoryHandler = RepositoryFactory.getRepositoryHandler(rcsType);
+				final int ln = new Throwable().getStackTrace()[0].getLineNumber();
+				final Class<?>[] parameterTypes = new Class<?>[] { PersonFactory.class };
+				final Object[] arguments = new Object[] { new PersonFactory() };
+				
+				SANITY: {
+					assert repositoryHandler != null;
+					
+					// make sure the two arrays above conform to each other.
+					assert parameterTypes != null;
+					assert arguments != null;
+					assert parameterTypes.length == arguments.length;
+					
+					for (int i = 0; i < arguments.length; ++i) {
+						assert (arguments[i] == null) || parameterTypes[i].isAssignableFrom(arguments.getClass());
+					}
+				}
+				
+				final Constructor<? extends Repository> repositoryConstructor = repositoryHandler.getConstructor(parameterTypes);
+				
+				if (repositoryConstructor != null) {
+					// create the repository instance
+					repository = repositoryConstructor.newInstance(arguments);
+					assert repository != null;
+				} else {
+					// handle error
+					final StringBuilder builder = new StringBuilder();
+					
+					builder.append("Tried to lookup constructor of '").append(repositoryHandler.getCanonicalName())
+					       .append("' with parameter types ").append(JavaUtils.arrayToString(parameterTypes))
+					       .append(", but wasn't able to do so. Please fix '").append(getClass().getCanonicalName())
+					       .append(':').append(ln + 1).append('-').append(ln + 2)
+					       .append("' with one of the following alternatives: ");
+					
+					@SuppressWarnings ("unchecked")
+					final Constructor<? extends Repository>[] constructors = (Constructor<? extends Repository>[]) repositoryHandler.getConstructors();
+					for (final Constructor<? extends Repository> constructor : constructors) {
+						builder.append("Available constructor: ").append(constructor);
+						
+					}
+					throw new UnrecoverableError(builder.toString());
+				}
 				
 				if (this.persistenceUtil == null) {
 					if (Logger.logWarn()) {
