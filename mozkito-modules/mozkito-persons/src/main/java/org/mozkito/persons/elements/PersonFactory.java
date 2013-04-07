@@ -24,7 +24,6 @@ import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.joda.time.DateTime;
-
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.persons.model.Person;
 

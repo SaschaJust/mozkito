@@ -20,7 +20,6 @@ import net.ownhero.dev.regex.Regex;
 
 import org.junit.Before;
 import org.junit.Test;
-
 import org.mozkito.persons.elements.PersonFactory;
 import org.mozkito.persons.model.Person;
 
@@ -84,7 +83,8 @@ public class GitLogParserTest {
 		assertTrue(author.getFullnames() != null);
 		assertEquals(0, author.getFullnames().size());
 		assertTrue(author.getEmailAddresses() != null);
-		assertEquals(0, author.getEmailAddresses().size());
+		assertEquals(1, author.getEmailAddresses().size());
+		assertTrue(author.getEmailAddresses().contains("tinorj@gmail.com"));
 		assertTrue(author.getUsernames() != null);
 		assertEquals(1, author.getUsernames().size());
 		assertTrue(author.getUsernames().contains("tinogomes"));
@@ -105,7 +105,8 @@ public class GitLogParserTest {
 		assertTrue(author.getFullnames() != null);
 		assertEquals(0, author.getFullnames().size());
 		assertTrue(author.getEmailAddresses() != null);
-		assertEquals(0, author.getEmailAddresses().size());
+		assertEquals(1, author.getEmailAddresses().size());
+		assertTrue(author.getEmailAddresses().contains("just@b3cd8044-6b0a-409c-a07a-9925dc373c42"));
 		assertTrue(author.getUsernames() != null);
 		assertEquals(1, author.getUsernames().size());
 		assertTrue(author.getUsernames().contains("just"));
