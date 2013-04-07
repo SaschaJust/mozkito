@@ -43,3 +43,13 @@ mozkito-*/bin
 persistence.xml
 *-persistence.xml
 mozkito-modules/**/eclipse
+
+/mozkito-modules/mozkito-versions/src/main/resources/RepositoryUML.ucls
+/mozkito-modules/mozkito-versions/src/main/resources/ClassDiagram.ucls
+/mozkito-modules/mozkito-versions/src/main/resources/ClassDiagram.png
+/mozkito-modules/mozkito-persistence/src/main/resources/ClassDiagram.ucls
+/mozkito-modules/mozkito-persistence/src/main/resources/ClassDiagram.png
+/mozkito-modules/mozkito-issues/src/main/resources/ClassDiagram.ucls
+/mozkito-modules/mozkito-issues/src/main/resources/ClassDiagram.png
+/mozkito-modules/maven.err
+/mozkito-maven-plugins/mozkito-maven-plugin/maven.err
