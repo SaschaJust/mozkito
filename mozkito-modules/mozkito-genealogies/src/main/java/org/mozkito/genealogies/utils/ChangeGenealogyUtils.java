@@ -15,6 +15,8 @@ package org.mozkito.genealogies.utils;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -25,10 +27,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import com.tinkerpop.blueprints.pgm.Graph;
-import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jGraph;
-import com.tinkerpop.blueprints.pgm.util.io.graphml.GraphMLWriter;
-
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.JavaUtils;
@@ -38,21 +36,25 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.CollectionCondition;
 import net.ownhero.dev.kisa.Logger;
 
-import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.kernel.EmbeddedGraphDatabase;
-
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.genealogies.core.CoreChangeGenealogy;
 import org.mozkito.genealogies.core.GenealogyEdgeType;
 import org.mozkito.genealogies.utils.GenealogyTestEnvironment.TestEnvironmentOperation;
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.persons.elements.PersonFactory;
 import org.mozkito.versions.Repository;
 import org.mozkito.versions.RepositoryFactory;
 import org.mozkito.versions.RepositoryType;
 import org.mozkito.versions.exceptions.UnregisteredRepositoryTypeException;
 import org.mozkito.versions.model.ChangeSet;
 import org.mozkito.versions.model.Revision;
+import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.kernel.EmbeddedGraphDatabase;
+
+import com.tinkerpop.blueprints.pgm.Graph;
+import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jGraph;
+import com.tinkerpop.blueprints.pgm.util.io.graphml.GraphMLWriter;
 
 /**
  * The Class ChangeGenealogyUtils.
@@ -150,8 +152,12 @@ public class ChangeGenealogyUtils {
 		
 		Repository repository = null;
 		try {
-			repository = RepositoryFactory.getRepositoryHandler(RepositoryType.GIT).newInstance();
-		} catch (final InstantiationException | IllegalAccessException | UnregisteredRepositoryTypeException e1) {
+			final Class<?>[] parameterTypes = new Class<?>[] { PersonFactory.class };
+			final Constructor<? extends Repository> repositoryConstructor = RepositoryFactory.getRepositoryHandler(RepositoryType.GIT)
+			                                                                                 .getConstructor(parameterTypes);
+			repository = repositoryConstructor.newInstance(new PersonFactory());
+		} catch (final InstantiationException | IllegalAccessException | UnregisteredRepositoryTypeException
+		        | NoSuchMethodException | SecurityException | IllegalArgumentException | InvocationTargetException e1) {
 			throw new UnrecoverableError(e1);
 		}
 		
