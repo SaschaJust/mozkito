@@ -12,6 +12,7 @@
  **********************************************************************************************************************/
 package org.mozkito.issues.tracker.bugzilla;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.net.URI;
 import java.util.Collection;
@@ -90,9 +91,12 @@ public class BugzillaTracker extends Tracker {
 				                                                                                                       Modifier.ABSTRACT
 				                                                                                                               | Modifier.INTERFACE
 				                                                                                                               | Modifier.PRIVATE);
+				final Class<?>[] parameterTypes = new Class<?>[] { PersonFactory.class };
+				final PersonFactory persoFactory = new PersonFactory();
 				for (final Class<? extends BugzillaParser> parserClass : parserClasses) {
 					if (!Modifier.isAbstract(parserClass.getModifiers())) {
-						parserClass.newInstance();
+						final Constructor<? extends BugzillaParser> parserConstructor = parserClass.getConstructor(parameterTypes);
+						parserConstructor.newInstance(persoFactory);
 					}
 				}
 			} catch (final Exception e) {
