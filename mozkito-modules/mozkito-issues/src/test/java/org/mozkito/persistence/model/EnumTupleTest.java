@@ -17,14 +17,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.List;
 import java.util.Map;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
-
 import org.mozkito.issues.model.HistoryElement;
 import org.mozkito.issues.model.IssueTracker;
 import org.mozkito.issues.model.Report;
@@ -60,19 +58,8 @@ public class EnumTupleTest extends DatabaseTest {
 		assertEquals(TestEnum.class, tuple.getEnumClass());
 		
 		util.beginTransaction();
-		try {
-			util.save(element);
-		} catch (final Throwable t) {
-			fail(t.toString());
-		}
-		
-		try {
-			if (util.activeTransaction()) {
-				util.commitTransaction();
-			}
-		} catch (final Throwable t) {
-			fail(t.toString());
-		}
+		util.save(element);
+		util.commitTransaction();
 		
 		final Criteria<HistoryElement> criteria = util.createCriteria(HistoryElement.class);
 		final List<HistoryElement> list = util.load(criteria);
