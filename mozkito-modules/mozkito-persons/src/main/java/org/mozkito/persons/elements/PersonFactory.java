@@ -217,14 +217,23 @@ public class PersonFactory {
 			if (!this.usernameToUser.containsKey(username)) {
 				this.usernameToUser.put(username, create(username, fullname, email));
 			}
-			
-			return this.usernameToUser.get(username);
+			final Person existingPerson = this.usernameToUser.get(username);
+			if ((fullname != null) && (!existingPerson.getFullnames().contains(fullname))) {
+				existingPerson.addFullname(fullname);
+			}
+			if ((email != null) && (!existingPerson.getEmailAddresses().contains(email))) {
+				existingPerson.addEmail(email);
+			}
+			return existingPerson;
 		} else if (fullname != null) {
 			if (!this.fullnameToUser.containsKey(fullname)) {
 				this.fullnameToUser.put(fullname, create(username, fullname, email));
 			}
-			
-			return this.fullnameToUser.get(fullname);
+			final Person existingPerson = this.fullnameToUser.get(fullname);
+			if ((email != null) && (!existingPerson.getEmailAddresses().contains(email))) {
+				existingPerson.addEmail(email);
+			}
+			return existingPerson;
 		} else if (email != null) {
 			if (!this.emailToUser.containsKey(email)) {
 				this.emailToUser.put(email, person);
