@@ -69,12 +69,9 @@ public class EnumTuple implements PersistentTuple<Enum<?>> {
 	@NoneNull
 	public EnumTuple(final Enum<?> oldValue, final Enum<?> newValue) {
 		assert oldValue.getClass() == newValue.getClass();
-		setOldValue(oldValue);
-		setNewValue(newValue);
+		setEnumClassName(this.oldValue.getClass().getCanonicalName());
 		setNewStringValue(newValue.name());
 		setOldStringValue(oldValue.name());
-		setEnumClass(oldValue.getClass());
-		setEnumClassName(this.oldValue.getClass().getCanonicalName());
 	}
 	
 	/**
