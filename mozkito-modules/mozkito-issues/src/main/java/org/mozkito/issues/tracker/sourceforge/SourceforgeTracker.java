@@ -48,6 +48,8 @@ public class SourceforgeTracker extends Tracker {
 	 * 
 	 * @param issueTracker
 	 *            the issue tracker
+	 * @param personFactory
+	 *            the person factory
 	 */
 	public SourceforgeTracker(final IssueTracker issueTracker, final PersonFactory personFactory) {
 		super(issueTracker, personFactory);
