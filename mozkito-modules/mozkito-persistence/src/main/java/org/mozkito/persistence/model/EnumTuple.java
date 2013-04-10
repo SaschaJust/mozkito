@@ -53,13 +53,6 @@ public class EnumTuple implements PersistentTuple<Enum<?>> {
 	
 	/**
 	 * Instantiates a new enum tuple.
-	 */
-	protected EnumTuple() {
-		
-	}
-	
-	/**
-	 * Instantiates a new enum tuple.
 	 * 
 	 * @param oldValue
 	 *            the old value
@@ -75,27 +68,30 @@ public class EnumTuple implements PersistentTuple<Enum<?>> {
 			}
 		}
 		
-		this.oldValue = oldValue;
-		this.newValue = newValue;
-		this.enumClass = (oldValue != null
-		                                  ? oldValue
-		                                  : newValue).getClass();
-		
-		SANITY: {
-			assert this.enumClass != null;
-		}
-		
-		this.enumClassName = this.enumClass.getCanonicalName();
-		if (newValue != null) {
-			this.newStringValue = newValue.name();
-		}
-		
-		if (oldValue != null) {
-			this.oldStringValue = oldValue.name();
-		}
-		
-		POSTCONDITIONS: {
-			Condition.notNull(this.enumClass, "Field '%s' in '%s'.", "enumClass", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+		try {
+			this.oldValue = oldValue;
+			this.newValue = newValue;
+			this.enumClass = (oldValue != null
+			                                  ? oldValue
+			                                  : newValue).getClass();
+			
+			SANITY: {
+				assert this.enumClass != null;
+			}
+			
+			this.enumClassName = this.enumClass.getCanonicalName();
+			if (newValue != null) {
+				this.newStringValue = newValue.name();
+			}
+			
+			if (oldValue != null) {
+				this.oldStringValue = oldValue.name();
+			}
+			
+		} finally {
+			POSTCONDITIONS: {
+				Condition.notNull(this.enumClass, "Field '%s' in '%s'.", "enumClass", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 		}
 	}
 	
@@ -126,8 +122,9 @@ public class EnumTuple implements PersistentTuple<Enum<?>> {
 		return null;
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -138,29 +135,29 @@ public class EnumTuple implements PersistentTuple<Enum<?>> {
 		if (obj == null) {
 			return false;
 		}
-		if (!(obj instanceof EnumTuple)) {
+		if (getClass() != obj.getClass()) {
 			return false;
 		}
 		final EnumTuple other = (EnumTuple) obj;
-		if (this.enumClass == null) {
-			if (other.enumClass != null) {
+		if (this.enumClassName == null) {
+			if (other.enumClassName != null) {
 				return false;
 			}
-		} else if (!this.enumClass.equals(other.enumClass)) {
+		} else if (!this.enumClassName.equals(other.enumClassName)) {
 			return false;
 		}
-		if (this.newValue == null) {
-			if (other.newValue != null) {
+		if (this.newStringValue == null) {
+			if (other.newStringValue != null) {
 				return false;
 			}
-		} else if (!this.newValue.equals(other.newValue)) {
+		} else if (!this.newStringValue.equals(other.newStringValue)) {
 			return false;
 		}
-		if (this.oldValue == null) {
-			if (other.oldValue != null) {
+		if (this.oldStringValue == null) {
+			if (other.oldStringValue != null) {
 				return false;
 			}
-		} else if (!this.oldValue.equals(other.oldValue)) {
+		} else if (!this.oldStringValue.equals(other.oldStringValue)) {
 			return false;
 		}
 		return true;
@@ -183,6 +180,19 @@ public class EnumTuple implements PersistentTuple<Enum<?>> {
 	 */
 	@Transient
 	public Class<?> getEnumClass() {
+		if (this.enumClass == null) {
+			if (getOldValue() != null) {
+				this.enumClass = getOldValue().getClass();
+			} else if (getNewValue() != null) {
+				this.enumClass = getNewValue().getClass();
+			} else if (getEnumClassName() != null) {
+				try {
+					this.enumClass = Class.forName(getEnumClassName());
+				} catch (final ClassNotFoundException e) {
+					throw new ClassLoadingError(e, getEnumClassName());
+				}
+			}
+		}
 		return this.enumClass;
 	}
 	
@@ -214,6 +224,10 @@ public class EnumTuple implements PersistentTuple<Enum<?>> {
 	@Override
 	@Transient
 	public Enum<?> getNewValue() {
+		if ((this.newValue == null) && (getNewStringValue() != null)) {
+			this.newValue = convertEnum(getEnumClass(), getNewStringValue());
+		}
+		
 		return this.newValue;
 	}
 	
@@ -235,69 +249,31 @@ public class EnumTuple implements PersistentTuple<Enum<?>> {
 	@Override
 	@Transient
 	public Enum<?> getOldValue() {
+		if ((this.oldValue == null) && (getOldStringValue() != null)) {
+			this.oldValue = convertEnum(getEnumClass(), getOldStringValue());
+		}
 		return this.oldValue;
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = (prime * result) + ((this.enumClass == null)
-		                                                     ? 0
-		                                                     : this.enumClass.hashCode());
-		result = (prime * result) + ((this.newValue == null)
-		                                                    ? 0
-		                                                    : this.newValue.hashCode());
-		result = (prime * result) + ((this.oldValue == null)
-		                                                    ? 0
-		                                                    : this.oldValue.hashCode());
+		result = (prime * result) + ((this.enumClassName == null)
+		                                                         ? 0
+		                                                         : this.enumClassName.hashCode());
+		result = (prime * result) + ((this.newStringValue == null)
+		                                                          ? 0
+		                                                          : this.newStringValue.hashCode());
+		result = (prime * result) + ((this.oldStringValue == null)
+		                                                          ? 0
+		                                                          : this.oldStringValue.hashCode());
 		return result;
-	}
-	
-	/**
-	 * Sets the enum class.
-	 * 
-	 * @param enumClass
-	 *            the enumClass to set
-	 */
-	@Transient
-	public void setEnumClass(final Class<?> enumClass) {
-		this.enumClass = enumClass;
-	}
-	
-	/**
-	 * Sets the enum class.
-	 * 
-	 * @param className
-	 *            the new enum class
-	 */
-	public void setEnumClass(final String className) {
-		try {
-			setEnumClass(Class.forName(className));
-			
-			Enum<?> _enum = null;
-			if (this.oldStringValue != null) {
-				_enum = convertEnum(getEnumClass(), getOldStringValue());
-				
-				if (_enum != null) {
-					setOldValue(_enum);
-				}
-			}
-			
-			if (this.newStringValue != null) {
-				_enum = convertEnum(getEnumClass(), getNewStringValue());
-				
-				if (_enum != null) {
-					setNewValue(_enum);
-				}
-			}
-		} catch (final ClassNotFoundException e) {
-			throw new ClassLoadingError(e, className);
-		}
 	}
 	
 	/**
@@ -306,10 +282,8 @@ public class EnumTuple implements PersistentTuple<Enum<?>> {
 	 * @param enumClassName
 	 *            the enumClassName to set
 	 */
-	@SuppressWarnings ("unused")
-	private void setEnumClassName(final String enumClassName) {
+	protected void setEnumClassName(final String enumClassName) {
 		this.enumClassName = enumClassName;
-		setEnumClass(enumClassName);
 	}
 	
 	/**
@@ -318,15 +292,8 @@ public class EnumTuple implements PersistentTuple<Enum<?>> {
 	 * @param newStringValue
 	 *            the newStringValue to set
 	 */
-	@SuppressWarnings ("unused")
-	private void setNewStringValue(final String newStringValue) {
+	protected void setNewStringValue(final String newStringValue) {
 		this.newStringValue = newStringValue;
-		if (getEnumClass() != null) {
-			final Enum<?> _enum = convertEnum(getEnumClass(), newStringValue);
-			if (_enum != null) {
-				setNewValue(_enum);
-			}
-		}
 	}
 	
 	/**
@@ -337,7 +304,14 @@ public class EnumTuple implements PersistentTuple<Enum<?>> {
 	 */
 	@Override
 	public void setNewValue(final Enum<?> newValue) {
+		if ((getOldValue() == null) && (newValue == null)) {
+			throw new IllegalArgumentException("Old and new value must not be null at the same time.");
+		}
+		
 		this.newValue = newValue;
+		setNewStringValue(newValue != null
+		                                  ? newValue.name()
+		                                  : null);
 	}
 	
 	/**
@@ -346,15 +320,8 @@ public class EnumTuple implements PersistentTuple<Enum<?>> {
 	 * @param oldStringValue
 	 *            the oldStringValue to set
 	 */
-	@SuppressWarnings ("unused")
-	private void setOldStringValue(final String oldStringValue) {
+	protected void setOldStringValue(final String oldStringValue) {
 		this.oldStringValue = oldStringValue;
-		if (getEnumClass() != null) {
-			final Enum<?> _enum = convertEnum(getEnumClass(), oldStringValue);
-			if (_enum != null) {
-				setOldValue(_enum);
-			}
-		}
 	}
 	
 	/**
@@ -365,7 +332,14 @@ public class EnumTuple implements PersistentTuple<Enum<?>> {
 	 */
 	@Override
 	public void setOldValue(final Enum<?> oldValue) {
+		if ((getNewValue() == null) && (oldValue == null)) {
+			throw new IllegalArgumentException("Old and new value must not be null at the same time.");
+		}
+		
 		this.oldValue = oldValue;
+		setOldStringValue(oldValue != null
+		                                  ? oldValue.name()
+		                                  : null);
 	}
 	
 	/*
