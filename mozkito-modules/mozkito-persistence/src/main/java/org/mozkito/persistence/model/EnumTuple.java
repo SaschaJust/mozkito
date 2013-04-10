@@ -19,8 +19,8 @@ import javax.persistence.Transient;
 import net.ownhero.dev.andama.exceptions.ClassLoadingError;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.JavaUtils;
-import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.mozkito.persistence.PersistentTuple;
 
@@ -66,12 +66,37 @@ public class EnumTuple implements PersistentTuple<Enum<?>> {
 	 * @param newValue
 	 *            the new value
 	 */
-	@NoneNull
 	public EnumTuple(final Enum<?> oldValue, final Enum<?> newValue) {
-		assert oldValue.getClass() == newValue.getClass();
-		setEnumClassName(this.oldValue.getClass().getCanonicalName());
-		setNewStringValue(newValue.name());
-		setOldStringValue(oldValue.name());
+		PRECONDITIONS: {
+			if ((oldValue == null) && (newValue == null)) {
+				throw new NullPointerException("Old and new value must not be null at the same time.");
+			} else if ((oldValue != null) && (newValue != null) && (oldValue.getClass() != newValue.getClass())) {
+				throw new IllegalArgumentException("Old and new value have to be of the same type.");
+			}
+		}
+		
+		this.oldValue = oldValue;
+		this.newValue = newValue;
+		this.enumClass = (oldValue != null
+		                                  ? oldValue
+		                                  : newValue).getClass();
+		
+		SANITY: {
+			assert this.enumClass != null;
+		}
+		
+		this.enumClassName = this.enumClass.getCanonicalName();
+		if (newValue != null) {
+			this.newStringValue = newValue.name();
+		}
+		
+		if (oldValue != null) {
+			this.oldStringValue = oldValue.name();
+		}
+		
+		POSTCONDITIONS: {
+			Condition.notNull(this.enumClass, "Field '%s' in '%s'.", "enumClass", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 	}
 	
 	/**
@@ -281,6 +306,7 @@ public class EnumTuple implements PersistentTuple<Enum<?>> {
 	 * @param enumClassName
 	 *            the enumClassName to set
 	 */
+	@SuppressWarnings ("unused")
 	private void setEnumClassName(final String enumClassName) {
 		this.enumClassName = enumClassName;
 		setEnumClass(enumClassName);
@@ -292,6 +318,7 @@ public class EnumTuple implements PersistentTuple<Enum<?>> {
 	 * @param newStringValue
 	 *            the newStringValue to set
 	 */
+	@SuppressWarnings ("unused")
 	private void setNewStringValue(final String newStringValue) {
 		this.newStringValue = newStringValue;
 		if (getEnumClass() != null) {
@@ -319,6 +346,7 @@ public class EnumTuple implements PersistentTuple<Enum<?>> {
 	 * @param oldStringValue
 	 *            the oldStringValue to set
 	 */
+	@SuppressWarnings ("unused")
 	private void setOldStringValue(final String oldStringValue) {
 		this.oldStringValue = oldStringValue;
 		if (getEnumClass() != null) {
