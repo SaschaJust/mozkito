@@ -181,15 +181,15 @@ public class EnumTuple implements PersistentTuple<Enum<?>> {
 	@Transient
 	public Class<?> getEnumClass() {
 		if (this.enumClass == null) {
-			if (getOldValue() != null) {
-				this.enumClass = getOldValue().getClass();
-			} else if (getNewValue() != null) {
-				this.enumClass = getNewValue().getClass();
-			} else if (getEnumClassName() != null) {
+			if (this.oldValue != null) {
+				this.enumClass = this.oldValue.getClass();
+			} else if (this.newValue != null) {
+				this.enumClass = this.newValue.getClass();
+			} else if (this.enumClassName != null) {
 				try {
-					this.enumClass = Class.forName(getEnumClassName());
+					this.enumClass = Class.forName(this.enumClassName);
 				} catch (final ClassNotFoundException e) {
-					throw new ClassLoadingError(e, getEnumClassName());
+					throw new ClassLoadingError(e, this.enumClassName);
 				}
 			}
 		}
