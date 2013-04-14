@@ -104,9 +104,9 @@ public class PersonTuple implements PersistentTuple<Person> {
 	}
 	
 	/**
-	 * Gets the old value.
+	 * Gets the container.
 	 * 
-	 * @return the oldValue
+	 * @return the container
 	 */
 	@Id
 	@ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -115,22 +115,24 @@ public class PersonTuple implements PersistentTuple<Person> {
 	}
 	
 	/**
-	 * Gets the new value.
+	 * {@inheritDoc}
 	 * 
-	 * @return the new value
+	 * @see org.mozkito.persistence.PersistentTuple#getNewValue()
 	 */
 	@Override
+	@Transient
 	public Person getNewValue() {
 		return this.container != null
 		                             ? this.container.get("new") : null; //$NON-NLS-1$
 	}
 	
 	/**
-	 * Gets the old value.
+	 * {@inheritDoc}
 	 * 
-	 * @return the old value
+	 * @see org.mozkito.persistence.PersistentTuple#getOldValue()
 	 */
 	@Override
+	@Transient
 	public Person getOldValue() {
 		return this.container != null
 		                             ? this.container.get("old") : null; //$NON-NLS-1$
@@ -172,10 +174,9 @@ public class PersonTuple implements PersistentTuple<Person> {
 	}
 	
 	/**
-	 * Sets the new value.
+	 * {@inheritDoc}
 	 * 
-	 * @param newValue
-	 *            the newValue to set
+	 * @see org.mozkito.persistence.PersistentTuple#setNewValue(java.lang.Object)
 	 */
 	@Override
 	public void setNewValue(final Person newValue) {
@@ -186,10 +187,9 @@ public class PersonTuple implements PersistentTuple<Person> {
 	}
 	
 	/**
-	 * Sets the old value.
+	 * {@inheritDoc}
 	 * 
-	 * @param oldValue
-	 *            the oldValue to set
+	 * @see org.mozkito.persistence.PersistentTuple#setOldValue(java.lang.Object)
 	 */
 	@Override
 	public void setOldValue(final Person oldValue) {
