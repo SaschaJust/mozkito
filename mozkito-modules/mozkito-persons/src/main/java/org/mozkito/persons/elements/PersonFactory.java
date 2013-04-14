@@ -24,6 +24,7 @@ import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.joda.time.DateTime;
+
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.persons.model.Person;
 
@@ -217,22 +218,28 @@ public class PersonFactory {
 			if (!this.usernameToUser.containsKey(username)) {
 				this.usernameToUser.put(username, create(username, fullname, email));
 			}
+			
 			final Person existingPerson = this.usernameToUser.get(username);
 			if ((fullname != null) && (!existingPerson.getFullnames().contains(fullname))) {
 				existingPerson.addFullname(fullname);
 			}
+			
 			if ((email != null) && (!existingPerson.getEmailAddresses().contains(email))) {
 				existingPerson.addEmail(email);
 			}
+			
 			return existingPerson;
 		} else if (fullname != null) {
 			if (!this.fullnameToUser.containsKey(fullname)) {
 				this.fullnameToUser.put(fullname, create(username, fullname, email));
 			}
+			
 			final Person existingPerson = this.fullnameToUser.get(fullname);
+			
 			if ((email != null) && (!existingPerson.getEmailAddresses().contains(email))) {
 				existingPerson.addEmail(email);
 			}
+			
 			return existingPerson;
 		} else if (email != null) {
 			if (!this.emailToUser.containsKey(email)) {
@@ -241,7 +248,7 @@ public class PersonFactory {
 			
 			return this.emailToUser.get(email);
 		} else {
-			return null;
+			return getUnknown();
 		}
 	}
 	

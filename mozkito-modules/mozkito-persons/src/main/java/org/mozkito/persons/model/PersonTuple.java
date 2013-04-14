@@ -15,8 +15,10 @@ package org.mozkito.persons.model;
 import java.util.Arrays;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Embeddable;
+import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
@@ -28,7 +30,7 @@ import org.mozkito.persistence.PersistentTuple;
 /**
  * The Class PersonTuple.
  */
-@Embeddable
+@Entity
 public class PersonTuple implements PersistentTuple<Person> {
 	
 	/** The Constant serialVersionUID. */
@@ -37,12 +39,8 @@ public class PersonTuple implements PersistentTuple<Person> {
 	/** The old value. */
 	private PersonContainer   container;
 	
-	/**
-	 * Instantiates a new person tuple.
-	 */
-	protected PersonTuple() {
-		
-	}
+	/** The generated id. */
+	private long              generatedId;
 	
 	/**
 	 * Instantiates a new person tuple.
@@ -86,6 +84,16 @@ public class PersonTuple implements PersistentTuple<Person> {
 		return true;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.persistence.Annotated#getHandle()
+	 */
+	@Override
+	@Transient
+	public final String getClassName() {
+		return JavaUtils.getHandle(PersonTuple.class);
+	}
+	
 	/**
 	 * Gets the old value.
 	 * 
@@ -96,14 +104,23 @@ public class PersonTuple implements PersistentTuple<Person> {
 		return this.container;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.persistence.Annotated#getHandle()
+	/**
+	 * @return the generatedId
 	 */
-	@Override
-	@Transient
-	public final String getClassName() {
-		return JavaUtils.getHandle(PersonTuple.class);
+	@GeneratedValue
+	@Id
+	public final long getGeneratedId() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.generatedId;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/**
@@ -140,6 +157,24 @@ public class PersonTuple implements PersistentTuple<Person> {
 		                                                     ? 0
 		                                                     : this.container.hashCode());
 		return result;
+	}
+	
+	/**
+	 * @param generatedId
+	 *            the generatedId to set
+	 */
+	protected void setGeneratedId(final long generatedId) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.generatedId = generatedId;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/**
