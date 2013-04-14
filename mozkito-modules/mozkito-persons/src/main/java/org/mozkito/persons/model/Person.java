@@ -274,6 +274,7 @@ public class Person implements Annotated {
 	 * @see org.mozkito.persistence.Annotated#getHandle()
 	 */
 	@Override
+	@Transient
 	public final String getClassName() {
 		return JavaUtils.getHandle(Person.class);
 	}

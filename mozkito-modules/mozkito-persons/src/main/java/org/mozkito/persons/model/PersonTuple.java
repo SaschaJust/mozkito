@@ -17,8 +17,8 @@ import java.util.Arrays;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
@@ -26,11 +26,13 @@ import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.conditions.CollectionCondition;
 
 import org.mozkito.persistence.PersistentTuple;
+import org.mozkito.persons.elements.PersonTupleId;
 
 /**
  * The Class PersonTuple.
  */
 @Entity
+@IdClass (PersonTupleId.class)
 public class PersonTuple implements PersistentTuple<Person> {
 	
 	/** The Constant serialVersionUID. */
@@ -38,9 +40,6 @@ public class PersonTuple implements PersistentTuple<Person> {
 	
 	/** The old value. */
 	private PersonContainer   container;
-	
-	/** The generated id. */
-	private long              generatedId;
 	
 	/**
 	 * Instantiates a new person tuple.
@@ -60,6 +59,11 @@ public class PersonTuple implements PersistentTuple<Person> {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -88,6 +92,11 @@ public class PersonTuple implements PersistentTuple<Person> {
 	 * (non-Javadoc)
 	 * @see org.mozkito.persistence.Annotated#getHandle()
 	 */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.persistence.PersistentTuple#getClassName()
+	 */
 	@Override
 	@Transient
 	public final String getClassName() {
@@ -99,28 +108,10 @@ public class PersonTuple implements PersistentTuple<Person> {
 	 * 
 	 * @return the oldValue
 	 */
+	@Id
 	@ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	protected PersonContainer getContainer() {
 		return this.container;
-	}
-	
-	/**
-	 * @return the generatedId
-	 */
-	@GeneratedValue
-	@Id
-	public final long getGeneratedId() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.generatedId;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
 	}
 	
 	/**
@@ -145,8 +136,9 @@ public class PersonTuple implements PersistentTuple<Person> {
 		                             ? this.container.get("old") : null; //$NON-NLS-1$
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -160,16 +152,18 @@ public class PersonTuple implements PersistentTuple<Person> {
 	}
 	
 	/**
-	 * @param generatedId
-	 *            the generatedId to set
+	 * Sets the container.
+	 * 
+	 * @param container
+	 *            the container to set
 	 */
-	protected void setGeneratedId(final long generatedId) {
+	protected final void setContainer(final PersonContainer container) {
 		PRECONDITIONS: {
 			// none
 		}
 		
 		try {
-			this.generatedId = generatedId;
+			this.container = container;
 		} finally {
 			POSTCONDITIONS: {
 				// none
@@ -205,8 +199,9 @@ public class PersonTuple implements PersistentTuple<Person> {
 		this.container.add("old", oldValue); //$NON-NLS-1$
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
