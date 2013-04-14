@@ -18,7 +18,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.IdClass;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
@@ -26,13 +25,11 @@ import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.conditions.CollectionCondition;
 
 import org.mozkito.persistence.PersistentTuple;
-import org.mozkito.persons.elements.PersonTupleId;
 
 /**
  * The Class PersonTuple.
  */
 @Entity
-@IdClass (PersonTupleId.class)
 public class PersonTuple implements PersistentTuple<Person> {
 	
 	/** The Constant serialVersionUID. */
