@@ -22,13 +22,11 @@ import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.StringArgument;
 import net.ownhero.dev.hiari.settings.URIArgument;
-import net.ownhero.dev.hiari.settings.URIArgument.Options;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
-import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.mozkito.issues.exceptions.InvalidParameterException;
 import org.mozkito.issues.model.IssueTracker;
@@ -50,9 +48,6 @@ public class BugzillaOptions extends ArgumentSetOptions<Boolean, ArgumentSet<Boo
 	/** The bugzilla version arg. */
 	private StringArgument.Options bugzillaVersionArg;
 	
-	/** The tracker uri options. */
-	private Options                trackerURIOptions;
-	
 	/** The overview argument. */
 	private URIArgument            overviewArgument;
 	
@@ -71,7 +66,6 @@ public class BugzillaOptions extends ArgumentSetOptions<Boolean, ArgumentSet<Boo
 	public BugzillaOptions(final TrackerOptions trackerOptions, final Requirement requirement) {
 		super(trackerOptions.getArgumentSet(), "bugzilla",
 		      "Necessary arguments to connect and parse bugzilla reports.", requirement);
-		
 	}
 	
 	/**
@@ -95,23 +89,6 @@ public class BugzillaOptions extends ArgumentSetOptions<Boolean, ArgumentSet<Boo
 			return this.overviewURIArg;
 		} finally {
 			// POSTCONDITIONS
-		}
-	}
-	
-	/**
-	 * Gets the tracker uri options.
-	 * 
-	 * @return the tracker uri options
-	 */
-	public URIArgument.Options getTrackerURIOptions() {
-		// PRECONDITIONS
-		
-		try {
-			return this.trackerURIOptions;
-		} finally {
-			// POSTCONDITIONS
-			Condition.notNull(this.trackerURIOptions, "Field '%s' in '%s'.", "trackerURIArg",
-			                  getClass().getSimpleName());
 		}
 	}
 	
