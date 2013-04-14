@@ -35,7 +35,6 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import org.apache.openjpa.persistence.jdbc.Index;
 
 import org.mozkito.persistence.Annotated;
-import org.mozkito.persistence.Intercepted;
 
 /**
  * The Class PersonContainer.
@@ -43,7 +42,7 @@ import org.mozkito.persistence.Intercepted;
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 @Entity
-public class PersonContainer implements Intercepted<Person>, Annotated {
+public class PersonContainer implements Annotated {
 	
 	/** The Constant serialVersionUID. */
 	private static final long   serialVersionUID = -5061178255449904475L;
@@ -60,11 +59,15 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	public PersonContainer() {
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.persistence.Intercepted#add(java.lang. String, java.lang.Object)
+	/**
+	 * Adds the.
+	 * 
+	 * @param id
+	 *            the id
+	 * @param person
+	 *            the person
+	 * @return the person
 	 */
-	@Override
 	@Transient
 	public Person add(@NotNull final String id,
 	                  @NotNull final Person person) {
@@ -86,16 +89,28 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 		return getMap().containsKey(key.toLowerCase());
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.persistence.Intercepted#get(java.lang. String)
+	/**
+	 * Gets the.
+	 * 
+	 * @param id
+	 *            the id
+	 * @return the person
 	 */
-	@Override
 	@Transient
 	public Person get(final String id) {
 		return getMap() != null
 		                       ? getMap().get(id.toLowerCase())
 		                       : null;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.persistence.Annotated#getClassName()
+	 */
+	@Transient
+	public final String getClassName() {
+		return JavaUtils.getHandle(PersonContainer.class);
 	}
 	
 	/**
@@ -109,15 +124,6 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	@GeneratedValue (strategy = GenerationType.SEQUENCE)
 	public long getGeneratedId() {
 		return this.generatedId;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.persistence.Annotated#getHandle()
-	 */
-	@Override
-	public final String getClassName() {
-		return JavaUtils.getHandle(PersonContainer.class);
 	}
 	
 	/**
@@ -140,11 +146,11 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 		return getMap().values();
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.persistence.Intercepted#interceptorTargets ()
+	/**
+	 * Interceptor targets.
+	 * 
+	 * @return the collection
 	 */
-	@Override
 	public Collection<Person> interceptorTargets() {
 		return getMap().values();
 	}
@@ -159,11 +165,14 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 		return getMap().isEmpty();
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.persistence.Intercepted#replace(java.lang .Object, java.lang.Object)
+	/**
+	 * Replace.
+	 * 
+	 * @param from
+	 *            the from
+	 * @param to
+	 *            the to
 	 */
-	@Override
 	public void replace(final Person from,
 	                    final Person to) {
 		for (final String key : getMap().keySet()) {
@@ -205,6 +214,11 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
