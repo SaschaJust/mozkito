@@ -19,11 +19,11 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.persons.elements.PersonFactory;
 import org.mozkito.persons.model.Person;
 import org.mozkito.persons.model.PersonContainer;
+import org.mozkito.persons.model.PersonTuple;
 import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
 
@@ -92,6 +92,21 @@ public class Person_PersistenceTest extends DatabaseTest {
 		assertEquals(person1, list.get(0).get("role1")); //$NON-NLS-1$
 		assertEquals(person2, list.get(0).get("role2")); //$NON-NLS-1$
 		assertEquals(person3, list.get(0).get("role3")); //$NON-NLS-1$
+	}
+	
+	/**
+	 * Test person tuple.
+	 */
+	@Test
+	public void testPersonTuple() {
+		final PersonFactory pFactory = new PersonFactory();
+		final Person p1 = pFactory.get("max", "Max Mustermann", "max@mustermann.de");
+		final Person p2 = pFactory.get("mimi", "Mimi Mustermann", "mimi@mustermann.de");
+		final PersonTuple pTuple = new PersonTuple(p1, p2);
+		final PersistenceUtil persistenceUtil = getPersistenceUtil();
+		persistenceUtil.beginTransaction();
+		persistenceUtil.saveOrUpdate(pTuple);
+		persistenceUtil.commitTransaction();
 	}
 	
 }
