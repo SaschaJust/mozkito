@@ -17,6 +17,7 @@ import java.util.Arrays;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
@@ -37,6 +38,8 @@ public class PersonTuple implements PersistentTuple<Person> {
 	
 	/** The old value. */
 	private PersonContainer   container;
+	
+	private long              tupleId;
 	
 	/**
 	 * Instantiates a new person tuple.
@@ -136,6 +139,17 @@ public class PersonTuple implements PersistentTuple<Person> {
 	}
 	
 	/**
+	 * Gets the revision id.
+	 * 
+	 * @return the revisionId
+	 */
+	@Id
+	@GeneratedValue
+	public long getTupleId() {
+		return this.tupleId;
+	}
+	
+	/**
 	 * {@inheritDoc}
 	 * 
 	 * @see java.lang.Object#hashCode()
@@ -194,6 +208,17 @@ public class PersonTuple implements PersistentTuple<Person> {
 			this.container = new PersonContainer();
 		}
 		this.container.add("old", oldValue); //$NON-NLS-1$
+	}
+	
+	/**
+	 * Sets the tuple id.
+	 * 
+	 * @param id
+	 *            the new tuple id
+	 */
+	@SuppressWarnings ("unused")
+	private void setTupleId(final long id) {
+		this.tupleId = id;
 	}
 	
 	/**
