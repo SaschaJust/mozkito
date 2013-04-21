@@ -10,7 +10,7 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  ******************************************************************************/
-package org.persistence.persons;
+package org.mozkito.persons.model;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -22,9 +22,6 @@ import org.junit.Test;
 
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.persons.elements.PersonFactory;
-import org.mozkito.persons.model.Person;
-import org.mozkito.persons.model.PersonContainer;
-import org.mozkito.persons.model.PersonTuple;
 import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
 
@@ -112,9 +109,13 @@ public class Person_PersistenceTest extends DatabaseTest {
 		final PersistenceUtil persistenceUtil = getPersistenceUtil();
 		
 		persistenceUtil.beginTransaction();
+		// persistenceUtil.save(pTuple.getContainer());
+		// persistenceUtil.save(pTuple2.getContainer());
 		persistenceUtil.saveOrUpdate(pTuple);
 		persistenceUtil.saveOrUpdate(pTuple2);
 		persistenceUtil.commitTransaction();
+		
+		System.err.println(pTuple.getContainer().getGeneratedId());
+		System.err.println(pTuple2.getContainer().getGeneratedId());
 	}
-	
 }
