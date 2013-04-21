@@ -25,4 +25,7 @@ public class PersonTuple_ {
 	
 	/** The container. */
 	public static volatile SingularAttribute<PersonTuple, PersonContainer> container;
+	
+	/** The generated id. */
+	public static volatile SingularAttribute<PersonTuple, Long>            generatedId;
 }

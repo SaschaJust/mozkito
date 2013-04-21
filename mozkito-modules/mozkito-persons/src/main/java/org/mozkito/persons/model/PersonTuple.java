@@ -17,6 +17,8 @@ import java.util.Arrays;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
@@ -31,6 +33,8 @@ import org.mozkito.persistence.PersistentTuple;
  */
 @Entity
 public class PersonTuple implements PersistentTuple<Person> {
+	
+	private long              generatedId;
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -8692461784697718949L;
@@ -97,10 +101,28 @@ public class PersonTuple implements PersistentTuple<Person> {
 	 * 
 	 * @return the container
 	 */
-	@Id
 	@ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	protected PersonContainer getContainer() {
 		return this.container;
+	}
+	
+	/**
+	 * @return the generatedId
+	 */
+	@Id
+	@GeneratedValue (strategy = GenerationType.SEQUENCE)
+	public final long getGeneratedId() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.generatedId;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/**
@@ -153,6 +175,24 @@ public class PersonTuple implements PersistentTuple<Person> {
 		
 		try {
 			this.container = container;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * @param generatedId
+	 *            the generatedId to set
+	 */
+	public final void setGeneratedId(final long generatedId) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.generatedId = generatedId;
 		} finally {
 			POSTCONDITIONS: {
 				// none
