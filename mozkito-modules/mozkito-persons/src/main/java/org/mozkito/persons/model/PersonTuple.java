@@ -20,7 +20,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
 import net.ownhero.dev.ioda.JavaUtils;
@@ -34,10 +34,11 @@ import org.mozkito.persistence.PersistentTuple;
 @Entity
 public class PersonTuple implements PersistentTuple<Person> {
 	
-	private long              generatedId;
-	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -8692461784697718949L;
+	
+	/** The generated id. */
+	private long              generatedId;
 	
 	/** The old value. */
 	private PersonContainer   container        = new PersonContainer();
@@ -101,7 +102,7 @@ public class PersonTuple implements PersistentTuple<Person> {
 	 * 
 	 * @return the container
 	 */
-	@ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToOne (cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	protected PersonContainer getContainer() {
 		return this.container;
 	}
@@ -111,7 +112,7 @@ public class PersonTuple implements PersistentTuple<Person> {
 	 */
 	@Id
 	@GeneratedValue (strategy = GenerationType.SEQUENCE)
-	public final long getGeneratedId() {
+	public long getGeneratedId() {
 		PRECONDITIONS: {
 			// none
 		}
@@ -186,7 +187,7 @@ public class PersonTuple implements PersistentTuple<Person> {
 	 * @param generatedId
 	 *            the generatedId to set
 	 */
-	public final void setGeneratedId(final long generatedId) {
+	public void setGeneratedId(final long generatedId) {
 		PRECONDITIONS: {
 			// none
 		}
@@ -207,7 +208,7 @@ public class PersonTuple implements PersistentTuple<Person> {
 	 */
 	@Override
 	public void setNewValue(final Person newValue) {
-		this.container.add("new", newValue); //$NON-NLS-1$
+		getContainer().add("new", newValue); //$NON-NLS-1$
 	}
 	
 	/**
@@ -217,7 +218,7 @@ public class PersonTuple implements PersistentTuple<Person> {
 	 */
 	@Override
 	public void setOldValue(final Person oldValue) {
-		this.container.add("old", oldValue); //$NON-NLS-1$
+		getContainer().add("old", oldValue); //$NON-NLS-1$
 	}
 	
 	/**
@@ -228,11 +229,13 @@ public class PersonTuple implements PersistentTuple<Person> {
 	@Override
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
+		
 		builder.append("PersonTuple [old="); //$NON-NLS-1$
 		builder.append(getOldValue());
 		builder.append(", new="); //$NON-NLS-1$
 		builder.append(getNewValue());
 		builder.append("]"); //$NON-NLS-1$
+		
 		return builder.toString();
 	}
 	

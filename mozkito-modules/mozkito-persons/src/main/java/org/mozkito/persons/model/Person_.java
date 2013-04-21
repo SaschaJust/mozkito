@@ -18,10 +18,12 @@ import javax.persistence.metamodel.SingularAttribute;
 
 /**
  * The Class Person_.
+ * 
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 @javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.persons.model.Person.class)
 @javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
-                             date = "Mon Jan 07 15:24:20 CET 2013")
+                             date = "Mon Apr 22 00:09:22 CEST 2013")
 public class Person_ {
 	
 	/** The email addresses. */
@@ -35,4 +37,5 @@ public class Person_ {
 	
 	/** The usernames. */
 	public static volatile SetAttribute<Person, String>    usernames;
+	
 }
