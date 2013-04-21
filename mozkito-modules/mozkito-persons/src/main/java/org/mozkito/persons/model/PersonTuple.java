@@ -36,7 +36,7 @@ public class PersonTuple implements PersistentTuple<Person> {
 	private static final long serialVersionUID = -8692461784697718949L;
 	
 	/** The old value. */
-	private PersonContainer   container;
+	private PersonContainer   container        = new PersonContainer();
 	
 	/**
 	 * Instantiates a new person tuple.
@@ -85,10 +85,6 @@ public class PersonTuple implements PersistentTuple<Person> {
 		return true;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.persistence.Annotated#getHandle()
-	 */
 	/**
 	 * {@inheritDoc}
 	 * 
@@ -119,8 +115,7 @@ public class PersonTuple implements PersistentTuple<Person> {
 	@Override
 	@Transient
 	public Person getNewValue() {
-		return this.container != null
-		                             ? this.container.get("new") : null; //$NON-NLS-1$
+		return this.container.get("new"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -131,8 +126,7 @@ public class PersonTuple implements PersistentTuple<Person> {
 	@Override
 	@Transient
 	public Person getOldValue() {
-		return this.container != null
-		                             ? this.container.get("old") : null; //$NON-NLS-1$
+		return this.container.get("old"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -177,9 +171,6 @@ public class PersonTuple implements PersistentTuple<Person> {
 	 */
 	@Override
 	public void setNewValue(final Person newValue) {
-		if (this.container == null) {
-			this.container = new PersonContainer();
-		}
 		this.container.add("new", newValue); //$NON-NLS-1$
 	}
 	
@@ -190,9 +181,6 @@ public class PersonTuple implements PersistentTuple<Person> {
 	 */
 	@Override
 	public void setOldValue(final Person oldValue) {
-		if (this.container == null) {
-			this.container = new PersonContainer();
-		}
 		this.container.add("old", oldValue); //$NON-NLS-1$
 	}
 	
