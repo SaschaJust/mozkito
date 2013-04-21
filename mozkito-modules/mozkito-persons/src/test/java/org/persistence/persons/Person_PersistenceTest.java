@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.persons.elements.PersonFactory;
 import org.mozkito.persons.model.Person;
@@ -100,12 +101,19 @@ public class Person_PersistenceTest extends DatabaseTest {
 	@Test
 	public void testPersonTuple() {
 		final PersonFactory pFactory = new PersonFactory();
+		
 		final Person p1 = pFactory.get("max", "Max Mustermann", "max@mustermann.de");
 		final Person p2 = pFactory.get("mimi", "Mimi Mustermann", "mimi@mustermann.de");
+		final Person p3 = pFactory.get("moritz", "Moritz Mustermann", "moritz@mustermann.de");
+		final Person p4 = pFactory.get("mumu", "Mumu Mustermann", "mumu@mustermann.de");
+		
 		final PersonTuple pTuple = new PersonTuple(p1, p2);
+		final PersonTuple pTuple2 = new PersonTuple(p3, p4);
 		final PersistenceUtil persistenceUtil = getPersistenceUtil();
+		
 		persistenceUtil.beginTransaction();
 		persistenceUtil.saveOrUpdate(pTuple);
+		persistenceUtil.saveOrUpdate(pTuple2);
 		persistenceUtil.commitTransaction();
 	}
 	
