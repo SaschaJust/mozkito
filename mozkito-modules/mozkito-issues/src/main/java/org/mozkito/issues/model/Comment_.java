@@ -24,7 +24,7 @@ import org.mozkito.persons.model.PersonContainer;
  */
 @javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.issues.model.Comment.class)
 @javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
-                             date = "Mon May 07 15:41:49 CEST 2012")
+                             date = "Fri Apr 26 13:58:11 CEST 2013")
 public class Comment_ {
 	
 	/** The bug report. */

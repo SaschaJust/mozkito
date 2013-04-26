@@ -21,12 +21,13 @@ import javax.persistence.metamodel.SingularAttribute;
  */
 @javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.issues.model.History.class)
 @javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
-                             date = "Mon May 07 15:41:49 CEST 2012")
+                             date = "Fri Apr 26 13:58:11 CEST 2013")
 public class History_ {
 	
 	/** The elements. */
-	public static volatile SetAttribute<History, HistoryElement>     elements;
+	public static volatile SetAttribute<History, HistoryElement> elements;
 	
-	/** The history. */
-	public static volatile SingularAttribute<HistoryElement, Report> report;
+	/** The report. */
+	public static volatile SingularAttribute<History, Report>    report;
+	
 }

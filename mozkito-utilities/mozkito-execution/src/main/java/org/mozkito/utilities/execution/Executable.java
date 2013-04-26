@@ -69,6 +69,11 @@ public interface Executable extends Runnable {
 	InputStream getStandardOut();
 	
 	/**
+	 * Join.
+	 */
+	void join();
+	
+	/**
 	 * Pipe from.
 	 * 
 	 * @param executable

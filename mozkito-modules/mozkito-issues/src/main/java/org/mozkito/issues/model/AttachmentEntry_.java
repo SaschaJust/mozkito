@@ -17,8 +17,6 @@ import java.util.Date;
 
 import javax.persistence.metamodel.SingularAttribute;
 
-import org.joda.time.DateTime;
-
 import org.mozkito.persons.model.PersonContainer;
 
 /**
@@ -26,11 +24,8 @@ import org.mozkito.persons.model.PersonContainer;
  */
 @javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.issues.model.AttachmentEntry.class)
 @javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
-                             date = "Mon May 07 15:41:49 CEST 2012")
+                             date = "Fri Apr 26 13:58:11 CEST 2013")
 public class AttachmentEntry_ {
-	
-	/** The delta ts. */
-	public static volatile SingularAttribute<AttachmentEntry, DateTime>        deltaTS;
 	
 	/** The description. */
 	public static volatile SingularAttribute<AttachmentEntry, String>          description;
@@ -40,6 +35,9 @@ public class AttachmentEntry_ {
 	
 	/** The id. */
 	public static volatile SingularAttribute<AttachmentEntry, String>          id;
+	
+	/** The java delta ts. */
+	public static volatile SingularAttribute<AttachmentEntry, Date>            javaDeltaTS;
 	
 	/** The java timestamp. */
 	public static volatile SingularAttribute<AttachmentEntry, Date>            javaTimestamp;
@@ -55,4 +53,5 @@ public class AttachmentEntry_ {
 	
 	/** The size. */
 	public static volatile SingularAttribute<AttachmentEntry, Long>            size;
+	
 }

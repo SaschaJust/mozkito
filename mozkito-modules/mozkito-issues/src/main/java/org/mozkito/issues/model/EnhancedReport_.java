@@ -22,7 +22,7 @@ import org.mozkito.issues.elements.Type;
  */
 @javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.issues.model.EnhancedReport.class)
 @javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
-                             date = "Mon May 07 15:41:49 CEST 2012")
+                             date = "Fri Apr 26 13:58:11 CEST 2013")
 public class EnhancedReport_ {
 	
 	/** The classified type. */
@@ -33,4 +33,5 @@ public class EnhancedReport_ {
 	
 	/** The report. */
 	public static volatile SingularAttribute<EnhancedReport, Report> report;
+	
 }
