@@ -23,13 +23,13 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
-import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.strategies.Strategy;
 import org.mozkito.persistence.Annotated;
+import org.mozkito.utilities.commons.JavaUtils;
 
 /**
  * The Class Composite.

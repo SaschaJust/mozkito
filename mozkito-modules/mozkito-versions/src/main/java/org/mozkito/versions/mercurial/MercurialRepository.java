@@ -31,12 +31,6 @@ import java.util.List;
 import java.util.Map;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.ioda.CommandExecutor;
-import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
-import net.ownhero.dev.ioda.Tuple;
-import net.ownhero.dev.ioda.URIUtils;
-import net.ownhero.dev.ioda.exceptions.ExternalExecutableException;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNegative;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
@@ -47,7 +41,6 @@ import net.ownhero.dev.regex.Regex;
 
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeUtils;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -56,6 +49,13 @@ import difflib.DiffUtils;
 import difflib.Patch;
 
 import org.mozkito.persons.elements.PersonFactory;
+import org.mozkito.utilities.commons.URIUtils;
+import org.mozkito.utilities.datastructures.Tuple;
+import org.mozkito.utilities.datetime.DateTimeUtils;
+import org.mozkito.utilities.execution.CommandExecutor;
+import org.mozkito.utilities.io.FileUtils;
+import org.mozkito.utilities.io.FileUtils.FileShutdownAction;
+import org.mozkito.utilities.io.exceptions.ExternalExecutableException;
 import org.mozkito.versions.DistributedCommandLineRepository;
 import org.mozkito.versions.LogParser;
 import org.mozkito.versions.elements.AnnotationEntry;
@@ -182,6 +182,7 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 			throw new RepositoryOperationException("filePath and revision must not be null. Abort.");
 		}
 		Tuple<Integer, List<String>> response;
+		
 		try {
 			response = CommandExecutor.execute("hg", new String[] { "annotate", "-cfud", "-r", revision, filePath },
 			                                   this.cloneDir, null, null);
@@ -192,7 +193,9 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 		if (response.getFirst() != 0) {
 			return null;
 		}
+		
 		final List<String> lines = response.getSecond();
+		
 		if (lines.size() < 1) {
 			throw new RepositoryOperationException("Annotating file `" + filePath + "` in revision `" + revision
 			        + "` returned no output.");
@@ -210,7 +213,7 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 			final String date = MercurialRepository.REGEX.getGroup("date");
 			
 			DateTime timestamp;
-			timestamp = net.ownhero.dev.ioda.DateTimeUtils.parseDate(date, DATE_FORMAT_REGEX);
+			timestamp = DateTimeUtils.parseDate(date, DATE_FORMAT_REGEX);
 			
 			final String file = MercurialRepository.REGEX.getGroup("file");
 			final String codeLine = MercurialRepository.REGEX.getGroup("codeline");
@@ -910,11 +913,11 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 			if (tmpDir == null) {
 				localCloneDir = FileUtils.createRandomDir("moskito_hg_clone_",
 				
-				String.valueOf(DateTimeUtils.currentTimeMillis()), FileShutdownAction.DELETE);
+				String.valueOf(org.joda.time.DateTimeUtils.currentTimeMillis()), FileShutdownAction.DELETE);
 			} else {
 				localCloneDir = FileUtils.createRandomDir(tmpDir, "moskito_hg_clone_",
 				
-				String.valueOf(DateTimeUtils.currentTimeMillis()), FileShutdownAction.DELETE);
+				String.valueOf(org.joda.time.DateTimeUtils.currentTimeMillis()), FileShutdownAction.DELETE);
 			}
 			
 			// clone the remote repository

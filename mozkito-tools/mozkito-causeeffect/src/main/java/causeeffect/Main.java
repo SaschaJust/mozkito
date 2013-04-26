@@ -29,7 +29,6 @@ import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
-import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.causeeffect.AG_EF_FormulaGenearator;
@@ -43,6 +42,7 @@ import org.mozkito.genealogies.core.TransactionChangeGenealogy;
 import org.mozkito.genealogies.settings.GenealogyOptions;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.settings.DatabaseOptions;
+import org.mozkito.utilities.commons.JavaUtils;
 import org.mozkito.versions.elements.RevDependencyGraph;
 import org.mozkito.versions.model.Branch;
 import org.mozkito.versions.model.ChangeSet;

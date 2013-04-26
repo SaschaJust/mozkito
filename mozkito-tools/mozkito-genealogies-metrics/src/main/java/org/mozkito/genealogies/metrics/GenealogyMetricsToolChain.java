@@ -33,7 +33,6 @@ import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
-import net.ownhero.dev.ioda.ClassFinder;
 import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.genealogies.core.CoreChangeGenealogy;
@@ -51,6 +50,8 @@ import org.mozkito.genealogies.metrics.layer.transaction.TransactionGenealogyMet
 import org.mozkito.genealogies.metrics.layer.transaction.TransactionGenealogyMetricThread;
 import org.mozkito.genealogies.metrics.utils.MetricLevel;
 import org.mozkito.genealogies.settings.GenealogyOptions;
+import org.mozkito.utilities.commons.JavaUtils;
+import org.mozkito.utilities.loading.classpath.ClassFinder;
 
 /**
  * The Class GenealogyMetricsToolChain.
@@ -260,7 +261,7 @@ public class GenealogyMetricsToolChain extends Chain<Settings> {
 					
 					if (Logger.logDebug()) {
 						Logger.debug("Found %d GenealogyMetrics: %s.", metricClasses.size(),
-						             net.ownhero.dev.ioda.JavaUtils.collectionToString(metricClasses));
+						             JavaUtils.collectionToString(metricClasses));
 					}
 					
 					for (final Class<? extends GenealogyTransactionMetric> metricClass : metricClasses) {

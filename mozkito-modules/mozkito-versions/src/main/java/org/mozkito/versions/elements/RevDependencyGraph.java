@@ -23,7 +23,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.annotations.string.NotEmptyString;
@@ -37,8 +36,9 @@ import edu.uci.ics.jung.graph.AbstractTypedGraph;
 import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.util.Pair;
 
-import org.mozkito.datastructures.BidirectionalMultiMap;
 import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.utilities.commons.JavaUtils;
+import org.mozkito.utilities.datastructures.BidirectionalMultiMap;
 import org.mozkito.versions.elements.ChangeSetIterator.ChangeSetOrder;
 import org.mozkito.versions.model.ChangeSet;
 

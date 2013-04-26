@@ -21,7 +21,6 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
-import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
@@ -30,6 +29,7 @@ import net.ownhero.dev.kanuni.conditions.StringCondition;
 import org.jdom2.Element;
 
 import org.mozkito.persistence.Annotated;
+import org.mozkito.utilities.commons.JavaUtils;
 
 /**
  * The Class JavaMethodDefinition.

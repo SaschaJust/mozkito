@@ -18,16 +18,15 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.List;
 
-import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.ioda.JavaUtils;
-
 import org.junit.Test;
 
 import org.mozkito.mappings.utils.TextSeparator;
+import org.mozkito.utilities.commons.JavaUtils;
+import org.mozkito.utilities.io.FileUtils;
 
 /**
  * The Class TextSeparatorTest.
- *
+ * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class TextSeparatorTest {

@@ -27,12 +27,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.persistence.Annotated;
+import org.mozkito.utilities.commons.JavaUtils;
 import org.mozkito.versions.elements.ChangeType;
 
 /**
@@ -218,6 +218,16 @@ public class Revision implements Annotated {
 	}
 	
 	/**
+	 * Sets the transaction.
+	 * 
+	 * @param changeSet
+	 *            the transaction to set
+	 */
+	public void setChangeSet(final ChangeSet changeSet) {
+		this.changeSet = changeSet;
+	}
+	
+	/**
 	 * Sets the change type.
 	 * 
 	 * @param changeType
@@ -235,16 +245,6 @@ public class Revision implements Annotated {
 	 */
 	public void setRevisionId(final long revisionId) {
 		this.revisionId = revisionId;
-	}
-	
-	/**
-	 * Sets the transaction.
-	 * 
-	 * @param changeSet
-	 *            the transaction to set
-	 */
-	public void setChangeSet(final ChangeSet changeSet) {
-		this.changeSet = changeSet;
 	}
 	
 	/*

@@ -36,9 +36,6 @@ import javax.persistence.criteria.Root;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.ioda.ClassFinder;
-import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
 
@@ -49,6 +46,10 @@ import org.apache.openjpa.persistence.OpenJPAEntityManagerFactory;
 import org.apache.openjpa.persistence.OpenJPAPersistence;
 import org.apache.openjpa.persistence.criteria.OpenJPACriteriaBuilder;
 import org.apache.openjpa.persistence.criteria.OpenJPACriteriaQuery;
+
+import org.mozkito.utilities.commons.JavaUtils;
+import org.mozkito.utilities.io.FileUtils;
+import org.mozkito.utilities.loading.classpath.ClassFinder;
 
 /**
  * The Class OpenJPAUtil.

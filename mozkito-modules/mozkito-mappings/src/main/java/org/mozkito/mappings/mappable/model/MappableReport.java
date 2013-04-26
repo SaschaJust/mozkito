@@ -25,7 +25,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.Logger;
 
 import org.jsoup.Jsoup;
@@ -37,6 +36,7 @@ import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persons.model.Person;
+import org.mozkito.utilities.io.FileUtils;
 
 /**
  * Class that wraps {@link Report} to be mapped.

@@ -31,8 +31,6 @@ import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
-import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.ioda.Tuple;
 
 import org.mozkito.issues.analysis.IssuesAnalysis;
 import org.mozkito.issues.model.History;
@@ -40,6 +38,8 @@ import org.mozkito.issues.model.HistoryElement;
 import org.mozkito.issues.model.Report;
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.utilities.datastructures.Tuple;
+import org.mozkito.utilities.io.FileUtils;
 
 /**
  * Class to analyse how often field of issue reports get changed. This analysis was used to for the RSSE book.

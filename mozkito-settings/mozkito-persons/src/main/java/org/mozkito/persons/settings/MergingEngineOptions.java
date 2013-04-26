@@ -30,12 +30,12 @@ import net.ownhero.dev.hiari.settings.SetArgument;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
-import net.ownhero.dev.ioda.ClassFinder;
-import net.ownhero.dev.ioda.exceptions.WrongClassSearchMethodException;
 import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.persons.engine.MergingEngine;
 import org.mozkito.persons.messages.Messages;
+import org.mozkito.utilities.loading.classpath.ClassFinder;
+import org.mozkito.utilities.loading.classpath.exceptions.WrongClassSearchMethodException;
 
 /**
  * The Class MergingEngineOptions.

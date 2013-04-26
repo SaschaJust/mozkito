@@ -18,13 +18,13 @@ import java.util.List;
 import java.util.Set;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 
 import org.apache.commons.collections.CollectionUtils;
 
 import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.mappings.mappable.model.MappableEntity;
+import org.mozkito.utilities.commons.JavaUtils;
 
 /**
  * The atom expression evaluates to true if the given criteria are met. Evaluates to false otherwise.

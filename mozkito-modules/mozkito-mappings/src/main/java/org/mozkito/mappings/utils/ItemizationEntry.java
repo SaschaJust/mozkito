@@ -13,9 +13,10 @@
 
 package org.mozkito.mappings.utils;
 
-import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
+
+import org.mozkito.utilities.commons.JavaUtils;
 
 /**
  * The Class ItemizationEntry.

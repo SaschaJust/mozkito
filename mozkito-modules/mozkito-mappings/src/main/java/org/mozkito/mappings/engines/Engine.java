@@ -12,7 +12,6 @@
  **********************************************************************************************************************/
 package org.mozkito.mappings.engines;
 
-import net.ownhero.dev.ioda.StringUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 
@@ -21,6 +20,7 @@ import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Relation;
 import org.mozkito.mappings.register.Node;
 import org.mozkito.mappings.requirements.Expression;
+import org.mozkito.utilities.commons.StringUtils;
 
 /**
  * 

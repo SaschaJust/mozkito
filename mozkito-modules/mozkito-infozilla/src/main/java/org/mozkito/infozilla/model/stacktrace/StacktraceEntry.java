@@ -13,7 +13,7 @@
 
 package org.mozkito.infozilla.model.stacktrace;
 
-import net.ownhero.dev.ioda.JavaUtils;
+import org.mozkito.utilities.commons.JavaUtils;
 
 /**
  * The Class StacktraceEntry.

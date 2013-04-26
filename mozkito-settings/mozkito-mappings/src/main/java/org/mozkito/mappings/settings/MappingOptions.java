@@ -24,7 +24,6 @@ import net.ownhero.dev.hiari.settings.TupleArgument;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
-import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kisa.Highlighter;
 import net.ownhero.dev.kisa.LogLevel;
 import net.ownhero.dev.kisa.Logger;
@@ -38,6 +37,7 @@ import org.mozkito.mappings.selectors.Selector;
 import org.mozkito.mappings.splitters.Splitter;
 import org.mozkito.mappings.strategies.Strategy;
 import org.mozkito.mappings.training.Trainer;
+import org.mozkito.utilities.datastructures.Tuple;
 import org.mozkito.versions.model.ChangeSet;
 
 /**

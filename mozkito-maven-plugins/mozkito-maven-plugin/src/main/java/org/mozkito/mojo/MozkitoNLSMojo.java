@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 
-import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.regex.Match;
 import net.ownhero.dev.regex.MultiMatch;
 import net.ownhero.dev.regex.Regex;
@@ -42,6 +41,8 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
+
+import org.mozkito.utilities.io.FileUtils;
 
 /**
  * Goal that checks if calls to NLS are valid, i.e. the key class is the same as the simple classname and the key exists

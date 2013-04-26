@@ -20,11 +20,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.ioda.ClassFinder;
-import net.ownhero.dev.ioda.exceptions.WrongClassSearchMethodException;
 import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.issues.exceptions.UnregisteredTrackerTypeException;
+import org.mozkito.utilities.loading.classpath.ClassFinder;
+import org.mozkito.utilities.loading.classpath.exceptions.WrongClassSearchMethodException;
 
 /**
  * A factory for creating Tracker objects.

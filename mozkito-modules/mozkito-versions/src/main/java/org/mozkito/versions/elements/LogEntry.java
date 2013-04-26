@@ -12,7 +12,6 @@
  ******************************************************************************/
 package org.mozkito.versions.elements;
 
-import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
 
@@ -20,6 +19,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.joda.time.DateTime;
 
 import org.mozkito.persons.model.Person;
+import org.mozkito.utilities.io.FileUtils;
 
 /**
  * The Class LogEntry.

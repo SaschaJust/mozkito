@@ -29,18 +29,18 @@ import java.util.Map;
 import java.util.Set;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.ioda.CommandExecutor;
-import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
-import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
-import org.mozkito.clustering.MultilevelClustering;
-import org.mozkito.clustering.MultilevelClusteringScoreVisitor;
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.codeanalysis.model.JavaElementLocation.LineCover;
+import org.mozkito.utilities.clustering.MultilevelClustering;
+import org.mozkito.utilities.clustering.MultilevelClusteringScoreVisitor;
+import org.mozkito.utilities.datastructures.Tuple;
+import org.mozkito.utilities.execution.CommandExecutor;
+import org.mozkito.utilities.io.FileUtils;
+import org.mozkito.utilities.io.FileUtils.FileShutdownAction;
 import org.mozkito.versions.Repository;
 import org.mozkito.versions.exceptions.RepositoryOperationException;
 import org.mozkito.versions.model.ChangeSet;

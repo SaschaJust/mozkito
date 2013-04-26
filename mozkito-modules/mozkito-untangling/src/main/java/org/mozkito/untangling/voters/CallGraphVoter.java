@@ -19,10 +19,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.ioda.CommandExecutor;
-import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
-import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
@@ -34,11 +30,15 @@ import org.mozkito.callgraph.model.CallGraph;
 import org.mozkito.callgraph.model.CallGraphEdge;
 import org.mozkito.callgraph.model.MethodVertex;
 import org.mozkito.callgraph.model.VertexFactory;
-import org.mozkito.clustering.MultilevelClustering;
-import org.mozkito.clustering.MultilevelClusteringScoreVisitor;
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.codeanalysis.model.JavaElement;
 import org.mozkito.codeanalysis.model.JavaMethodDefinition;
+import org.mozkito.utilities.clustering.MultilevelClustering;
+import org.mozkito.utilities.clustering.MultilevelClusteringScoreVisitor;
+import org.mozkito.utilities.datastructures.Tuple;
+import org.mozkito.utilities.execution.CommandExecutor;
+import org.mozkito.utilities.io.FileUtils;
+import org.mozkito.utilities.io.FileUtils.FileShutdownAction;
 import org.mozkito.versions.model.ChangeSet;
 
 /**

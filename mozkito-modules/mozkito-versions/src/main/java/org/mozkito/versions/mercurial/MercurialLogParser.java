@@ -15,7 +15,6 @@ package org.mozkito.versions.mercurial;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
@@ -26,6 +25,7 @@ import org.joda.time.DateTimeZone;
 
 import org.mozkito.persons.elements.PersonFactory;
 import org.mozkito.persons.model.Person;
+import org.mozkito.utilities.io.FileUtils;
 import org.mozkito.versions.LogParser;
 import org.mozkito.versions.elements.LogEntry;
 

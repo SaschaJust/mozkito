@@ -35,8 +35,6 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.ioda.JavaUtils;
-import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.MinSize;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
@@ -52,6 +50,8 @@ import org.mozkito.persistence.model.StringTuple;
 import org.mozkito.persons.model.Person;
 import org.mozkito.persons.model.PersonContainer;
 import org.mozkito.persons.model.PersonTuple;
+import org.mozkito.utilities.commons.JavaUtils;
+import org.mozkito.utilities.datastructures.Tuple;
 
 /**
  * The Class HistoryElement.

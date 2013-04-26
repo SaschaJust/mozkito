@@ -20,7 +20,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
@@ -45,6 +44,7 @@ import org.mozkito.genealogies.neo4j.Neo4jRootCache;
 import org.mozkito.genealogies.neo4j.Neo4jVertexCache;
 import org.mozkito.genealogies.persistence.JavaChangeOperationCache;
 import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.utilities.io.FileUtils;
 import org.mozkito.versions.elements.ChangeType;
 
 /**

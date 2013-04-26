@@ -22,7 +22,6 @@
 		<module>mozkito-persistence</module>
 		<module>mozkito-persons</module>
 		<module>mozkito-untangling</module>
-		<module>mozkito-utilities</module>
 		<module>mozkito-versions</module>
 	</modules>
 	<dependencies>

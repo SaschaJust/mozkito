@@ -26,8 +26,6 @@ import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
-import net.ownhero.dev.ioda.ClassFinder;
-import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 
 import org.mozkito.issues.model.EnhancedReport;
@@ -41,6 +39,8 @@ import org.mozkito.mappings.model.Relation;
 import org.mozkito.mappings.settings.MappingOptions;
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.utilities.datastructures.Tuple;
+import org.mozkito.utilities.loading.classpath.ClassFinder;
 import org.mozkito.versions.model.ChangeSet;
 
 /**
@@ -173,7 +173,7 @@ public final class Environment {
 	 * @return the rCS transaction
 	 */
 	public static ChangeSet loadTransaction(final PersistenceUtil util,
-	                                             final String id) {
+	                                        final String id) {
 		return util.loadById(id, ChangeSet.class);
 	}
 	

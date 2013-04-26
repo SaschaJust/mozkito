@@ -20,7 +20,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 
-import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.Logger;
 
 import org.joda.time.DateTime;
@@ -35,6 +34,7 @@ import org.mozkito.persons.elements.PersonFactory;
 import org.mozkito.persons.model.Person;
 import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
+import org.mozkito.utilities.io.FileUtils;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.RevDependencyGraph;
 import org.mozkito.versions.elements.RevDependencyGraph.EdgeType;

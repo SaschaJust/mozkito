@@ -23,7 +23,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
@@ -32,6 +31,7 @@ import org.jdom2.Element;
 
 import org.mozkito.codeanalysis.visitors.PPATypeVisitor;
 import org.mozkito.persistence.Annotated;
+import org.mozkito.utilities.commons.JavaUtils;
 
 /**
  * The Class JavaClassDefinition.

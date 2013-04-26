@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Set;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.compare.LessOrEqualDouble;
 import net.ownhero.dev.kanuni.annotations.simple.Positive;
@@ -36,6 +35,7 @@ import org.mozkito.changecouplings.model.FileChangeCoupling;
 import org.mozkito.changecouplings.model.MethodChangeCoupling;
 import org.mozkito.persistence.DatabaseType;
 import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.utilities.io.FileUtils;
 import org.mozkito.versions.model.ChangeSet;
 
 /**
@@ -81,8 +81,7 @@ public class ChangeCouplingRuleFactory {
 		tablename = "mozkito_cc_" + tablename;
 		persistenceUtil.commitTransaction();
 		
-		final String query = "select mozkito_file_changecouplings('" + changeSet.getId() + "','" + tablename
-		        + "')";
+		final String query = "select mozkito_file_changecouplings('" + changeSet.getId() + "','" + tablename + "')";
 		
 		if (Logger.logTrace()) {
 			Logger.trace("Selecting file change couplings: " + query);

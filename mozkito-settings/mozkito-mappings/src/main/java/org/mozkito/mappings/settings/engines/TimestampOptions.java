@@ -25,7 +25,6 @@ import net.ownhero.dev.hiari.settings.TupleArgument;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
-import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Match;
 import net.ownhero.dev.regex.Regex;
@@ -34,6 +33,7 @@ import org.joda.time.Interval;
 
 import org.mozkito.mappings.engines.TimestampEngine;
 import org.mozkito.mappings.messages.Messages;
+import org.mozkito.utilities.datastructures.Tuple;
 
 /**
  * @author Sascha Just <sascha.just@mozkito.org>

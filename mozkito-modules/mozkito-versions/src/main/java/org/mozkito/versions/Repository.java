@@ -19,13 +19,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import difflib.Delta;
 
 import org.mozkito.persons.elements.PersonFactory;
 import org.mozkito.persons.model.Person;
+import org.mozkito.utilities.commons.JavaUtils;
 import org.mozkito.versions.elements.AnnotationEntry;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.LogEntry;

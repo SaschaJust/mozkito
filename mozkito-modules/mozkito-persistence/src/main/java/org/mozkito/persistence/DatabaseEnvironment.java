@@ -16,9 +16,10 @@ package org.mozkito.persistence;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
+
+import org.mozkito.utilities.commons.JavaUtils;
 
 /**
  * The Class DatabaseOptions.

@@ -22,8 +22,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
-import net.ownhero.dev.ioda.FileUtils;
-
 import org.apache.commons.lang.StringUtils;
 import org.tmatesoft.svn.core.SVNErrorCode;
 import org.tmatesoft.svn.core.SVNErrorMessage;
@@ -35,6 +33,8 @@ import difflib.Chunk;
 import difflib.Delta;
 import difflib.DiffUtils;
 import difflib.Patch;
+
+import org.mozkito.utilities.io.FileUtils;
 
 /**
  * The Class SubversionDiffParser.

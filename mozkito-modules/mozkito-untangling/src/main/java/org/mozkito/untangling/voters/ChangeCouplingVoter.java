@@ -26,7 +26,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
@@ -35,12 +34,13 @@ import net.ownhero.dev.kisa.Logger;
 import org.mozkito.changecouplings.ChangeCouplingRuleFactory;
 import org.mozkito.changecouplings.model.MethodChangeCoupling;
 import org.mozkito.changecouplings.model.SerialMethodChangeCoupling;
-import org.mozkito.clustering.MultilevelClustering;
-import org.mozkito.clustering.MultilevelClusteringScoreVisitor;
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.codeanalysis.model.JavaElement;
 import org.mozkito.codeanalysis.model.JavaMethodDefinition;
 import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.utilities.clustering.MultilevelClustering;
+import org.mozkito.utilities.clustering.MultilevelClusteringScoreVisitor;
+import org.mozkito.utilities.io.FileUtils;
 import org.mozkito.versions.model.ChangeSet;
 
 /**

@@ -36,7 +36,6 @@ import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
-import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.Logger;
 
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -48,6 +47,7 @@ import org.mozkito.codeanalysis.model.JavaElementLocationSet;
 import org.mozkito.codeanalysis.utils.PPAUtils;
 import org.mozkito.codeanalysis.visitors.PPATypeVisitor;
 import org.mozkito.settings.DatabaseOptions;
+import org.mozkito.utilities.io.FileUtils;
 import org.mozkito.versions.Repository;
 import org.mozkito.versions.exceptions.RepositoryOperationException;
 import org.mozkito.versions.settings.RepositoryOptions;

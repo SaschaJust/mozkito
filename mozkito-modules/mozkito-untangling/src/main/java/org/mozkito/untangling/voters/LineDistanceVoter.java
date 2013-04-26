@@ -12,10 +12,10 @@
  **********************************************************************************************************************/
 package org.mozkito.untangling.voters;
 
-import org.mozkito.clustering.MultilevelClusteringScoreVisitor;
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.codeanalysis.model.JavaElementLocation;
 import org.mozkito.codeanalysis.model.JavaElementLocation.LineCover;
+import org.mozkito.utilities.clustering.MultilevelClusteringScoreVisitor;
 
 /**
  * The Class CallGraphHandler.

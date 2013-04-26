@@ -590,9 +590,6 @@ public class MozkitoPersistenceMojo extends AbstractMojo {
 	 *             the mojo execution exception
 	 */
 	private Document readSkeleton() throws MojoExecutionException {
-		// getLog().warn(System.getProperty("java.class.path"));
-		// getLog().warn("Looking up resource results in: "
-		// + Thread.currentThread().getContextClassLoader().getResource("/persistence-skeleton.xml"));
 		final InputStream stream = new ByteArrayInputStream(SKELETON.getBytes());
 		InputStreamReader reader = null;
 		Document document = null;
@@ -604,7 +601,7 @@ public class MozkitoPersistenceMojo extends AbstractMojo {
 			                                             new XMLReaderSAX2Factory(false,
 			                                                                      "org.apache.xerces.parsers.SAXParser"));
 			saxBuilder.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
-			saxBuilder.setFeature("http://apache." + "org/xml/features/nonvalidating/load-external-dtd", false);
+			saxBuilder.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
 			
 			document = saxBuilder.build(reader);
 			reader.close();

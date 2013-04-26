@@ -41,7 +41,6 @@ import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
-import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
@@ -50,13 +49,6 @@ import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 import org.joda.time.Days;
 import org.uncommons.maths.combinatorics.PermutationGenerator;
 
-import org.mozkito.clustering.AvgCollapseVisitor;
-import org.mozkito.clustering.MaxCollapseVisitor;
-import org.mozkito.clustering.MultilevelClustering;
-import org.mozkito.clustering.MultilevelClusteringCollapseVisitor;
-import org.mozkito.clustering.MultilevelClusteringScoreVisitor;
-import org.mozkito.clustering.ScoreAggregation;
-import org.mozkito.clustering.SumAggregation;
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.codeanalysis.model.JavaMethodDefinition;
 import org.mozkito.persistence.Criteria;
@@ -76,6 +68,14 @@ import org.mozkito.untangling.settings.UntanglingOptions;
 import org.mozkito.untangling.voters.FileDistanceVoter;
 import org.mozkito.untangling.voters.LineDistanceVoter;
 import org.mozkito.untangling.voters.MultilevelClusteringScoreVisitorFactory;
+import org.mozkito.utilities.clustering.AvgCollapseVisitor;
+import org.mozkito.utilities.clustering.MaxCollapseVisitor;
+import org.mozkito.utilities.clustering.MultilevelClustering;
+import org.mozkito.utilities.clustering.MultilevelClusteringCollapseVisitor;
+import org.mozkito.utilities.clustering.MultilevelClusteringScoreVisitor;
+import org.mozkito.utilities.clustering.ScoreAggregation;
+import org.mozkito.utilities.clustering.SumAggregation;
+import org.mozkito.utilities.io.FileUtils;
 import org.mozkito.versions.model.ChangeSet;
 
 /**

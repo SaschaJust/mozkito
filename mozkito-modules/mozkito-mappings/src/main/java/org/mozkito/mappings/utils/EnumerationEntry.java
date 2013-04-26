@@ -17,8 +17,6 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.compare.Less;
 import net.ownhero.dev.kanuni.annotations.meta.Marker;
 import net.ownhero.dev.kanuni.annotations.simple.NotNegative;
@@ -27,6 +25,9 @@ import net.ownhero.dev.kanuni.annotations.simple.Positive;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kanuni.conditions.StringCondition;
+
+import org.mozkito.utilities.commons.JavaUtils;
+import org.mozkito.utilities.io.FileUtils;
 
 /**
  * The Class EnumerationEntry.

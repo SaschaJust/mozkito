@@ -19,9 +19,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotNegative;
 import net.ownhero.dev.kanuni.conditions.Condition;
+
+import org.mozkito.utilities.commons.JavaUtils;
 
 /**
  * The Class Itemization.

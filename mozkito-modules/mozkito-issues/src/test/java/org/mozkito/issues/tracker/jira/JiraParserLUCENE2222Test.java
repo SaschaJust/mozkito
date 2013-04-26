@@ -23,8 +23,6 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.SortedSet;
 
-import net.ownhero.dev.ioda.DateTimeUtils;
-import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
 
@@ -44,6 +42,8 @@ import org.mozkito.issues.model.Report;
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.persons.elements.PersonFactory;
 import org.mozkito.persons.model.Person;
+import org.mozkito.utilities.datetime.DateTimeUtils;
+import org.mozkito.utilities.io.FileUtils;
 
 /**
  * The Class JiraParserLUCENE2222Test.

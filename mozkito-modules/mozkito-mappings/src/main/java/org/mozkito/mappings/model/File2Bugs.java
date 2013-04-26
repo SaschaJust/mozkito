@@ -23,15 +23,14 @@ import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
-import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.ioda.JavaUtils;
-
 import org.mozkito.issues.model.Report;
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.DatabaseType;
 import org.mozkito.persistence.PersistenceManager;
 import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.utilities.commons.JavaUtils;
+import org.mozkito.utilities.io.FileUtils;
 import org.mozkito.versions.exceptions.NoSuchHandleException;
 import org.mozkito.versions.model.Handle;
 

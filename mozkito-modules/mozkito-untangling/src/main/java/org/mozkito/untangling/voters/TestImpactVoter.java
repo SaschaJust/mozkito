@@ -20,10 +20,10 @@ import java.io.ObjectInputStream;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 
-import org.mozkito.changeimpact.ImpactMatrix;
-import org.mozkito.clustering.MultilevelClustering;
-import org.mozkito.clustering.MultilevelClusteringScoreVisitor;
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
+import org.mozkito.utilities.changeimpact.ImpactMatrix;
+import org.mozkito.utilities.clustering.MultilevelClustering;
+import org.mozkito.utilities.clustering.MultilevelClusteringScoreVisitor;
 
 /**
  * The Class TestImpactVoter.

@@ -19,7 +19,8 @@ import java.util.Map;
 import java.util.Set;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.ioda.Tuple;
+
+import org.mozkito.utilities.datastructures.Tuple;
 
 /**
  * The Class Partition.

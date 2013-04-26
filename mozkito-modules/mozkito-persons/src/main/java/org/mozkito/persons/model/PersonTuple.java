@@ -23,10 +23,10 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
-import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.conditions.CollectionCondition;
 
 import org.mozkito.persistence.PersistentTuple;
+import org.mozkito.utilities.commons.JavaUtils;
 
 /**
  * The Class PersonTuple.

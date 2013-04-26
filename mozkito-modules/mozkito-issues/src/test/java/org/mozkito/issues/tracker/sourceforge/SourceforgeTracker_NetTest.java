@@ -20,8 +20,6 @@ import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.ownhero.dev.ioda.FileUtils;
-
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -30,6 +28,7 @@ import org.mozkito.issues.exceptions.InvalidParameterException;
 import org.mozkito.issues.model.IssueTracker;
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.persons.elements.PersonFactory;
+import org.mozkito.utilities.io.FileUtils;
 
 /**
  * The Class SourceforgeTracker_NetTest.

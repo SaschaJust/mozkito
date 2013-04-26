@@ -24,7 +24,6 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
-import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kisa.Logger;
 
@@ -33,6 +32,7 @@ import org.jdom2.Element;
 
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persistence.ModelStorage;
+import org.mozkito.utilities.commons.JavaUtils;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.model.ChangeSet;
 import org.mozkito.versions.model.Revision;

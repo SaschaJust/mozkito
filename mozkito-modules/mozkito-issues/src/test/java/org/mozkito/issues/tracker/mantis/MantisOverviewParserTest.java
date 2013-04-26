@@ -19,13 +19,12 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
-import net.ownhero.dev.ioda.FileUtils;
-
 import org.junit.Before;
 import org.junit.Test;
 
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.persons.elements.PersonFactory;
+import org.mozkito.utilities.io.FileUtils;
 
 /**
  * The Class MantisOverviewParserTest.

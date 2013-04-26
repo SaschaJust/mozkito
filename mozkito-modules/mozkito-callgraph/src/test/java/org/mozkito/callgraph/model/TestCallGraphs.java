@@ -19,14 +19,14 @@ import static org.junit.Assert.assertNull;
 import java.io.File;
 import java.io.IOException;
 
-import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import edu.uci.ics.jung.graph.DirectedSparseGraph;
+
+import org.mozkito.utilities.io.FileUtils;
+import org.mozkito.utilities.io.FileUtils.FileShutdownAction;
 
 /**
  * The Class TestCallGraphs.
@@ -247,8 +247,9 @@ public class TestCallGraphs {
 	
 	/**
 	 * Test serialize.
-	 *
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
 	public void testSerialize() throws IOException {

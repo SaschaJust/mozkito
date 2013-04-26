@@ -16,7 +16,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
@@ -41,6 +40,7 @@ import org.mozkito.mappings.storages.PersistenceStorage;
 import org.mozkito.mappings.storages.Storage;
 import org.mozkito.persistence.PPAPersistenceUtil;
 import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.utilities.commons.JavaUtils;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.model.ChangeSet;
 

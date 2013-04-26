@@ -14,12 +14,6 @@ package org.mozkito.issues.tracker.jira;
 
 import java.net.URI;
 
-import net.ownhero.dev.ioda.DateTimeUtils;
-import net.ownhero.dev.ioda.IOUtils;
-import net.ownhero.dev.ioda.Tuple;
-import net.ownhero.dev.ioda.container.RawContent;
-import net.ownhero.dev.ioda.exceptions.FetchException;
-import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.MultiMatch;
@@ -36,6 +30,12 @@ import org.mozkito.issues.model.History;
 import org.mozkito.issues.model.HistoryElement;
 import org.mozkito.persons.elements.PersonFactory;
 import org.mozkito.persons.model.Person;
+import org.mozkito.utilities.datastructures.RawContent;
+import org.mozkito.utilities.datastructures.Tuple;
+import org.mozkito.utilities.datetime.DateTimeUtils;
+import org.mozkito.utilities.io.IOUtils;
+import org.mozkito.utilities.io.exceptions.FetchException;
+import org.mozkito.utilities.io.exceptions.UnsupportedProtocolException;
 
 /**
  * The Class JiraHistoryParser.

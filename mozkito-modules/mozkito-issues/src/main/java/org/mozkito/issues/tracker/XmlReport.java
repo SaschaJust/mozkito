@@ -12,10 +12,11 @@
  **********************************************************************************************************************/
 package org.mozkito.issues.tracker;
 
-import net.ownhero.dev.ioda.container.RawContent;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 
 import org.jdom2.Document;
+
+import org.mozkito.utilities.datastructures.RawContent;
 
 /**
  * The Class XmlReport.
@@ -24,11 +25,8 @@ import org.jdom2.Document;
  */
 public class XmlReport extends RawContent {
 	
-	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = 6524458006854786132L;
-	
 	/** The document. */
-	private final Document    document;
+	private final Document document;
 	
 	/**
 	 * Instantiates a new xml report.

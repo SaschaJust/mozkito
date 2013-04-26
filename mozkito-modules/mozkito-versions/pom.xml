@@ -13,7 +13,17 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.mozkito</groupId>
-			<artifactId>mozkito-utilities</artifactId>
+			<artifactId>mozkito-diff-utilities</artifactId>
+			<version>0.4-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mozkito</groupId>
+			<artifactId>mozkito-execution-utilities</artifactId>
+			<version>0.4-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mozkito</groupId>
+			<artifactId>mozkito-datetime-utilities</artifactId>
 			<version>0.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>

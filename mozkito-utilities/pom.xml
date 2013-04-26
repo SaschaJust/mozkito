@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.mozkito</groupId>
+		<artifactId>mozkito</artifactId>
+		<version>0.4-SNAPSHOT</version>
+	</parent>
+	<artifactId>mozkito-utilities</artifactId>
+	<name>mozkito utilities [meta]</name>
+	<description>Data Mining and Analyzation for Various Repositories</description>
+	<packaging>pom</packaging>
+	<modules>
+		<module>mozkito-commons</module>
+		<module>mozkito-io</module>
+		<module>mozkito-mime</module>
+		<module>mozkito-loading</module>
+		<module>mozkito-reflections</module>
+		<module>mozkito-datetime</module>
+		<module>mozkito-execution</module>
+		<module>mozkito-diff</module>
+		<module>mozkito-datastructures</module>
+		<module>mozkito-changeimpact</module>
+		<module>mozkito-clustering</module>
+	</modules>
+	<dependencies>
+		<dependency>
+			<groupId>net.ownhero.dev</groupId>
+			<artifactId>kisa</artifactId>
+			<version>0.2-SNAPSHOT</version>
+		</dependency>
+	</dependencies>
+</project>

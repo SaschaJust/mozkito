@@ -13,7 +13,6 @@
 
 package org.mozkito.mappings.engines;
 
-import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.ClassCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
@@ -39,6 +38,7 @@ import org.mozkito.mappings.requirements.Atom;
 import org.mozkito.mappings.requirements.Expression;
 import org.mozkito.mappings.requirements.Index;
 import org.mozkito.persistence.model.EnumTuple;
+import org.mozkito.utilities.datastructures.Tuple;
 
 /**
  * The Class TimestampEngine.

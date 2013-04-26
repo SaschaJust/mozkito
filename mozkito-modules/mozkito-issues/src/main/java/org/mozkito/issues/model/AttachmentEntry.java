@@ -30,7 +30,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
-import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 
 import org.joda.time.DateTime;
@@ -38,6 +37,7 @@ import org.joda.time.DateTime;
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persons.model.Person;
 import org.mozkito.persons.model.PersonContainer;
+import org.mozkito.utilities.commons.JavaUtils;
 
 /**
  * The Class AttachmentEntry.
@@ -104,11 +104,25 @@ public class AttachmentEntry implements Annotated {
 		return getPersonContainer().get("author");
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.persistence.Annotated#getHandle()
+	 */
+	/**
+	 * Gets the class name.
+	 * 
+	 * @return the class name
+	 */
+	public final String getClassName() {
+		return JavaUtils.getHandle(AttachmentEntry.class);
+	}
+	
 	/**
 	 * Gets the delta ts.
 	 * 
 	 * @return the deltaTS
 	 */
+	@Transient
 	public DateTime getDeltaTS() {
 		return this.deltaTS;
 	}
@@ -134,14 +148,6 @@ public class AttachmentEntry implements Annotated {
 		return this.filename;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.persistence.Annotated#getHandle()
-	 */
-	public final String getClassName() {
-		return JavaUtils.getHandle(AttachmentEntry.class);
-	}
-	
 	/**
 	 * Gets the id.
 	 * 
@@ -150,6 +156,19 @@ public class AttachmentEntry implements Annotated {
 	@Id
 	public String getId() {
 		return this.id;
+	}
+	
+	/**
+	 * Gets the java delta ts.
+	 * 
+	 * @return the java delta ts
+	 */
+	@Column (name = "deltats")
+	@Temporal (TemporalType.TIMESTAMP)
+	public Date getJavaDeltaTS() {
+		return getDeltaTS() != null
+		                           ? getDeltaTS().toDate()
+		                           : null;
 	}
 	
 	/**
@@ -264,6 +283,16 @@ public class AttachmentEntry implements Annotated {
 	 */
 	public void setId(final String id) {
 		this.id = id;
+	}
+	
+	/**
+	 * Sets the java delta ts.
+	 * 
+	 * @param deltaTS
+	 *            the new java delta ts
+	 */
+	public final void setJavaDeltaTS(final Date deltaTS) {
+		setDeltaTS(new DateTime(deltaTS));
 	}
 	
 	/**

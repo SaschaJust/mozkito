@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import net.ownhero.dev.ioda.DateTimeUtils;
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 import net.ownhero.dev.regex.Match;
 
@@ -34,6 +33,7 @@ import difflib.Delta;
 
 import org.mozkito.testing.VersionsTest;
 import org.mozkito.testing.annotation.RepositorySetting;
+import org.mozkito.utilities.datetime.DateTimeUtils;
 import org.mozkito.versions.RepositoryType;
 import org.mozkito.versions.elements.AnnotationEntry;
 import org.mozkito.versions.elements.ChangeType;

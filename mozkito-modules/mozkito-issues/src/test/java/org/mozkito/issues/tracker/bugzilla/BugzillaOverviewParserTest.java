@@ -20,12 +20,12 @@ import java.net.URI;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.Logger;
 
 import org.junit.Test;
 
 import org.mozkito.issues.tracker.ReportLink;
+import org.mozkito.utilities.io.FileUtils;
 
 // TODO: Auto-generated Javadoc
 /**

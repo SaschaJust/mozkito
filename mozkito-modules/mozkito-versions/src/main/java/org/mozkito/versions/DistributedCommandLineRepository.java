@@ -16,12 +16,12 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.string.MinLength;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.mozkito.persons.elements.PersonFactory;
+import org.mozkito.utilities.datastructures.Tuple;
 import org.mozkito.versions.elements.LogEntry;
 import org.mozkito.versions.exceptions.RepositoryOperationException;
 

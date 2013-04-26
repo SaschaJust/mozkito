@@ -25,8 +25,6 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-import net.ownhero.dev.ioda.DateTimeUtils;
-import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
@@ -37,6 +35,8 @@ import org.joda.time.format.DateTimeFormatter;
 
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.codeanalysis.model.JavaElement;
+import org.mozkito.utilities.datetime.DateTimeUtils;
+import org.mozkito.utilities.io.FileUtils;
 import org.mozkito.versions.exceptions.NoSuchHandleException;
 import org.mozkito.versions.model.ChangeSet;
 import org.mozkito.versions.model.Revision;
@@ -137,6 +137,79 @@ public class PPAPersistenceUtil {
 	}
 	
 	/**
+	 * Gets the transactions that changed the specified JavaElement.
+	 * 
+	 * @param persistenceUtil
+	 *            the persistence util
+	 * @param element
+	 *            the element
+	 * @return the transactions changing element. The collection is empty if no such transactions exist.
+	 */
+	@SuppressWarnings ("unchecked")
+	@NoneNull
+	public static List<ChangeSet> getChangeSetChangingElement(@NotNull final PersistenceUtil persistenceUtil,
+	                                                          @NotNull final JavaElement element) {
+		updateProcedures(persistenceUtil);
+		final List<ChangeSet> result = new LinkedList<ChangeSet>();
+		final StringBuilder query = new StringBuilder();
+		query.append("select * from elementChanges(");
+		query.append(element.getGeneratedId());
+		query.append(");");
+		final Query nativeQuery = persistenceUtil.createNativeQuery(query.toString(), ChangeSet.class);
+		if (nativeQuery != null) {
+			result.addAll(nativeQuery.getResultList());
+		} else {
+			if (Logger.logError()) {
+				Logger.error("Could not create native query: " + query.toString());
+			}
+		}
+		return result;
+	}
+	
+	/**
+	 * Gets the collection of transactions changing element the given JavaElement within the given time window.
+	 * 
+	 * @param persistenceUtil
+	 *            the persistence util
+	 * @param element
+	 *            the element
+	 * @param before
+	 *            the before
+	 * @param after
+	 *            the after
+	 * @return the transactions changing element. The collection is empty if no such transactions exist.
+	 */
+	@SuppressWarnings ("unchecked")
+	@NoneNull
+	public static List<ChangeSet> getChangeSetChangingElement(@NotNull final PersistenceUtil persistenceUtil,
+	                                                          @NotNull final JavaElement element,
+	                                                          @NotNull final DateTime before,
+	                                                          @NotNull final DateTime after) {
+		updateProcedures(persistenceUtil);
+		final List<ChangeSet> result = new LinkedList<ChangeSet>();
+		final DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+		
+		final StringBuilder query = new StringBuilder();
+		query.append("select * from elementChangesBetween(");
+		query.append(element.getGeneratedId());
+		query.append(",'");
+		query.append(formatter.print(before));
+		query.append("','");
+		query.append(formatter.print(after));
+		query.append("');");
+		final Query nativeQuery = persistenceUtil.createNativeQuery(query.toString(), ChangeSet.class);
+		if (nativeQuery != null) {
+			result.addAll(nativeQuery.getResultList());
+		} else {
+			if (Logger.logError()) {
+				Logger.error("Could not create native query: " + query.toString());
+			}
+		}
+		return result;
+		
+	}
+	
+	/**
 	 * Gets the first timestamp changing element.
 	 * 
 	 * @param persistenceUtil
@@ -221,79 +294,6 @@ public class PPAPersistenceUtil {
 			return null;
 		}
 		return elements.get(0);
-	}
-	
-	/**
-	 * Gets the transactions that changed the specified JavaElement.
-	 * 
-	 * @param persistenceUtil
-	 *            the persistence util
-	 * @param element
-	 *            the element
-	 * @return the transactions changing element. The collection is empty if no such transactions exist.
-	 */
-	@SuppressWarnings ("unchecked")
-	@NoneNull
-	public static List<ChangeSet> getChangeSetChangingElement(@NotNull final PersistenceUtil persistenceUtil,
-	                                                             @NotNull final JavaElement element) {
-		updateProcedures(persistenceUtil);
-		final List<ChangeSet> result = new LinkedList<ChangeSet>();
-		final StringBuilder query = new StringBuilder();
-		query.append("select * from elementChanges(");
-		query.append(element.getGeneratedId());
-		query.append(");");
-		final Query nativeQuery = persistenceUtil.createNativeQuery(query.toString(), ChangeSet.class);
-		if (nativeQuery != null) {
-			result.addAll(nativeQuery.getResultList());
-		} else {
-			if (Logger.logError()) {
-				Logger.error("Could not create native query: " + query.toString());
-			}
-		}
-		return result;
-	}
-	
-	/**
-	 * Gets the collection of transactions changing element the given JavaElement within the given time window.
-	 * 
-	 * @param persistenceUtil
-	 *            the persistence util
-	 * @param element
-	 *            the element
-	 * @param before
-	 *            the before
-	 * @param after
-	 *            the after
-	 * @return the transactions changing element. The collection is empty if no such transactions exist.
-	 */
-	@SuppressWarnings ("unchecked")
-	@NoneNull
-	public static List<ChangeSet> getChangeSetChangingElement(@NotNull final PersistenceUtil persistenceUtil,
-	                                                             @NotNull final JavaElement element,
-	                                                             @NotNull final DateTime before,
-	                                                             @NotNull final DateTime after) {
-		updateProcedures(persistenceUtil);
-		final List<ChangeSet> result = new LinkedList<ChangeSet>();
-		final DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-		
-		final StringBuilder query = new StringBuilder();
-		query.append("select * from elementChangesBetween(");
-		query.append(element.getGeneratedId());
-		query.append(",'");
-		query.append(formatter.print(before));
-		query.append("','");
-		query.append(formatter.print(after));
-		query.append("');");
-		final Query nativeQuery = persistenceUtil.createNativeQuery(query.toString(), ChangeSet.class);
-		if (nativeQuery != null) {
-			result.addAll(nativeQuery.getResultList());
-		} else {
-			if (Logger.logError()) {
-				Logger.error("Could not create native query: " + query.toString());
-			}
-		}
-		return result;
-		
 	}
 	
 	/**

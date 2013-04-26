@@ -26,8 +26,6 @@ import java.util.Set;
 import net.ownhero.dev.andama.exceptions.ClassLoadingError;
 import net.ownhero.dev.andama.exceptions.NoSuchConstructorError;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.ioda.ClassFinder;
-import net.ownhero.dev.ioda.exceptions.WrongClassSearchMethodException;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
@@ -35,6 +33,8 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.persons.elements.PersonFactory;
+import org.mozkito.utilities.loading.classpath.ClassFinder;
+import org.mozkito.utilities.loading.classpath.exceptions.WrongClassSearchMethodException;
 import org.mozkito.versions.concurrent.ConcurrentRepository;
 import org.mozkito.versions.exceptions.UnregisteredRepositoryTypeException;
 

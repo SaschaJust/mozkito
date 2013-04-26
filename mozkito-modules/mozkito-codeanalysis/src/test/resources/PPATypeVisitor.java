@@ -42,7 +42,6 @@ import org.mozkito.ppa.model.JavaClassDefinition;
 import org.mozkito.ppa.model.JavaMethodDefinition;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.Logger;
-import net.ownhero.dev.ioda.specification.NoneNull;
 
 /**
  * The Class PPATypeVisitor.
@@ -77,7 +76,6 @@ public class PPATypeVisitor extends ASTVisitor {
 	 * @throws CompilationUnitException
 	 *             the compilation unit exception
 	 */
-	@NoneNull
 	public PPATypeVisitor(final CompilationUnit cu, final File file, final String filePathPrefix,
 			final String[] packageFilter, final Set<PPAVisitor> visitors) throws CompilationUnitException {
 		this.packageFilter = packageFilter;

@@ -12,7 +12,7 @@
  **********************************************************************************************************************/
 package org.mozkito.untangling.voters;
 
-import org.mozkito.clustering.MultilevelClusteringScoreVisitor;
+import org.mozkito.utilities.clustering.MultilevelClusteringScoreVisitor;
 import org.mozkito.versions.model.ChangeSet;
 
 /**

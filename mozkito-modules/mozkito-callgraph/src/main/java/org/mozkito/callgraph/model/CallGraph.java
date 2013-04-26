@@ -26,13 +26,14 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.Logger;
 import edu.uci.ics.jung.graph.AbstractGraph;
 import edu.uci.ics.jung.graph.DirectedGraph;
 import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.util.EdgeType;
 import edu.uci.ics.jung.graph.util.Pair;
+
+import org.mozkito.utilities.io.FileUtils;
 
 /**
  * The Class MinerCallGraph.

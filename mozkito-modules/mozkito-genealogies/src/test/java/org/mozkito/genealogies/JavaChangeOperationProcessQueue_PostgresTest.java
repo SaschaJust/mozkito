@@ -21,9 +21,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
-import net.ownhero.dev.ioda.exceptions.FilePermissionException;
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 
 import org.junit.Test;
@@ -38,6 +35,9 @@ import org.mozkito.persistence.ConnectOptions;
 import org.mozkito.persistence.DatabaseType;
 import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
+import org.mozkito.utilities.io.FileUtils;
+import org.mozkito.utilities.io.FileUtils.FileShutdownAction;
+import org.mozkito.utilities.io.exceptions.FilePermissionException;
 
 /**
  * The Class JavaChangeOperationProcessQueue_PersistenceTest.

@@ -28,7 +28,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
@@ -40,6 +39,7 @@ import org.apache.openjpa.persistence.jdbc.Index;
 
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persons.elements.PersonFactory;
+import org.mozkito.utilities.commons.JavaUtils;
 
 /**
  * The Class Person.

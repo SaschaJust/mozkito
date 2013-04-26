@@ -18,11 +18,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import net.ownhero.dev.ioda.JavaUtils;
-
 import org.apache.commons.collections.CollectionUtils;
 
 import org.mozkito.mappings.mappable.model.MappableEntity;
+import org.mozkito.utilities.commons.JavaUtils;
 
 /**
  * The any expression evaluates to true if any of the inner expressions evaluate to true. Evaluates to false otherwise.

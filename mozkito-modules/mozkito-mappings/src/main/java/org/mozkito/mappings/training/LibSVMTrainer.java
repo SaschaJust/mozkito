@@ -29,13 +29,13 @@ import libsvm.svm_parameter;
 import libsvm.svm_problem;
 import au.com.bytecode.opencsv.CSVReader;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.ioda.JavaUtils;
-import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.conditions.FileCondition;
 import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.strategies.SVMStrategy;
+import org.mozkito.utilities.commons.JavaUtils;
+import org.mozkito.utilities.datastructures.Tuple;
 
 /**
  * The Class LibSVMTrainer.

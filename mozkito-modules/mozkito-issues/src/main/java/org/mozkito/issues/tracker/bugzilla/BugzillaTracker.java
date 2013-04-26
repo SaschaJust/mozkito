@@ -19,7 +19,6 @@ import java.util.Collection;
 import java.util.Set;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.ioda.ClassFinder;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
 
@@ -29,6 +28,7 @@ import org.mozkito.issues.tracker.Parser;
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.issues.tracker.Tracker;
 import org.mozkito.persons.elements.PersonFactory;
+import org.mozkito.utilities.loading.classpath.ClassFinder;
 
 /**
  * The Class BugzillaTracker.

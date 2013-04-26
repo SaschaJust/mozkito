@@ -26,10 +26,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
-import net.ownhero.dev.ioda.IOUtils;
-import net.ownhero.dev.ioda.JavaUtils;
-import net.ownhero.dev.ioda.exceptions.FetchException;
-import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
 import net.ownhero.dev.kisa.Logger;
 import net.sf.jmimemagic.Magic;
 import net.sf.jmimemagic.MagicException;
@@ -53,6 +49,10 @@ import org.mozkito.infozilla.exceptions.MIMETypeDeterminationException;
 import org.mozkito.infozilla.model.Attachable;
 import org.mozkito.issues.model.AttachmentEntry;
 import org.mozkito.persistence.Annotated;
+import org.mozkito.utilities.commons.JavaUtils;
+import org.mozkito.utilities.io.IOUtils;
+import org.mozkito.utilities.io.exceptions.FetchException;
+import org.mozkito.utilities.io.exceptions.UnsupportedProtocolException;
 
 /**
  * The Class Attachment.

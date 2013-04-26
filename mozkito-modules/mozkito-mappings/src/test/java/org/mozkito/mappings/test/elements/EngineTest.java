@@ -20,8 +20,6 @@ import static org.junit.Assert.fail;
 import java.io.IOException;
 import java.lang.reflect.Method;
 
-import net.ownhero.dev.ioda.Tuple;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -33,6 +31,7 @@ import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.model.Candidate;
 import org.mozkito.mappings.model.Relation;
+import org.mozkito.utilities.datastructures.Tuple;
 
 /**
  * The Class EngineTest.

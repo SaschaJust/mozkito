@@ -17,12 +17,11 @@ package org.mozkito.persons.engine;
 
 import java.util.List;
 
-import net.ownhero.dev.ioda.JavaUtils;
-
 import org.mozkito.persons.elements.PersonBucket;
 import org.mozkito.persons.model.Person;
 import org.mozkito.persons.model.PersonContainer;
 import org.mozkito.persons.processing.PersonManager;
+import org.mozkito.utilities.commons.JavaUtils;
 
 /**
  * The Class MergingEngine.

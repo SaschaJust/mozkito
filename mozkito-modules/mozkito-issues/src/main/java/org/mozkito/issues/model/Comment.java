@@ -31,8 +31,6 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
-import net.ownhero.dev.ioda.JavaUtils;
-import net.ownhero.dev.ioda.StringUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.Positive;
 
@@ -42,6 +40,8 @@ import org.mozkito.issues.elements.TextElement;
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persons.model.Person;
 import org.mozkito.persons.model.PersonContainer;
+import org.mozkito.utilities.commons.JavaUtils;
+import org.mozkito.utilities.commons.StringUtils;
 
 /**
  * The Class Comment.

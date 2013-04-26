@@ -24,7 +24,6 @@ import javax.persistence.IdClass;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
-import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.mozkito.mappings.elements.CandidateId;
@@ -33,6 +32,7 @@ import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.selectors.Selector;
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.utilities.datastructures.Tuple;
 
 /**
  * This class represents a potential mapping pair and thus encapsulates to {@link MappableEntity}s. {@link Candidate}s

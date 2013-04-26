@@ -20,10 +20,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import net.ownhero.dev.ioda.IOUtils;
-import net.ownhero.dev.ioda.container.RawContent;
-import net.ownhero.dev.ioda.exceptions.FetchException;
-import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
 
@@ -39,6 +35,10 @@ import org.mozkito.issues.tracker.Parser;
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.issues.tracker.Tracker;
 import org.mozkito.persons.elements.PersonFactory;
+import org.mozkito.utilities.datastructures.RawContent;
+import org.mozkito.utilities.io.IOUtils;
+import org.mozkito.utilities.io.exceptions.FetchException;
+import org.mozkito.utilities.io.exceptions.UnsupportedProtocolException;
 
 /**
  * The Class JiraTracker.

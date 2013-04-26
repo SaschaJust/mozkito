@@ -24,10 +24,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 
-import net.ownhero.dev.ioda.DateTimeUtils;
-import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.ioda.IOUtils;
-import net.ownhero.dev.ioda.container.RawContent;
 import net.ownhero.dev.regex.Match;
 import net.ownhero.dev.regex.MultiMatch;
 import net.ownhero.dev.regex.Regex;
@@ -49,6 +45,10 @@ import org.mozkito.issues.model.Report;
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.persons.elements.PersonFactory;
 import org.mozkito.persons.model.PersonTuple;
+import org.mozkito.utilities.datastructures.RawContent;
+import org.mozkito.utilities.datetime.DateTimeUtils;
+import org.mozkito.utilities.io.FileUtils;
+import org.mozkito.utilities.io.IOUtils;
 
 /**
  * The Class MantisParserTest.

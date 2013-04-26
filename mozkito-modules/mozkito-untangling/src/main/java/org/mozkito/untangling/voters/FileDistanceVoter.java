@@ -17,8 +17,8 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 
-import org.mozkito.clustering.MultilevelClusteringScoreVisitor;
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
+import org.mozkito.utilities.clustering.MultilevelClusteringScoreVisitor;
 
 /**
  * The Class CallGraphHandler.

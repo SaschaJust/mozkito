@@ -29,8 +29,6 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import jregex.REFlags;
-import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
 import net.ownhero.dev.kanuni.annotations.simple.NotNegative;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
@@ -45,6 +43,9 @@ import net.ownhero.dev.regex.Regex;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.ArrayUtils;
+
+import org.mozkito.utilities.commons.JavaUtils;
+import org.mozkito.utilities.io.FileUtils;
 
 /**
  * The Class Enumeration.

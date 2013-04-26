@@ -38,7 +38,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
-import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kisa.Logger;
@@ -50,6 +49,7 @@ import org.joda.time.DateTime;
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persons.model.Person;
 import org.mozkito.persons.model.PersonContainer;
+import org.mozkito.utilities.commons.JavaUtils;
 import org.mozkito.versions.exceptions.NoSuchHandleException;
 
 /**

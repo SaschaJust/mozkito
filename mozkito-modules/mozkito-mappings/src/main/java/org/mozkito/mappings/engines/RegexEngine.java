@@ -22,7 +22,6 @@ import java.util.regex.Pattern;
 
 import au.com.bytecode.opencsv.CSVReader;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
@@ -42,6 +41,7 @@ import org.mozkito.mappings.requirements.And;
 import org.mozkito.mappings.requirements.Atom;
 import org.mozkito.mappings.requirements.Expression;
 import org.mozkito.mappings.requirements.Index;
+import org.mozkito.utilities.commons.JavaUtils;
 
 import serp.util.Strings;
 

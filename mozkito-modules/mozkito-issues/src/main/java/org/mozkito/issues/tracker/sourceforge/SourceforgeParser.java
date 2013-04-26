@@ -24,13 +24,6 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import net.ownhero.dev.ioda.DateTimeUtils;
-import net.ownhero.dev.ioda.IOUtils;
-import net.ownhero.dev.ioda.MimeUtils;
-import net.ownhero.dev.ioda.container.RawContent;
-import net.ownhero.dev.ioda.exceptions.FetchException;
-import net.ownhero.dev.ioda.exceptions.MIMETypeDeterminationException;
-import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
@@ -62,6 +55,13 @@ import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.issues.tracker.Tracker;
 import org.mozkito.persons.elements.PersonFactory;
 import org.mozkito.persons.model.Person;
+import org.mozkito.utilities.datastructures.RawContent;
+import org.mozkito.utilities.datetime.DateTimeUtils;
+import org.mozkito.utilities.io.IOUtils;
+import org.mozkito.utilities.io.exceptions.FetchException;
+import org.mozkito.utilities.io.exceptions.UnsupportedProtocolException;
+import org.mozkito.utilities.mime.MimeUtils;
+import org.mozkito.utilities.mime.exceptions.MIMETypeDeterminationException;
 
 /**
  * The Class SourceForgeParser.

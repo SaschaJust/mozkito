@@ -20,7 +20,6 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
-import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
@@ -28,6 +27,7 @@ import net.ownhero.dev.kisa.Logger;
 import org.jdom2.Element;
 
 import org.mozkito.persistence.Annotated;
+import org.mozkito.utilities.commons.JavaUtils;
 
 /**
  * The Class JavaMethodCall.
@@ -198,7 +198,8 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 		
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.codeanalysis.model.JavaElement#equals(java.lang.Object)
 	 */
 	@Override
@@ -310,7 +311,8 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 		return thisElement;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.codeanalysis.model.JavaElement#hashCode()
 	 */
 	@Override

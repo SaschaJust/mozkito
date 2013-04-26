@@ -23,11 +23,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 
-import net.ownhero.dev.ioda.DateTimeUtils;
-import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.ioda.IOUtils;
-import net.ownhero.dev.ioda.container.RawContent;
-
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,6 +39,10 @@ import org.mozkito.issues.model.Report;
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.issues.tracker.XmlReport;
 import org.mozkito.persons.elements.PersonFactory;
+import org.mozkito.utilities.datastructures.RawContent;
+import org.mozkito.utilities.datetime.DateTimeUtils;
+import org.mozkito.utilities.io.FileUtils;
+import org.mozkito.utilities.io.IOUtils;
 
 /**
  * The Class BugzillaParser_4_0_4_Test.

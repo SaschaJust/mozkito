@@ -30,13 +30,13 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Transient;
 
-import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.apache.commons.collections.CollectionUtils;
 
 import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.persistence.Annotated;
+import org.mozkito.utilities.io.FileUtils;
 
 /**
  * Superclass that is used to wrap around classes that shall be mapped. Since inheritance based annotations do not work

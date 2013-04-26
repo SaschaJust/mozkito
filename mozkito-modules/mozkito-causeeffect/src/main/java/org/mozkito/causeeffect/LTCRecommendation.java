@@ -19,12 +19,12 @@ import java.util.Queue;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 
 import org.joda.time.DateTime;
 
 import org.mozkito.causeeffect.ctl.CTLFormula;
+import org.mozkito.utilities.datastructures.Tuple;
 import org.mozkito.versions.model.ChangeSet;
 import org.mozkito.versions.model.Handle;
 
@@ -168,8 +168,7 @@ public class LTCRecommendation {
 		}
 		
 		if (!property.equals(ChangeProperty.NONE)) {
-			this.support.get(property).add(new Tuple<String, DateTime>(changeSet.getId(),
-			                                                           changeSet.getTimestamp()));
+			this.support.get(property).add(new Tuple<String, DateTime>(changeSet.getId(), changeSet.getTimestamp()));
 			supportEntry = this.support.get(property).peek();
 			while ((supportEntry != null) && supportEntry.getSecond().isBefore(expiry)) {
 				supportEntry = this.support.get(property).poll();

@@ -26,9 +26,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.ioda.JavaUtils;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -37,6 +34,8 @@ import org.junit.Test;
 
 import org.mozkito.mappings.utils.Enumeration;
 import org.mozkito.mappings.utils.EnumerationEntry;
+import org.mozkito.utilities.commons.JavaUtils;
+import org.mozkito.utilities.io.FileUtils;
 
 /**
  * The Class EnumerationTest.

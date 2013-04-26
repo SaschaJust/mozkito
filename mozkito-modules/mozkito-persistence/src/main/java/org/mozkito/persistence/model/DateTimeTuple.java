@@ -21,12 +21,12 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
-import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 
 import org.joda.time.DateTime;
 
 import org.mozkito.persistence.PersistentTuple;
+import org.mozkito.utilities.commons.JavaUtils;
 
 /**
  * The Class DateTimeTuple.

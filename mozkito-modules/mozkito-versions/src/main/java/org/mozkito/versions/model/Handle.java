@@ -33,9 +33,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import net.ownhero.dev.ioda.JavaUtils;
-
 import org.mozkito.persistence.Annotated;
+import org.mozkito.utilities.commons.JavaUtils;
 import org.mozkito.versions.elements.RevDependencyGraph;
 import org.mozkito.versions.exceptions.NoSuchHandleException;
 

@@ -29,7 +29,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Transient;
 
-import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 
@@ -37,9 +36,11 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
+
 import org.mozkito.issues.model.comparators.HistoryElementComparator;
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persons.model.Person;
+import org.mozkito.utilities.commons.JavaUtils;
 
 /**
  * The Class History.

@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
+
 import org.mozkito.issues.model.HistoryElement;
 import org.mozkito.issues.model.IssueTracker;
 import org.mozkito.issues.model.Report;

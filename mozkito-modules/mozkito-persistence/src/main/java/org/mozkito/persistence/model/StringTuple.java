@@ -17,10 +17,10 @@ import javax.persistence.Embeddable;
 import javax.persistence.Lob;
 import javax.persistence.Transient;
 
-import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 
 import org.mozkito.persistence.PersistentTuple;
+import org.mozkito.utilities.commons.JavaUtils;
 
 /**
  * The Class StringTuple.

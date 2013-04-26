@@ -16,7 +16,6 @@ package org.mozkito.testing;
 import java.lang.annotation.Annotation;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 import net.ownhero.dev.kisa.Logger;
@@ -30,6 +29,7 @@ import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.testing.annotation.DatabaseSettings;
 import org.mozkito.testing.annotation.EnvironmentProcessor;
 import org.mozkito.testing.annotation.processors.DatabaseSettingsProcessor;
+import org.mozkito.utilities.commons.JavaUtils;
 
 /**
  * The Class TestZweiPunktNull.

@@ -20,8 +20,6 @@ import java.net.URI;
 import java.util.Iterator;
 import java.util.SortedSet;
 
-import net.ownhero.dev.ioda.DateTimeUtils;
-import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.Logger;
 
 import org.joda.time.DateTime;
@@ -34,6 +32,8 @@ import org.mozkito.issues.model.IssueTracker;
 import org.mozkito.issues.model.Report;
 import org.mozkito.persons.elements.PersonFactory;
 import org.mozkito.persons.model.Person;
+import org.mozkito.utilities.datetime.DateTimeUtils;
+import org.mozkito.utilities.io.FileUtils;
 
 // TODO: Auto-generated Javadoc
 /**

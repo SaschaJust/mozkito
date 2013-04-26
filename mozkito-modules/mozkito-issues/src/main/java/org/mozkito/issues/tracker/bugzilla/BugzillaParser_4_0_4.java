@@ -23,7 +23,6 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import net.ownhero.dev.ioda.DateTimeUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
@@ -51,6 +50,7 @@ import org.mozkito.issues.model.History;
 import org.mozkito.issues.tracker.XmlReport;
 import org.mozkito.persons.elements.PersonFactory;
 import org.mozkito.persons.model.Person;
+import org.mozkito.utilities.datetime.DateTimeUtils;
 
 /**
  * The Class BugzillaParser.

@@ -17,8 +17,8 @@ import java.util.List;
 
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 
-import org.mozkito.clustering.MultilevelClustering;
-import org.mozkito.clustering.ScoreAggregation;
+import org.mozkito.utilities.clustering.MultilevelClustering;
+import org.mozkito.utilities.clustering.ScoreAggregation;
 
 /**
  * The Class VarSumAggregation.

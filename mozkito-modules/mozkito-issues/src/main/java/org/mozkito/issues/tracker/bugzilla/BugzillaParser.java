@@ -22,8 +22,6 @@ import java.util.Set;
 
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
-import net.ownhero.dev.ioda.IOUtils;
-import net.ownhero.dev.ioda.container.RawContent;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
@@ -52,6 +50,8 @@ import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.issues.tracker.Tracker;
 import org.mozkito.issues.tracker.XmlReport;
 import org.mozkito.persons.elements.PersonFactory;
+import org.mozkito.utilities.datastructures.RawContent;
+import org.mozkito.utilities.io.IOUtils;
 
 /**
  * The Class BugzillaParser.

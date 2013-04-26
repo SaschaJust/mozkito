@@ -17,11 +17,10 @@ import static org.junit.Assert.assertEquals;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.ownhero.dev.ioda.FileUtils;
-
 import org.junit.Test;
 
 import org.mozkito.untangling.utils.CollectionUtils;
+import org.mozkito.utilities.io.FileUtils;
 
 /**
  * The Class ArtificialBlobGeneratorTest.

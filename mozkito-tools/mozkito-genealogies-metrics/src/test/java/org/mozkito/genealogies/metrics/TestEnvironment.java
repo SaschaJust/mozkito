@@ -16,14 +16,14 @@ package org.mozkito.genealogies.metrics;
 import java.io.File;
 import java.io.IOException;
 
-import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import net.ownhero.dev.kisa.LogLevel;
 import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.genealogies.core.CoreChangeGenealogy;
 import org.mozkito.genealogies.core.GenealogyEdgeType;
 import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.utilities.io.FileUtils;
+import org.mozkito.utilities.io.FileUtils.FileShutdownAction;
 
 /**
  * The Class TestEnvironment.
@@ -55,8 +55,9 @@ public class TestEnvironment {
 	
 	/**
 	 * Setup.
-	 *
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	public static void setup() throws IOException {
 		

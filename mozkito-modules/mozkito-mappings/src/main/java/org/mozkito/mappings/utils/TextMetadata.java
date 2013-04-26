@@ -40,11 +40,12 @@ import cc.mallet.types.Instance;
 import cc.mallet.types.InstanceList;
 import cc.mallet.types.LabelSequence;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
-import net.ownhero.dev.ioda.IOUtils;
-import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kisa.Logger;
+
+import org.mozkito.utilities.commons.JavaUtils;
+import org.mozkito.utilities.io.FileUtils;
+import org.mozkito.utilities.io.FileUtils.FileShutdownAction;
+import org.mozkito.utilities.io.IOUtils;
 
 /**
  * The Class TextMetadata.
@@ -147,9 +148,11 @@ public class TextMetadata {
 	
 	/**
 	 * The main method.
-	 *
-	 * @param args the arguments
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * 
+	 * @param args
+	 *            the arguments
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	public static void main(final String[] args) throws IOException {
 		final ArrayList<String> strings = new ArrayList<>(3);

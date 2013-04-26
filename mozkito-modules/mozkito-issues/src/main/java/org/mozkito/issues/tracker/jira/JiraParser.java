@@ -30,14 +30,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
-import net.ownhero.dev.ioda.DateTimeUtils;
-import net.ownhero.dev.ioda.IOUtils;
-import net.ownhero.dev.ioda.MimeUtils;
-import net.ownhero.dev.ioda.ProxyConfig;
-import net.ownhero.dev.ioda.container.RawContent;
-import net.ownhero.dev.ioda.exceptions.FetchException;
-import net.ownhero.dev.ioda.exceptions.MIMETypeDeterminationException;
-import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.MultiMatch;
@@ -70,6 +62,13 @@ import org.mozkito.issues.tracker.Tracker;
 import org.mozkito.issues.tracker.XmlReport;
 import org.mozkito.persons.elements.PersonFactory;
 import org.mozkito.persons.model.Person;
+import org.mozkito.utilities.datastructures.RawContent;
+import org.mozkito.utilities.datetime.DateTimeUtils;
+import org.mozkito.utilities.io.IOUtils;
+import org.mozkito.utilities.io.exceptions.FetchException;
+import org.mozkito.utilities.io.exceptions.UnsupportedProtocolException;
+import org.mozkito.utilities.mime.MimeUtils;
+import org.mozkito.utilities.mime.exceptions.MIMETypeDeterminationException;
 
 /**
  * The Class JiraParser.
@@ -204,9 +203,6 @@ public class JiraParser implements Parser {
 	
 	/** The md5. */
 	private byte[]             md5;
-	
-	/** The proxy config. */
-	private ProxyConfig        proxyConfig       = null;
 	
 	/** The report. */
 	private XmlReport          xmlReport;
@@ -972,11 +968,7 @@ public class JiraParser implements Parser {
 			final URI uri = reportLink.getUri();
 			this.issueId = reportLink.getBugId();
 			RawContent rawContent = null;
-			if (this.proxyConfig == null) {
-				rawContent = IOUtils.fetch(uri);
-			} else {
-				rawContent = IOUtils.fetch(uri, this.proxyConfig);
-			}
+			rawContent = IOUtils.fetch(uri);
 			
 			if (rawContent.getContent().trim().isEmpty()) {
 				return null;
@@ -1007,22 +999,6 @@ public class JiraParser implements Parser {
 				Logger.error(e);
 			}
 			return null;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/**
-	 * Sets the proxy config.
-	 * 
-	 * @param proxyConfig
-	 *            the new proxy config
-	 */
-	public void setProxyConfig(final ProxyConfig proxyConfig) {
-		// PRECONDITIONS
-		
-		try {
-			this.proxyConfig = proxyConfig;
 		} finally {
 			// POSTCONDITIONS
 		}

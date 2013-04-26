@@ -23,8 +23,6 @@ import java.util.Set;
 
 import cc.mallet.util.Strings;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
@@ -50,6 +48,8 @@ import org.mozkito.mappings.requirements.Expression;
 import org.mozkito.mappings.requirements.Index;
 import org.mozkito.mappings.storages.RepositoryStorage;
 import org.mozkito.mappings.storages.Storage;
+import org.mozkito.utilities.commons.JavaUtils;
+import org.mozkito.utilities.io.FileUtils;
 import org.mozkito.versions.Repository;
 import org.mozkito.versions.exceptions.NoSuchHandleException;
 import org.mozkito.versions.exceptions.RepositoryOperationException;

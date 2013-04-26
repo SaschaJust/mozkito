@@ -25,7 +25,6 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
-import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNegative;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
@@ -38,6 +37,7 @@ import org.jdom2.Attribute;
 import org.jdom2.Element;
 
 import org.mozkito.persistence.Annotated;
+import org.mozkito.utilities.commons.JavaUtils;
 
 /**
  * The Class JavaElementLocation.

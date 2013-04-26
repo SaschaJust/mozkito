@@ -20,10 +20,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
-import net.ownhero.dev.ioda.DateTimeUtils;
-import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.ioda.IOUtils;
-import net.ownhero.dev.ioda.container.RawContent;
 import net.ownhero.dev.kisa.Logger;
 
 import org.junit.Before;
@@ -33,6 +29,10 @@ import org.mozkito.issues.model.AttachmentEntry;
 import org.mozkito.issues.model.IssueTracker;
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.persons.elements.PersonFactory;
+import org.mozkito.utilities.datastructures.RawContent;
+import org.mozkito.utilities.datetime.DateTimeUtils;
+import org.mozkito.utilities.io.FileUtils;
+import org.mozkito.utilities.io.IOUtils;
 
 /**
  * The Class MantisParser_NetTest.

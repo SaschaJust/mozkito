@@ -21,8 +21,8 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 
-import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.mappable.model.MappableChangeSet;
+import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;

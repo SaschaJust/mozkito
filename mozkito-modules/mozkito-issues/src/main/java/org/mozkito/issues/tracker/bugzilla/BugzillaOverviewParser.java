@@ -18,10 +18,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.ioda.IOUtils;
-import net.ownhero.dev.ioda.container.RawContent;
-import net.ownhero.dev.ioda.exceptions.FetchException;
-import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
@@ -33,6 +29,10 @@ import org.jsoup.select.Elements;
 
 import org.mozkito.issues.tracker.OverviewParser;
 import org.mozkito.issues.tracker.ReportLink;
+import org.mozkito.utilities.datastructures.RawContent;
+import org.mozkito.utilities.io.IOUtils;
+import org.mozkito.utilities.io.exceptions.FetchException;
+import org.mozkito.utilities.io.exceptions.UnsupportedProtocolException;
 
 /**
  * The Class BugzillaOverviewParser.

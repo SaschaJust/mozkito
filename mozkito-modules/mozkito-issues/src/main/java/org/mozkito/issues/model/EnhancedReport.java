@@ -26,7 +26,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 
 import org.joda.time.DateTime;
@@ -39,6 +38,7 @@ import org.mozkito.issues.elements.Type;
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persons.model.Person;
 import org.mozkito.persons.model.PersonContainer;
+import org.mozkito.utilities.commons.JavaUtils;
 
 /**
  * The Class Report.

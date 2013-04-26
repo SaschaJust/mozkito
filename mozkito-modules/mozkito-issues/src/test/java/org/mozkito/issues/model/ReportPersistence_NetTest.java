@@ -17,8 +17,6 @@ import static org.junit.Assert.fail;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import net.ownhero.dev.ioda.FileUtils;
-
 import org.junit.Test;
 
 import org.mozkito.issues.exceptions.InvalidParameterException;
@@ -27,6 +25,7 @@ import org.mozkito.issues.tracker.bugzilla.BugzillaTracker;
 import org.mozkito.persons.elements.PersonFactory;
 import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
+import org.mozkito.utilities.io.FileUtils;
 
 /**
  * The Class ReportPersistence_NetTest.

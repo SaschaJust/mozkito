@@ -23,8 +23,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import net.ownhero.dev.ioda.DateTimeUtils;
-import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.regex.Match;
 import net.ownhero.dev.regex.Regex;
 
@@ -45,6 +43,8 @@ import org.mozkito.issues.model.Report;
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.persons.elements.PersonFactory;
 import org.mozkito.persons.model.Person;
+import org.mozkito.utilities.datetime.DateTimeUtils;
+import org.mozkito.utilities.io.FileUtils;
 
 /**
  * The Class SourceforgeParserTest.

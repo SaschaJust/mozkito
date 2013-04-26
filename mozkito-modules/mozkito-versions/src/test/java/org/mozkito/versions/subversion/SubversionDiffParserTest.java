@@ -20,11 +20,11 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.ownhero.dev.ioda.FileUtils;
-
 import org.junit.Test;
 
 import difflib.Chunk;
+
+import org.mozkito.utilities.io.FileUtils;
 
 /**
  * The Class SubversionDiffParserTest.

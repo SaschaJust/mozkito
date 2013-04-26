@@ -68,6 +68,7 @@
 	</organization>
 	<modules>
 		<module>mozkito-maven-plugins</module>
+		<module>mozkito-utilities</module>
 		<module>mozkito-modules</module>
 		<module>mozkito-settings</module>
 		<module>mozkito-tools</module>

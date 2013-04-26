@@ -26,10 +26,11 @@ import com.aliasi.tokenizer.IndoEuropeanTokenizerFactory;
 import com.aliasi.tokenizer.Tokenizer;
 import com.aliasi.tokenizer.TokenizerFactory;
 
-import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.regex.Match;
 import net.ownhero.dev.regex.MultiMatch;
 import net.ownhero.dev.regex.Regex;
+
+import org.mozkito.utilities.commons.JavaUtils;
 
 /**
  * The Class TextSeparator.

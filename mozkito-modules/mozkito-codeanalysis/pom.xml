@@ -23,11 +23,6 @@
         </exclusions>
 		</dependency>
 		<dependency>
-			<groupId>org.mozkito</groupId>
-			<artifactId>mozkito-utilities</artifactId>
-			<version>0.4-SNAPSHOT</version>
-		</dependency>
-		<dependency>
 			<groupId>org.eclipse</groupId>
 			<artifactId>jdt-core</artifactId>
 			<version>3.6.2</version>

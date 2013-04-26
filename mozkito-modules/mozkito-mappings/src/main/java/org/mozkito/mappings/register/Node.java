@@ -17,9 +17,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import net.ownhero.dev.ioda.JavaUtils;
-
 import org.mozkito.mappings.storages.Storage;
+import org.mozkito.utilities.commons.JavaUtils;
 
 /**
  * The Class Node.

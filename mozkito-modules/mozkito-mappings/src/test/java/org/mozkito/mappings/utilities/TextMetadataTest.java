@@ -14,12 +14,13 @@
 package org.mozkito.mappings.utilities;
 
 import static org.junit.Assert.fail;
-import net.ownhero.dev.ioda.JavaUtils;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import org.mozkito.utilities.commons.JavaUtils;
 
 /**
  * The Class TextMetadataTest.

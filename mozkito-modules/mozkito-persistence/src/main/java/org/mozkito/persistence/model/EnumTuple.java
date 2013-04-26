@@ -18,11 +18,11 @@ import javax.persistence.Transient;
 
 import net.ownhero.dev.andama.exceptions.ClassLoadingError;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.mozkito.persistence.PersistentTuple;
+import org.mozkito.utilities.commons.JavaUtils;
 
 /**
  * The Class EnumTuple.

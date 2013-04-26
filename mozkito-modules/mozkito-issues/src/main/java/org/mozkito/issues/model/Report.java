@@ -45,7 +45,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
-import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.CollectionCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
@@ -63,6 +62,7 @@ import org.mozkito.issues.model.comparators.CommentComparator;
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persons.model.Person;
 import org.mozkito.persons.model.PersonContainer;
+import org.mozkito.utilities.commons.JavaUtils;
 
 /**
  * The Class Report.

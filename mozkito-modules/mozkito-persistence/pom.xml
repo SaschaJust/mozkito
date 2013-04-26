@@ -22,11 +22,6 @@
 	<description>TODO</description>
 	<dependencies>
 		<dependency>
-			<groupId>org.mozkito</groupId>
-			<artifactId>mozkito-utilities</artifactId>
-			<version>0.4-SNAPSHOT</version>
-		</dependency>
-		<dependency>
 			<groupId>postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<version>9.2-1002.jdbc4</version>

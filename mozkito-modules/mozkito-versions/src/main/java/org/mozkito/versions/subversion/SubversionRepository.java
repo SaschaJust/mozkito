@@ -26,10 +26,6 @@ import java.util.List;
 import java.util.Map;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
-import net.ownhero.dev.ioda.URIUtils;
-import net.ownhero.dev.ioda.exceptions.FilePermissionException;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
@@ -67,6 +63,10 @@ import difflib.DiffUtils;
 import difflib.Patch;
 
 import org.mozkito.persons.elements.PersonFactory;
+import org.mozkito.utilities.commons.URIUtils;
+import org.mozkito.utilities.io.FileUtils;
+import org.mozkito.utilities.io.FileUtils.FileShutdownAction;
+import org.mozkito.utilities.io.exceptions.FilePermissionException;
 import org.mozkito.versions.ProtocolType;
 import org.mozkito.versions.Repository;
 import org.mozkito.versions.elements.AnnotationEntry;

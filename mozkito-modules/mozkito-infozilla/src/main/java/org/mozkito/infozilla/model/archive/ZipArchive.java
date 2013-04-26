@@ -18,11 +18,10 @@ package org.mozkito.infozilla.model.archive;
 import java.io.File;
 import java.io.IOException;
 
-import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
-import net.ownhero.dev.ioda.exceptions.FilePermissionException;
-
 import org.mozkito.infozilla.model.attachment.Attachment;
+import org.mozkito.utilities.io.FileUtils;
+import org.mozkito.utilities.io.FileUtils.FileShutdownAction;
+import org.mozkito.utilities.io.exceptions.FilePermissionException;
 
 /**
  * The Class ZipArchive.

@@ -22,7 +22,6 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
-import org.mozkito.clustering.MultilevelClusteringScoreVisitor;
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.untangling.Untangling.ScoreCombinationMode;
@@ -30,6 +29,7 @@ import org.mozkito.untangling.Untangling.UntanglingCollapse;
 import org.mozkito.untangling.blob.ChangeOperationSet;
 import org.mozkito.untangling.blob.combine.CombineOperator;
 import org.mozkito.untangling.voters.MultilevelClusteringScoreVisitorFactory;
+import org.mozkito.utilities.clustering.MultilevelClusteringScoreVisitor;
 
 /**
  * The Class UntanglingControl.
@@ -42,7 +42,7 @@ public class UntanglingControl {
 	private final boolean                                                                                                       measurePrecision;
 	
 	/** The change coupling combine operator. */
-	private CombineOperator<ChangeOperationSet>                                                                                          combineOperator;
+	private CombineOperator<ChangeOperationSet>                                                                                 combineOperator;
 	
 	/** The confidence voters. */
 	private final Set<MultilevelClusteringScoreVisitorFactory<? extends MultilevelClusteringScoreVisitor<JavaChangeOperation>>> confidenceVoters       = new HashSet<>();

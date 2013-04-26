@@ -14,12 +14,17 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.mozkito</groupId>
-			<artifactId>mozkito-codeanalysis</artifactId>
+			<artifactId>mozkito-clustering-utilities</artifactId>
 			<version>0.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mozkito</groupId>
-			<artifactId>mozkito-utilities</artifactId>
+			<artifactId>mozkito-changeimpact-utilities</artifactId>
+			<version>0.4-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mozkito</groupId>
+			<artifactId>mozkito-codeanalysis</artifactId>
 			<version>0.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>

@@ -22,13 +22,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import net.ownhero.dev.ioda.CommandExecutor;
-import net.ownhero.dev.ioda.Tuple;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import org.mozkito.utilities.datastructures.Tuple;
+import org.mozkito.utilities.execution.CommandExecutor;
 
 /**
  * The Class VersionsIT.

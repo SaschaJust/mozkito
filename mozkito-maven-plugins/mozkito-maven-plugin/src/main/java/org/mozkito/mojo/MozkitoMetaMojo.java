@@ -21,9 +21,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.ownhero.dev.ioda.CommandExecutor;
-import net.ownhero.dev.ioda.Tuple;
-
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
@@ -32,6 +29,9 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
+
+import org.mozkito.utilities.datastructures.Tuple;
+import org.mozkito.utilities.execution.CommandExecutor;
 
 /**
  * Goal that collects meta information such as module version and version archive hash and injects it into the project
