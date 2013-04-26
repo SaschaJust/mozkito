@@ -17,11 +17,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 
 import org.junit.Test;
 
@@ -30,26 +28,6 @@ import org.junit.Test;
  * 
  */
 public class ExecutorTest {
-	
-	/**
-	 * Process builder cat.
-	 * 
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
-	 * @throws InterruptedException
-	 */
-	@Test
-	public final void processBuilderCat() throws IOException, InterruptedException {
-		final ProcessBuilder builder = new ProcessBuilder("/Users/just/test");
-		final Process process = builder.start();
-		final BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(process.getOutputStream()));
-		writer.write("processBuilderCat");
-		writer.newLine();
-		writer.flush();
-		writer.close();
-		process.waitFor();
-		System.out.println(new BufferedReader(new InputStreamReader(process.getInputStream())).readLine());
-	}
 	
 	/**
 	 * Test advanced piping.
