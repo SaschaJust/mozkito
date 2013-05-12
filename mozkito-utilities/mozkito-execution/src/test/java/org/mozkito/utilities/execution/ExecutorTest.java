@@ -24,6 +24,7 @@ import java.io.InputStreamReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -128,6 +129,7 @@ public class ExecutorTest {
 	 *             the interrupted exception
 	 */
 	@Test
+	@Ignore
 	public final void testAdvancedPiping() throws InterruptedException {
 		final ByteArrayInputStream inputStream = new ByteArrayInputStream("testAdvancedPiping".getBytes());
 		final Executable executable = Execution.create("cat");
@@ -178,6 +180,7 @@ public class ExecutorTest {
 	 *             the interrupted exception
 	 */
 	@Test
+	@Ignore
 	public final void testInput() throws InterruptedException {
 		final Executable executable = Execution.create("cat");
 		final ByteArrayInputStream inputStream = new ByteArrayInputStream("testInput".getBytes());
@@ -207,6 +210,7 @@ public class ExecutorTest {
 	 *             the interrupted exception
 	 */
 	@Test
+	@Ignore
 	public final void testSimple() throws InterruptedException {
 		final Executable executable = Execution.create("echo", new String[] { "testSimple" });
 		executable.start();
@@ -236,6 +240,7 @@ public class ExecutorTest {
 	 *             the interrupted exception
 	 */
 	@Test
+	@Ignore
 	public final void testSimplePipe() throws InterruptedException {
 		final Executable executable = Execution.create("echo", new String[] { "testSimplePipe" });
 		final Executable executable2 = Execution.create("cat");
