@@ -16,6 +16,7 @@ package org.mozkito.utilities.execution;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.List;
 
 /**
  * The Interface Executable.
@@ -48,6 +49,13 @@ public interface Executable extends Runnable {
 	String getName();
 	
 	/**
+	 * Gets the next std out line.
+	 * 
+	 * @return the next std out line
+	 */
+	String getNextStdOutLine();
+	
+	/**
 	 * Gets the standard err.
 	 * 
 	 * @return the standard err
@@ -69,9 +77,11 @@ public interface Executable extends Runnable {
 	InputStream getStandardOut();
 	
 	/**
-	 * Join.
+	 * Gets the std out lines.
+	 * 
+	 * @return the std out lines
 	 */
-	void join();
+	List<String> getStdOutLines();
 	
 	/**
 	 * Pipe from.

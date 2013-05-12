@@ -28,7 +28,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -42,7 +41,118 @@ import org.mozkito.utilities.io.exceptions.ExternalExecutableException;
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class Executor extends Thread implements Executable {
+class Executor extends Thread implements Executable {
+	
+	/**
+	 * The Class ExceptionHandler.
+	 */
+	private static final class ExceptionHandler implements UncaughtExceptionHandler {
+		
+		/** The executor. */
+		private final Executor executor;
+		
+		/** The stats. */
+		private final Stats    stats;
+		
+		/**
+		 * Instantiates a new exception handler.
+		 * 
+		 * @param stats
+		 *            the stats
+		 * @param executor
+		 *            the executor
+		 */
+		public ExceptionHandler(final Stats stats, final Executor executor) {
+			this.stats = stats;
+			this.executor = executor;
+		}
+		
+		/**
+		 * {@inheritDoc}
+		 * 
+		 * @see java.lang.Thread.UncaughtExceptionHandler#uncaughtException(java.lang.Thread, java.lang.Throwable)
+		 */
+		@Override
+		public void uncaughtException(final Thread t,
+		                              final Throwable e) {
+			PRECONDITIONS: {
+				// none
+			}
+			
+			try {
+				this.stats.exception(e);
+				this.executor.killOnError();
+			} finally {
+				POSTCONDITIONS: {
+					// none
+				}
+			}
+		}
+	}
+	
+	/**
+	 * The Enum ExecutorState.
+	 */
+	private static enum ExecutorState {
+		
+		/** The created. */
+		CREATED,
+		/** The processed. */
+		PROCESSED,
+		/** The running. */
+		RUNNING,
+		/** The terminated. */
+		TERMINATED;
+	}
+	
+	/**
+	 * The Class StateMonitor.
+	 */
+	private static class StateMonitor {
+		
+		/** The executor state. */
+		private ExecutorState executorState = ExecutorState.CREATED;
+		
+		/**
+		 * Gets the state.
+		 * 
+		 * @return the state
+		 */
+		public synchronized final ExecutorState getState() {
+			PRECONDITIONS: {
+				// none
+			}
+			
+			try {
+				return this.executorState;
+			} finally {
+				POSTCONDITIONS: {
+					Condition.notNull(this.executorState, "Field '%s' in '%s'.", "state", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+				}
+			}
+		}
+		
+		/**
+		 * Sets the state.
+		 * 
+		 * @param executorState
+		 *            the state to set
+		 */
+		public synchronized final void setState(final ExecutorState executorState) {
+			PRECONDITIONS: {
+				Condition.notNull(executorState, "Argument '%s' in '%s'.", "state", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			
+			try {
+				this.executorState = executorState;
+			} finally {
+				POSTCONDITIONS: {
+					// none
+				}
+			}
+		}
+		
+	}
 	
 	/**
 	 * The Class Stats.
@@ -54,29 +164,29 @@ public class Executor extends Thread implements Executable {
 		/** The timestamp the thread was created. */
 		private final DateTime   created;
 		
-		/** The name of the thread. */
-		private final String     name;
-		
-		/** The internal id of the thread. */
-		private final int        id;
-		
-		/** The number of bytes that have been written. */
-		private long             writtenBytes = 0l;
-		
 		/** Points to an exception if an error occurred. */
 		private Throwable        error        = null;
-		
-		/** The time the thread has been started. */
-		private DateTime         started      = null;
-		
-		/** The number of bytes that have been read. */
-		private long             readBytes    = 0l;
 		
 		/** The time the thread terminated. */
 		private DateTime         finished     = null;
 		
+		/** The internal id of the thread. */
+		private final int        id;
+		
+		/** The name of the thread. */
+		private final String     name;
+		
+		/** The number of bytes that have been read. */
+		private long             readBytes    = 0l;
+		
+		/** The time the thread has been started. */
+		private DateTime         started      = null;
+		
 		/** The type of the thread. @see ThreadType */
 		private final ThreadType type;
+		
+		/** The number of bytes that have been written. */
+		private long             writtenBytes = 0l;
 		
 		/**
 		 * Instantiates a new stats object.
@@ -207,6 +317,8 @@ public class Executor extends Thread implements Executable {
 		}
 		
 		/**
+		 * Gets the error.
+		 * 
 		 * @return the error
 		 */
 		public final Throwable getError() {
@@ -497,145 +609,39 @@ public class Executor extends Thread implements Executable {
 		
 		/** The connected input. */
 		CONNECTED_INPUT,
+		/** The error handler. */
+		ERROR_HANDLER,
 		/** The input handler. */
 		INPUT_HANDLER,
 		/** The output handler. */
 		OUTPUT_HANDLER,
-		/** The error handler. */
-		ERROR_HANDLER,
 		/** The piped outputhandler. */
 		PIPED_OUTPUTHANDLER;
 	}
 	
 	/** The Constant EOF. */
-	protected static final int EOF = -1;
-	
-	/**
-	 * Creates the.
-	 * 
-	 * @param command
-	 *            the command
-	 * @return the executable
-	 */
-	public static Executable create(@NotNull final String command) {
-		return create(command, new String[0]);
-	}
-	
-	/**
-	 * Creates the.
-	 * 
-	 * @param command
-	 *            the command
-	 * @param arguments
-	 *            the arguments
-	 * @return the executable
-	 */
-	public static Executable create(@NotNull final String command,
-	                                @NotNull final String[] arguments) {
-		return create(command, arguments, null);
-	}
-	
-	/**
-	 * Creates the.
-	 * 
-	 * @param command
-	 *            the command
-	 * @param arguments
-	 *            the arguments
-	 * @param dir
-	 *            the dir
-	 * @return the executable
-	 */
-	public static Executable create(@NotNull final String command,
-	                                @NotNull final String[] arguments,
-	                                final File dir) {
-		return create(command, arguments, dir, null);
-	}
-	
-	/**
-	 * Creates the.
-	 * 
-	 * @param command
-	 *            the command
-	 * @param arguments
-	 *            the arguments
-	 * @param dir
-	 *            the dir
-	 * @param environment
-	 *            the environment
-	 * @return the executable
-	 */
-	public static Executable create(@NotNull final String command,
-	                                @NotNull final String[] arguments,
-	                                final File dir,
-	                                final Map<String, String> environment) {
-		return create(command, arguments, dir, environment, Charset.defaultCharset());
-	}
-	
-	/**
-	 * Creates the.
-	 * 
-	 * @param command
-	 *            the command
-	 * @param arguments
-	 *            the arguments
-	 * @param dir
-	 *            the dir
-	 * @param environment
-	 *            the environment
-	 * @param charset
-	 *            the charset
-	 * @return the executable
-	 */
-	public static Executable create(@NotNull final String command,
-	                                @NotNull final String[] arguments,
-	                                final File dir,
-	                                final Map<String, String> environment,
-	                                @NotNull final Charset charset) {
-		return new Executor(command, arguments, dir, environment, charset);
-	}
-	
-	/** The terminated. */
-	private boolean                   terminated  = false;
-	
-	/** The command. */
-	private String                    command;
+	protected static final int        EOF          = -1;
 	
 	/** The arguments. */
 	private String[]                  arguments;
 	
-	/** The working directory. */
-	private File                      workingDirectory;
+	/** The charset. */
+	private Charset                   charset;
+	
+	/** The command. */
+	private String                    command;
+	
+	/** The connected input. */
+	private Object                    connectedInput;
 	
 	/** The environment. */
 	private Map<String, String>       environment;
 	
-	/** The charset. */
-	private Charset                   charset;
-	
-	/** The pipe to. */
-	private final Set<Executable>     pipeTo      = new HashSet<>();
-	
-	/** The standard err. */
-	private final CircularByteBuffer  standardErr = new CircularByteBuffer();
-	
-	/** The standard out. */
-	private final CircularByteBuffer  standardOut = new CircularByteBuffer();
-	
-	/** The standard in. */
-	private final CircularByteBuffer  standardIn  = new CircularByteBuffer();
-	
-	/** The process. */
-	private Process                   process     = null;
-	
 	/** The standard err handler. */
 	private Thread                    errorHandler;
 	
-	/** The standard out handler. */
-	private Thread                    outputHandler;
-	
-	/** The redirect standard error. */
-	private boolean                   redirectStandardError;
+	/** The exit value. */
+	private Integer                   exitValue    = null;
 	
 	/** The input handler. */
 	private Thread                    inputHandler;
@@ -643,14 +649,41 @@ public class Executor extends Thread implements Executable {
 	/** The log stream. */
 	private PrintStream               logStream;
 	
+	/** The standard out handler. */
+	private Thread                    outputHandler;
+	
+	/** The pipe to. */
+	private final Set<Executable>     pipeTo       = new HashSet<>();
+	
+	/** The process. */
+	private Process                   process      = null;
+	
+	/** The redirect standard error. */
+	private boolean                   redirectStandardError;
+	
+	/** The standard err. */
+	private final CircularByteBuffer  standardErr  = new CircularByteBuffer();
+	
+	/** The standard in. */
+	private final CircularByteBuffer  standardIn   = new CircularByteBuffer();
+	
+	/** The standard out. */
+	private final CircularByteBuffer  standardOut  = new CircularByteBuffer();
+	
+	/** The started. */
+	private boolean                   started      = false;
+	
+	/** The state monitor. */
+	private final StateMonitor        stateMonitor = new StateMonitor();
+	
 	/** The statistics. */
-	private final Map<Integer, Stats> statistics  = new HashMap<>();
+	private final Map<Integer, Stats> statistics   = new HashMap<>();
 	
-	private Integer                   exitValue   = null;
+	/** The terminated. */
+	private boolean                   terminated   = false;
 	
-	private boolean                   started     = false;
-	
-	private Object                    connectedInput;
+	/** The working directory. */
+	private File                      workingDirectory;                        ;
 	
 	/**
 	 * Instantiates a new executor.
@@ -666,8 +699,8 @@ public class Executor extends Thread implements Executable {
 	 * @param charset
 	 *            the charset
 	 */
-	private Executor(final String command, final String[] arguments, final File dir,
-	        final Map<String, String> environment, final Charset charset) {
+	Executor(final String command, final String[] arguments, final File dir, final Map<String, String> environment,
+	        final Charset charset) {
 		PRECONDITIONS: {
 			if (command == null) {
 				throw new NullPointerException("You have to specify a command.");
@@ -705,7 +738,7 @@ public class Executor extends Thread implements Executable {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see net.ownhero.dev.ioda.Executable#connectStandardIn(java.io.InputStream)
+	 * @see org.mozkito.utilities.execution.Executable#connectStandardIn(java.io.InputStream)
 	 */
 	@Override
 	public synchronized boolean connectStandardIn(final InputStream inputStream) {
@@ -777,7 +810,7 @@ public class Executor extends Thread implements Executable {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see net.ownhero.dev.ioda.Executable#exitValue()
+	 * @see org.mozkito.utilities.execution.Executable#exitValue()
 	 */
 	@Override
 	public Integer exitValue() {
@@ -871,6 +904,28 @@ public class Executor extends Thread implements Executable {
 	}
 	
 	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.utilities.execution.Executable#getNextStdOutLine()
+	 */
+	@Override
+	public String getNextStdOutLine() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			// TODO Auto-generated method stub
+			// return null;
+			throw new RuntimeException("Method 'getNextStdOutLine' has not yet been implemented."); //$NON-NLS-1$
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
 	 * Gets the pipe to.
 	 * 
 	 * @return the pipeTo
@@ -892,7 +947,7 @@ public class Executor extends Thread implements Executable {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see net.ownhero.dev.ioda.Executable#getStandardErr()
+	 * @see org.mozkito.utilities.execution.Executable#getStandardErr()
 	 */
 	@Override
 	public InputStream getStandardErr() {
@@ -912,7 +967,7 @@ public class Executor extends Thread implements Executable {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see net.ownhero.dev.ioda.Executable#getStandardIn()
+	 * @see org.mozkito.utilities.execution.Executable#getStandardIn()
 	 */
 	@Override
 	public OutputStream getStandardIn() {
@@ -921,6 +976,14 @@ public class Executor extends Thread implements Executable {
 		}
 		
 		try {
+			if (this.inputHandler == null) {
+				startStandardInHandler();
+				
+				SANITY: {
+					assert this.inputHandler != null;
+				}
+			}
+			
 			return this.standardIn.getOutputStream();
 		} finally {
 			POSTCONDITIONS: {
@@ -932,7 +995,7 @@ public class Executor extends Thread implements Executable {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see net.ownhero.dev.ioda.Executable#getStandardOut()
+	 * @see org.mozkito.utilities.execution.Executable#getStandardOut()
 	 */
 	@Override
 	public InputStream getStandardOut() {
@@ -941,7 +1004,41 @@ public class Executor extends Thread implements Executable {
 		}
 		
 		try {
+			if (this.outputHandler == null) {
+				if (!this.pipeTo.isEmpty()) {
+					startPipedOutHandler();
+				} else {
+					startStandardOutHandler();
+				}
+				
+				SANITY: {
+					assert this.outputHandler != null;
+				}
+			}
+			
 			return this.standardOut.getInputStream();
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.utilities.execution.Executable#getStdOutLines()
+	 */
+	@Override
+	public List<String> getStdOutLines() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			// TODO Auto-generated method stub
+			// return null;
+			throw new RuntimeException("Method 'getStdOutLines' has not yet been implemented."); //$NON-NLS-1$
 		} finally {
 			POSTCONDITIONS: {
 				// none
@@ -969,9 +1066,20 @@ public class Executor extends Thread implements Executable {
 	}
 	
 	/**
+	 * Kill on error.
+	 */
+	private void killOnError() {
+		// stub
+		System.err.println("KILL IT WITH FIRE!");
+		if (this.process != null) {
+			this.process.destroy();
+		}
+	}
+	
+	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see net.ownhero.dev.ioda.Executable#pipeFrom(net.ownhero.dev.ioda.Executable)
+	 * @see org.mozkito.utilities.execution.Executable#pipeFrom(org.mozkito.utilities.execution.Executable)
 	 */
 	@Override
 	public boolean pipeFrom(final Executable executable) {
@@ -993,7 +1101,7 @@ public class Executor extends Thread implements Executable {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see net.ownhero.dev.ioda.Executable#pipeTo(net.ownhero.dev.ioda.Executable...)
+	 * @see org.mozkito.utilities.execution.Executable#pipeTo(org.mozkito.utilities.execution.Executable...)
 	 */
 	@Override
 	public boolean pipeTo(final Executable... executable) {
@@ -1015,7 +1123,7 @@ public class Executor extends Thread implements Executable {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see net.ownhero.dev.ioda.Executable#printStats(java.io.PrintStream)
+	 * @see org.mozkito.utilities.execution.Executable#printStats(java.io.PrintStream)
 	 */
 	@Override
 	public void printStats(final PrintStream err) {
@@ -1037,7 +1145,7 @@ public class Executor extends Thread implements Executable {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see net.ownhero.dev.ioda.Executable#redirectStandardError(boolean)
+	 * @see org.mozkito.utilities.execution.Executable#redirectStandardError(boolean)
 	 */
 	@Override
 	public void redirectStandardError(final boolean redirect) {
@@ -1106,6 +1214,11 @@ public class Executor extends Thread implements Executable {
 			try {
 				this.process = processBuilder.start();
 				
+				synchronized (this.stateMonitor) {
+					this.stateMonitor.setState(ExecutorState.RUNNING);
+					this.stateMonitor.notify();
+				}
+				
 				if (!this.redirectStandardError) {
 					startStandardErrHandler();
 					SANITY: {
@@ -1113,42 +1226,54 @@ public class Executor extends Thread implements Executable {
 					}
 				}
 				
-				if (!this.pipeTo.isEmpty()) {
-					startPipedOutHandler();
-				} else {
-					startStandardOutHandler();
-				}
+				// startStandardInHandler();
+				//
+				// SANITY: {
+				// assert this.inputHandler != null;
+				// }
 				
-				SANITY: {
-					assert this.outputHandler != null;
-				}
-				
-				startStandardInHandler();
-				
-				SANITY: {
-					assert this.inputHandler != null;
-				}
-				
+				System.err.println("Waiting for process.");
 				this.process.waitFor();
+				System.err.println("Process finished.");
+				
+				this.stateMonitor.setState(ExecutorState.PROCESSED);
+				
 				this.terminated = true;
 				this.exitValue = this.process.exitValue();
 				
 				try {
 					this.standardIn.getOutputStream().close();
-					this.inputHandler.join(1000);
+					
+					if (this.inputHandler != null) {
+						System.err.println("Stopping InputHandler.");
+						this.inputHandler.join();
+						System.err.println("Stopped InputHandler.");
+					}
+					
 					this.standardIn.getInputStream().close();
+					this.process.getOutputStream().close();
 				} catch (final InterruptedException e) {
 					e.printStackTrace();
 				}
 				
 				try {
-					this.standardOut.getOutputStream().close();
-					this.outputHandler.join();
+					if (this.outputHandler != null) {
+						System.err.println("Stopping OutputHandler.");
+						this.outputHandler.join();
+						System.err.println("Stopped OutputHandler.");
+					}
+					
+					try {
+						this.standardOut.getOutputStream().close();
+					} catch (final IOException e) {
+						// ignore
+					}
 					
 					// close the output. everything is written to the pipe
 					if (!this.pipeTo.isEmpty()) {
 						this.standardOut.getInputStream().close();
 					}
+					this.process.getInputStream().close();
 				} catch (final InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -1156,7 +1281,10 @@ public class Executor extends Thread implements Executable {
 				if (this.errorHandler != null) {
 					try {
 						this.standardErr.getOutputStream().close();
+						
+						System.err.println("Stopping ErrorHandler.");
 						this.errorHandler.join();
+						System.err.println("Stopped ErrorHandler.");
 						
 						if (!this.pipeTo.isEmpty()) {
 							this.standardErr.getInputStream().close();
@@ -1166,10 +1294,14 @@ public class Executor extends Thread implements Executable {
 					}
 				}
 				
+				this.process.getErrorStream().close();
+				
 			} catch (final IOException | InterruptedException e) {
 				throw new RuntimeException(e);
 			}
 		} finally {
+			this.terminated = true;
+			
 			POSTCONDITIONS: {
 				// none
 			}
@@ -1180,7 +1312,7 @@ public class Executor extends Thread implements Executable {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see net.ownhero.dev.ioda.Executable#setLogger(java.io.PrintStream)
+	 * @see org.mozkito.utilities.execution.Executable#setLogger(java.io.PrintStream)
 	 */
 	@Override
 	public boolean setLogger(final PrintStream logStream) {
@@ -1291,6 +1423,9 @@ public class Executor extends Thread implements Executable {
 					}
 				}
 			};
+			
+			this.outputHandler.setUncaughtExceptionHandler(new ExceptionHandler(stats, this));
+			
 			this.outputHandler.start();
 		} finally {
 			POSTCONDITIONS: {
@@ -1338,7 +1473,7 @@ public class Executor extends Thread implements Executable {
 						}
 					}
 				};
-				
+				this.errorHandler.setUncaughtExceptionHandler(new ExceptionHandler(stats, this));
 				this.errorHandler.start();
 			}
 		} finally {
@@ -1356,7 +1491,6 @@ public class Executor extends Thread implements Executable {
 			assert this.statistics != null;
 			assert this.inputHandler == null;
 			assert this.standardIn != null;
-			assert this.process != null;
 		}
 		
 		try {
@@ -1379,8 +1513,23 @@ public class Executor extends Thread implements Executable {
 						final byte[] buffer = new byte[2048];
 						
 						try {
+							synchronized (Executor.this.stateMonitor) {
+								while (!ExecutorState.RUNNING.equals(Executor.this.stateMonitor.getState())) {
+									try {
+										Executor.this.stateMonitor.wait();
+									} catch (final InterruptedException e) {
+										// TODO Auto-generated catch block
+										
+									}
+								}
+							}
 							while ((n = Executor.this.standardIn.getInputStream().read(buffer)) != EOF) {
 								readCount += n;
+								
+								if (Executor.this.process == null) {
+									throw new IOException("Process hasn't been started yet.");
+								}
+								
 								Executor.this.process.getOutputStream().write(buffer, 0, n);
 								writeCount += n;
 							}
@@ -1394,8 +1543,10 @@ public class Executor extends Thread implements Executable {
 							stats.written(writeCount);
 							stats.finished();
 							try {
-								Executor.this.process.getOutputStream().flush();
-								Executor.this.process.getOutputStream().close();
+								if (Executor.this.process != null) {
+									Executor.this.process.getOutputStream().flush();
+									Executor.this.process.getOutputStream().close();
+								}
 							} catch (final IOException ignore) {
 								// ignore
 							}
@@ -1407,6 +1558,9 @@ public class Executor extends Thread implements Executable {
 					}
 				}
 			};
+			
+			this.inputHandler.setUncaughtExceptionHandler(new ExceptionHandler(stats, this));
+			
 			this.inputHandler.start();
 		} finally {
 			POSTCONDITIONS: {
@@ -1456,6 +1610,7 @@ public class Executor extends Thread implements Executable {
 					}
 				}
 			};
+			this.outputHandler.setUncaughtExceptionHandler(new ExceptionHandler(stats, this));
 			this.outputHandler.start();
 		} finally {
 			POSTCONDITIONS: {
@@ -1488,7 +1643,7 @@ public class Executor extends Thread implements Executable {
 	 * {@inheritDoc}
 	 * 
 	 * @throws InterruptedException
-	 * @see net.ownhero.dev.ioda.Executable#waitFor()
+	 * @see org.mozkito.utilities.execution.Executable#waitFor()
 	 */
 	@Override
 	public int waitFor() throws InterruptedException {
@@ -1500,6 +1655,7 @@ public class Executor extends Thread implements Executable {
 		
 		try {
 			if ((this.exitValue == null) || !this.terminated) {
+				System.err.println("Waiting for thread to die.");
 				join();
 			}
 			return this.exitValue;

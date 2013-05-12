@@ -18,16 +18,108 @@ import static org.junit.Assert.fail;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.junit.Test;
 
 /**
- * @author Sascha Just <sascha.just@mozkito.org>
+ * The Class ExecutorTest.
  * 
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class ExecutorTest {
+	
+	/**
+	 * The main method.
+	 * 
+	 * @param args
+	 *            the arguments
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	public static void main(final String[] args) throws IOException {
+		final Executable exec = Execution.create("git", new String[] { "diff" },
+		                                         new File("/Users/just/Development/mozkito"));
+		exec.start();
+		
+		final BufferedReader reader = new BufferedReader(new InputStreamReader(exec.getStandardOut()));
+		final String output = reader.readLine();
+		reader.close();
+		
+		try {
+			exec.waitFor();
+		} catch (final InterruptedException e) {
+			// ignore
+			e.printStackTrace();
+		}
+		
+		final boolean modified = (exec.exitValue() == 0) || !output.isEmpty();
+		
+		System.err.println((modified
+		                            ? ""
+		                            : "not ") + "modified");
+		
+		exec.printStats(System.err);
+	}
+	
+	/**
+	 * Main2.
+	 * 
+	 * @param args
+	 *            the args
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	public static void main2(final String[] args) throws IOException {
+		final Pattern pattern = Pattern.compile("^\\p{XDigit}+$");
+		System.getProperty("line.separator");
+		Executable exec = Execution.create("git", new String[] { "log", "HEAD^..HEAD", "--pretty=format:%H" },
+		                                   new File("/Users/just/Development/mozkito"));
+		exec.start();
+		
+		BufferedReader reader = new BufferedReader(new InputStreamReader(exec.getStandardOut()));
+		String output = reader.readLine();
+		try {
+			exec.waitFor();
+		} catch (final InterruptedException e) {
+			// ignore
+		}
+		if (output.isEmpty()) {
+			System.err.println("Getting git head revision failed.");
+			return;
+		} else {
+			if ((exec.exitValue() != 0) || output.isEmpty() || output.startsWith("fatal:")) {
+				System.err.println("Getting git head revision failed: " + output);
+			} else {
+				final Matcher matcher = pattern.matcher(output);
+				if (matcher.matches()) {
+					System.err.println("Head: " + output);
+				} else {
+					System.err.println("Getting git head revision failed. Output is not a hash: " + output);
+				}
+			}
+		}
+		
+		exec = Execution.create("git", new String[] { "diff" }, new File("/Users/just/Development/mozkito"));
+		exec.start();
+		try {
+			exec.waitFor();
+		} catch (final InterruptedException e) {
+			// ignore
+		}
+		
+		reader = new BufferedReader(new InputStreamReader(exec.getStandardOut()));
+		output = reader.readLine();
+		final boolean modified = (exec.exitValue() == 0) || !output.isEmpty();
+		
+		System.err.println((modified
+		                            ? ""
+		                            : "not ") + "modified");
+	}
 	
 	/**
 	 * Test advanced piping.
@@ -38,10 +130,10 @@ public class ExecutorTest {
 	@Test
 	public final void testAdvancedPiping() throws InterruptedException {
 		final ByteArrayInputStream inputStream = new ByteArrayInputStream("testAdvancedPiping".getBytes());
-		final Executable executable = Executor.create("cat");
-		final Executable executable2 = Executor.create("sed", new String[] { "-e", "s:\\([A-Z]\\): \\1:g" });
-		final Executable executable3 = Executor.create("tr", new String[] { "[:lower:]", "[:upper:]" });
-		final Executable executable4 = Executor.create("awk", new String[] { "{ print $3 \" \" $2 \" \" $1; }" });
+		final Executable executable = Execution.create("cat");
+		final Executable executable2 = Execution.create("sed", new String[] { "-e", "s:\\([A-Z]\\): \\1:g" });
+		final Executable executable3 = Execution.create("tr", new String[] { "[:lower:]", "[:upper:]" });
+		final Executable executable4 = Execution.create("awk", new String[] { "{ print $3 \" \" $2 \" \" $1; }" });
 		executable.connectStandardIn(inputStream);
 		executable.pipeTo(executable2);
 		executable3.pipeFrom(executable2);
@@ -83,10 +175,11 @@ public class ExecutorTest {
 	 * Test input.
 	 * 
 	 * @throws InterruptedException
+	 *             the interrupted exception
 	 */
 	@Test
 	public final void testInput() throws InterruptedException {
-		final Executable executable = Executor.create("cat");
+		final Executable executable = Execution.create("cat");
 		final ByteArrayInputStream inputStream = new ByteArrayInputStream("testInput".getBytes());
 		executable.connectStandardIn(inputStream);
 		executable.start();
@@ -111,10 +204,11 @@ public class ExecutorTest {
 	 * Test.
 	 * 
 	 * @throws InterruptedException
+	 *             the interrupted exception
 	 */
 	@Test
 	public final void testSimple() throws InterruptedException {
-		final Executable executable = Executor.create("echo", new String[] { "testSimple" });
+		final Executable executable = Execution.create("echo", new String[] { "testSimple" });
 		executable.start();
 		executable.waitFor();
 		assertEquals(new Integer(0), executable.exitValue());
@@ -139,11 +233,12 @@ public class ExecutorTest {
 	 * Test.
 	 * 
 	 * @throws InterruptedException
+	 *             the interrupted exception
 	 */
 	@Test
 	public final void testSimplePipe() throws InterruptedException {
-		final Executable executable = Executor.create("echo", new String[] { "testSimplePipe" });
-		final Executable executable2 = Executor.create("cat");
+		final Executable executable = Execution.create("echo", new String[] { "testSimplePipe" });
+		final Executable executable2 = Execution.create("cat");
 		
 		executable.setLogger(System.err);
 		executable2.setLogger(System.err);
