@@ -23,7 +23,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-
 import org.mozkito.issues.model.Report;
 import org.mozkito.mappings.engines.master.Environment;
 import org.mozkito.mappings.finder.Finder;
@@ -33,6 +32,7 @@ import org.mozkito.persistence.ConnectOptions;
 import org.mozkito.persistence.DatabaseType;
 import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
+import org.mozkito.utilities.commons.JavaUtils;
 import org.mozkito.versions.model.ChangeSet;
 
 /**
