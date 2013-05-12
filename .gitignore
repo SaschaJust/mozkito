@@ -53,3 +53,14 @@ mozkito-modules/**/eclipse
 /mozkito-modules/mozkito-issues/src/main/resources/ClassDiagram.png
 /mozkito-modules/maven.err
 /mozkito-maven-plugins/mozkito-maven-plugin/maven.err
+/mozkito-utilities/mozkito-reflections/.classpath
+/mozkito-utilities/mozkito-mime/.classpath
+/mozkito-utilities/mozkito-loading/.classpath
+/mozkito-utilities/mozkito-io/.classpath
+/mozkito-utilities/mozkito-execution/.classpath
+/mozkito-utilities/mozkito-diff/.classpath
+/mozkito-utilities/mozkito-datetime/.classpath
+/mozkito-utilities/mozkito-datastructures/.classpath
+/mozkito-utilities/mozkito-commons/.classpath
+/mozkito-utilities/mozkito-clustering/.classpath
+/mozkito-utilities/mozkito-changeimpact/.classpath
