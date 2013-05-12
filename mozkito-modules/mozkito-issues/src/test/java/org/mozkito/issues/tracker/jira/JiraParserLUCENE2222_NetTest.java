@@ -25,7 +25,6 @@ import net.ownhero.dev.regex.Regex;
 
 import org.junit.Before;
 import org.junit.Test;
-
 import org.mozkito.issues.elements.Resolution;
 import org.mozkito.issues.elements.Severity;
 import org.mozkito.issues.elements.Status;
@@ -131,7 +130,7 @@ public class JiraParserLUCENE2222_NetTest {
 	@Test
 	public void testGetHistoryElements() {
 		JiraParserLUCENE2222_NetTest.parser.parseHistoryElements(report.getHistory());
-		assertEquals(11, report.getHistory().size());
+		assertEquals(12, report.getHistory().size());
 		
 		int counter = 0;
 		for (final HistoryElement hElem : report.getHistory()) {
