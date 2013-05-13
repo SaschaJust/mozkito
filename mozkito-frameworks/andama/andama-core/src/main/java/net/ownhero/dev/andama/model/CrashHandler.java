@@ -32,8 +32,9 @@ import javax.mail.internet.MimeMessage;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.Logger;
+
+import org.mozkito.utilities.io.FileUtils;
 
 /**
  * The Class CrashHandler.
@@ -353,6 +354,7 @@ public class CrashHandler extends ThreadGroup {
 	 */
 	/**
 	 * {@inheritDoc}
+	 * 
 	 * @see java.lang.ThreadGroup#uncaughtException(java.lang.Thread, java.lang.Throwable)
 	 */
 	@Override

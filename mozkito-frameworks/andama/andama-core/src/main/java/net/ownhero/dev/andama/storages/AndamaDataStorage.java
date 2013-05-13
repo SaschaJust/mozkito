@@ -20,10 +20,11 @@ import java.util.concurrent.LinkedBlockingDeque;
 
 import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.threads.INode;
-import net.ownhero.dev.ioda.JavaUtils;
-import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
+
+import org.mozkito.utilities.commons.JavaUtils;
+import org.mozkito.utilities.datastructures.Tuple;
 
 /**
  * The {@link AndamaDataStorage} elements are the node of a.

@@ -35,13 +35,14 @@ import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.storages.AndamaDataStorage;
 import net.ownhero.dev.andama.threads.comparator.AndamaThreadComparator;
 import net.ownhero.dev.hiari.settings.ISettings;
-import net.ownhero.dev.ioda.JavaUtils;
-import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.CollectionCondition;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
+
+import org.mozkito.utilities.commons.JavaUtils;
+import org.mozkito.utilities.datastructures.Tuple;
 
 /**
  * The Class Node.

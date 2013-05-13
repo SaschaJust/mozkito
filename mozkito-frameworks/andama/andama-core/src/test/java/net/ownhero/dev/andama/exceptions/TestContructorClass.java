@@ -16,7 +16,7 @@ package net.ownhero.dev.andama.exceptions;
 import java.util.Collection;
 import java.util.List;
 
-import net.ownhero.dev.ioda.Tuple;
+import org.mozkito.utilities.datastructures.Tuple;
 
 public class TestContructorClass {
 	
