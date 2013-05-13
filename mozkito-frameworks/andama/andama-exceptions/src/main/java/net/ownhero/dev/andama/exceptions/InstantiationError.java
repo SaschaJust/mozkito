@@ -16,7 +16,7 @@ import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 
-import net.ownhero.dev.ioda.FileUtils;
+import org.mozkito.utilities.io.FileUtils;
 
 /**
  * The Class InstantiationError.

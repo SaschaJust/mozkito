@@ -20,9 +20,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
 
-import net.ownhero.dev.ioda.ClassFinder;
-import net.ownhero.dev.ioda.FileUtils;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.IndexWriterConfig;
@@ -32,6 +29,9 @@ import org.apache.lucene.search.spell.SpellChecker;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.Version;
+
+import org.mozkito.utilities.io.FileUtils;
+import org.mozkito.utilities.loading.classpath.ClassFinder;
 
 /**
  * The Class ClassLoadingError.

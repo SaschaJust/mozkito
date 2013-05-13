@@ -42,11 +42,11 @@
 	<distributionManagement>
 	    <repository>
 	      <id>releases</id>
-	      <url>http://mozkito.org:8080/nexus/content/repositories/releases</url>
+	      <url>https://nexus.mozkito.org/content/repositories/releases</url>
 	    </repository>
 	    <snapshotRepository>
 	      <id>snapshots</id>
-	      <url>http://mozkito.org:8080/nexus/content/repositories/snapshots</url>
+	      <url>https://nexus.mozkito.org/content/repositories/snapshots</url>
 	    </snapshotRepository>
 	</distributionManagement>
 	<build>
@@ -129,34 +129,34 @@
 		<repository>
 			<id>own-hero.net-public</id>
 			<name>own-hero.net Public Repositories</name>
-			<url>http://mozkito.org:8080/nexus/content/groups/public</url>
+			<url>https://nexus.mozkito.org/content/groups/public</url>
 		</repository>
 		<repository>
 			<id>own-hero.net-private</id>
 			<name>own-hero.net Private Repositories</name>
-			<url>http://mozkito.org:8080/nexus/content/groups/private</url>
+			<url>https://nexus.mozkito.org/content/groups/private</url>
 		</repository>
 		<repository>
 			<id>own-hero.net-proxy</id>
 			<name>own-hero.net Proxy Repositories</name>
-			<url>http://mozkito.org:8080/nexus/content/groups/proxy</url>
+			<url>https://nexus.mozkito.org/content/groups/proxy</url>
 		</repository>
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
 			<id>own-hero.net-public</id>
 			<name>own-hero.net Public Repositories</name>
-			<url>http://mozkito.org:8080/nexus/content/groups/public</url>
+			<url>https://nexus.mozkito.org/content/groups/public</url>
 		</pluginRepository>
 			<pluginRepository>
 			<id>own-hero.net-private</id>
 			<name>own-hero.net Private Repositories</name>
-			<url>http://mozkito.org:8080/nexus/content/groups/private</url>
+			<url>https://nexus.mozkito.org/content/groups/private</url>
 		</pluginRepository>
 		<pluginRepository>
 			<id>own-hero.net-proxy</id>
 			<name>own-hero.net Proxy Repositories</name>
-			<url>http://mozkito.org:8080/nexus/content/groups/proxy</url>
+			<url>https://nexus.mozkito.org/content/groups/proxy</url>
 		</pluginRepository>
 	</pluginRepositories>
 	<dependencies>
