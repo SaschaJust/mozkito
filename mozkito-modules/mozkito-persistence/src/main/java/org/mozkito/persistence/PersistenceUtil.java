@@ -79,8 +79,9 @@ public interface PersistenceUtil {
 	
 	/**
 	 * Creates the session factory.
-	 *
-	 * @param options the options
+	 * 
+	 * @param options
+	 *            the options
 	 */
 	void createSessionFactory(DatabaseEnvironment options);
 	
@@ -130,6 +131,13 @@ public interface PersistenceUtil {
 	 * Flush.
 	 */
 	void flush();
+	
+	/**
+	 * Gets the managed entities.
+	 * 
+	 * @return the managed entities
+	 */
+	public String getManagedEntities();
 	
 	/**
 	 * Gets the tool information.

@@ -180,12 +180,12 @@ public class DatabaseOptions extends ArgumentSetOptions<PersistenceUtil, Argumen
 			org.mozkito.persistence.DatabaseEnvironment dbOptions;
 			try {
 				dbOptions = new org.mozkito.persistence.DatabaseEnvironment(typeArgument.getValue(),
-				                                                        nameArgument.getValue(),
-				                                                        hostArgument.getValue(),
-				                                                        userArgument.getValue(),
-				                                                        passwordArgument.getValue(),
-				                                                        optionsArgument.getValue(),
-				                                                        unitArgument.getValue());
+				                                                            nameArgument.getValue(),
+				                                                            hostArgument.getValue(),
+				                                                            userArgument.getValue(),
+				                                                            passwordArgument.getValue(),
+				                                                            optionsArgument.getValue(),
+				                                                            unitArgument.getValue());
 			} catch (final ConfigurationException e1) {
 				throw new UnrecoverableError(e1);
 			}
@@ -209,8 +209,11 @@ public class DatabaseOptions extends ArgumentSetOptions<PersistenceUtil, Argumen
 			}
 			
 			final PersistenceUtil util = PersistenceManager.createUtil(dbOptions, middlewareArgument.getValue());
-			
 			this.settings.addInformation(middlewareArgument.getValue(), util.getToolInformation());
+			
+			if (Logger.logDebug()) {
+				Logger.debug(util.getToolInformation());
+			}
 			
 			return util;
 		} finally {

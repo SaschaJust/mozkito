@@ -33,6 +33,7 @@ import javax.persistence.Id;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.Root;
+import javax.persistence.metamodel.ManagedType;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
@@ -46,7 +47,6 @@ import org.apache.openjpa.persistence.OpenJPAEntityManagerFactory;
 import org.apache.openjpa.persistence.OpenJPAPersistence;
 import org.apache.openjpa.persistence.criteria.OpenJPACriteriaBuilder;
 import org.apache.openjpa.persistence.criteria.OpenJPACriteriaQuery;
-
 import org.mozkito.utilities.commons.JavaUtils;
 import org.mozkito.utilities.io.FileUtils;
 import org.mozkito.utilities.loading.classpath.ClassFinder;
@@ -344,6 +344,16 @@ public class OpenJPAUtil implements PersistenceUtil {
 		this.entityManager.flush();
 	}
 	
+	@Override
+	public String getManagedEntities() {
+		final StringBuilder sb = new StringBuilder();
+		for (final ManagedType<?> type : this.entityManager.getMetamodel().getManagedTypes()) {
+			sb.append(type.getJavaType().getName());
+			sb.append(FileUtils.lineSeparator);
+		}
+		return sb.toString();
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see org.mozkito.persistence.PersistenceUtil#getToolInformation ()
@@ -371,6 +381,10 @@ public class OpenJPAUtil implements PersistenceUtil {
 			builder.append(String.format("%-" + max + "s : %s", key, properties.get(key))); //$NON-NLS-1$ //$NON-NLS-2$
 			builder.append(FileUtils.lineSeparator);
 		}
+		
+		builder.append("Managed  Entities:");
+		builder.append(FileUtils.lineSeparator);
+		builder.append(getManagedEntities());
 		
 		return builder.toString();
 	}
