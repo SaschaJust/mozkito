@@ -94,7 +94,7 @@ public class Persons extends Chain<Settings> {
 			this.threadPool = new Pool(Persons.class.getSimpleName(), this);
 			
 			final DatabaseOptions databaseOptions = new DatabaseOptions(settings.getRoot(), Requirement.required,
-			                                                            "persistence"); //$NON-NLS-1$
+			                                                            "persons"); //$NON-NLS-1$
 			this.databaseArguments = ArgumentSetFactory.create(databaseOptions);
 			
 			this.enginesSet = ArgumentSetFactory.create(new MergingEngineOptions(getSettings().getRoot(),
