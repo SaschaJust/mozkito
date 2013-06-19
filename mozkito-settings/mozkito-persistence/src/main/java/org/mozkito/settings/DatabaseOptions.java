@@ -29,6 +29,7 @@ import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kisa.Logger;
 
+import org.apache.openjpa.persistence.PersistenceException;
 import org.apache.openjpa.util.UserException;
 import org.mozkito.persistence.ConnectOptions;
 import org.mozkito.persistence.DatabaseEnvironment.ConfigurationException;
@@ -218,7 +219,7 @@ public class DatabaseOptions extends ArgumentSetOptions<PersistenceUtil, Argumen
 				}
 				
 				return util;
-			} catch (final UserException e) {
+			} catch (final UserException | PersistenceException e) {
 				if (e.getMessage().contains("database") && e.getMessage().contains("does not exist")) {
 					throw new Shutdown(
 					                   String.format("The specified database %s on host %s does not exist. Please check you settings.",
