@@ -16,6 +16,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
@@ -28,6 +29,7 @@ import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kisa.Logger;
 
+import org.apache.openjpa.util.UserException;
 import org.mozkito.persistence.ConnectOptions;
 import org.mozkito.persistence.DatabaseEnvironment.ConfigurationException;
 import org.mozkito.persistence.DatabaseType;
@@ -207,15 +209,23 @@ public class DatabaseOptions extends ArgumentSetOptions<PersistenceUtil, Argumen
 				}
 				
 			}
-			
-			final PersistenceUtil util = PersistenceManager.createUtil(dbOptions, middlewareArgument.getValue());
-			this.settings.addInformation(middlewareArgument.getValue(), util.getToolInformation());
-			
-			if (Logger.logDebug()) {
-				Logger.debug(util.getToolInformation());
+			try {
+				final PersistenceUtil util = PersistenceManager.createUtil(dbOptions, middlewareArgument.getValue());
+				this.settings.addInformation(middlewareArgument.getValue(), util.getToolInformation());
+				
+				if (Logger.logDebug()) {
+					Logger.debug(util.getToolInformation());
+				}
+				
+				return util;
+			} catch (final UserException e) {
+				if (e.getMessage().contains("database") && e.getMessage().contains("does not exist")) {
+					throw new Shutdown(
+					                   String.format("The specified database %s on host %s does not exist. Please check you settings.",
+					                                 dbOptions.getDatabaseName(), dbOptions.getDatabaseHost()));
+				}
+				throw new Shutdown(e);
 			}
-			
-			return util;
 		} finally {
 			// POSTCONDITIONS
 		}
