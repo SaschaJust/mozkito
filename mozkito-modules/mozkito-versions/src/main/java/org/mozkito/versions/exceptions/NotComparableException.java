@@ -58,7 +58,6 @@ public class NotComparableException extends Exception {
 	 */
 	public NotComparableException() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 	
 	/**

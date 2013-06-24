@@ -21,7 +21,6 @@ import org.mozkito.utilities.loading.classpath.ClassPath;
 import org.mozkito.utilities.loading.classpath.ClassPath.Element;
 import org.mozkito.utilities.loading.classpath.exceptions.ElementLoadingException;
 
-
 /**
  * @author Sascha Just <sascha.just@mozkito.org>
  * 

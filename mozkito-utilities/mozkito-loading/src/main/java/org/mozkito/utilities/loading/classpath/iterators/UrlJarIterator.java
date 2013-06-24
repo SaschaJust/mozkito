@@ -21,7 +21,6 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
 import org.apache.commons.io.FilenameUtils;
-
 import org.mozkito.utilities.io.FileUtils;
 import org.mozkito.utilities.loading.classpath.ClassPath;
 import org.mozkito.utilities.loading.classpath.ClassPath.Element;
@@ -160,7 +159,7 @@ public class UrlJarIterator implements Iterator<Element> {
 				}
 			}
 		} catch (final IOException e) {
-			// TODO Auto-generated catch block
+			// empty block
 		}
 	}
 	

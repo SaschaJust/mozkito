@@ -56,7 +56,6 @@ public class LocalDirectoryIterator implements Iterator<Element> {
 				this.classPath = classPath;
 				setNext();
 			} catch (final IOException e) {
-				// TODO Auto-generated catch block
 				if (Logger.logError()) {
 					Logger.error(e);
 				}

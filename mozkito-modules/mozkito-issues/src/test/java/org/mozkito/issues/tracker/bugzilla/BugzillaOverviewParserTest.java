@@ -23,11 +23,9 @@ import java.util.Set;
 import net.ownhero.dev.kisa.Logger;
 
 import org.junit.Test;
-
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.utilities.io.FileUtils;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class BugzillaOverviewParserTest.
  * 

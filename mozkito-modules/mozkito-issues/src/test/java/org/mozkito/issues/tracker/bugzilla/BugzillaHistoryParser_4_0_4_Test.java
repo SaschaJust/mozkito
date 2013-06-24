@@ -25,7 +25,6 @@ import net.ownhero.dev.kisa.Logger;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.mozkito.issues.elements.Priority;
 import org.mozkito.issues.model.HistoryElement;
 import org.mozkito.issues.model.IssueTracker;
@@ -35,7 +34,6 @@ import org.mozkito.persons.model.Person;
 import org.mozkito.utilities.datetime.DateTimeUtils;
 import org.mozkito.utilities.io.FileUtils;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class BugzillaHistoryParser_4_0_4_Test.
  * 

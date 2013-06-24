@@ -17,16 +17,18 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import net.ownhero.dev.kisa.Logger;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.junit.Ignore;
 import org.junit.Test;
-
 import org.mozkito.utilities.datastructures.Tuple;
 import org.mozkito.utilities.execution.CommandExecutor;
 
@@ -49,7 +51,14 @@ public class VersionsIT {
 	private Tuple<Integer, List<String>> exec(final Properties properties) throws IOException {
 		
 		// TODO this should be automatically generated and be platform independent
-		final String jar = "target/mozkito-versions-tool-0.4-SNAPSHOT-jar-with-dependencies.jar";
+		String jar = "unknown";
+		try {
+			jar = VersionsIT.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+		} catch (final URISyntaxException e) {
+			if (Logger.logWarn()) {
+				Logger.warn(e.getMessage());
+			}
+		}
 		
 		// move properties to hashmap
 		final HashMap<String, String> hmap = new HashMap<>();
