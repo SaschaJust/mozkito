@@ -58,7 +58,6 @@ import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.joda.time.DateTime;
-
 import org.mozkito.utilities.datastructures.RawContent;
 import org.mozkito.utilities.io.FileUtils.FileShutdownAction;
 import org.mozkito.utilities.io.exceptions.FetchException;
@@ -316,6 +315,7 @@ public class IOUtils {
 	 * 
 	 * @return the sSL socket factory
 	 */
+	@SuppressWarnings ("unused")
 	private static SSLSocketFactory buildSSLSocketFactory() {
 		final TrustStrategy ts = new TrustStrategy() {
 			

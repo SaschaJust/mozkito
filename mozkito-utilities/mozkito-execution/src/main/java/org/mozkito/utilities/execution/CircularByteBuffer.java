@@ -26,8 +26,6 @@ import java.io.OutputStream;
  * <p>
  * This class is thread safe.
  * 
- * @see CircularCharBuffer
- * @see CircularObjectBuffer
  * 
  * @author Stephen Ostermiller http://ostermiller.org/contact.pl?regarding=Java+Utilities
  * @since ostermillerutils 1.00.00
@@ -38,6 +36,11 @@ public class CircularByteBuffer {
 	 * The Class BufferOverflowException.
 	 */
 	private static final class BufferOverflowException extends IOException {
+		
+		/**
+         * 
+         */
+		private static final long serialVersionUID = -5941116973072961871L;
 		
 		/**
 		 * Instantiates a new buffer overflow exception.
@@ -117,6 +120,7 @@ public class CircularByteBuffer {
 		 * 
 		 * @since ostermillerutils 1.00.00
 		 */
+		@SuppressWarnings ("sync-override")
 		@Override
 		public void mark(final int readAheadLimit) {
 			synchronized (CircularByteBuffer.this) {
@@ -262,6 +266,7 @@ public class CircularByteBuffer {
 		 * 
 		 * @since ostermillerutils 1.00.00
 		 */
+		@SuppressWarnings ("sync-override")
 		@Override
 		public void reset() throws IOException {
 			synchronized (CircularByteBuffer.this) {
