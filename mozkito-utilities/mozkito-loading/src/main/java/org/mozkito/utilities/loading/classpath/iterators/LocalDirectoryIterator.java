@@ -22,7 +22,6 @@ import java.util.Iterator;
 import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.io.FilenameUtils;
-
 import org.mozkito.utilities.io.FileUtils;
 import org.mozkito.utilities.loading.classpath.ClassPath;
 import org.mozkito.utilities.loading.classpath.ClassPath.Element;
@@ -42,8 +41,11 @@ public class LocalDirectoryIterator implements Iterator<Element> {
 	private Element          current   = null; ;
 	
 	/**
- * 
- */
+	 * Instantiates a new local directory iterator.
+	 * 
+	 * @param classPath
+	 *            the class path
+	 */
 	public LocalDirectoryIterator(final ClassPath classPath) {
 		// PRECONDITIONS
 		

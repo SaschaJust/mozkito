@@ -42,7 +42,6 @@ import net.ownhero.dev.kisa.Logger;
 import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.lang.StringEscapeUtils;
-
 import org.mozkito.utilities.io.FileUtils;
 import org.mozkito.utilities.io.FileUtils.FileShutdownAction;
 import org.mozkito.utilities.loading.classpath.exceptions.WrongClassSearchMethodException;
@@ -395,8 +394,8 @@ public class ClassFinder {
 				if (!current.isDirectory()) {
 					
 					if (currentName.toLowerCase().endsWith(".jar")) {
-						if (Logger.logError()) {
-							Logger.error("JAR in JAR is not supported yet. Found archive: " + currentName);
+						if (Logger.logInfo()) {
+							Logger.info("JAR in JAR is not supported yet. Found archive: " + currentName);
 						}
 						retryFromFile = true;
 						break JARENTRIES;
@@ -679,8 +678,8 @@ public class ClassFinder {
 					final String currentName = current.getName();
 					if (!current.isDirectory()) {
 						if (currentName.toLowerCase().endsWith(".jar")) {
-							if (Logger.logError()) {
-								Logger.error("JAR in JAR is not supported yet. Found archive: " + currentName);
+							if (Logger.logInfo()) {
+								Logger.info("JAR in JAR is not supported yet. Found archive: " + currentName);
 							}
 						} else if (currentName.endsWith(".class")) {
 							String path = current.getName();
@@ -695,8 +694,8 @@ public class ClassFinder {
 					}
 				}
 			} catch (final IOException e) {
-				if (Logger.logWarn()) {
-					Logger.warn("Skipping invalid JAR file `" + resource.toString() + "`: " + e.getMessage());
+				if (Logger.logInfo()) {
+					Logger.info("Skipping invalid JAR file `" + resource.toString() + "`: " + e.getMessage());
 				}
 			} finally {
 				if (inputStream != null) {

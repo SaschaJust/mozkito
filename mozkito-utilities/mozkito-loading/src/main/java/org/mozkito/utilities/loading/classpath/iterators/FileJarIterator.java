@@ -24,7 +24,6 @@ import java.util.jar.JarFile;
 import java.util.jar.JarInputStream;
 
 import org.apache.commons.io.FilenameUtils;
-
 import org.mozkito.utilities.io.FileUtils;
 import org.mozkito.utilities.loading.classpath.ClassPath;
 import org.mozkito.utilities.loading.classpath.ClassPath.Element;
@@ -96,7 +95,7 @@ public class FileJarIterator implements ElementIterator {
 	 * {@inheritDoc}
 	 * 
 	 * @throws IOException
-	 * @see org.mozkito.utilities.loading.classpath.ClassPath.ElementIterator#load(org.mozkito.utilities.loading.classpath.ClassPath.Element)
+	 * @see org.mozkito.utilities.loading.classpath.ClassPath.ElementIterator#loadCompilationUnit(org.mozkito.utilities.loading.classpath.ClassPath.Element)
 	 */
 	@Override
 	public Class<?> loadCompilationUnit(final Element element) throws IOException {

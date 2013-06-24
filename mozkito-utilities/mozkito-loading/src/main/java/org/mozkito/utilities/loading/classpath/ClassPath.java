@@ -30,7 +30,6 @@ import net.ownhero.dev.regex.Match;
 import net.ownhero.dev.regex.Regex;
 
 import org.apache.commons.io.FilenameUtils;
-
 import org.mozkito.utilities.loading.classpath.ClassPath.Element.Criterion;
 import org.mozkito.utilities.loading.classpath.classloaders.BootstrapClassloader;
 import org.mozkito.utilities.loading.classpath.criteria.And;
@@ -498,7 +497,9 @@ public final class ClassPath {
 	}
 	
 	/**
-	 * @return
+	 * Gets the resources.
+	 * 
+	 * @return the resources
 	 */
 	public static Collection<Resource> getResources() {
 		// PRECONDITIONS
