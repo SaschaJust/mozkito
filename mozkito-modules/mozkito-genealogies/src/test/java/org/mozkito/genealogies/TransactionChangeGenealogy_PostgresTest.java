@@ -26,7 +26,6 @@ import java.util.Set;
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 
 import org.junit.Test;
-
 import org.mozkito.genealogies.core.CoreChangeGenealogy;
 import org.mozkito.genealogies.core.GenealogyEdgeType;
 import org.mozkito.genealogies.core.TransactionChangeGenealogy;
@@ -47,7 +46,7 @@ import org.mozkito.versions.model.ChangeSet;
 @DatabaseSettings (unit = "codeanalysis",
                    database = "mozkito_genealogies_test_environment",
                    options = ConnectOptions.VALIDATE_OR_CREATE_SCHEMA,
-                   hostname = "grid1.st.cs.uni-saarland.de",
+                   hostname = "localhost",
                    password = "miner",
                    username = "miner",
                    type = DatabaseType.POSTGRESQL,
