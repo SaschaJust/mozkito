@@ -48,7 +48,7 @@
 			<artifactId>opencsv</artifactId>
 			<version>2.3</version>
 		</dependency>
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-core</artifactId>
 			<version>3.6.2</version>
@@ -57,7 +57,7 @@
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-spellchecker</artifactId>
 			<version>3.6.2</version>
-		</dependency>
+		</dependency> -->
 		<dependency>
 			<groupId>libsvm</groupId>
 			<artifactId>libsvm</artifactId>
@@ -68,11 +68,11 @@
 			<artifactId>lingpipe</artifactId>
 			<version>4.1.0</version>
 		</dependency>
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-analyzers</artifactId>
 			<version>3.6.2</version>
-		</dependency>
+		</dependency> -->
 		<dependency>
 			<groupId>cc.mallet</groupId>
 			<artifactId>mallet</artifactId>
@@ -82,6 +82,31 @@
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
 			<version>4.2.2</version>
+		</dependency>
+		<!-- <dependency>
+		   <groupId>com.tinkerpop.blueprints</groupId>
+		   <artifactId>blueprints-core</artifactId>
+		   <version>2.3.0</version>
+		</dependency> -->
+		<dependency>
+		   <groupId>com.thinkaurelius.titan</groupId>
+		   <artifactId>titan-core</artifactId>
+		   <version>0.3.1</version>
+		</dependency>
+		<dependency>
+		   <groupId>com.thinkaurelius.titan</groupId>
+		   <artifactId>titan-berkeleyje</artifactId>
+		   <version>0.3.1</version>
+		</dependency>
+		<!-- <dependency>
+		   <groupId>com.thinkaurelius.titan</groupId>
+		   <artifactId>titan-es</artifactId>
+		   <version>0.3.1</version>
+		</dependency> -->
+		<dependency>
+		   <groupId>com.thinkaurelius.titan</groupId>
+		   <artifactId>titan-lucene</artifactId>
+		   <version>0.3.1</version>
 		</dependency>
 	</dependencies>
 </project>
