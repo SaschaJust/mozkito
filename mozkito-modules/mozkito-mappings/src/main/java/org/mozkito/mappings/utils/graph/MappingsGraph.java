@@ -13,16 +13,29 @@
 
 package org.mozkito.mappings.utils.graph;
 
+import com.thinkaurelius.titan.core.TitanGraph;
+import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.blueprints.Graph;
+import com.tinkerpop.blueprints.Vertex;
+
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+
 import org.mozkito.mappings.mappable.model.MappableEntity;
 
 /**
- * @author Sascha Just <sascha.just@mozkito.org>
+ * The Class MappingsGraph.
  * 
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class MappingsGraph {
 	
+	/** The Constant TYPE_KEY. */
 	public static final String TYPE_KEY    = "type";
 	
+	/** The Constant ID_KEY. */
+	public static final String ID_KEY      = "id";
+	
+	/** The Constant FIXES_LABEL. */
 	public static final String FIXES_LABEL = "fixes";
 	
 	/**
@@ -36,7 +49,36 @@ public class MappingsGraph {
 		return entity.getBaseType().getCanonicalName() + "##" + entity.getId();
 	}
 	
+	/**
+	 * Gets the vertex type.
+	 * 
+	 * @param entity
+	 *            the entity
+	 * @return the vertex type
+	 */
 	public static final String getVertexType(final MappableEntity entity) {
 		return entity.getClassName();
+	}
+	
+	/**
+	 * Initialize.
+	 * 
+	 * @param graph
+	 *            the graph
+	 */
+	public static void initialize(@NotNull final Graph graph) {
+		if (graph instanceof TitanGraph) {
+			final TitanGraph tGraph = (TitanGraph) graph;
+			
+			// unique
+			tGraph.makeType().name(ID_KEY).dataType(String.class).indexed(Vertex.class).unique(Direction.BOTH)
+			      .makePropertyKey();
+			tGraph.makeType().name(TYPE_KEY).dataType(String.class).indexed(Vertex.class).makePropertyKey();
+			tGraph.makeType().name(FIXES_LABEL).makeEdgeLabel();
+			
+			tGraph.commit();
+			
+		}
+		
 	}
 }

@@ -74,6 +74,27 @@ public class AuthorEqualityEngine extends Engine {
 	}
 	
 	/**
+	 * Compute.
+	 * 
+	 * @param one
+	 *            the one
+	 * @param other
+	 *            the other
+	 * @return the double
+	 */
+	public double compute(final Person one,
+	                      final Person other) {
+		double localConfidence = 0d;
+		
+		// check if the values in the author fields are equal
+		if (one.equals(other)) {
+			localConfidence = getConfidence();
+		}
+		
+		return localConfidence;
+	}
+	
+	/**
 	 * Gets the confidence. This method is for internal use only and returns the confidence that is used to score if
 	 * requirements are met.
 	 * 
@@ -129,10 +150,7 @@ public class AuthorEqualityEngine extends Engine {
 				assert fromAuthor != null;
 			}
 			
-			// check if the values in the author fields are equal
-			if (fromAuthor.equals(toAuthor)) {
-				localConfidence = getConfidence();
-			}
+			localConfidence = compute(fromAuthor, toAuthor);
 			
 			// add result
 			addFeature(relation, localConfidence, FieldKey.AUTHOR.name(), from.get(FieldKey.AUTHOR),

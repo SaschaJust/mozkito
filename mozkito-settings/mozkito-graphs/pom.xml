@@ -16,24 +16,14 @@
 		<artifactId>mozkito-settings</artifactId>
 		<version>0.4-SNAPSHOT</version>
 	</parent>
-	<artifactId>mozkito-mappings-settings</artifactId>
+	<artifactId>mozkito-graphs-settings</artifactId>
 	<packaging>jar</packaging>
 	<name>mappings [settings]</name>
 	<description>TODO</description>
 	<dependencies>
 		<dependency>
 			<groupId>org.mozkito</groupId>
-			<artifactId>mozkito-mappings</artifactId>
-			<version>0.4-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>org.mozkito</groupId>
-			<artifactId>mozkito-versions-settings</artifactId>
-			<version>0.4-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>org.mozkito</groupId>
-			<artifactId>mozkito-graphs-settings</artifactId>
+			<artifactId>mozkito-graphs</artifactId>
 			<version>0.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>

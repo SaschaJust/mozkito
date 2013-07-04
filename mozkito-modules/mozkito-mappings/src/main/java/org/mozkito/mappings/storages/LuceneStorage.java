@@ -66,8 +66,10 @@ public class LuceneStorage extends Storage {
 	/** The isearcher reports. */
 	private IndexSearcher                         isearcherReports = null;
 	
+	/** The one type. */
 	private final Class<? extends MappableEntity> oneType;
 	
+	/** The other type. */
 	private final Class<? extends MappableEntity> otherType;
 	
 	/** The Constant DESCRIPTION. */
@@ -77,8 +79,8 @@ public class LuceneStorage extends Storage {
 	public static final String                    TAG              = "lucene";                                       //$NON-NLS-1$
 	                                                                                                                  
 	/**
-     * 
-     */
+	 * Instantiates a new lucene storage.
+	 */
 	public LuceneStorage() {
 		this(null, null);
 		
@@ -164,6 +166,8 @@ public class LuceneStorage extends Storage {
 	}
 	
 	/**
+	 * Gets the one type.
+	 * 
 	 * @return the oneType
 	 */
 	public final Class<? extends MappableEntity> getOneType() {
@@ -181,6 +185,8 @@ public class LuceneStorage extends Storage {
 	}
 	
 	/**
+	 * Gets the other type.
+	 * 
 	 * @return the otherType
 	 */
 	public final Class<? extends MappableEntity> getOtherType() {

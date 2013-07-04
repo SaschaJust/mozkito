@@ -77,6 +77,33 @@ public class BackrefEngine extends Engine {
 	}
 	
 	/**
+	 * Compute.
+	 * 
+	 * @param oneId
+	 *            the one id
+	 * @param oneText
+	 *            the one text
+	 * @param otherId
+	 *            the other id
+	 * @param otherText
+	 *            the other text
+	 * @return the double
+	 */
+	public double compute(final String oneId,
+	                      final String oneText,
+	                      final String otherId,
+	                      final String otherText) {
+		double localConfidence = 0d;
+		
+		// check if the text representation of the elements contain the others ID
+		if (otherText.contains(oneId) && oneText.contains(otherId)) {
+			localConfidence = getConfidence();
+		}
+		
+		return localConfidence;
+	}
+	
+	/**
 	 * Gets the confidence.
 	 * 
 	 * @return the confidence
@@ -125,13 +152,7 @@ public class BackrefEngine extends Engine {
 			final String fullText = to.getText();
 			final String id = from.getId();
 			
-			double localConfidence = 0d;
-			
-			// check if the text representation of the elements contain the others ID
-			if (to.getText().contains(from.getId()) && from.getText().contains(to.getId())) {
-				localConfidence = getConfidence();
-				
-			}
+			final double localConfidence = compute(from.getId(), from.getText(), to.getId(), to.getText());
 			
 			// add results
 			addFeature(relation, localConfidence, FieldKey.ID.name(), id, id, "FULLTEXT", fullText, fullText); //$NON-NLS-1$

@@ -33,10 +33,18 @@ import org.mozkito.mappings.engines.Engine;
 import org.mozkito.mappings.filters.Filter;
 import org.mozkito.mappings.finder.Finder;
 import org.mozkito.mappings.messages.Messages;
+import org.mozkito.mappings.register.Node;
 import org.mozkito.mappings.selectors.Selector;
 import org.mozkito.mappings.splitters.Splitter;
+import org.mozkito.mappings.storages.GraphStorage;
+import org.mozkito.mappings.storages.LuceneStorage;
+import org.mozkito.mappings.storages.PersistenceStorage;
+import org.mozkito.mappings.storages.RepositoryStorage;
+import org.mozkito.mappings.storages.Storage;
 import org.mozkito.mappings.strategies.Strategy;
 import org.mozkito.mappings.training.Trainer;
+import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.settings.DatabaseOptions;
 import org.mozkito.utilities.datastructures.Tuple;
 import org.mozkito.versions.model.ChangeSet;
 
@@ -48,11 +56,11 @@ import org.mozkito.versions.model.ChangeSet;
 public class MappingOptions extends ArgumentSetOptions<Finder, ArgumentSet<Finder, MappingOptions>> {
 	
 	/** The Constant DESCRIPTION. */
-	private static final String   DESCRIPTION = Messages.getString("MappingOptions.description"); //$NON-NLS-1$
-	                                                                                              
+	private static final String   DESCRIPTION        = Messages.getString("MappingOptions.description"); //$NON-NLS-1$
+	                                                                                                     
 	/** The Constant NAME. */
-	public static final String    TAG         = "mappings";                                      //$NON-NLS-1$
-	                                                                                              
+	public static final String    TAG                = "mappings";                                      //$NON-NLS-1$
+	                                                                                                     
 	static {
 		Logger.addHighlighter(new Highlighter(LogLevel.ERROR, LogLevel.DEBUG) {
 			
@@ -69,36 +77,54 @@ public class MappingOptions extends ArgumentSetOptions<Finder, ArgumentSet<Finde
 	private EngineOptions         engineOptions;
 	
 	/** The engines. */
-	private final Set<Engine>     engines     = new HashSet<Engine>();
+	private final Set<Engine>     engines            = new HashSet<Engine>();
 	
 	/** The filters. */
-	private final Set<Filter>     filters     = new HashSet<Filter>();
+	private final Set<Filter>     filters            = new HashSet<Filter>();
 	
 	/** The selector options. */
 	private SelectorOptions       selectorOptions;
 	
 	/** The selectors. */
-	private final Set<Selector>   selectors   = new HashSet<Selector>();
+	private final Set<Selector>   selectors          = new HashSet<Selector>();
 	
 	/** The source options. */
 	private TupleArgument.Options sourceOptions;
 	/** The splitters. */
-	private final Set<Splitter>   splitters   = new HashSet<Splitter>();
+	private final Set<Splitter>   splitters          = new HashSet<Splitter>();
 	
 	/** The splitter options. */
 	private SplitterOptions       splitterOptions;
 	
 	/** The strategies. */
-	private final Set<Strategy>   strategies  = new HashSet<Strategy>();
+	private final Set<Strategy>   strategies         = new HashSet<Strategy>();
 	
 	/** The trainers. */
-	private final Set<Trainer>    trainers    = new HashSet<Trainer>();
+	private final Set<Trainer>    trainers           = new HashSet<Trainer>();
 	
 	/** The strategy options. */
 	private StrategyOptions       strategyOptions;
 	
 	/** The filter options. */
 	private FilterOptions         filterOptions;
+	
+	/** The database options. */
+	private final DatabaseOptions databaseOptions;
+	
+	/** The graph options. */
+	private final GraphOptions    graphOptions;
+	
+	/** The persistence storage. */
+	private PersistenceStorage    persistenceStorage = null;
+	
+	/** The graph storage. */
+	private GraphStorage          graphStorage       = null;
+	
+	/** The lucene storage. */
+	private LuceneStorage         luceneStorage      = null;
+	
+	/** The repository storage. */
+	private RepositoryStorage     repositoryStorage  = null;
 	
 	/**
 	 * Instantiates a new mapping options.
@@ -107,9 +133,16 @@ public class MappingOptions extends ArgumentSetOptions<Finder, ArgumentSet<Finde
 	 *            the argument set
 	 * @param requirements
 	 *            the requirements
+	 * @param databaseOptions
+	 *            the database options
+	 * @param graphOptions
+	 *            the graph options
 	 */
-	public MappingOptions(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
+	public MappingOptions(final ArgumentSet<?, ?> argumentSet, final Requirement requirements,
+	        final DatabaseOptions databaseOptions, final GraphOptions graphOptions) {
 		super(argumentSet, MappingOptions.TAG, MappingOptions.DESCRIPTION, requirements);
+		this.databaseOptions = databaseOptions;
+		this.graphOptions = graphOptions;
 	}
 	
 	/**
@@ -177,39 +210,97 @@ public class MappingOptions extends ArgumentSetOptions<Finder, ArgumentSet<Finde
 	 */
 	@Override
 	public Finder init() {
+		this.persistenceStorage = null;
+		this.graphStorage = null;
+		this.luceneStorage = null;
+		this.repositoryStorage = null;
+		
+		// check for available storage provider
+		if (this.databaseOptions != null) {
+			final PersistenceUtil persistenceUtil = getSettings().getArgumentSet(this.databaseOptions).getValue();
+			if (persistenceUtil != null) {
+				this.persistenceStorage = new PersistenceStorage(persistenceUtil);
+			} else {
+				// TODO error
+			}
+		}
+		
 		final Finder finder = new Finder();
 		
 		final ArgumentSet<Set<Selector>, SelectorOptions> selectorArgument = getSettings().getArgumentSet(this.selectorOptions);
 		
 		for (final Selector selector : selectorArgument.getValue()) {
+			provideStorages(selector);
 			finder.addSelector(selector);
 		}
 		
 		final ArgumentSet<Set<Engine>, EngineOptions> engineArgument = getSettings().getArgumentSet(this.engineOptions);
 		
 		for (final Engine engine : engineArgument.getValue()) {
+			provideStorages(engine);
 			finder.addEngine(engine);
 		}
 		
 		final ArgumentSet<Set<Strategy>, StrategyOptions> strategyArgument = getSettings().getArgumentSet(this.strategyOptions);
 		
 		for (final Strategy strategy : strategyArgument.getValue()) {
+			provideStorages(strategy);
 			finder.addStrategy(strategy);
 		}
 		
 		final ArgumentSet<Set<Filter>, FilterOptions> filterArgument = getSettings().getArgumentSet(this.filterOptions);
 		
 		for (final Filter filter : filterArgument.getValue()) {
+			provideStorages(filter);
 			finder.addFilter(filter);
 		}
 		
 		final ArgumentSet<Set<Splitter>, SplitterOptions> splitterArgument = getSettings().getArgumentSet(this.splitterOptions);
 		
 		for (final Splitter splitter : splitterArgument.getValue()) {
+			provideStorages(splitter);
 			finder.addSplitter(splitter);
 		}
 		
 		return finder;
+	}
+	
+	/**
+	 * Provide storages.
+	 * 
+	 * @param node
+	 *            the node
+	 */
+	private void provideStorages(final Node node) {
+		for (final Class<? extends Storage> clazz : node.storageDependency()) {
+			if (clazz.equals(PersistenceStorage.class)) {
+				if (this.persistenceStorage != null) {
+					node.provideStorage(this.persistenceStorage);
+				} else {
+					// TODO error
+				}
+			} else if (clazz.equals(GraphStorage.class)) {
+				if (this.graphStorage != null) {
+					node.provideStorage(this.graphStorage);
+				} else {
+					// TODO error
+				}
+			} else if (clazz.equals(LuceneStorage.class)) {
+				if (this.luceneStorage != null) {
+					node.provideStorage(this.luceneStorage);
+				} else {
+					// TODO error
+				}
+			} else if (clazz.equals(RepositoryStorage.class)) {
+				if (this.repositoryStorage != null) {
+					node.provideStorage(this.repositoryStorage);
+				} else {
+					// TODO error
+				}
+			} else {
+				// TODO error: unsupported storage provider
+			}
+		}
 	}
 	
 	/*
@@ -250,6 +341,14 @@ public class MappingOptions extends ArgumentSetOptions<Finder, ArgumentSet<Finde
 			
 			this.splitterOptions = new SplitterOptions(set, Requirement.required);
 			map.put(this.splitterOptions.getName(), this.splitterOptions);
+			
+			if (this.databaseOptions != null) {
+				map.put(this.databaseOptions.getName(), this.databaseOptions);
+			}
+			
+			if (this.graphOptions != null) {
+				map.put(this.graphOptions.getName(), this.graphOptions);
+			}
 			
 			return map;
 		} finally {

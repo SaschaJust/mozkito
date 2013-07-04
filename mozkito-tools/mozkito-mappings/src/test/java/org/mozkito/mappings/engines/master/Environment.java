@@ -233,7 +233,7 @@ public final class Environment {
 		
 		final Settings settings = new Settings();
 		
-		final MappingOptions mappingOptions = new MappingOptions(settings.getRoot(), Requirement.required);
+		final MappingOptions mappingOptions = new MappingOptions(settings.getRoot(), Requirement.required, null, null);
 		final ArgumentSet<Finder, MappingOptions> mappingArguments = ArgumentSetFactory.create(mappingOptions);
 		final Finder finder = mappingArguments.getValue();
 		

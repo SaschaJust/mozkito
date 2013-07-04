@@ -14,6 +14,8 @@ package org.mozkito.mappings.chains;
 
 import java.util.List;
 
+import com.tinkerpop.blueprints.Graph;
+
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.messages.ErrorEvent;
 import net.ownhero.dev.andama.messages.StartupEvent;
@@ -48,6 +50,7 @@ import org.mozkito.mappings.filters.Filter;
 import org.mozkito.mappings.finder.Finder;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Relation;
+import org.mozkito.mappings.settings.GraphOptions;
 import org.mozkito.mappings.settings.MappingOptions;
 import org.mozkito.mappings.strategies.Strategy;
 import org.mozkito.persistence.PersistenceUtil;
@@ -73,6 +76,12 @@ public class MappingChain extends Chain<Settings> {
 	/** The thread pool. */
 	private final Pool                                    threadPool;
 	
+	/** The graph options. */
+	private GraphOptions                                  graphOptions;
+	
+	/** The graph arguments. */
+	private ArgumentSet<Graph, GraphOptions>              graphArguments;
+	
 	/**
 	 * Instantiates a new mapping chain.
 	 * 
@@ -85,8 +94,11 @@ public class MappingChain extends Chain<Settings> {
 		
 		try {
 			this.databaseOptions = new DatabaseOptions(getSettings().getRoot(), Requirement.required, getName());
+			this.graphOptions = new GraphOptions(getSettings().getRoot(), Requirement.required, getName());
+			this.graphArguments = ArgumentSetFactory.create(this.graphOptions);
 			this.databaseArguments = ArgumentSetFactory.create(this.databaseOptions);
-			this.mappingOptions = new MappingOptions(getSettings().getRoot(), Requirement.required);
+			this.mappingOptions = new MappingOptions(getSettings().getRoot(), Requirement.required,
+			                                         this.databaseOptions, this.graphOptions);
 			this.mappingArguments = ArgumentSetFactory.create(this.mappingOptions);
 		} catch (final ArgumentRegistrationException e) {
 			throw new Shutdown(e.getMessage(), e);
@@ -110,6 +122,11 @@ public class MappingChain extends Chain<Settings> {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.model.Chain#setup()
+	 */
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see net.ownhero.dev.andama.model.Chain#setup()
 	 */
 	@Override
