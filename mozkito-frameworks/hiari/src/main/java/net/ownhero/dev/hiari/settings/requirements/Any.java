@@ -20,13 +20,14 @@ import java.util.List;
 import java.util.Set;
 
 import net.ownhero.dev.hiari.settings.IOptions;
-import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.CollectionCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.apache.commons.collections.CollectionUtils;
+
+import org.mozkito.utilities.commons.JavaUtils;
 
 /**
  * The any expression evaluates to true if any of the inner expressions evaluate to true. Evaluates to false otherwise.

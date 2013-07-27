@@ -15,7 +15,8 @@ package net.ownhero.dev.hiari.settings;
 import java.util.Set;
 
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
-import net.ownhero.dev.ioda.Tuple;
+
+import org.mozkito.utilities.datastructures.Tuple;
 
 /**
  * The Interface IArgument.

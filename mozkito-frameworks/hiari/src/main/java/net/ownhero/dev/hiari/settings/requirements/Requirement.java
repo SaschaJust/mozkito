@@ -12,12 +12,10 @@
  ******************************************************************************/
 package net.ownhero.dev.hiari.settings.requirements;
 
-import java.io.ByteArrayInputStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.BooleanArgument;
 import net.ownhero.dev.hiari.settings.DoubleArgument;
 import net.ownhero.dev.hiari.settings.EnumArgument;
@@ -27,9 +25,6 @@ import net.ownhero.dev.hiari.settings.ListArgument;
 import net.ownhero.dev.hiari.settings.LongArgument;
 import net.ownhero.dev.hiari.settings.SetArgument;
 import net.ownhero.dev.hiari.settings.StringArgument;
-import net.ownhero.dev.ioda.CommandExecutor;
-import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 
@@ -279,33 +274,33 @@ public abstract class Requirement {
 		return new Or(requirement1, requirement2);
 	}
 	
-	/**
-	 * Prints the graph.
-	 * 
-	 * @param arguments
-	 *            the arguments
-	 */
-	public static void printGraph(final Collection<ArgumentSet<?, ?>> arguments) {
-		final StringBuilder builder = new StringBuilder();
-		
-		for (final IArgument<?, ?> aai : arguments) {
-			for (final IOptions<?, ?> aaiDependency : aai.getDependencies()) {
-				builder.append(aai.getName()).append(" --> ").append(aaiDependency.getName()) //$NON-NLS-1$
-				       .append(FileUtils.lineSeparator);
-			}
-		}
-		
-		final Tuple<Integer, List<String>> execute = CommandExecutor.execute("graph-easy", //$NON-NLS-1$
-		                                                                     null,
-		                                                                     FileUtils.tmpDir,
-		                                                                     new ByteArrayInputStream(
-		                                                                                              builder.toString()
-		                                                                                                     .getBytes()),
-		                                                                     null);
-		for (final String output : execute.getSecond()) {
-			System.out.println(output);
-		}
-	}
+	// /**
+	// * Prints the graph.
+	// *
+	// * @param arguments
+	// * the arguments
+	// */
+	// public static void printGraph(final Collection<ArgumentSet<?, ?>> arguments) {
+	// final StringBuilder builder = new StringBuilder();
+	//
+	// for (final IArgument<?, ?> aai : arguments) {
+	// for (final IOptions<?, ?> aaiDependency : aai.getDependencies()) {
+	//				builder.append(aai.getName()).append(" --> ").append(aaiDependency.getName()) //$NON-NLS-1$
+	// .append(FileUtils.lineSeparator);
+	// }
+	// }
+	//
+	//		final Tuple<Integer, List<String>> execute = CommandExecutor.execute("graph-easy", //$NON-NLS-1$
+	// null,
+	// FileUtils.tmpDir,
+	// new ByteArrayInputStream(
+	// builder.toString()
+	// .getBytes()),
+	// null);
+	// for (final String output : execute.getSecond()) {
+	// System.out.println(output);
+	// }
+	// }
 	
 	/**
 	 * Unset.
@@ -347,6 +342,13 @@ public abstract class Requirement {
 	public abstract Set<IOptions<?, ?>> getDependencies();
 	
 	/**
+	 * Gets the required dependencies.
+	 * 
+	 * @return the required dependencies
+	 */
+	public abstract List<Requirement> getFailedChecks();
+	
+	/**
 	 * Gets the handle.
 	 * 
 	 * @return the handle
@@ -354,11 +356,4 @@ public abstract class Requirement {
 	public final String getHandle() {
 		return getClass().getSimpleName();
 	}
-	
-	/**
-	 * Gets the required dependencies.
-	 * 
-	 * @return the required dependencies
-	 */
-	public abstract List<Requirement> getFailedChecks();
 }

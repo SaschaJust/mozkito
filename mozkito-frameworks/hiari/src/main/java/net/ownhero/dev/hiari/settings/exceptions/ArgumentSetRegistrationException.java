@@ -15,8 +15,9 @@ package net.ownhero.dev.hiari.settings.exceptions;
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.IArgumentSetOptions;
-import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+
+import org.mozkito.utilities.io.FileUtils;
 
 /**
  * The Class ArgumentRegistrationException.
@@ -39,10 +40,13 @@ public class ArgumentSetRegistrationException extends Exception {
 	
 	/**
 	 * Instantiates a new argument set registration exception.
-	 *
-	 * @param message the message
-	 * @param argument the argument
-	 * @param options the options
+	 * 
+	 * @param message
+	 *            the message
+	 * @param argument
+	 *            the argument
+	 * @param options
+	 *            the options
 	 */
 	public ArgumentSetRegistrationException(@NotNull final String message, final ArgumentSet<?, ?> argument,
 	        final ArgumentSetOptions<?, ?> options) {
@@ -59,11 +63,15 @@ public class ArgumentSetRegistrationException extends Exception {
 	
 	/**
 	 * Instantiates a new argument registration exception.
-	 *
-	 * @param message the message
-	 * @param argument the argument
-	 * @param options the options
-	 * @param t the t
+	 * 
+	 * @param message
+	 *            the message
+	 * @param argument
+	 *            the argument
+	 * @param options
+	 *            the options
+	 * @param t
+	 *            the t
 	 */
 	public ArgumentSetRegistrationException(@NotNull final String message, final ArgumentSet<?, ?> argument,
 	        final ArgumentSetOptions<?, ?> options, final Throwable t) {

@@ -5,8 +5,9 @@ package net.ownhero.dev.hiari.settings.exceptions;
 
 import net.ownhero.dev.hiari.settings.IArgument;
 import net.ownhero.dev.hiari.settings.IArgumentOptions;
-import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+
+import org.mozkito.utilities.io.FileUtils;
 
 /**
  * The Class ArgumentRegistrationException.

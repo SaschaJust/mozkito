@@ -14,12 +14,13 @@ package net.ownhero.dev.hiari.settings;
 
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
-import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.annotations.string.NotEmptyString;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kanuni.conditions.StringCondition;
 import net.ownhero.dev.kisa.Logger;
+
+import org.mozkito.utilities.datastructures.Tuple;
 
 /**
  * The Class ListArgument.

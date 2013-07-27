@@ -30,13 +30,14 @@ import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
-import net.ownhero.dev.ioda.ClassFinder;
-import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.ioda.exceptions.WrongClassSearchMethodException;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.ClassCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
+
+import org.mozkito.utilities.io.FileUtils;
+import org.mozkito.utilities.loading.classpath.ClassFinder;
+import org.mozkito.utilities.loading.classpath.exceptions.WrongClassSearchMethodException;
 
 /**
  * The Class Settings.

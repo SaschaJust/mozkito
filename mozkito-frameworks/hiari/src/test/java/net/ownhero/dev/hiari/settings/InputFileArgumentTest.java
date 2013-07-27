@@ -23,12 +23,13 @@ import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
-import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import org.mozkito.utilities.io.FileUtils;
+import org.mozkito.utilities.io.FileUtils.FileShutdownAction;
 
 /**
  * The Class InputFileArgumentTest.
@@ -40,8 +41,9 @@ public class InputFileArgumentTest {
 	
 	/**
 	 * Sets the up.
-	 *
-	 * @throws Exception the exception
+	 * 
+	 * @throws Exception
+	 *             the exception
 	 */
 	@Before
 	public void setUp() throws Exception {
@@ -50,8 +52,9 @@ public class InputFileArgumentTest {
 	
 	/**
 	 * Tear down.
-	 *
-	 * @throws Exception the exception
+	 * 
+	 * @throws Exception
+	 *             the exception
 	 */
 	@After
 	public void tearDown() throws Exception {

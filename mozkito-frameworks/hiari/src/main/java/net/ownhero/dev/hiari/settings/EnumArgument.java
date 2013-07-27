@@ -18,13 +18,14 @@ import java.util.HashSet;
 
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
-import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.annotations.string.NotEmptyString;
 import net.ownhero.dev.kanuni.conditions.CollectionCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
+
+import org.mozkito.utilities.commons.JavaUtils;
 
 /**
  * The Class EnumArgument.

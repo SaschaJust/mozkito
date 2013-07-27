@@ -16,12 +16,13 @@ import java.util.List;
 
 import net.ownhero.dev.hiari.settings.IArgument;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
-import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.ioda.JavaUtils;
+
+import org.mozkito.utilities.commons.JavaUtils;
+import org.mozkito.utilities.io.FileUtils;
 
 /**
  * The Class SettingsParseError.
- *
+ * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class SettingsParseError extends Exception {
@@ -41,8 +42,9 @@ public class SettingsParseError extends Exception {
 	
 	/**
 	 * Instantiates a new settings parse error.
-	 *
-	 * @param arg0 the arg0
+	 * 
+	 * @param arg0
+	 *            the arg0
 	 */
 	public SettingsParseError(final String arg0) {
 		super(arg0);
@@ -50,9 +52,11 @@ public class SettingsParseError extends Exception {
 	
 	/**
 	 * Instantiates a new settings parse error.
-	 *
-	 * @param arg0 the arg0
-	 * @param argument the argument
+	 * 
+	 * @param arg0
+	 *            the arg0
+	 * @param argument
+	 *            the argument
 	 */
 	public SettingsParseError(final String arg0, final IArgument<?, ?> argument) {
 		super(arg0);
@@ -61,10 +65,13 @@ public class SettingsParseError extends Exception {
 	
 	/**
 	 * Instantiates a new settings parse error.
-	 *
-	 * @param arg0 the arg0
-	 * @param argument the argument
-	 * @param arg1 the arg1
+	 * 
+	 * @param arg0
+	 *            the arg0
+	 * @param argument
+	 *            the argument
+	 * @param arg1
+	 *            the arg1
 	 */
 	public SettingsParseError(final String arg0, final IArgument<?, ?> argument, final Throwable arg1) {
 		super(arg0, arg1);
