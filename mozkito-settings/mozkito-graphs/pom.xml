@@ -25,6 +25,7 @@
 			<groupId>org.mozkito</groupId>
 			<artifactId>mozkito-graphs</artifactId>
 			<version>0.4-SNAPSHOT</version>
+			<type>pom</type>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
