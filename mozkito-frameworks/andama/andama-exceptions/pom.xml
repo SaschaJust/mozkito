@@ -14,10 +14,15 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
-			<artifactId>lucene-spellchecker</artifactId>
-			<version>3.5.0</version>
+			<artifactId>lucene-core</artifactId>
+			<version>4.2.1</version>
 		</dependency>
 		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-suggest</artifactId>
+			<version>4.2.1</version>
+		</dependency>
+		<!-- <dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-core</artifactId>
 			<version>3.5.0</version>
@@ -26,7 +31,7 @@
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-analyzers</artifactId>
 			<version>3.5.0</version>
-		</dependency>
+		</dependency> -->
 		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
