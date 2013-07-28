@@ -86,9 +86,9 @@ public class RepositoryParser extends Transformer<LogEntry, ChangeSet> {
 					case Renamed:
 						Handle renamedHandle = CURRENT_FILES.get(fileName);
 						if (renamedHandle == null) {
-							if (Logger.logError()) {
-								Logger.error("Renaming of unknown file with file name %s. Assuming 'ADD' operation instead. Data may be incosistent!",
-								             fileName);
+							if (Logger.logWarn()) {
+								Logger.warn("Renaming of unknown file with file name %s. Assuming 'ADD' operation instead. Data may be incosistent!",
+								            fileName);
 							}
 							renamedHandle = new Handle(versionArchive);
 							CURRENT_FILES.put(fileName, renamedHandle);
@@ -110,9 +110,9 @@ public class RepositoryParser extends Transformer<LogEntry, ChangeSet> {
 					case Deleted:
 						final Handle deletedHandle = CURRENT_FILES.get(fileName);
 						if (deletedHandle == null) {
-							if (Logger.logError()) {
-								Logger.error("Deletion of unknown file with file name %s. Ignoring operation. Data may be incosistent!",
-								             fileName);
+							if (Logger.logWarn()) {
+								Logger.warn("Deletion of unknown file with file name %s. Ignoring operation. Data may be incosistent!",
+								            fileName);
 							}
 							break;
 						}
@@ -121,9 +121,9 @@ public class RepositoryParser extends Transformer<LogEntry, ChangeSet> {
 					default:
 						Handle modifiedHandle = CURRENT_FILES.get(fileName);
 						if (modifiedHandle == null) {
-							if (Logger.logError()) {
-								Logger.error("Modification of unknown file with file name %s. Assuming 'ADD' operation instead. Data may be incosistent!",
-								             fileName);
+							if (Logger.logWarn()) {
+								Logger.warn("Modification of unknown file with file name %s. Assuming 'ADD' operation instead. Data may be incosistent!",
+								            fileName);
 							}
 							modifiedHandle = new Handle(versionArchive);
 							CURRENT_FILES.put(fileName, modifiedHandle);
