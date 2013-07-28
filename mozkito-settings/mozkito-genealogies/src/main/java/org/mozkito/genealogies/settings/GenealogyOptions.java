@@ -17,17 +17,19 @@ import java.util.Map;
 
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
-import net.ownhero.dev.hiari.settings.DirectoryArgument;
-import net.ownhero.dev.hiari.settings.DirectoryArgument.Options;
 import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 
 import org.mozkito.genealogies.core.CoreChangeGenealogy;
-import org.mozkito.genealogies.utils.ChangeGenealogyUtils;
+import org.mozkito.mappings.settings.GraphOptions;
+import org.mozkito.mappings.utils.graph.GraphManager.GraphEnvironment;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.settings.DatabaseOptions;
+import org.mozkito.utilities.datastructures.Tuple;
+
+import com.tinkerpop.blueprints.KeyIndexableGraph;
 
 /**
  * The Class GenealogyOptions.
@@ -41,7 +43,7 @@ public class GenealogyOptions extends
 	private final DatabaseOptions databaseOptions;
 	
 	/** The graph db option. */
-	private Options               graphDbOption;
+	private GraphOptions          graphDbOption;
 	
 	/** The persistence util. */
 	private PersistenceUtil       persistenceUtil;
@@ -71,10 +73,10 @@ public class GenealogyOptions extends
 		// PRECONDITIONS
 		
 		try {
-			final DirectoryArgument graphDbArgument = getSettings().getArgument(this.graphDbOption);
 			this.persistenceUtil = getSettings().getArgumentSet(this.databaseOptions).getValue();
-			
-			return ChangeGenealogyUtils.readFromDB(graphDbArgument.getValue(), this.persistenceUtil);
+			final Tuple<KeyIndexableGraph, GraphEnvironment> graphDetails = getSettings().getArgumentSet(this.graphDbOption)
+			                                                                             .getValue();
+			return new CoreChangeGenealogy(graphDetails.getFirst(), graphDetails.getSecond(), this.persistenceUtil);
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -92,11 +94,7 @@ public class GenealogyOptions extends
 		try {
 			final Map<String, IOptions<?, ?>> map = new HashMap<String, IOptions<?, ?>>();
 			
-			this.graphDbOption = new DirectoryArgument.Options(
-			                                                   set,
-			                                                   "graphdb",
-			                                                   "Directory in which to store the GraphDB (if exists, load graphDB from this dir)",
-			                                                   null, Requirement.required, true);
+			this.graphDbOption = new GraphOptions(set, Requirement.required, "graphdb");
 			
 			map.put(this.graphDbOption.getName(), this.graphDbOption);
 			map.put(this.databaseOptions.getName(), this.databaseOptions);

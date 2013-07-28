@@ -16,8 +16,6 @@ package org.mozkito.mappings.settings;
 import java.io.File;
 import java.util.Map;
 
-import com.tinkerpop.blueprints.Graph;
-
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.IOptions;
@@ -28,13 +26,18 @@ import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import org.mozkito.mappings.utils.graph.GraphManager;
 import org.mozkito.mappings.utils.graph.GraphManager.GraphEnvironment;
 import org.mozkito.mappings.utils.graph.GraphManager.GraphType;
+import org.mozkito.utilities.datastructures.Tuple;
+
+import com.tinkerpop.blueprints.KeyIndexableGraph;
 
 /**
  * The Class GraphOptions.
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class GraphOptions extends ArgumentSetOptions<Graph, ArgumentSet<Graph, GraphOptions>> {
+public class GraphOptions
+        extends
+        ArgumentSetOptions<Tuple<KeyIndexableGraph, GraphEnvironment>, ArgumentSet<Tuple<KeyIndexableGraph, GraphEnvironment>, GraphOptions>> {
 	
 	/** The Constant TAG. */
 	private static final String TAG         = "graph";
@@ -74,13 +77,18 @@ public class GraphOptions extends ArgumentSetOptions<Graph, ArgumentSet<Graph, G
 	 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
 	 */
 	@Override
-	public Graph init() {
+	public Tuple<KeyIndexableGraph, GraphEnvironment> init() {
 		PRECONDITIONS: {
 			// none
 		}
 		
 		try {
-			return GraphManager.createUtil(new GraphEnvironment(GraphType.TITAN_DB, new File(new File("."), "database")));
+			
+			final GraphEnvironment graphEnvironment = new GraphEnvironment(GraphType.TITAN_DB, new File(new File("."),
+			                                                                                            "database"));
+			return new Tuple<KeyIndexableGraph, GraphManager.GraphEnvironment>(
+			                                                                   GraphManager.createUtil(graphEnvironment),
+			                                                                   graphEnvironment);
 		} finally {
 			POSTCONDITIONS: {
 				// none

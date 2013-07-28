@@ -14,8 +14,6 @@ package org.mozkito.mappings.chains;
 
 import java.util.List;
 
-import com.tinkerpop.blueprints.Graph;
-
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.messages.ErrorEvent;
 import net.ownhero.dev.andama.messages.StartupEvent;
@@ -53,9 +51,13 @@ import org.mozkito.mappings.model.Relation;
 import org.mozkito.mappings.settings.GraphOptions;
 import org.mozkito.mappings.settings.MappingOptions;
 import org.mozkito.mappings.strategies.Strategy;
+import org.mozkito.mappings.utils.graph.GraphManager.GraphEnvironment;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.settings.DatabaseOptions;
 import org.mozkito.utilities.commons.JavaUtils;
+import org.mozkito.utilities.datastructures.Tuple;
+
+import com.tinkerpop.blueprints.KeyIndexableGraph;
 
 /**
  * The Class MappingChain.
@@ -63,24 +65,24 @@ import org.mozkito.utilities.commons.JavaUtils;
 public class MappingChain extends Chain<Settings> {
 	
 	/** The database arguments. */
-	private ArgumentSet<PersistenceUtil, DatabaseOptions> databaseArguments;
+	private ArgumentSet<PersistenceUtil, DatabaseOptions>                         databaseArguments;
 	
 	/** The database options. */
-	private DatabaseOptions                               databaseOptions;
+	private DatabaseOptions                                                       databaseOptions;
 	
 	/** The mapping arguments. */
-	private ArgumentSet<Finder, MappingOptions>           mappingArguments;
+	private ArgumentSet<Finder, MappingOptions>                                   mappingArguments;
 	
 	/** The mapping options. */
-	private MappingOptions                                mappingOptions;
+	private MappingOptions                                                        mappingOptions;
 	/** The thread pool. */
-	private final Pool                                    threadPool;
+	private final Pool                                                            threadPool;
 	
 	/** The graph options. */
-	private GraphOptions                                  graphOptions;
+	private GraphOptions                                                          graphOptions;
 	
 	/** The graph arguments. */
-	private ArgumentSet<Graph, GraphOptions>              graphArguments;
+	private ArgumentSet<Tuple<KeyIndexableGraph, GraphEnvironment>, GraphOptions> graphArguments;
 	
 	/**
 	 * Instantiates a new mapping chain.
