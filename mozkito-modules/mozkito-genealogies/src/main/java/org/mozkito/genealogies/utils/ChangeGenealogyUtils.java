@@ -27,23 +27,19 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import com.tinkerpop.blueprints.pgm.Graph;
-import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jGraph;
-import com.tinkerpop.blueprints.pgm.util.io.graphml.GraphMLWriter;
-
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.CollectionCondition;
 import net.ownhero.dev.kisa.Logger;
 
-import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.kernel.EmbeddedGraphDatabase;
-
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.genealogies.core.CoreChangeGenealogy;
 import org.mozkito.genealogies.core.GenealogyEdgeType;
 import org.mozkito.genealogies.utils.GenealogyTestEnvironment.TestEnvironmentOperation;
+import org.mozkito.mappings.utils.graph.GraphManager;
+import org.mozkito.mappings.utils.graph.GraphManager.GraphEnvironment;
+import org.mozkito.mappings.utils.graph.GraphManager.GraphType;
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.persons.elements.PersonFactory;
@@ -56,6 +52,10 @@ import org.mozkito.versions.RepositoryType;
 import org.mozkito.versions.exceptions.UnregisteredRepositoryTypeException;
 import org.mozkito.versions.model.ChangeSet;
 import org.mozkito.versions.model.Revision;
+
+import com.tinkerpop.blueprints.Graph;
+import com.tinkerpop.blueprints.KeyIndexableGraph;
+import com.tinkerpop.blueprints.util.io.graphml.GraphMLWriter;
 
 /**
  * The Class ChangeGenealogyUtils.
@@ -93,8 +93,8 @@ public class ChangeGenealogyUtils {
 	                                   final File outFile) {
 		try {
 			final FileOutputStream out = new FileOutputStream(outFile);
-			final Graph g = new Neo4jGraph(genealogy.getGraphDBService());
-			GraphMLWriter.outputGraph(g, out);
+			
+			GraphMLWriter.outputGraph(genealogy.getGraphDB(), out);
 		} catch (final IOException e) {
 			if (Logger.logError()) {
 				Logger.error(e);
@@ -531,7 +531,8 @@ public class ChangeGenealogyUtils {
 			                                     + transactionMap.size());
 		}
 		
-		final CoreChangeGenealogy changeGenealogy = ChangeGenealogyUtils.readFromDB(tmpGraphDBFile, persistenceUtil);
+		final CoreChangeGenealogy changeGenealogy = ChangeGenealogyUtils.readFromDB(tmpGraphDBFile, GraphType.TITAN_DB,
+		                                                                            persistenceUtil);
 		
 		if (changeGenealogy == null) {
 			throw new UnrecoverableError(
@@ -623,6 +624,8 @@ public class ChangeGenealogyUtils {
 	 * 
 	 * @param dbFile
 	 *            the db file
+	 * @param graphType
+	 *            the graph type
 	 * @param persistenceUtil
 	 *            the persistence util
 	 * @return the change genealogy stored within5 the graph DB directory, if possible. Otherwise, creates a new
@@ -630,10 +633,12 @@ public class ChangeGenealogyUtils {
 	 */
 	@NoneNull
 	public static CoreChangeGenealogy readFromDB(final File dbFile,
+	                                             final GraphType graphType,
 	                                             final PersistenceUtil persistenceUtil) {
-		final GraphDatabaseService graph = new EmbeddedGraphDatabase(dbFile.getAbsolutePath());
+		final GraphEnvironment graphEnvironment = new GraphEnvironment(graphType, dbFile);
+		final KeyIndexableGraph graph = GraphManager.createUtil(graphEnvironment);
 		registerShutdownHook(graph);
-		final CoreChangeGenealogy genealogy = new CoreChangeGenealogy(graph, dbFile, persistenceUtil);
+		final CoreChangeGenealogy genealogy = new CoreChangeGenealogy(graph, graphEnvironment, persistenceUtil);
 		ChangeGenealogyUtils.genealogies.put(genealogy, dbFile);
 		return genealogy;
 	}
@@ -644,7 +649,7 @@ public class ChangeGenealogyUtils {
 	 * @param graphDb
 	 *            the graph db
 	 */
-	private static void registerShutdownHook(final GraphDatabaseService graphDb) {
+	private static void registerShutdownHook(final Graph graphDb) {
 		// Registers a shutdown hook for the Neo4j instance so that it
 		// shuts down nicely when the VM exits (even if you "Ctrl-C" the
 		// running example before it's completed)

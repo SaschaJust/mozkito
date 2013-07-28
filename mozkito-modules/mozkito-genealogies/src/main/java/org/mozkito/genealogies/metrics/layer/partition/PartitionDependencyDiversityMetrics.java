@@ -102,7 +102,7 @@ public class PartitionDependencyDiversityMetrics extends GenealogyPartitionMetri
 			parentStat.addValue(1d - ((double) intersectionSize / (double) changedFiles.size()));
 		}
 		
-		for (final ChangeGenealogyLayerNode dependant : this.genealogy.getAllDependants(item.getNode())) {
+		for (final ChangeGenealogyLayerNode dependant : this.genealogy.getAllDependents(item.getNode())) {
 			final Set<Handle> dependentChangedFiles = new HashSet<Handle>();
 			for (final JavaChangeOperation op : dependant) {
 				dependentChangedFiles.add(op.getRevision().getChangedFile());

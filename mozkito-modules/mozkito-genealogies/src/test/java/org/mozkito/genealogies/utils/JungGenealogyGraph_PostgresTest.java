@@ -75,7 +75,7 @@ public class JungGenealogyGraph_PostgresTest extends DatabaseTest {
 			assertEquals(outDegree, jungGraph.outDegree(op));
 			assertEquals(inDegree + outDegree, jungGraph.degree(op));
 			
-			final Collection<JavaChangeOperation> allDependants = changeGenealogy.getAllDependants(op);
+			final Collection<JavaChangeOperation> allDependants = changeGenealogy.getAllDependents(op);
 			final Collection<JavaChangeOperation> allParents = changeGenealogy.getAllParents(op);
 			
 			assertTrue(jungGraph.getIncidentEdges(op).size() >= (allDependants.size() + allParents.size()));

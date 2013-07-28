@@ -100,8 +100,8 @@ public class UniversalChildrenMetrics<T> {
 		final DescriptiveStatistics childrenParents = new DescriptiveStatistics();
 		final DescriptiveStatistics childrenIn = new DescriptiveStatistics();
 		
-		for (final T child : this.genealogy.getAllDependants(node)) {
-			childrenChildren.addValue(this.genealogy.getAllDependants(child).size());
+		for (final T child : this.genealogy.getAllDependents(node)) {
+			childrenChildren.addValue(this.genealogy.getAllDependents(child).size());
 			childrenOut.addValue(this.genealogy.outDegree(node));
 			childrenParents.addValue(this.genealogy.getAllParents(child).size());
 			childrenIn.addValue(this.genealogy.inDegree(node));

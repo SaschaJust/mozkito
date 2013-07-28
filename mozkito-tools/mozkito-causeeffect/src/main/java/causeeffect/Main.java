@@ -37,8 +37,8 @@ import org.mozkito.causeeffect.EF_and_FormulaGenearator;
 import org.mozkito.causeeffect.EFandEF_FormulaGenearator;
 import org.mozkito.causeeffect.LTCExperiment;
 import org.mozkito.causeeffect.LTCFormulaFactory;
+import org.mozkito.genealogies.core.ChangeGenealogy;
 import org.mozkito.genealogies.core.CoreChangeGenealogy;
-import org.mozkito.genealogies.core.TransactionChangeGenealogy;
 import org.mozkito.genealogies.settings.GenealogyOptions;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.settings.DatabaseOptions;
@@ -119,7 +119,7 @@ public class Main {
 			
 			final ArgumentSet<CoreChangeGenealogy, GenealogyOptions> genealogyArgument = ArgumentSetFactory.create(genealogyOptions);
 			final CoreChangeGenealogy coreChangeGenealogy = genealogyArgument.getValue();
-			final TransactionChangeGenealogy transactionLayer = coreChangeGenealogy.getChangeSetLayer();
+			final ChangeGenealogy<ChangeSet> transactionLayer = coreChangeGenealogy.getChangeSetLayer();
 			
 			final LTCFormulaFactory formulaFactory = new LTCFormulaFactory();
 			formulaFactory.register(new EF_FormulaGenearator());

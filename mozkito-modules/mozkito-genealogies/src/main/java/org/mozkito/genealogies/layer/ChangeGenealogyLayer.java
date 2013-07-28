@@ -13,199 +13,25 @@
 
 package org.mozkito.genealogies.layer;
 
-import java.io.File;
-import java.util.Collection;
-import java.util.Set;
-
-import org.neo4j.graphdb.GraphDatabaseService;
-
 import org.mozkito.genealogies.core.ChangeGenealogy;
-import org.mozkito.genealogies.core.CoreChangeGenealogy;
-import org.mozkito.genealogies.core.GenealogyEdgeType;
+
+import com.tinkerpop.blueprints.KeyIndexableGraph;
 
 /**
  * The Class ChangeGenealogy.
  * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
-public abstract class ChangeGenealogyLayer implements ChangeGenealogy<ChangeGenealogyLayerNode> {
-	
-	/** The core. */
-	protected CoreChangeGenealogy core;
+public abstract class ChangeGenealogyLayer extends ChangeGenealogy<ChangeGenealogyLayerNode> {
 	
 	/**
-	 * Instantiates a new change genealogy.
+	 * Instantiates a new change genealogy layer.
 	 * 
-	 * @param core
-	 *            the core
+	 * @param graph
+	 *            the graph
 	 */
-	public ChangeGenealogyLayer(final CoreChangeGenealogy core) {
-		this.core = core;
+	public ChangeGenealogyLayer(final KeyIndexableGraph graph) {
+		super(graph);
 	}
-	
-	/**
-	 * Close.
-	 */
-	@Override
-	public void close() {
-		this.core.close();
-	}
-	
-	/**
-	 * Contains edge.
-	 * 
-	 * @param from
-	 *            the from
-	 * @param to
-	 *            the to
-	 * @return true, if successful
-	 */
-	@Override
-	public abstract boolean containsEdge(final ChangeGenealogyLayerNode from,
-	                                     final ChangeGenealogyLayerNode to);
-	
-	/**
-	 * Contains vertex.
-	 * 
-	 * @param vertex
-	 *            the vertex
-	 * @return true, if successful
-	 */
-	@Override
-	public abstract boolean containsVertex(final ChangeGenealogyLayerNode vertex);
-	
-	/**
-	 * Edge size.
-	 * 
-	 * @return the int
-	 */
-	@Override
-	public final int edgeSize() {
-		return this.core.edgeSize();
-	}
-	
-	/**
-	 * Gets the all dependents.
-	 * 
-	 * @param t
-	 *            the t
-	 * @return the all dependents
-	 */
-	@Override
-	public final Collection<ChangeGenealogyLayerNode> getAllDependants(final ChangeGenealogyLayerNode t) {
-		return getDependants(t, GenealogyEdgeType.CallOnDefinition, GenealogyEdgeType.DefinitionOnDefinition,
-		                     GenealogyEdgeType.DefinitionOnDeletedDefinition, GenealogyEdgeType.DeletedCallOnCall,
-		                     GenealogyEdgeType.DeletedCallOnDeletedDefinition,
-		                     GenealogyEdgeType.DeletedDefinitionOnDefinition);
-	}
-	
-	/**
-	 * Gets the all parents.
-	 * 
-	 * @param t
-	 *            the t
-	 * @return the all parents
-	 */
-	@Override
-	public final Collection<ChangeGenealogyLayerNode> getAllParents(final ChangeGenealogyLayerNode t) {
-		return getParents(t, GenealogyEdgeType.CallOnDefinition, GenealogyEdgeType.DefinitionOnDefinition,
-		                  GenealogyEdgeType.DefinitionOnDeletedDefinition, GenealogyEdgeType.DeletedCallOnCall,
-		                  GenealogyEdgeType.DeletedCallOnDeletedDefinition,
-		                  GenealogyEdgeType.DeletedDefinitionOnDefinition);
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.genealogies.ChangeGenealogy#getCore()
-	 */
-	@Override
-	public final CoreChangeGenealogy getCore() {
-		return this.core;
-	}
-	
-	/**
-	 * Gets the dependents.
-	 * 
-	 * @param t
-	 *            the t
-	 * @param edgeTypes
-	 *            the edge types
-	 * @return the dependents
-	 */
-	@Override
-	public abstract Collection<ChangeGenealogyLayerNode> getDependants(ChangeGenealogyLayerNode t,
-	                                                                   GenealogyEdgeType... edgeTypes);
-	
-	/**
-	 * Gets the edges.
-	 * 
-	 * @param from
-	 *            the from
-	 * @param to
-	 *            the to
-	 * @return the edges
-	 */
-	@Override
-	public abstract Collection<GenealogyEdgeType> getEdges(final ChangeGenealogyLayerNode from,
-	                                                       final ChangeGenealogyLayerNode to);
-	
-	/**
-	 * Gets the existing edge types.
-	 * 
-	 * @return the existing edge types
-	 */
-	@Override
-	public final Set<GenealogyEdgeType> getExistingEdgeTypes() {
-		return this.core.getExistingEdgeTypes();
-	}
-	
-	/**
-	 * Gets the graph db dir.
-	 * 
-	 * @return the graph db dir
-	 */
-	@Override
-	public final File getGraphDBDir() {
-		return this.core.getGraphDBDir();
-	}
-	
-	/**
-	 * Gets the graph db service.
-	 * 
-	 * @return the graph db service
-	 */
-	@Override
-	public final GraphDatabaseService getGraphDBService() {
-		return this.core.getGraphDBService();
-	}
-	
-	/**
-	 * Gets the parents.
-	 * 
-	 * @param t
-	 *            the t
-	 * @param edgeTypes
-	 *            the edge types
-	 * @return the parents
-	 */
-	@Override
-	public abstract Collection<ChangeGenealogyLayerNode> getParents(ChangeGenealogyLayerNode t,
-	                                                                GenealogyEdgeType... edgeTypes);
-	
-	/**
-	 * Vertex set.
-	 * 
-	 * @return the iterator
-	 */
-	@Override
-	public abstract Iterable<ChangeGenealogyLayerNode> vertexSet();
-	
-	/**
-	 * Vertex size.
-	 * 
-	 * @return the int
-	 */
-	@Override
-	public abstract int vertexSize();
 	
 }

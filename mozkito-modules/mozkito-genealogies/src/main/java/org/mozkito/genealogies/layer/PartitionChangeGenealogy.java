@@ -13,10 +13,8 @@
 
 package org.mozkito.genealogies.layer;
 
-import java.io.File;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
 
@@ -24,8 +22,8 @@ import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.genealogies.core.CoreChangeGenealogy;
 import org.mozkito.genealogies.core.GenealogyEdgeType;
 import org.mozkito.genealogies.core.PartitionGenerator;
-import org.mozkito.genealogies.utils.ChangeGenealogyUtils;
-import org.mozkito.persistence.PersistenceUtil;
+
+import com.tinkerpop.blueprints.Vertex;
 
 /**
  * The Class PartitionChangeGenealogy.
@@ -34,7 +32,7 @@ import org.mozkito.persistence.PersistenceUtil;
  */
 public class PartitionChangeGenealogy extends ChangeGenealogyLayer {
 	
-	/** The partition generator. */
+	private final CoreChangeGenealogy                                                                       core;
 	private final PartitionGenerator<Collection<JavaChangeOperation>, Collection<ChangeGenealogyLayerNode>> partitionGenerator;
 	
 	/**
@@ -48,26 +46,18 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer {
 	public PartitionChangeGenealogy(
 	        final CoreChangeGenealogy coreGenealogy,
 	        final PartitionGenerator<Collection<JavaChangeOperation>, Collection<ChangeGenealogyLayerNode>> partitionGenerator) {
-		super(coreGenealogy);
+		super(coreGenealogy.getGraphDB());
+		this.core = coreGenealogy;
 		this.partitionGenerator = partitionGenerator;
 	}
 	
-	/**
-	 * Instantiates a new partition change genealogy.
-	 * 
-	 * @param graphDBDir
-	 *            the graph db dir
-	 * @param persistenceUtil
-	 *            the persistence util
-	 * @param partitionGenerator
-	 *            the partition generator
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.genealogies.core.ChangeGenealogy#addVertex(java.lang.Object)
 	 */
-	public PartitionChangeGenealogy(
-	        final File graphDBDir,
-	        final PersistenceUtil persistenceUtil,
-	        final PartitionGenerator<Collection<JavaChangeOperation>, Collection<ChangeGenealogyLayerNode>> partitionGenerator) {
-		super(ChangeGenealogyUtils.readFromDB(graphDBDir, persistenceUtil));
-		this.partitionGenerator = partitionGenerator;
+	@Override
+	public boolean addVertex(final ChangeGenealogyLayerNode v) {
+		return false;
 	}
 	
 	/**
@@ -81,10 +71,6 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer {
 		return this.partitionGenerator.partition(input);
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.genealogies.layer.ChangeGenealogy#containsEdge (java.lang.Object, java.lang.Object)
-	 */
 	@Override
 	public boolean containsEdge(final ChangeGenealogyLayerNode from,
 	                            final ChangeGenealogyLayerNode to) {
@@ -98,10 +84,6 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer {
 		return false;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.genealogies.layer.ChangeGenealogy#containsVertex (java.lang.Object)
-	 */
 	@Override
 	public boolean containsVertex(final ChangeGenealogyLayerNode vertex) {
 		if (vertex.isEmpty()) {
@@ -116,14 +98,19 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.genealogies.layer.ChangeGenealogy#
+	 * @see org.mozkito.genealogies.core.ChangeGenealogy#getCore()
 	 */
 	@Override
-	public Collection<ChangeGenealogyLayerNode> getDependants(final ChangeGenealogyLayerNode t,
+	public CoreChangeGenealogy getCore() {
+		return this.core;
+	}
+	
+	@Override
+	public Collection<ChangeGenealogyLayerNode> getDependents(final ChangeGenealogyLayerNode t,
 	                                                          final GenealogyEdgeType... edgeTypes) {
 		final Collection<JavaChangeOperation> result = new HashSet<JavaChangeOperation>();
 		for (final JavaChangeOperation op : t) {
-			for (final JavaChangeOperation dependent : this.core.getDependants(op, edgeTypes)) {
+			for (final JavaChangeOperation dependent : this.core.getDependents(op, edgeTypes)) {
 				if (!t.contains(dependent)) {
 					result.add(dependent);
 				}
@@ -132,10 +119,6 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer {
 		return buildPartitions(result);
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.genealogies.layer.ChangeGenealogy#getEdges (java.lang.Object, java.lang.Object)
-	 */
 	@Override
 	public Collection<GenealogyEdgeType> getEdges(final ChangeGenealogyLayerNode from,
 	                                              final ChangeGenealogyLayerNode to) {
@@ -151,24 +134,15 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer {
 		return edges;
 	}
 	
-	/**
-	 * Gets the node id.
-	 * 
-	 * @param t
-	 *            the t
-	 * @return the node id
-	 * @deprecated You can call <code>ChangeGenealogyLayerNode.getNodeId()</code> directly.
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.genealogies.core.ChangeGenealogy#getNodeId(java.lang.Object)
 	 */
 	@Override
-	@Deprecated
 	public String getNodeId(final ChangeGenealogyLayerNode t) {
 		return t.getNodeId();
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.genealogies.layer.ChangeGenealogy# getAllDependents(java.lang.Object)
-	 */
 	@Override
 	public Collection<ChangeGenealogyLayerNode> getParents(final ChangeGenealogyLayerNode t,
 	                                                       final GenealogyEdgeType... edgeTypes) {
@@ -183,17 +157,12 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer {
 		return buildPartitions(result);
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.genealogies.ChangeGenealogy#getRoots()
-	 */
 	@Override
 	public Collection<ChangeGenealogyLayerNode> getRoots() {
 		final Collection<ChangeGenealogyLayerNode> roots = new LinkedList<ChangeGenealogyLayerNode>();
 		final Collection<JavaChangeOperation> vertices = new HashSet<JavaChangeOperation>();
-		final Iterator<JavaChangeOperation> vertexIterator = this.core.vertexIterator();
-		while (vertexIterator.hasNext()) {
-			vertices.add(vertexIterator.next());
+		for (final JavaChangeOperation op : this.core.vertexSet()) {
+			vertices.add(op);
 		}
 		final Collection<ChangeGenealogyLayerNode> partitions = buildPartitions(vertices);
 		for (final ChangeGenealogyLayerNode partition : partitions) {
@@ -206,42 +175,23 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.genealogies.ChangeGenealogy#inDegree(java.lang.Object)
+	 * @see org.mozkito.genealogies.core.ChangeGenealogy#getVertexForNode(com.tinkerpop.blueprints.Vertex)
 	 */
 	@Override
-	public int inDegree(final ChangeGenealogyLayerNode node) {
-		return inDegree(node, GenealogyEdgeType.values());
+	protected ChangeGenealogyLayerNode getVertexForNode(final Vertex dependentNode) {
+		return null;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.genealogies.ChangeGenealogy#inDegree(java.lang.Object,
-	 * org.mozkito.genealogies.core.GenealogyEdgeType[])
-	 */
 	@Override
 	public int inDegree(final ChangeGenealogyLayerNode node,
 	                    final GenealogyEdgeType... edgeTypes) {
 		int numEdges = 0;
-		for (final ChangeGenealogyLayerNode dependant : getDependants(node, edgeTypes)) {
+		for (final ChangeGenealogyLayerNode dependant : getDependents(node, edgeTypes)) {
 			numEdges += getEdges(dependant, node).size();
 		}
 		return numEdges;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.genealogies.ChangeGenealogy#outDegree(java.lang.Object)
-	 */
-	@Override
-	public int outDegree(final ChangeGenealogyLayerNode node) {
-		return outDegree(node, GenealogyEdgeType.values());
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.genealogies.ChangeGenealogy#outDegree(java.lang.Object,
-	 * org.mozkito.genealogies.core.GenealogyEdgeType[])
-	 */
 	@Override
 	public int outDegree(final ChangeGenealogyLayerNode node,
 	                     final GenealogyEdgeType... edgeTypes) {
@@ -252,28 +202,23 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer {
 		return numEdges;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.genealogies.layer.ChangeGenealogy#vertexSet ()
-	 */
 	@Override
 	public Iterable<ChangeGenealogyLayerNode> vertexSet() {
-		final Iterator<JavaChangeOperation> vertexIterator = this.core.vertexIterator();
 		final Collection<JavaChangeOperation> result = new LinkedList<JavaChangeOperation>();
-		while (vertexIterator.hasNext()) {
-			final JavaChangeOperation elem = vertexIterator.next();
-			result.add(elem);
+		for (final JavaChangeOperation op : this.core.vertexSet()) {
+			result.add(op);
 		}
 		return buildPartitions(result);
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.genealogies.layer.ChangeGenealogy#vertexSize ()
-	 */
 	@Override
 	public int vertexSize() {
-		return this.core.vertexSize();
+		int result = 0;
+		for (@SuppressWarnings ("unused")
+		final ChangeGenealogyLayerNode n : vertexSet()) {
+			++result;
+		}
+		return result;
 	}
 	
 }

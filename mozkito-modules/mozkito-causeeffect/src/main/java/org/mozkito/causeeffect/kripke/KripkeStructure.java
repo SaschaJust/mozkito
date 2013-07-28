@@ -95,14 +95,14 @@ public class KripkeStructure<V> {
 		verticesToProcess.add(rootVertex);
 		while (!verticesToProcess.isEmpty()) {
 			final T vertex = verticesToProcess.poll();
-			for (final T dependent : changeGenealogy.getAllDependants(vertex)) {
+			for (final T dependent : changeGenealogy.getAllDependents(vertex)) {
 				if (selector.selectVertex(dependent)) {
 					verticesToProcess.add(dependent);
 				}
 			}
 			vertices2States.put(vertex, kripkeStruct.createNewState(vertex));
 			final State state = vertices2States.get(vertex);
-			final Collection<T> allDependents = changeGenealogy.getAllDependants(vertex);
+			final Collection<T> allDependents = changeGenealogy.getAllDependents(vertex);
 			if (allDependents.isEmpty()) {
 				// if there are no outgoing edges, the state is a final state
 				finalTransitionStates.add(state);
@@ -118,7 +118,7 @@ public class KripkeStructure<V> {
 		}
 		
 		for (final T from : vertices2States.keySet()) {
-			for (final T to : changeGenealogy.getAllDependants(from)) {
+			for (final T to : changeGenealogy.getAllDependents(from)) {
 				if (selector.selectVertex(to)) {
 					final State fromState = vertices2States.get(from);
 					final State toState = vertices2States.get(to);

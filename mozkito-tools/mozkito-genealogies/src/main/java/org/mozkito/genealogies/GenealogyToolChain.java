@@ -31,10 +31,9 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 import org.joda.time.Days;
-
 import org.mozkito.genealogies.ChangeOperationReader.Options;
+import org.mozkito.genealogies.core.ChangeGenealogy;
 import org.mozkito.genealogies.core.CoreChangeGenealogy;
-import org.mozkito.genealogies.core.TransactionChangeGenealogy;
 import org.mozkito.genealogies.settings.GenealogyOptions;
 import org.mozkito.settings.DatabaseOptions;
 import org.mozkito.versions.model.ChangeSet;
@@ -120,7 +119,7 @@ public class GenealogyToolChain extends Chain<Settings> {
 		if (this.infoArgument.getValue()) {
 			
 			this.genealogy = this.genealogyArgs.getValue();
-			final TransactionChangeGenealogy transactionLayer = this.genealogy.getChangeSetLayer();
+			final ChangeGenealogy<ChangeSet> transactionLayer = this.genealogy.getChangeSetLayer();
 			if (Logger.logInfo()) {
 				Logger.info("Statistic on change genealogy graph:");
 				Logger.info("Number of vertices: " + this.genealogy.vertexSize());
@@ -135,7 +134,7 @@ public class GenealogyToolChain extends Chain<Settings> {
 				while (vertexIterator.hasNext()) {
 					final ChangeSet t = vertexIterator.next();
 					int dayGap = Integer.MAX_VALUE;
-					for (final ChangeSet c : transactionLayer.getAllDependants(t)) {
+					for (final ChangeSet c : transactionLayer.getAllDependents(t)) {
 						final int gap = Math.abs(Days.daysBetween(t.getTimestamp(), c.getTimestamp()).getDays());
 						if (gap < dayGap) {
 							dayGap = gap;

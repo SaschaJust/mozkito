@@ -72,7 +72,7 @@ public class PartitionAuthorMetrics extends GenealogyPartitionMetric {
 		final String nodeId = pNode.getNodeId();
 		
 		final Set<Long> depAuthors = new HashSet<Long>();
-		for (final ChangeGenealogyLayerNode dependant : this.genealogy.getAllDependants(pNode)) {
+		for (final ChangeGenealogyLayerNode dependant : this.genealogy.getAllDependents(pNode)) {
 			for (final JavaChangeOperation tmpOp : dependant) {
 				depAuthors.add(tmpOp.getRevision().getChangeSet().getPersons().getGeneratedId());
 			}

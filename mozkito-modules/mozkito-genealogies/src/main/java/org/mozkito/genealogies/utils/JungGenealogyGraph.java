@@ -14,18 +14,17 @@
 package org.mozkito.genealogies.utils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import edu.uci.ics.jung.graph.DirectedGraph;
-import edu.uci.ics.jung.graph.util.EdgeType;
-import edu.uci.ics.jung.graph.util.Pair;
-
 import org.mozkito.genealogies.core.ChangeGenealogy;
 import org.mozkito.genealogies.core.GenealogyEdgeType;
 
-import scala.actors.threadpool.Arrays;
+import edu.uci.ics.jung.graph.DirectedGraph;
+import edu.uci.ics.jung.graph.util.EdgeType;
+import edu.uci.ics.jung.graph.util.Pair;
 
 /**
  * Represents a ChangeGenealogy as a Jung2 graph. This graph cannot be modified. This class should only be used for
@@ -145,7 +144,6 @@ public class JungGenealogyGraph<T> implements DirectedGraph<T, JungGenealogyGrap
 	 * @param genealogy
 	 *            the genealogy
 	 */
-	@SuppressWarnings ("unchecked")
 	public JungGenealogyGraph(final ChangeGenealogy<T> genealogy) {
 		this.genealogy = genealogy;
 		this.edgeTypeFilter = Arrays.asList(GenealogyEdgeType.values());
@@ -311,7 +309,7 @@ public class JungGenealogyGraph<T> implements DirectedGraph<T, JungGenealogyGrap
 		if (this.edgeCount < 0) {
 			this.edgeCount = 0;
 			for (final T vertex : this.genealogy.vertexSet()) {
-				this.edgeCount += this.genealogy.getDependants(vertex,
+				this.edgeCount += this.genealogy.getDependents(vertex,
 				                                               this.edgeTypeFilter.toArray(new GenealogyEdgeType[this.edgeTypeFilter.size()]))
 				                                .size();
 			}
@@ -339,7 +337,7 @@ public class JungGenealogyGraph<T> implements DirectedGraph<T, JungGenealogyGrap
 	public Collection<Edge<T>> getEdges() {
 		final Collection<Edge<T>> result = new HashSet<Edge<T>>();
 		for (final T v : getVertices()) {
-			for (final T to : this.genealogy.getDependants(v,
+			for (final T to : this.genealogy.getDependents(v,
 			                                               this.edgeTypeFilter.toArray(new GenealogyEdgeType[this.edgeTypeFilter.size()]))) {
 				result.addAll(this.findEdgeSet(v, to));
 			}
@@ -426,7 +424,7 @@ public class JungGenealogyGraph<T> implements DirectedGraph<T, JungGenealogyGrap
 	@Override
 	public Collection<Edge<T>> getInEdges(final T vertex) {
 		final Collection<Edge<T>> edges = new HashSet<Edge<T>>();
-		for (final T dependant : this.genealogy.getDependants(vertex,
+		for (final T dependant : this.genealogy.getDependents(vertex,
 		                                                      this.edgeTypeFilter.toArray(new GenealogyEdgeType[this.edgeTypeFilter.size()]))) {
 			edges.addAll(findEdgeSet(dependant, vertex));
 		}
@@ -452,7 +450,7 @@ public class JungGenealogyGraph<T> implements DirectedGraph<T, JungGenealogyGrap
 	@Override
 	public Collection<T> getNeighbors(final T vertex) {
 		final Collection<T> neighbors = new HashSet<T>();
-		for (final T dependant : this.genealogy.getDependants(vertex,
+		for (final T dependant : this.genealogy.getDependents(vertex,
 		                                                      this.edgeTypeFilter.toArray(new GenealogyEdgeType[this.edgeTypeFilter.size()]))) {
 			neighbors.add(dependant);
 		}
@@ -532,7 +530,7 @@ public class JungGenealogyGraph<T> implements DirectedGraph<T, JungGenealogyGrap
 	@Override
 	public int getSuccessorCount(final T vertex) {
 		int count = 0;
-		count += this.genealogy.getDependants(vertex,
+		count += this.genealogy.getDependents(vertex,
 		                                      this.edgeTypeFilter.toArray(new GenealogyEdgeType[this.edgeTypeFilter.size()]))
 		                       .size();
 		return count;
@@ -544,7 +542,7 @@ public class JungGenealogyGraph<T> implements DirectedGraph<T, JungGenealogyGrap
 	 */
 	@Override
 	public Collection<T> getSuccessors(final T vertex) {
-		return this.genealogy.getDependants(vertex,
+		return this.genealogy.getDependents(vertex,
 		                                    this.edgeTypeFilter.toArray(new GenealogyEdgeType[this.edgeTypeFilter.size()]));
 	}
 	

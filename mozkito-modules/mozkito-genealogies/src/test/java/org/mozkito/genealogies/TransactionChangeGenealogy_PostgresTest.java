@@ -26,9 +26,9 @@ import java.util.Set;
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 
 import org.junit.Test;
+import org.mozkito.genealogies.core.ChangeGenealogy;
 import org.mozkito.genealogies.core.CoreChangeGenealogy;
 import org.mozkito.genealogies.core.GenealogyEdgeType;
-import org.mozkito.genealogies.core.TransactionChangeGenealogy;
 import org.mozkito.genealogies.utils.ChangeGenealogyUtils;
 import org.mozkito.genealogies.utils.GenealogyTestEnvironment;
 import org.mozkito.persistence.ConnectOptions;
@@ -75,7 +75,7 @@ public class TransactionChangeGenealogy_PostgresTest extends DatabaseTest {
 		final Map<Integer, ChangeSet> environmentTransactions = testEnvironment.getEnvironmentTransactions();
 		
 		changeGenealogy.close();
-		final TransactionChangeGenealogy tdg = changeGenealogy.getChangeSetLayer();
+		final ChangeGenealogy<ChangeSet> tdg = changeGenealogy.getChangeSetLayer();
 		
 		assertEquals(12, tdg.edgeSize());
 		
@@ -258,14 +258,14 @@ public class TransactionChangeGenealogy_PostgresTest extends DatabaseTest {
 		
 		assertFalse(tdg.containsEdge(environmentTransactions.get(10), environmentTransactions.get(10)));
 		
-		Collection<ChangeSet> dependents = tdg.getAllDependants(environmentTransactions.get(3));
+		Collection<ChangeSet> dependents = tdg.getAllDependents(environmentTransactions.get(3));
 		assertEquals(4, dependents.size());
 		assertTrue(dependents.contains(environmentTransactions.get(4)));
 		assertTrue(dependents.contains(environmentTransactions.get(5)));
 		assertTrue(dependents.contains(environmentTransactions.get(6)));
 		assertTrue(dependents.contains(environmentTransactions.get(9)));
 		
-		dependents = tdg.getDependants(environmentTransactions.get(3), GenealogyEdgeType.CallOnDefinition);
+		dependents = tdg.getDependents(environmentTransactions.get(3), GenealogyEdgeType.CallOnDefinition);
 		assertEquals(2, dependents.size());
 		assertTrue(dependents.contains(environmentTransactions.get(4)));
 		assertTrue(dependents.contains(environmentTransactions.get(5)));

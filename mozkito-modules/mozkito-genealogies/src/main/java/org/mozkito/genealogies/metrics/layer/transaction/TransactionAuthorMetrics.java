@@ -83,7 +83,7 @@ public class TransactionAuthorMetrics extends GenealogyTransactionMetric {
 		final String nodeId = this.genealogy.getNodeId(changeSet);
 		
 		final Set<Long> depAuthors = new HashSet<Long>();
-		for (final ChangeSet dependant : this.genealogy.getAllDependants(changeSet)) {
+		for (final ChangeSet dependant : this.genealogy.getAllDependents(changeSet)) {
 			depAuthors.add(dependant.getPersons().getGeneratedId());
 		}
 		

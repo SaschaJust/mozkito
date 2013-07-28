@@ -88,7 +88,7 @@ public class UniversalStructuralHolesMetrics<T> {
 	public Collection<GenealogyMetricValue> handle(final T node) {
 		final Collection<GenealogyMetricValue> result = new LinkedList<GenealogyMetricValue>();
 		
-		final Collection<T> incoming = this.genealogy.getAllDependants(node);
+		final Collection<T> incoming = this.genealogy.getAllDependents(node);
 		final Collection<T> outgoing = this.genealogy.getAllParents(node);
 		@SuppressWarnings ("unchecked")
 		final Collection<T> egoNetwork = CollectionUtils.union(incoming, outgoing);
@@ -98,7 +98,7 @@ public class UniversalStructuralHolesMetrics<T> {
 		final DescriptiveStatistics inEffStat = new DescriptiveStatistics();
 		for (final T in : incoming) {
 			// get the number of connections between in and all other incomings
-			final Collection<T> inTies = this.genealogy.getAllDependants(in);
+			final Collection<T> inTies = this.genealogy.getAllDependents(in);
 			inTies.addAll(this.genealogy.getAllParents(in));
 			inEffStat.addValue(CollectionUtils.intersection(incoming, inTies).size());
 		}
@@ -113,7 +113,7 @@ public class UniversalStructuralHolesMetrics<T> {
 		final DescriptiveStatistics outEffStat = new DescriptiveStatistics();
 		for (final T out : outgoing) {
 			// get the number of connections between in and all other outgoings
-			final Collection<T> outTies = this.genealogy.getAllDependants(out);
+			final Collection<T> outTies = this.genealogy.getAllDependents(out);
 			outTies.addAll(this.genealogy.getAllParents(out));
 			outEffStat.addValue(CollectionUtils.intersection(outgoing, outTies).size());
 		}
@@ -128,7 +128,7 @@ public class UniversalStructuralHolesMetrics<T> {
 		final DescriptiveStatistics effStat = new DescriptiveStatistics();
 		for (final T ego : egoNetwork) {
 			// get the number of connections between in and all other ego-network
-			final Collection<T> ties = this.genealogy.getAllDependants(ego);
+			final Collection<T> ties = this.genealogy.getAllDependents(ego);
 			ties.addAll(this.genealogy.getAllParents(ego));
 			effStat.addValue(CollectionUtils.intersection(egoNetwork, ties).size());
 		}

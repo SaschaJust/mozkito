@@ -13,12 +13,10 @@
 
 package org.mozkito.genealogies.core;
 
-import org.neo4j.graphdb.RelationshipType;
-
 /**
  * The Enum GenealogyEdgeType.
  */
-public enum GenealogyEdgeType implements RelationshipType {
+public enum GenealogyEdgeType {
 	
 	/** The Definition on definition. */
 	DefinitionOnDefinition,
@@ -42,5 +40,20 @@ public enum GenealogyEdgeType implements RelationshipType {
 	UNKNOWN,
 	
 	/** The Modified definition on definition. */
-	ModifiedDefinitionOnDefinition
+	ModifiedDefinitionOnDefinition;
+	
+	/**
+	 * As string array.
+	 * 
+	 * @param types
+	 *            the types
+	 * @return the string[]
+	 */
+	public static String[] asStringArray(final GenealogyEdgeType... types) {
+		final String[] result = new String[types.length];
+		for (int i = 0; i < types.length; ++i) {
+			result[i] = types[i].name();
+		}
+		return result;
+	}
 }

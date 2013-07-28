@@ -22,7 +22,7 @@ import net.ownhero.dev.andama.threads.Source;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
 
-import org.mozkito.genealogies.core.TransactionChangeGenealogy;
+import org.mozkito.genealogies.core.ChangeGenealogy;
 import org.mozkito.versions.model.ChangeSet;
 
 /**
@@ -46,7 +46,7 @@ public class TransactionGenealogyReader extends Source<GenealogyTransactionNode>
 	 *            the change genealogy
 	 */
 	public TransactionGenealogyReader(final Group threadGroup, final Settings settings,
-	        final TransactionChangeGenealogy changeGenealogy) {
+	        final ChangeGenealogy<ChangeSet> changeGenealogy) {
 		super(threadGroup, settings, false);
 		
 		new PreExecutionHook<GenealogyTransactionNode, GenealogyTransactionNode>(this) {

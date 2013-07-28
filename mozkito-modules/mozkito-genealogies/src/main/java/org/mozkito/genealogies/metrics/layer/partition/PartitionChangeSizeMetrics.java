@@ -95,7 +95,7 @@ public class PartitionChangeSizeMetrics extends GenealogyPartitionMetric {
 		
 		metricValues.add(new GenealogyMetricValue(PartitionChangeSizeMetrics.CHANGE_SIZE, nodeId, partition.size()));
 		
-		for (final ChangeGenealogyLayerNode dependant : this.genealogy.getAllDependants(partition)) {
+		for (final ChangeGenealogyLayerNode dependant : this.genealogy.getAllDependents(partition)) {
 			dependantStats.addValue(dependant.size());
 		}
 		

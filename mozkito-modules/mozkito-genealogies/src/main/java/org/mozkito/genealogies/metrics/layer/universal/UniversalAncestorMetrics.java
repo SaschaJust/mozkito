@@ -149,7 +149,7 @@ public class UniversalAncestorMetrics<T> {
 		if (depth != -1) {
 			for (int i = 0; i < depth; ++i) {
 				for (final T node : nodes) {
-					final Collection<T> children = this.genealogy.getDependants(node, types);
+					final Collection<T> children = this.genealogy.getDependents(node, types);
 					result += children.size();
 					nextNodes.addAll(CollectionUtils.subtract(children, seenNodes));
 					seenNodes.addAll(children);
@@ -161,7 +161,7 @@ public class UniversalAncestorMetrics<T> {
 		} else {
 			while (!nodes.isEmpty()) {
 				for (final T node : nodes) {
-					final Collection<T> children = this.genealogy.getDependants(node, types);
+					final Collection<T> children = this.genealogy.getDependents(node, types);
 					result += children.size();
 					nextNodes.addAll(CollectionUtils.subtract(children, seenNodes));
 					seenNodes.addAll(children);

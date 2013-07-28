@@ -35,6 +35,7 @@ import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kisa.Logger;
 
+import org.mozkito.genealogies.core.ChangeGenealogy;
 import org.mozkito.genealogies.core.CoreChangeGenealogy;
 import org.mozkito.genealogies.core.TransactionChangeGenealogy;
 import org.mozkito.genealogies.layer.PartitionChangeGenealogy;
@@ -52,6 +53,7 @@ import org.mozkito.genealogies.metrics.utils.MetricLevel;
 import org.mozkito.genealogies.settings.GenealogyOptions;
 import org.mozkito.utilities.commons.JavaUtils;
 import org.mozkito.utilities.loading.classpath.ClassFinder;
+import org.mozkito.versions.model.ChangeSet;
 
 /**
  * The Class GenealogyMetricsToolChain.
@@ -245,7 +247,7 @@ public class GenealogyMetricsToolChain extends Chain<Settings> {
 				// throw new UnrecoverableError(e);
 				// }
 			case TRANSACTION:
-				final TransactionChangeGenealogy transactionChangeGenealogy = this.genealogy.getChangeSetLayer();
+				final ChangeGenealogy<ChangeSet> transactionChangeGenealogy = this.genealogy.getChangeSetLayer();
 				new TransactionGenealogyReader(this.threadPool.getThreadGroup(), getSettings(),
 				                               transactionChangeGenealogy);
 				new TransactionGenealogyMetricMux(this.threadPool.getThreadGroup(), getSettings());

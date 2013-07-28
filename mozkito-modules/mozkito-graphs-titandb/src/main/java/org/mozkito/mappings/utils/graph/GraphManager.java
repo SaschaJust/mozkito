@@ -18,16 +18,16 @@ import static com.thinkaurelius.titan.graphdb.configuration.GraphDatabaseConfigu
 
 import java.io.File;
 
-import com.thinkaurelius.titan.core.TitanFactory;
-import com.thinkaurelius.titan.core.TitanGraph;
-import com.thinkaurelius.titan.graphdb.configuration.GraphDatabaseConfiguration;
-import com.tinkerpop.blueprints.Graph;
-
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
+
+import com.thinkaurelius.titan.core.TitanFactory;
+import com.thinkaurelius.titan.core.TitanGraph;
+import com.thinkaurelius.titan.graphdb.configuration.GraphDatabaseConfiguration;
+import com.tinkerpop.blueprints.KeyIndexableGraph;
 
 /**
  * The Class GraphManager.
@@ -186,7 +186,7 @@ public class GraphManager {
 	 *            the environment
 	 * @return the graph
 	 */
-	public static final Graph createUtil(@NotNull final GraphEnvironment environment) {
+	public static final KeyIndexableGraph createUtil(@NotNull final GraphEnvironment environment) {
 		SANITY: {
 			assert environment.getType() != null;
 		}

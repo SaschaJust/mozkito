@@ -72,13 +72,13 @@ public class UniversalSiblingMetrics<T> {
 	public Collection<GenealogyMetricValue> handle(final T node) {
 		final Collection<GenealogyMetricValue> result = new LinkedList<GenealogyMetricValue>();
 		
-		final Collection<T> vertexParents = this.genealogy.getAllDependants(node);
+		final Collection<T> vertexParents = this.genealogy.getAllDependents(node);
 		
 		final DescriptiveStatistics siblingChildren = new DescriptiveStatistics();
 		int num = 0;
 		
-		for (final T child : this.genealogy.getAllDependants(node)) {
-			final Collection<T> childParents = this.genealogy.getAllDependants(child);
+		for (final T child : this.genealogy.getAllDependents(node)) {
+			final Collection<T> childParents = this.genealogy.getAllDependents(child);
 			final int size = CollectionUtils.intersection(vertexParents, childParents).size();
 			if (size > 0) {
 				++num;

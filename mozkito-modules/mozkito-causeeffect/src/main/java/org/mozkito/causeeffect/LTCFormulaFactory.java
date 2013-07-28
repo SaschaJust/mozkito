@@ -60,7 +60,7 @@ public class LTCFormulaFactory {
 			final Set<Handle> implications = new HashSet<>();
 			while (!verticesToProcess.isEmpty()) {
 				final ChangeSet vertex = verticesToProcess.poll();
-				for (final ChangeSet dependent : genealogy.getAllDependants(vertex)) {
+				for (final ChangeSet dependent : genealogy.getAllDependents(vertex)) {
 					if (vertexSelector.selectVertex(dependent)) {
 						verticesToProcess.add(dependent);
 					}

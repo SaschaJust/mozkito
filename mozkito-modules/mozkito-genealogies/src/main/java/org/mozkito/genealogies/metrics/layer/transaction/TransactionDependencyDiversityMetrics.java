@@ -93,7 +93,7 @@ public class TransactionDependencyDiversityMetrics extends GenealogyTransactionM
 			parentStat.addValue(1d - ((double) intersectionSize / (double) changedFiles.size()));
 		}
 		
-		for (final ChangeSet dependant : this.genealogy.getAllDependants(item.getNode())) {
+		for (final ChangeSet dependant : this.genealogy.getAllDependents(item.getNode())) {
 			final int intersectionSize = CollectionUtils.intersection(changedFiles, dependant.getChangedFiles()).size();
 			dependantStat.addValue(1d - ((double) intersectionSize / (double) changedFiles.size()));
 		}

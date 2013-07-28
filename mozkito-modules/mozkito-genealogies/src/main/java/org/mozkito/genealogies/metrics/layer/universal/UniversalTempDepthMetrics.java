@@ -277,7 +277,7 @@ public class UniversalTempDepthMetrics<T> {
 		
 		final int[] toAdd = { 0, 0, 0, 0, 0 };
 		
-		for (final T dependant : this.genealogy.getAllDependants(node)) {
+		for (final T dependant : this.genealogy.getAllDependents(node)) {
 			if (seen.contains(dependant)) {
 				continue;
 			}

@@ -85,7 +85,7 @@ public class UniversalResponseTimeMetrics<T> {
 		final String nodeId = this.genealogy.getNodeId(node);
 		final DescriptiveStatistics stats = new DescriptiveStatistics();
 		
-		for (final T dependant : this.genealogy.getAllDependants(node)) {
+		for (final T dependant : this.genealogy.getAllDependents(node)) {
 			stats.addValue(this.dayComparator.daysDiff(node, dependant));
 		}
 		

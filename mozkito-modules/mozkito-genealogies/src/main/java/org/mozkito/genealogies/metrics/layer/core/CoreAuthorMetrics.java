@@ -71,7 +71,7 @@ public class CoreAuthorMetrics extends GenealogyCoreMetric {
 		final String nodeId = this.genealogy.getNodeId(operation);
 		
 		final Set<Long> depAuthors = new HashSet<Long>();
-		for (final JavaChangeOperation dependant : this.genealogy.getAllDependants(operation)) {
+		for (final JavaChangeOperation dependant : this.genealogy.getAllDependents(operation)) {
 			depAuthors.add(dependant.getRevision().getChangeSet().getPersons().getGeneratedId());
 		}
 		

@@ -82,8 +82,8 @@ public class UniversalInbreedMetrics<T> {
 	public Collection<GenealogyMetricValue> handle(final T node) {
 		final Collection<GenealogyMetricValue> result = new LinkedList<GenealogyMetricValue>();
 		
-		final Collection<T> vertexParents = this.genealogy.getAllDependants(node);
-		final Collection<T> vertexChildren = this.genealogy.getAllDependants(node);
+		final Collection<T> vertexParents = this.genealogy.getAllDependents(node);
+		final Collection<T> vertexChildren = this.genealogy.getAllDependents(node);
 		
 		final DescriptiveStatistics inbreedChildrenStat = new DescriptiveStatistics();
 		final DescriptiveStatistics inbreedParentsStat = new DescriptiveStatistics();
@@ -91,8 +91,8 @@ public class UniversalInbreedMetrics<T> {
 		final Collection<T> inbreedChildren = new HashSet<T>();
 		final Collection<T> inbreedParents = new HashSet<T>();
 		
-		for (final T child : this.genealogy.getAllDependants(node)) {
-			final Collection<T> grandChildren = this.genealogy.getAllDependants(child);
+		for (final T child : this.genealogy.getAllDependents(node)) {
+			final Collection<T> grandChildren = this.genealogy.getAllDependents(child);
 			@SuppressWarnings ("rawtypes")
 			final Collection intersection = CollectionUtils.intersection(vertexChildren, grandChildren);
 			inbreedChildren.addAll(intersection);

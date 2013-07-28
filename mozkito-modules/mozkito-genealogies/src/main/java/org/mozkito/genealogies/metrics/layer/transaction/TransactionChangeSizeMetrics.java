@@ -269,7 +269,7 @@ public class TransactionChangeSizeMetrics extends GenealogyTransactionMetric {
 		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.CHANEGED_BLOCKS, nodeId,
 		                                          numChangedLineBlocks));
 		
-		for (final ChangeSet dependant : this.genealogy.getAllDependants(changeset)) {
+		for (final ChangeSet dependant : this.genealogy.getAllDependents(changeset)) {
 			// ignore test and non java files.
 			dependantStats.addValue(PPAPersistenceUtil.getChangeOperation(this.persistenceUtil, dependant).size());
 		}

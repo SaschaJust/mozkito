@@ -98,7 +98,7 @@ public class UniversalDwReachMetric<T> {
 		final Set<T> level = new HashSet<T>();
 		
 		for (final T node : nodes) {
-			for (final T dependant : this.genealogy.getAllDependants(node)) {
+			for (final T dependant : this.genealogy.getAllDependents(node)) {
 				if (!seen.contains(dependant)) {
 					if (this.comparator.compare(originalNode, node) >= 0) {
 						continue;
