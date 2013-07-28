@@ -18,11 +18,13 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeSet;
 
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.annotations.string.NotEmptyString;
@@ -30,17 +32,16 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.collections.CollectionUtils;
-
-import edu.uci.ics.jung.algorithms.shortestpath.UnweightedShortestPath;
-import edu.uci.ics.jung.graph.AbstractTypedGraph;
-import edu.uci.ics.jung.graph.DirectedSparseGraph;
-import edu.uci.ics.jung.graph.util.Pair;
-
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.utilities.commons.JavaUtils;
 import org.mozkito.utilities.datastructures.BidirectionalMultiMap;
 import org.mozkito.versions.elements.ChangeSetIterator.ChangeSetOrder;
 import org.mozkito.versions.model.ChangeSet;
+
+import edu.uci.ics.jung.algorithms.shortestpath.UnweightedShortestPath;
+import edu.uci.ics.jung.graph.AbstractTypedGraph;
+import edu.uci.ics.jung.graph.DirectedSparseGraph;
+import edu.uci.ics.jung.graph.util.Pair;
 
 /**
  * The Interface IRevDependencyGraph.
@@ -63,7 +64,7 @@ public class RevDependencyGraph {
 		BRANCH_HEAD;
 	}
 	
-	class RevDepEdge {
+	class RevDepEdge implements Comparable<RevDepEdge> {
 		
 		private final String   source;
 		
@@ -71,11 +72,25 @@ public class RevDependencyGraph {
 		
 		private final EdgeType type;
 		
+		private final int      edgeId;
+		
 		public RevDepEdge(final String source, final String target, final EdgeType type) {
 			Condition.check(!source.equals(target), "Edges must not point from a vertex to the vertex itself.");
 			this.source = source;
 			this.target = target;
 			this.type = type;
+			this.edgeId = RevDependencyGraph.edgeIdCounter++;
+		}
+		
+		@Override
+		public int compareTo(final RevDepEdge o) {
+			if (this.edgeId > o.edgeId) {
+				return -1;
+			} else if (this.edgeId < o.edgeId) {
+				return 1;
+			} else {
+				return 0;
+			}
 		}
 		
 		@Override
@@ -148,11 +163,13 @@ public class RevDependencyGraph {
 		
 	}
 	
+	private static int                                   edgeIdCounter = 0;
+	
 	private final AbstractTypedGraph<String, RevDepEdge> graph;
 	
-	private final Map<String, String>                    branchHeads = new HashMap<>();
+	private final Map<String, String>                    branchHeads   = new HashMap<>();
 	
-	private final BidirectionalMultiMap<String, String>  tags        = new BidirectionalMultiMap<String, String>();
+	private final BidirectionalMultiMap<String, String>  tags          = new BidirectionalMultiMap<String, String>();
 	
 	/**
 	 * Create a new RevDependencyGraph based on an underlying GraphDB.
@@ -408,9 +425,6 @@ public class RevDependencyGraph {
 	public String getBranchParent(@NotEmptyString final String hash) {
 		
 		final Collection<RevDepEdge> inEdges = this.graph.getInEdges(hash);
-		if (inEdges.size() > 2) {
-			throw new UnrecoverableError(String.format("Node %s  has more than two parents. This is impossible.", hash));
-		}
 		for (final RevDepEdge inEdge : inEdges) {
 			if (inEdge.getEdgeType().equals(EdgeType.BRANCH_EDGE)) {
 				return inEdge.getSource();
@@ -497,10 +511,6 @@ public class RevDependencyGraph {
 	                         @NotEmptyString final String parent) {
 		
 		final Collection<RevDepEdge> inEdges = this.graph.getInEdges(node);
-		if (inEdges.size() > 2) {
-			throw UnrecoverableError.format("Node %s  has more than two parents. This is impossible.", node);
-		}
-		
 		for (final RevDepEdge edge : inEdges) {
 			if (edge.getSource().equals(parent)) {
 				return edge.getEdgeType();
@@ -542,18 +552,16 @@ public class RevDependencyGraph {
 	 * @return the merge parent
 	 */
 	@NoneNull
-	public String getMergeParent(@NotEmptyString final String hash) {
+	public List<String> getMergeParents(@NotEmptyString final String hash) {
 		
-		final Collection<RevDepEdge> inEdges = this.graph.getInEdges(hash);
-		if (inEdges.size() > 2) {
-			throw new UnrecoverableError(String.format("Node %s  has more than two parents. This is impossible.", hash));
-		}
+		final TreeSet<RevDepEdge> inEdges = new TreeSet<>(this.graph.getInEdges(hash));
+		final List<String> result = new LinkedList<>();
 		for (final RevDepEdge inEdge : inEdges) {
 			if (inEdge.getEdgeType().equals(EdgeType.MERGE_EDGE)) {
-				return inEdge.getSource();
+				result.add(inEdge.getSource());
 			}
 		}
-		return null;
+		return result;
 	}
 	
 	/**

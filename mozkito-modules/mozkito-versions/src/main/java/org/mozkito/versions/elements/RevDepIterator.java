@@ -12,8 +12,12 @@
  ******************************************************************************/
 package org.mozkito.versions.elements;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 import java.util.Set;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
@@ -27,19 +31,19 @@ import net.ownhero.dev.kisa.Logger;
 public class RevDepIterator implements Iterator<String>, Iterable<String> {
 	
 	/** The root. */
-	private final String             root;
+	private final String                root;
 	
 	/** The current. */
-	private String                   current;
+	private String                      current;
 	
 	/** The delegate. */
-	private RevDepIterator      delegate        = null;
+	private final Queue<RevDepIterator> delegates       = new LinkedList<RevDepIterator>();
 	
 	/** The rev graph. */
-	private final RevDependencyGraph revGraph;
+	private final RevDependencyGraph    revGraph;
 	
 	/** The before delegates. */
-	private Set<String>              beforeDelegates = null;
+	private Set<String>                 beforeDelegates = null;
 	
 	/**
 	 * Instantiates a new iterator iterating across all transactions that were visible before this transaction.
@@ -83,8 +87,8 @@ public class RevDepIterator implements Iterator<String>, Iterable<String> {
 	public boolean hasNext() {
 		if (this.current != null) {
 			return true;
-		} else if (this.delegate != null) {
-			return this.delegate.hasNext();
+		} else if (!this.delegates.isEmpty()) {
+			return this.delegates.peek().hasNext();
 		}
 		return false;
 	}
@@ -111,14 +115,16 @@ public class RevDepIterator implements Iterator<String>, Iterable<String> {
 	@Override
 	public String next() {
 		
-		if ((this.delegate != null)) {
-			if (!this.delegate.hasNext()) {
-				this.delegate = null;
+		while (!this.delegates.isEmpty()) {
+			if (!this.delegates.peek().hasNext()) {
+				this.delegates.poll();
+				continue;
 			} else {
-				final String delegateNext = this.delegate.next();
+				final String delegateNext = this.delegates.peek().next();
 				
 				if (skip(delegateNext)) {
-					this.delegate = null;
+					this.delegates.poll();
+					continue;
 				} else {
 					return delegateNext;
 				}
@@ -126,13 +132,23 @@ public class RevDepIterator implements Iterator<String>, Iterable<String> {
 		}
 		
 		final String branchParent = this.revGraph.getBranchParent(this.current);
-		final String mergeParent = this.revGraph.getMergeParent(this.current);
+		final List<String> mergeParents = this.revGraph.getMergeParents(this.current);
 		this.beforeDelegates.remove(this.current);
 		this.beforeDelegates.add(branchParent);
-		if (mergeParent != null) {
+		if (!mergeParents.isEmpty()) {
+			
+			final List<String> reverseMergeParent = new LinkedList<String>(mergeParents);
+			Collections.reverse(reverseMergeParent);
 			final Set<String> stopAt = new HashSet<String>();
 			stopAt.addAll(this.beforeDelegates);
-			this.delegate = new RevDepIterator(mergeParent, this.revGraph, stopAt);
+			final List<RevDepIterator> newDelegates = new LinkedList<>();
+			for (final String mergeParent : reverseMergeParent) {
+				newDelegates.add(new RevDepIterator(mergeParent, this.revGraph, new HashSet<String>(stopAt)));
+				stopAt.add(mergeParent);
+			}
+			for (final RevDepIterator delegate : newDelegates) {
+				this.delegates.add(delegate);
+			}
 		}
 		
 		if (Logger.logDebug()) {

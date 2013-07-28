@@ -16,6 +16,7 @@
 package org.mozkito;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
@@ -90,10 +91,10 @@ public class GraphBuilder implements Runnable {
 				final ChangeSet branchParent = this.persistenceUtil.loadById(branchParentHash, ChangeSet.class);
 				changeSet.setBranchParent(branchParent);
 			}
-			final String mergeParentHash = this.revDepGraph.getMergeParent(hash);
-			if (mergeParentHash != null) {
+			final List<String> mergeParentHashes = this.revDepGraph.getMergeParents(hash);
+			for (final String mergeParentHash : mergeParentHashes) {
 				final ChangeSet mergeParent = this.persistenceUtil.loadById(mergeParentHash, ChangeSet.class);
-				changeSet.setMergeParent(mergeParent);
+				changeSet.addMergeParent(mergeParent);
 			}
 			
 			// set tags
@@ -136,8 +137,8 @@ public class GraphBuilder implements Runnable {
 		int counter = 0;
 		this.persistenceUtil.beginTransaction();
 		for (final String hash : this.revDepGraph.getVertices()) {
-			final String mergeParentHash = this.revDepGraph.getMergeParent(hash);
-			if (mergeParentHash != null) {
+			final List<String> mergeParentHashes = this.revDepGraph.getMergeParents(hash);
+			for (final String mergeParentHash : mergeParentHashes) {
 				final ChangeSet mergeParent = this.persistenceUtil.loadById(mergeParentHash, ChangeSet.class);
 				if (mergeParent == null) {
 					throw new UnrecoverableError("Could not load transaction " + mergeParentHash + " from DB.");

@@ -12,6 +12,7 @@
  **********************************************************************************************************************/
 package org.mozkito.versions.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -38,6 +39,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kisa.Logger;
@@ -45,7 +47,6 @@ import net.ownhero.dev.kisa.Logger;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.openjpa.persistence.jdbc.Index;
 import org.joda.time.DateTime;
-
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persons.model.Person;
 import org.mozkito.persons.model.PersonContainer;
@@ -80,7 +81,7 @@ public class ChangeSet implements Annotated {
 	private ChangeSet            branchParent     = null;
 	
 	/** The merge parent. */
-	private ChangeSet            mergeParent      = null;
+	private List<ChangeSet>      mergeParents     = new LinkedList<ChangeSet>();
 	
 	/** The revisions. */
 	private Collection<Revision> revisions        = new LinkedList<Revision>();
@@ -195,6 +196,23 @@ public class ChangeSet implements Annotated {
 		}
 		
 		return ret;
+	}
+	
+	/**
+	 * Sets the merge parent.
+	 * 
+	 * @param mergeParent
+	 *            the merge parent
+	 */
+	@Transient
+	@NoneNull
+	public void addMergeParent(final ChangeSet mergeParent) {
+		// PRECONDITIONS
+		try {
+			this.mergeParents.add(mergeParent);
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 	/**
@@ -348,12 +366,12 @@ public class ChangeSet implements Annotated {
 	 * 
 	 * @return the merge parent
 	 */
-	@ManyToOne (cascade = { CascadeType.REFRESH, CascadeType.MERGE }, fetch = FetchType.LAZY)
-	public ChangeSet getMergeParent() {
+	@ManyToMany (cascade = { CascadeType.REFRESH, CascadeType.MERGE }, fetch = FetchType.LAZY)
+	public List<ChangeSet> getMergeParents() {
 		// PRECONDITIONS
 		
 		try {
-			return this.mergeParent;
+			return this.mergeParents;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -553,13 +571,34 @@ public class ChangeSet implements Annotated {
 	/**
 	 * Sets the merge parent.
 	 * 
+	 * @param mergeParents
+	 *            merge parents
+	 */
+	@Transient
+	@NoneNull
+	protected void setMergeParent(final ChangeSet... mergeParents) {
+		// PRECONDITIONS
+		try {
+			final List<ChangeSet> mergeParentList = new ArrayList<>(mergeParents.length);
+			for (final ChangeSet mergeParent : mergeParents) {
+				mergeParentList.add(mergeParent);
+			}
+			setMergeParents(mergeParentList);
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/**
+	 * Sets the merge parent.
+	 * 
 	 * @param mergeParent
 	 *            the new merge parent
 	 */
-	public void setMergeParent(final ChangeSet mergeParent) {
+	public void setMergeParents(final List<ChangeSet> mergeParent) {
 		// PRECONDITIONS
 		try {
-			this.mergeParent = mergeParent;
+			this.mergeParents = mergeParent;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -663,22 +702,29 @@ public class ChangeSet implements Annotated {
 			string.append(getBranchParent().getId());
 		}
 		string.append(", mergeParents="); //$NON-NLS-1$
-		if (getMergeParent() == null) {
-			string.append("null"); //$NON-NLS-1$
-		} else {
-			string.append(getMergeParent().getId());
-		}
-		string.append(", children="); //$NON-NLS-1$
 		string.append("["); //$NON-NLS-1$
 		final StringBuilder builder2 = new StringBuilder();
 		
-		for (final ChangeSet changeSet : getChildren()) {
+		for (final ChangeSet changeSet : getMergeParents()) {
 			if (builder2.length() > 0) {
 				builder2.append(", "); //$NON-NLS-1$
 			}
 			builder2.append(changeSet.getId());
 		}
 		string.append(builder2.toString());
+		string.append("]"); //$NON-NLS-1$
+		
+		string.append(", children="); //$NON-NLS-1$
+		string.append("["); //$NON-NLS-1$
+		final StringBuilder builder3 = new StringBuilder();
+		
+		for (final ChangeSet changeSet : getChildren()) {
+			if (builder3.length() > 0) {
+				builder3.append(", "); //$NON-NLS-1$
+			}
+			builder3.append(changeSet.getId());
+		}
+		string.append(builder3.toString());
 		string.append("]"); //$NON-NLS-1$
 		
 		string.append("]"); //$NON-NLS-1$

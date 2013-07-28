@@ -7,6 +7,7 @@ package org.mozkito.versions.model;
 import java.util.Date;
 
 import javax.persistence.metamodel.CollectionAttribute;
+import javax.persistence.metamodel.ListAttribute;
 import javax.persistence.metamodel.MapAttribute;
 import javax.persistence.metamodel.SetAttribute;
 import javax.persistence.metamodel.SingularAttribute;
@@ -40,7 +41,7 @@ public class ChangeSet_ {
 	public static volatile SingularAttribute<ChangeSet, Date>                                 javaTimestamp;
 	
 	/** The merge parent. */
-	public static volatile SingularAttribute<ChangeSet, org.mozkito.versions.model.ChangeSet> mergeParent;
+	public static volatile ListAttribute<ChangeSet, org.mozkito.versions.model.ChangeSet>     mergeParents;
 	
 	/** The message. */
 	public static volatile SingularAttribute<ChangeSet, String>                               message;

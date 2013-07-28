@@ -17,52 +17,108 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
 
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-
-import org.mozkito.testing.VersionsTest;
-import org.mozkito.testing.annotation.RepositorySetting;
-import org.mozkito.testing.annotation.RepositorySettings;
 import org.mozkito.versions.elements.RevDependencyGraph;
 import org.mozkito.versions.elements.RevDependencyGraph.EdgeType;
-import org.mozkito.versions.exceptions.RepositoryOperationException;
 
 /**
  * The Class RevDependencyGraphTest.
  */
-@RepositorySettings ({ @RepositorySetting (type = RepositoryType.GIT, uri = "testGit.zip", id = "testGit") })
-public class RevDependencyGraphTest extends VersionsTest {
-	
-	/** The repo. */
-	private Repository         repo;
-	
-	/** The graph. */
-	private RevDependencyGraph graph;
+public class RevDependencyGraphTest {
 	
 	static {
 		KanuniAgent.initialize();
 	}
 	
 	/**
-	 * Gets the strange tag.
+	 * MOZKIT o_101_test.
 	 * 
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
-	 * @throws RepositoryOperationException
-	 *             the repository operation exception
 	 */
 	@Test
-	public void getStrangeTag() throws IOException, RepositoryOperationException {
-		final RevDependencyGraph graph = this.repo.getRevDependencyGraph();
-		assertEquals(1, graph.getTags("927478915f2d8fb9135eb33d21cb8491c0e655be").size());
-		assertEquals(true, graph.getTags("927478915f2d8fb9135eb33d21cb8491c0e655be").contains("tag_one"));
+	public void MOZKITO_101_test() throws IOException {
+		/* 
+		 * @formatter:off
+		 *        *---.   commit b072cf44964ebb6555ecc3cb1643065928129ca1
+         *        |\ \ \  
+         *        | | | |\
+         *        | | | | |                   
+         *        | | | | * commit 4f0200a06d1a57a908a37428cfb25ebc7f61fe69
+         *        | | | | |                   
+         *        | | | * | commit 3e56c3fc1884c8cdbfe9da55c689d26461592f55
+         *        | | | |/  
+         *        | | | |                  
+         *        | | * | commit 1e19eb3ecece1931b5363a797fd2b30f8edc6180
+         *        | | |/  
+         *        | | | 
+         *        | | |                 
+         *        | * | commit 3d03990abc68f39e7a92ed9594abb658879a6d7b
+         *        | | | 
+         *        | | |                 
+         *        | * | commit 3bbb65df3a5cb2cedb1d8080d6b70697c826a4a9
+         *        | |/  
+         *        | |   
+         *        | |                
+         *        * | commit 24c8b60f7ec2e92e1db69d3b11fb96ed4b6992d2
+         *        |/  
+         *        |
+         *        * commit 64ff0470944f71d0e25d6ff2b02892a759d95a9e  
+	     * 
+		 */
+		
+		final RevDependencyGraph revGraph = new RevDependencyGraph();
+		
+		revGraph.addEdge("24c8b60f7ec2e92e1db69d3b11fb96ed4b6992d2", "b072cf44964ebb6555ecc3cb1643065928129ca1",
+		                 EdgeType.BRANCH_EDGE);
+		revGraph.addEdge("64ff0470944f71d0e25d6ff2b02892a759d95a9e", "24c8b60f7ec2e92e1db69d3b11fb96ed4b6992d2",
+		                 EdgeType.BRANCH_EDGE);
+		
+		revGraph.addEdge("4f0200a06d1a57a908a37428cfb25ebc7f61fe69", "b072cf44964ebb6555ecc3cb1643065928129ca1",
+		                 EdgeType.MERGE_EDGE);
+		revGraph.addEdge("64ff0470944f71d0e25d6ff2b02892a759d95a9e", "4f0200a06d1a57a908a37428cfb25ebc7f61fe69",
+		                 EdgeType.BRANCH_EDGE);
+		
+		revGraph.addEdge("3e56c3fc1884c8cdbfe9da55c689d26461592f55", "b072cf44964ebb6555ecc3cb1643065928129ca1",
+		                 EdgeType.MERGE_EDGE);
+		revGraph.addEdge("64ff0470944f71d0e25d6ff2b02892a759d95a9e", "3e56c3fc1884c8cdbfe9da55c689d26461592f55",
+		                 EdgeType.BRANCH_EDGE);
+		
+		revGraph.addEdge("1e19eb3ecece1931b5363a797fd2b30f8edc6180", "b072cf44964ebb6555ecc3cb1643065928129ca1",
+		                 EdgeType.MERGE_EDGE);
+		revGraph.addEdge("64ff0470944f71d0e25d6ff2b02892a759d95a9e", "1e19eb3ecece1931b5363a797fd2b30f8edc6180",
+		                 EdgeType.BRANCH_EDGE);
+		
+		
+		revGraph.addEdge("3d03990abc68f39e7a92ed9594abb658879a6d7b", "b072cf44964ebb6555ecc3cb1643065928129ca1",
+		                 EdgeType.MERGE_EDGE);
+		revGraph.addEdge("3bbb65df3a5cb2cedb1d8080d6b70697c826a4a9", "3d03990abc68f39e7a92ed9594abb658879a6d7b",
+		                 EdgeType.BRANCH_EDGE);
+		revGraph.addEdge("64ff0470944f71d0e25d6ff2b02892a759d95a9e", "3bbb65df3a5cb2cedb1d8080d6b70697c826a4a9",
+		                 EdgeType.BRANCH_EDGE);
+		
+		
+		final Iterator<String> iterator = revGraph.getPreviousTransactions("b072cf44964ebb6555ecc3cb1643065928129ca1")
+		                                          .iterator();
+		assertTrue(iterator.hasNext());
+		assertEquals("4f0200a06d1a57a908a37428cfb25ebc7f61fe69",iterator.next());
+		assertTrue(iterator.hasNext());
+		assertEquals("3e56c3fc1884c8cdbfe9da55c689d26461592f55",iterator.next());
+		assertTrue(iterator.hasNext());
+		assertEquals("1e19eb3ecece1931b5363a797fd2b30f8edc6180",iterator.next());
+		assertTrue(iterator.hasNext());
+		assertEquals("3d03990abc68f39e7a92ed9594abb658879a6d7b",iterator.next());
+		assertTrue(iterator.hasNext());
+		assertEquals("3bbb65df3a5cb2cedb1d8080d6b70697c826a4a9",iterator.next());
+		assertTrue(iterator.hasNext());
+		assertEquals("24c8b60f7ec2e92e1db69d3b11fb96ed4b6992d2",iterator.next());
+		assertTrue(iterator.hasNext());
+		assertEquals("64ff0470944f71d0e25d6ff2b02892a759d95a9e",iterator.next());
+		assertFalse(iterator.hasNext());
 	}
 	
 	/**
@@ -164,34 +220,6 @@ public class RevDependencyGraphTest extends VersionsTest {
 		assertFalse(iterator.hasNext());
 	}
 	
-	// /**
-	// * Before class.
-	// */
-	// @BeforeClass
-	// public static void beforeClass() {
-	// try {
-	// final URL zipURL = RevDependencyGraphTest.class.getResource(FileUtils.fileSeparator + "testGit.zip");
-	// assert (zipURL != null);
-	//
-	// final File bareDir = new File(
-	// (new URL(zipURL.toString()
-	// .substring(0,
-	// zipURL.toString()
-	// .lastIndexOf(FileUtils.fileSeparator)))).toURI());
-	// FileUtils.unzip(new File(zipURL.toURI()), bareDir);
-	// if ((!bareDir.exists()) || (!bareDir.isDirectory())) {
-	// fail();
-	// }
-	// RevDependencyGraphTest.branchFactory = new BranchFactory(null);
-	// RevDependencyGraphTest.repo = new GitRepository();
-	// RevDependencyGraphTest.repo.setup(new URI("file://" + bareDir.getAbsolutePath() + FileUtils.fileSeparator
-	// + "testGit"), RevDependencyGraphTest.branchFactory, null, "master");
-	// graph = RevDependencyGraphTest.repo.getRevDependencyGraph();
-	// } catch (final Exception e) {
-	// fail();
-	// }
-	// }
-	
 	/**
 	 * Regression test rhino2.
 	 * 
@@ -279,199 +307,6 @@ public class RevDependencyGraphTest extends VersionsTest {
 	}
 	
 	/**
-	 * Tear down.
-	 * 
-	 * @throws RepositoryOperationException
-	 *             the repository operation exception
-	 */
-	@Before
-	public void setup() throws RepositoryOperationException {
-		assertTrue(getRepositories().containsKey("testGit"));
-		this.repo = getRepositories().get("testGit");
-		this.graph = this.repo.getRevDependencyGraph();
-	}
-	
-	/**
-	 * After class.
-	 */
-	@After
-	public void tearDown() {
-		// ignore
-	}
-	
-	/**
-	 * Test.
-	 */
-	@Test
-	public void test() {
-		
-		String hash = "e52def97ebc1f78c9286b1e7c36783aa67604439";
-		assertTrue(this.graph.existsVertex(hash));
-		assertEquals(0, this.graph.getTags(hash).size());
-		assertTrue(this.graph.getBranchParent(hash) == null);
-		assertTrue(this.graph.getMergeParent(hash) == null);
-		assertTrue(this.graph.isBranchHead(hash) == null);
-		
-		hash = "19bc6c11d2d8cff62f911f26bad29690c3cee256";
-		assertTrue(this.graph.existsVertex(hash));
-		assertEquals(0, this.graph.getTags(hash).size());
-		assertTrue(this.graph.getBranchParent(hash) != null);
-		assertEquals("e52def97ebc1f78c9286b1e7c36783aa67604439", this.graph.getBranchParent(hash));
-		assertTrue(this.graph.getMergeParent(hash) == null);
-		assertTrue(this.graph.isBranchHead(hash) == null);
-		
-		hash = "9d647acdef18e1bc6137354359ae75e490a7687d";
-		assertTrue(this.graph.existsVertex(hash));
-		assertEquals(0, this.graph.getTags(hash).size());
-		assertTrue(this.graph.getBranchParent(hash) != null);
-		assertEquals("19bc6c11d2d8cff62f911f26bad29690c3cee256", this.graph.getBranchParent(hash));
-		assertTrue(this.graph.getMergeParent(hash) == null);
-		assertTrue(this.graph.isBranchHead(hash) == null);
-		
-		hash = "98d5c40ef3c14503a472ba4133ae3529c7578e30";
-		assertTrue(this.graph.existsVertex(hash));
-		assertEquals(0, this.graph.getTags(hash).size());
-		assertTrue(this.graph.getBranchParent(hash) != null);
-		assertEquals("19bc6c11d2d8cff62f911f26bad29690c3cee256", this.graph.getBranchParent(hash));
-		assertTrue(this.graph.getMergeParent(hash) == null);
-		assertTrue(this.graph.isBranchHead(hash) == null);
-		
-		hash = "d23c3c69e8b9b8d8c0ee6ef08ea6f1944e186df6";
-		assertTrue(this.graph.existsVertex(hash));
-		assertEquals(0, this.graph.getTags(hash).size());
-		assertTrue(this.graph.getBranchParent(hash) != null);
-		assertEquals("9d647acdef18e1bc6137354359ae75e490a7687d", this.graph.getBranchParent(hash));
-		assertTrue(this.graph.getMergeParent(hash) == null);
-		assertTrue(this.graph.isBranchHead(hash) == null);
-		
-		hash = "deeefc5f6ab45a88c568fc8f27ee6f42e4a191b8";
-		assertTrue(this.graph.existsVertex(hash));
-		assertEquals(0, this.graph.getTags(hash).size());
-		assertTrue(this.graph.getBranchParent(hash) != null);
-		assertEquals("9d647acdef18e1bc6137354359ae75e490a7687d", this.graph.getBranchParent(hash));
-		assertTrue(this.graph.getMergeParent(hash) == null);
-		assertTrue(this.graph.isBranchHead(hash) == null);
-		
-		hash = "cbcc33d919a27b9450d117f211a5f4f45615cab9";
-		assertTrue(this.graph.existsVertex(hash));
-		assertEquals(0, this.graph.getTags(hash).size());
-		assertTrue(this.graph.getBranchParent(hash) != null);
-		assertEquals("d23c3c69e8b9b8d8c0ee6ef08ea6f1944e186df6", this.graph.getBranchParent(hash));
-		assertTrue(this.graph.getMergeParent(hash) == null);
-		assertTrue(this.graph.isBranchHead(hash) == null);
-		
-		hash = "ae94d7fa81437cbbd723049e3951f9daaa62a7c0";
-		assertTrue(this.graph.existsVertex(hash));
-		assertEquals(0, this.graph.getTags(hash).size());
-		assertTrue(this.graph.getBranchParent(hash) != null);
-		assertEquals("cbcc33d919a27b9450d117f211a5f4f45615cab9", this.graph.getBranchParent(hash));
-		assertTrue(this.graph.getMergeParent(hash) != null);
-		assertEquals("98d5c40ef3c14503a472ba4133ae3529c7578e30", this.graph.getMergeParent(hash));
-		assertTrue(this.graph.isBranchHead(hash) == null);
-		
-		hash = "8273c1e51992a4d7a1da012dbb416864c2749a7f";
-		assertTrue(this.graph.existsVertex(hash));
-		assertEquals(0, this.graph.getTags(hash).size());
-		assertTrue(this.graph.getBranchParent(hash) != null);
-		assertEquals("deeefc5f6ab45a88c568fc8f27ee6f42e4a191b8", this.graph.getBranchParent(hash));
-		assertTrue(this.graph.getMergeParent(hash) != null);
-		assertEquals("ae94d7fa81437cbbd723049e3951f9daaa62a7c0", this.graph.getMergeParent(hash));
-		assertTrue(this.graph.isBranchHead(hash) == null);
-		
-		hash = "927478915f2d8fb9135eb33d21cb8491c0e655be"; // tag_one
-		assertTrue(this.graph.existsVertex(hash));
-		assertEquals(1, this.graph.getTags(hash).size());
-		assertTrue(this.graph.getTags(hash).contains("tag_one"));
-		assertTrue(this.graph.getBranchParent(hash) != null);
-		assertEquals("8273c1e51992a4d7a1da012dbb416864c2749a7f", this.graph.getBranchParent(hash));
-		assertTrue(this.graph.getMergeParent(hash) == null);
-		assertTrue(this.graph.isBranchHead(hash) == null);
-		
-		hash = "1ac6aaa05eb6d55939b20e70ec818bb413417757";
-		assertTrue(this.graph.existsVertex(hash));
-		assertEquals(0, this.graph.getTags(hash).size());
-		assertTrue(this.graph.getBranchParent(hash) != null);
-		assertEquals("927478915f2d8fb9135eb33d21cb8491c0e655be", this.graph.getBranchParent(hash));
-		assertTrue(this.graph.getMergeParent(hash) == null);
-		assertTrue(this.graph.isBranchHead(hash) == null);
-		
-		hash = "41a40fb23b54a49e91eb4cee510533eef810ec68";
-		assertTrue(this.graph.existsVertex(hash));
-		assertEquals(0, this.graph.getTags(hash).size());
-		assertTrue(this.graph.getBranchParent(hash) != null);
-		assertEquals("927478915f2d8fb9135eb33d21cb8491c0e655be", this.graph.getBranchParent(hash));
-		assertTrue(this.graph.getMergeParent(hash) == null);
-		assertTrue(this.graph.isBranchHead(hash) == null);
-		
-		hash = "376adc0f9371129a76766f8030f2e576165358c1";
-		assertTrue(this.graph.existsVertex(hash));
-		assertEquals(0, this.graph.getTags(hash).size());
-		assertTrue(this.graph.getBranchParent(hash) != null);
-		assertEquals("1ac6aaa05eb6d55939b20e70ec818bb413417757", this.graph.getBranchParent(hash));
-		assertTrue(this.graph.getMergeParent(hash) == null);
-		assertTrue(this.graph.isBranchHead(hash) == null);
-		
-		hash = "637acf68104e7bdff8235fb2e1a254300ffea3cb";
-		assertTrue(this.graph.existsVertex(hash));
-		assertEquals(0, this.graph.getTags(hash).size());
-		assertTrue(this.graph.getBranchParent(hash) != null);
-		assertEquals("41a40fb23b54a49e91eb4cee510533eef810ec68", this.graph.getBranchParent(hash));
-		assertTrue(this.graph.getMergeParent(hash) != null);
-		assertEquals("376adc0f9371129a76766f8030f2e576165358c1", this.graph.getMergeParent(hash));
-		assertTrue(this.graph.isBranchHead(hash) == null);
-		
-		hash = "d98b5a8740dbbe912b711e3a29dcc4fa3d3890e9";
-		assertTrue(this.graph.existsVertex(hash));
-		assertEquals(0, this.graph.getTags(hash).size());
-		assertTrue(this.graph.getBranchParent(hash) != null);
-		assertEquals("376adc0f9371129a76766f8030f2e576165358c1", this.graph.getBranchParent(hash));
-		assertTrue(this.graph.getMergeParent(hash) == null);
-		assertTrue(this.graph.isBranchHead(hash) == null);
-		
-		hash = "9be561b3657e2b1da2b09d675dddd5f45c47f57c";
-		assertTrue(this.graph.existsVertex(hash));
-		assertEquals(0, this.graph.getTags(hash).size());
-		assertTrue(this.graph.getBranchParent(hash) != null);
-		assertEquals("637acf68104e7bdff8235fb2e1a254300ffea3cb", this.graph.getBranchParent(hash));
-		assertTrue(this.graph.getMergeParent(hash) == null);
-		assertTrue(this.graph.isBranchHead(hash) == null);
-		
-		hash = "a92759a8824c8a13c60f9d1c04fb16bd7bb37cc2";
-		assertTrue(this.graph.existsVertex(hash));
-		assertEquals(0, this.graph.getTags(hash).size());
-		assertTrue(this.graph.getBranchParent(hash) != null);
-		assertEquals("d98b5a8740dbbe912b711e3a29dcc4fa3d3890e9", this.graph.getBranchParent(hash));
-		assertTrue(this.graph.getMergeParent(hash) != null);
-		assertEquals("9be561b3657e2b1da2b09d675dddd5f45c47f57c", this.graph.getMergeParent(hash));
-		assertTrue(this.graph.isBranchHead(hash) == null);
-		
-		hash = "fe56f365f798c3742bac5e56f5ff30eca4f622c6";
-		assertTrue(this.graph.existsVertex(hash));
-		assertEquals(0, this.graph.getTags(hash).size());
-		assertTrue(this.graph.getBranchParent(hash) != null);
-		assertEquals("9be561b3657e2b1da2b09d675dddd5f45c47f57c", this.graph.getBranchParent(hash));
-		assertTrue(this.graph.getMergeParent(hash) == null);
-		assertTrue(this.graph.isBranchHead(hash) == null);
-		
-		hash = "96a9f105774b50f1fa3361212c4d12ae057a4285"; // HEAD master
-		assertTrue(this.graph.existsVertex(hash));
-		assertEquals(0, this.graph.getTags(hash).size());
-		assertTrue(this.graph.getBranchParent(hash) != null);
-		assertEquals("fe56f365f798c3742bac5e56f5ff30eca4f622c6", this.graph.getBranchParent(hash));
-		assertTrue(this.graph.getMergeParent(hash) == null);
-		assertEquals("master", this.graph.isBranchHead(hash));
-		
-		hash = "67635fe9efeb2fd3751df9ea67650c71e59e3df1"; // HEAD maintenance
-		assertTrue(this.graph.existsVertex(hash));
-		assertEquals(0, this.graph.getTags(hash).size());
-		assertTrue(this.graph.getBranchParent(hash) != null);
-		assertEquals("a92759a8824c8a13c60f9d1c04fb16bd7bb37cc2", this.graph.getBranchParent(hash));
-		assertTrue(this.graph.getMergeParent(hash) == null);
-		assertEquals("origin/maintenance", this.graph.isBranchHead(hash));
-		
-	}
-	
-	/**
 	 * Test add change set twice.
 	 * 
 	 * @throws IOException
@@ -509,75 +344,4 @@ public class RevDependencyGraphTest extends VersionsTest {
 		assertEquals(true, graph.addEdge("a", "b", EdgeType.BRANCH_EDGE));
 		assertEquals(false, graph.addEdge("a", "b", EdgeType.BRANCH_EDGE));
 	}
-	
-	/**
-	 * Test exist path success.
-	 */
-	@Test
-	public void testExistPathFail() {
-		
-		assertEquals(false, this.graph.existsPath("cbcc33d919a27b9450d117f211a5f4f45615cab9",
-		                                          "d23c3c69e8b9b8d8c0ee6ef08ea6f1944e186df6"));
-	}
-	
-	/**
-	 * Test exist path success.
-	 */
-	@Test
-	public void testExistPathSuccess() {
-		
-		assertEquals(true, this.graph.containsEdge("ae94d7fa81437cbbd723049e3951f9daaa62a7c0",
-		                                           "cbcc33d919a27b9450d117f211a5f4f45615cab9"));
-		assertEquals(false, this.graph.containsEdge("cbcc33d919a27b9450d117f211a5f4f45615cab9",
-		                                            "ae94d7fa81437cbbd723049e3951f9daaa62a7c0"));
-		assertEquals(true, this.graph.existsPath("d23c3c69e8b9b8d8c0ee6ef08ea6f1944e186df6",
-		                                         "41a40fb23b54a49e91eb4cee510533eef810ec68"));
-		assertEquals(false, this.graph.existsPath("41a40fb23b54a49e91eb4cee510533eef810ec68",
-		                                          "d23c3c69e8b9b8d8c0ee6ef08ea6f1944e186df6"));
-	}
-	
-	/**
-	 * Test exist path success.
-	 */
-	@Test
-	public void testExistSimplePath() {
-		assertEquals(true, this.graph.existsPath("cbcc33d919a27b9450d117f211a5f4f45615cab9",
-		                                         "cbcc33d919a27b9450d117f211a5f4f45615cab9"));
-	}
-	
-	/**
-	 * Test get vertices.
-	 * 
-	 * @throws RepositoryOperationException
-	 */
-	@Test
-	public void testGetVertices() throws RepositoryOperationException {
-		final Set<String> chnageSetIds = new HashSet<>();
-		for (final String v : this.repo.getRevDependencyGraph().getVertices()) {
-			chnageSetIds.add(v);
-		}
-		assertEquals(20, chnageSetIds.size());
-		assertEquals(true, chnageSetIds.contains("96a9f105774b50f1fa3361212c4d12ae057a4285"));
-		assertEquals(true, chnageSetIds.contains("fe56f365f798c3742bac5e56f5ff30eca4f622c6"));
-		assertEquals(true, chnageSetIds.contains("9be561b3657e2b1da2b09d675dddd5f45c47f57c"));
-		assertEquals(true, chnageSetIds.contains("637acf68104e7bdff8235fb2e1a254300ffea3cb"));
-		assertEquals(true, chnageSetIds.contains("376adc0f9371129a76766f8030f2e576165358c1"));
-		assertEquals(true, chnageSetIds.contains("41a40fb23b54a49e91eb4cee510533eef810ec68"));
-		assertEquals(true, chnageSetIds.contains("1ac6aaa05eb6d55939b20e70ec818bb413417757"));
-		assertEquals(true, chnageSetIds.contains("927478915f2d8fb9135eb33d21cb8491c0e655be"));
-		assertEquals(true, chnageSetIds.contains("8273c1e51992a4d7a1da012dbb416864c2749a7f"));
-		assertEquals(true, chnageSetIds.contains("ae94d7fa81437cbbd723049e3951f9daaa62a7c0"));
-		assertEquals(true, chnageSetIds.contains("cbcc33d919a27b9450d117f211a5f4f45615cab9"));
-		assertEquals(true, chnageSetIds.contains("deeefc5f6ab45a88c568fc8f27ee6f42e4a191b8"));
-		assertEquals(true, chnageSetIds.contains("d23c3c69e8b9b8d8c0ee6ef08ea6f1944e186df6"));
-		assertEquals(true, chnageSetIds.contains("98d5c40ef3c14503a472ba4133ae3529c7578e30"));
-		assertEquals(true, chnageSetIds.contains("9d647acdef18e1bc6137354359ae75e490a7687d"));
-		assertEquals(true, chnageSetIds.contains("19bc6c11d2d8cff62f911f26bad29690c3cee256"));
-		assertEquals(true, chnageSetIds.contains("e52def97ebc1f78c9286b1e7c36783aa67604439"));
-		assertEquals(true, chnageSetIds.contains("d98b5a8740dbbe912b711e3a29dcc4fa3d3890e9"));
-		assertEquals(true, chnageSetIds.contains("a92759a8824c8a13c60f9d1c04fb16bd7bb37cc2"));
-		assertEquals(true, chnageSetIds.contains("67635fe9efeb2fd3751df9ea67650c71e59e3df1"));
-		
-	}
-	
 }

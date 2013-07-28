@@ -40,7 +40,6 @@ import net.ownhero.dev.kanuni.annotations.string.Length;
 import net.ownhero.dev.kisa.Logger;
 
 import org.joda.time.DateTime;
-
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.elements.RevDependencyGraph;
@@ -355,9 +354,8 @@ public class VersionArchive implements Annotated {
 					if (changeSet.getBranchParent() != null) {
 						this.revDepGraph.addEdge(changeSet.getBranchParent().getId(), changeSet.getId(),
 						                         EdgeType.BRANCH_EDGE);
-						if (changeSet.getMergeParent() != null) {
-							this.revDepGraph.addEdge(changeSet.getMergeParent().getId(), changeSet.getId(),
-							                         EdgeType.MERGE_EDGE);
+						for (final ChangeSet mergeParent : changeSet.getMergeParents()) {
+							this.revDepGraph.addEdge(mergeParent.getId(), changeSet.getId(), EdgeType.MERGE_EDGE);
 						}
 					}
 					

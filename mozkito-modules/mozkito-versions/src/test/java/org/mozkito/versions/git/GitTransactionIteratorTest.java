@@ -19,6 +19,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -27,7 +28,6 @@ import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 
 import org.junit.Before;
 import org.junit.Test;
-
 import org.mozkito.testing.VersionsTest;
 import org.mozkito.testing.annotation.RepositorySetting;
 import org.mozkito.versions.RepositoryType;
@@ -99,10 +99,10 @@ public class GitTransactionIteratorTest extends VersionsTest {
 				final ChangeSet branchParent = this.transactionMap.get(branchParentHash);
 				changeset.setBranchParent(branchParent);
 			}
-			final String mergeParentHash = revDepGraph.getMergeParent(hash);
-			if (mergeParentHash != null) {
+			final List<String> mergeParentHashes = revDepGraph.getMergeParents(hash);
+			for (final String mergeParentHash : mergeParentHashes) {
 				final ChangeSet mergeParent = this.transactionMap.get(mergeParentHash);
-				changeset.setMergeParent(mergeParent);
+				changeset.addMergeParent(mergeParent);
 			}
 			
 			// set tags
