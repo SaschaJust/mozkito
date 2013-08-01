@@ -36,6 +36,8 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
 
+import org.mozkito.persistence.DatabaseEnvironment;
+
 /**
  * The Class GraphManager.
  * 
@@ -64,6 +66,8 @@ public class TitanDBGraphManager extends GraphManager {
 	/** The storage. */
 	private Configuration                            storage;
 	
+	private File                                     directory;
+	
 	/**
 	 * Instantiates a new titan db graph manager.
 	 */
@@ -77,12 +81,13 @@ public class TitanDBGraphManager extends GraphManager {
 	 * @param directory
 	 *            the directory
 	 */
-	public TitanDBGraphManager(final File directory) {
+	public TitanDBGraphManager(@NotNull final File directory) {
 		PRECONDITIONS: {
 			// none
 		}
 		
 		try {
+			this.directory = directory;
 			this.config = new BaseConfiguration();
 			this.storage = this.config.subset(GraphDatabaseConfiguration.STORAGE_NAMESPACE);
 			// configuring local backend
@@ -297,6 +302,46 @@ public class TitanDBGraphManager extends GraphManager {
 	/**
 	 * {@inheritDoc}
 	 * 
+	 * @see org.mozkito.graphs.GraphManager#getDatabaseEnvironment()
+	 */
+	@Override
+	public DatabaseEnvironment getDatabaseEnvironment() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return null;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.graphs.GraphManager#getFileHandle()
+	 */
+	@Override
+	public File getFileHandle() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.directory;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see org.mozkito.graphs.GraphManager#getGraph()
 	 */
 	@SuppressWarnings ("unchecked")
@@ -311,6 +356,46 @@ public class TitanDBGraphManager extends GraphManager {
 				createUtil();
 			}
 			return this.graph;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.graphs.GraphManager#isFileBased()
+	 */
+	@Override
+	public boolean isFileBased() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return true;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.graphs.GraphManager#isLocal()
+	 */
+	@Override
+	public boolean isLocal() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return true;
 		} finally {
 			POSTCONDITIONS: {
 				// none
