@@ -130,48 +130,17 @@ public abstract class GraphManager {
 	 */
 	public abstract KeyIndexableGraph createUtil();
 	
-	// /**
-	// * Creates the manager.
-	// *
-	// * @param environment
-	// * the environment
-	// * @return the graph manager
-	// */
-	// public static final GraphManager createManager(@NotNull final GraphEnvironment environment) {
-	//
-	// if (environment.getType() == null) {
-	// if (Logger.logError()) {
-	// Logger.error("Type is null. Can't create graph util.");
-	// }
-	// } else if (!map.containsKey(environment.getType())) {
-	// if (Logger.logError()) {
-	// Logger.error("Cannot find factory for graph backend: " + environment.getType());
-	// }
-	// } else {
-	// try {
-	// final GraphManager graphManager = map.get(environment.getType()).newInstance();
-	// return graphManager;
-	// } catch (InstantiationException | IllegalAccessException e) {
-	// if (Logger.logError()) {
-	// Logger.error(e, "Could not create graph manager for backend " + environment.getType() + ".");
-	// }
-	// }
-	// }
-	//
-	// return null;
-	// }
-	
 	/**
-	 * Gets the database environment.
+	 * Gets the database environment if any.
 	 * 
-	 * @return the database environment
+	 * @return the database environment or null if the underlying database is file-based.
 	 */
 	public abstract DatabaseEnvironment getDatabaseEnvironment();
 	
 	/**
 	 * Gets the file handle.
 	 * 
-	 * @return the file handle
+	 * @return the file handle/directory of the underlying file database; null otherwise
 	 */
 	public abstract File getFileHandle();
 	
