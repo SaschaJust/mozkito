@@ -16,8 +16,6 @@
 package org.mozkito.persons.model;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -94,18 +92,16 @@ public class Person implements Annotated {
 	}
 	
 	/** The generated id. */
-	private long                generatedId;
+	private long        generatedId;
 	
 	/** The usernames. */
-	private Set<String>         usernames      = new TreeSet<String>();
+	private Set<String> usernames      = new TreeSet<String>();
 	
 	/** The email addresses. */
-	private Set<String>         emailAddresses = new TreeSet<String>();
+	private Set<String> emailAddresses = new TreeSet<String>();
 	
 	/** The fullnames. */
-	private Set<String>         fullnames      = new TreeSet<String>();
-	
-	private Map<String, String> meta           = new HashMap<>();
+	private Set<String> fullnames      = new TreeSet<String>();
 	
 	/**
 	 * Instantiates a new person.
@@ -317,23 +313,6 @@ public class Person implements Annotated {
 	}
 	
 	/**
-	 * @return the meta
-	 */
-	public Map<String, String> getMeta() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.meta;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
-	}
-	
-	/**
 	 * Gets the usernames.
 	 * 
 	 * @return the usernames
@@ -413,24 +392,6 @@ public class Person implements Annotated {
 	 */
 	protected void setGeneratedId(final long generatedId) {
 		this.generatedId = generatedId;
-	}
-	
-	/**
-	 * @param meta
-	 *            the meta to set
-	 */
-	public void setMeta(final Map<String, String> meta) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.meta = meta;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
 	}
 	
 	/**

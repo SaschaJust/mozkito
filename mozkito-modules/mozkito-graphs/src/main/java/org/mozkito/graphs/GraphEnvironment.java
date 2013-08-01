@@ -18,7 +18,6 @@ import java.io.File;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
-
 /**
  * The Class GraphEnvironment.
  * 
@@ -33,19 +32,16 @@ public class GraphEnvironment {
 	private final boolean   remote;
 	
 	/** The directory. */
-	private File            directory = null;
+	private final File      directory = null;
 	
 	/**
 	 * Instantiates a new graph environment.
 	 * 
 	 * @param type
 	 *            the type
-	 * @param directory
-	 *            the directory
 	 */
-	public GraphEnvironment(@NotNull final GraphType type, @NotNull final File directory) {
+	public GraphEnvironment(@NotNull final GraphType type) {
 		this.remote = false;
-		this.directory = directory;
 		this.type = type;
 	}
 	

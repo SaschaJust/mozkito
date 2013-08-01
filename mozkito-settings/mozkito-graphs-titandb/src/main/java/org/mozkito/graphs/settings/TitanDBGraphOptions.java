@@ -28,10 +28,10 @@ import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 
 import org.mozkito.graphs.DatabaseBackend;
-import org.mozkito.graphs.GraphEnvironment;
 import org.mozkito.graphs.GraphManager;
 import org.mozkito.graphs.GraphType;
 import org.mozkito.graphs.SearchBackend;
+import org.mozkito.graphs.TitanDBGraphManager;
 
 /**
  * The Class GraphOptions.
@@ -96,17 +96,11 @@ public class TitanDBGraphOptions extends
 		
 		try {
 			this.graphTypeArgument = getSettings().getArgument(this.graphTypeOptions);
-			final GraphType graphType = this.graphTypeArgument.getValue();
+			this.graphTypeArgument.getValue();
 			this.directoryArgument = getSettings().getArgument(this.directoryOptions);
 			final File directory = this.directoryArgument.getValue();
 			
-			GraphEnvironment environment = null;
-			
-			if (directory != null) {
-				environment = new GraphEnvironment(graphType, directory);
-			}
-			
-			return GraphManager.createManager(environment);
+			return new TitanDBGraphManager(directory);
 		} finally {
 			POSTCONDITIONS: {
 				// none

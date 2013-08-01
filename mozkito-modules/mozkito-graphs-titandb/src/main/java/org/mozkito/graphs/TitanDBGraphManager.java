@@ -32,22 +32,16 @@ import com.tinkerpop.blueprints.Parameter;
 import com.tinkerpop.blueprints.Vertex;
 
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
-import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
-
-import org.mozkito.graphs.GraphEnvironment;
-import org.mozkito.graphs.GraphIndex;
-import org.mozkito.graphs.GraphManager;
-import org.mozkito.graphs.GraphType;
 
 /**
  * The Class GraphManager.
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class TitanGraphManager extends GraphManager {
+public class TitanDBGraphManager extends GraphManager {
 	
 	/** The Constant INDEX_NAME. */
 	public static final String                       INDEX_NAME = "search";
@@ -60,6 +54,51 @@ public class TitanGraphManager extends GraphManager {
 	
 	/** The graph. */
 	private TitanGraph                               graph;
+	
+	/** The index. */
+	private Configuration                            index;
+	
+	/** The config. */
+	private BaseConfiguration                        config;
+	
+	/** The storage. */
+	private Configuration                            storage;
+	
+	/**
+	 * Instantiates a new titan db graph manager.
+	 */
+	TitanDBGraphManager() {
+		// used only in reflections
+	}
+	
+	/**
+	 * Instantiates a new titan db graph manager.
+	 * 
+	 * @param directory
+	 *            the directory
+	 */
+	public TitanDBGraphManager(final File directory) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.config = new BaseConfiguration();
+			this.storage = this.config.subset(GraphDatabaseConfiguration.STORAGE_NAMESPACE);
+			// configuring local backend
+			this.storage.setProperty(GraphDatabaseConfiguration.STORAGE_BACKEND_KEY, "local");
+			this.storage.setProperty(GraphDatabaseConfiguration.STORAGE_DIRECTORY_KEY, directory.getAbsolutePath());
+			this.index = this.storage.subset(GraphDatabaseConfiguration.INDEX_NAMESPACE).subset(INDEX_NAME);
+			this.index.setProperty(INDEX_BACKEND_KEY, "elasticsearch");
+			this.index.setProperty("local-mode", true);
+			this.index.setProperty("client-only", false);
+			this.index.setProperty(STORAGE_DIRECTORY_KEY, directory.getAbsolutePath() + File.separator + "es");
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
 	
 	/**
 	 * Creates the edge index.
@@ -156,8 +195,6 @@ public class TitanGraphManager extends GraphManager {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.mappings.utils.graph.GraphManager#createKeyIndex(java.lang.String, java.lang.Class,
-	 *      com.tinkerpop.blueprints.Parameter<?,?>[])
 	 */
 	@Override
 	public <T extends Element> void createKeyIndex(final String key,
@@ -179,41 +216,16 @@ public class TitanGraphManager extends GraphManager {
 	/**
 	 * Creates the util.
 	 * 
-	 * @param environment
-	 *            the environment
 	 * @return the graph
 	 */
 	@Override
-	public final TitanGraph createUtil(@NotNull final GraphEnvironment environment) {
+	public final TitanGraph createUtil() {
 		PRECONDITIONS: {
 			// none
 		}
 		
 		try {
-			SANITY: {
-				Condition.notNull(environment,
-				                  "Argument '%s' in '%s'.", "environment", TitanGraphManager.class.getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
-				if (!GraphType.TITANDB.equals(environment.getType())) {
-					// TODO error
-					throw new RuntimeException();
-				}
-			}
-			
-			final BaseConfiguration config = new BaseConfiguration();
-			final Configuration storage = config.subset(GraphDatabaseConfiguration.STORAGE_NAMESPACE);
-			// configuring local backend
-			storage.setProperty(GraphDatabaseConfiguration.STORAGE_BACKEND_KEY, "local");
-			storage.setProperty(GraphDatabaseConfiguration.STORAGE_DIRECTORY_KEY, environment.getDirectory()
-			                                                                                 .getAbsolutePath());
-			// configuring elastic search index
-			final Configuration index = storage.subset(GraphDatabaseConfiguration.INDEX_NAMESPACE).subset(INDEX_NAME);
-			index.setProperty(INDEX_BACKEND_KEY, "elasticsearch");
-			index.setProperty("local-mode", true);
-			index.setProperty("client-only", false);
-			index.setProperty(STORAGE_DIRECTORY_KEY, environment.getDirectory().getAbsolutePath() + File.separator
-			        + "es");
-			
-			this.graph = TitanFactory.open(config);
+			this.graph = TitanFactory.open(this.config);
 			return this.graph;
 		} finally {
 			assert this.graph != null;
@@ -287,6 +299,7 @@ public class TitanGraphManager extends GraphManager {
 	 * 
 	 * @see org.mozkito.graphs.GraphManager#getGraph()
 	 */
+	@SuppressWarnings ("unchecked")
 	@Override
 	public TitanGraph getGraph() {
 		PRECONDITIONS: {
@@ -294,6 +307,9 @@ public class TitanGraphManager extends GraphManager {
 		}
 		
 		try {
+			if (this.graph == null) {
+				createUtil();
+			}
 			return this.graph;
 		} finally {
 			POSTCONDITIONS: {
