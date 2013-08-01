@@ -13,6 +13,7 @@
 
 package org.mozkito.graphs;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
@@ -25,6 +26,7 @@ import com.tinkerpop.blueprints.Parameter;
 
 import net.ownhero.dev.kisa.Logger;
 
+import org.mozkito.persistence.DatabaseEnvironment;
 import org.mozkito.utilities.loading.classpath.ClassFinder;
 import org.mozkito.utilities.loading.classpath.exceptions.WrongClassSearchMethodException;
 
@@ -88,37 +90,6 @@ public abstract class GraphManager {
 		}
 	}
 	
-	// /**
-	// * Creates the manager.
-	// *
-	// * @param environment
-	// * the environment
-	// * @return the graph manager
-	// */
-	// public static final GraphManager createManager(@NotNull final GraphEnvironment environment) {
-	//
-	// if (environment.getType() == null) {
-	// if (Logger.logError()) {
-	// Logger.error("Type is null. Can't create graph util.");
-	// }
-	// } else if (!map.containsKey(environment.getType())) {
-	// if (Logger.logError()) {
-	// Logger.error("Cannot find factory for graph backend: " + environment.getType());
-	// }
-	// } else {
-	// try {
-	// final GraphManager graphManager = map.get(environment.getType()).newInstance();
-	// return graphManager;
-	// } catch (InstantiationException | IllegalAccessException e) {
-	// if (Logger.logError()) {
-	// Logger.error(e, "Could not create graph manager for backend " + environment.getType() + ".");
-	// }
-	// }
-	// }
-	//
-	// return null;
-	// }
-	
 	/**
 	 * Gets the manager classes.
 	 * 
@@ -159,6 +130,51 @@ public abstract class GraphManager {
 	 */
 	public abstract KeyIndexableGraph createUtil();
 	
+	// /**
+	// * Creates the manager.
+	// *
+	// * @param environment
+	// * the environment
+	// * @return the graph manager
+	// */
+	// public static final GraphManager createManager(@NotNull final GraphEnvironment environment) {
+	//
+	// if (environment.getType() == null) {
+	// if (Logger.logError()) {
+	// Logger.error("Type is null. Can't create graph util.");
+	// }
+	// } else if (!map.containsKey(environment.getType())) {
+	// if (Logger.logError()) {
+	// Logger.error("Cannot find factory for graph backend: " + environment.getType());
+	// }
+	// } else {
+	// try {
+	// final GraphManager graphManager = map.get(environment.getType()).newInstance();
+	// return graphManager;
+	// } catch (InstantiationException | IllegalAccessException e) {
+	// if (Logger.logError()) {
+	// Logger.error(e, "Could not create graph manager for backend " + environment.getType() + ".");
+	// }
+	// }
+	// }
+	//
+	// return null;
+	// }
+	
+	/**
+	 * Gets the database environment.
+	 * 
+	 * @return the database environment
+	 */
+	public abstract DatabaseEnvironment getDatabaseEnvironment();
+	
+	/**
+	 * Gets the file handle.
+	 * 
+	 * @return the file handle
+	 */
+	public abstract File getFileHandle();
+	
 	/**
 	 * Gets the graph.
 	 * 
@@ -167,6 +183,20 @@ public abstract class GraphManager {
 	 * @return the graph
 	 */
 	public abstract <T extends KeyIndexableGraph> T getGraph();
+	
+	/**
+	 * Checks if is file based.
+	 * 
+	 * @return true, if is file based
+	 */
+	public abstract boolean isFileBased();
+	
+	/**
+	 * Checks if is local.
+	 * 
+	 * @return true, if is local
+	 */
+	public abstract boolean isLocal();
 	
 	/**
 	 * Provides.

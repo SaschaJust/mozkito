@@ -16,5 +16,10 @@
 		   <artifactId>blueprints-core</artifactId>
 		   <version>2.3.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.mozkito</groupId>
+			<artifactId>mozkito-persistence</artifactId>
+			<version>0.4-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 </project>
