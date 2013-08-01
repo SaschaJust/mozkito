@@ -14,6 +14,7 @@
 package org.mozkito.genealogies.utils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -24,8 +25,6 @@ import edu.uci.ics.jung.graph.util.Pair;
 
 import org.mozkito.genealogies.core.ChangeGenealogy;
 import org.mozkito.genealogies.core.GenealogyEdgeType;
-
-import scala.actors.threadpool.Arrays;
 
 /**
  * Represents a ChangeGenealogy as a Jung2 graph. This graph cannot be modified. This class should only be used for

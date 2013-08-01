@@ -22,11 +22,6 @@
 	<description>TODO</description>
 	<dependencies>
 		<dependency>
-			<groupId>org.mozkito</groupId>
-			<artifactId>mozkito-atomicchanges</artifactId>
-			<version>0.4-SNAPSHOT</version>
-		</dependency>
-		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.11</version>

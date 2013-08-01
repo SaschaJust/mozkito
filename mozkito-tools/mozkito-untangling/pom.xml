@@ -21,6 +21,11 @@
 		</dependency>
 		<dependency>
 			<groupId>org.mozkito</groupId>
+			<artifactId>mozkito-versions-settings</artifactId>
+			<version>0.4-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mozkito</groupId>
 			<artifactId>mozkito-untangling</artifactId>
 			<version>0.4-SNAPSHOT</version>
 		</dependency>

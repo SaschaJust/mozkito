@@ -602,7 +602,7 @@ public class GitRepository extends DistributedCommandLineRepository {
 			return null;
 		}
 		if (response.getSecond().isEmpty()) {
-			throw new UnrecoverableError(String.format("Command `git rev-parse %s` did not produc any output!",
+			throw new UnrecoverableError(String.format("Command `git rev-parse %s` did not produce any output!",
 			                                           getMainBranchName()));
 		}
 		return response.getSecond().get(0).trim();

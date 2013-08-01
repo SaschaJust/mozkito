@@ -94,7 +94,7 @@ public class SummarySearchEngine extends SearchEngine {
 			final LuceneStorage luceneStorage = getStorage(LuceneStorage.class);
 			
 			try {
-				final QueryParser parser = new QueryParser(Version.LUCENE_31, "summary", luceneStorage.getAnalyzer()); //$NON-NLS-1$
+				final QueryParser parser = new QueryParser(Version.LUCENE_42, "summary", luceneStorage.getAnalyzer()); //$NON-NLS-1$
 				final Query query = buildQuery(from.get(FieldKey.BODY).toString(), parser);
 				
 				if (query != null) {

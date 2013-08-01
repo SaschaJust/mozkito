@@ -30,7 +30,7 @@ import org.mozkito.persons.model.PersonContainer;
 
 /**
  * The Class MergingProcessor.
- *
+ * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class MergingProcessor {
@@ -43,8 +43,9 @@ public class MergingProcessor {
 	
 	/**
 	 * Adds the engine.
-	 *
-	 * @param engine the engine
+	 * 
+	 * @param engine
+	 *            the engine
 	 */
 	public void addEngine(final MergingEngine engine) {
 		this.engines.put(engine.getClass().getCanonicalName(), engine);
@@ -52,7 +53,7 @@ public class MergingProcessor {
 	
 	/**
 	 * The method is called after processing all {@link Person}s to consolidate the {@link Person}s in the created.
-	 *
+	 * 
 	 * {@link PersonBucket}s.
 	 */
 	public void consolidate() {
@@ -64,7 +65,7 @@ public class MergingProcessor {
 	 * Performs the actual merging algorithm using all active {@link MergingEngine}s.
 	 * 
 	 * @param container
-	 *            the {@link PersonContainer} unter subject
+	 *            the {@link PersonContainer} under subject
 	 */
 	public void process(final PersonContainer container) {
 		// process current PersonContainer:container

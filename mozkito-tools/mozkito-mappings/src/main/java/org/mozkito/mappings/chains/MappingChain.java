@@ -14,8 +14,6 @@ package org.mozkito.mappings.chains;
 
 import java.util.List;
 
-import com.tinkerpop.blueprints.Graph;
-
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.messages.ErrorEvent;
 import net.ownhero.dev.andama.messages.StartupEvent;
@@ -33,6 +31,8 @@ import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
+import org.mozkito.graphs.GraphManager;
+import org.mozkito.graphs.settings.GraphOptions;
 import org.mozkito.mappings.chains.converters.CandidatesConverter;
 import org.mozkito.mappings.chains.converters.CompositeConverter;
 import org.mozkito.mappings.chains.converters.RelationsConverter;
@@ -40,6 +40,7 @@ import org.mozkito.mappings.chains.demultiplexers.CandidatesDemux;
 import org.mozkito.mappings.chains.filters.EngineProcessor;
 import org.mozkito.mappings.chains.filters.FilterProcessor;
 import org.mozkito.mappings.chains.filters.StrategyProcessor;
+import org.mozkito.mappings.chains.sinks.Graphify;
 import org.mozkito.mappings.chains.sinks.Persister;
 import org.mozkito.mappings.chains.sources.ReportReader;
 import org.mozkito.mappings.chains.sources.TransactionReader;
@@ -50,9 +51,9 @@ import org.mozkito.mappings.filters.Filter;
 import org.mozkito.mappings.finder.Finder;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Relation;
-import org.mozkito.mappings.settings.GraphOptions;
 import org.mozkito.mappings.settings.MappingOptions;
 import org.mozkito.mappings.strategies.Strategy;
+import org.mozkito.mappings.utils.graph.MappingsGraph;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.settings.DatabaseOptions;
 import org.mozkito.utilities.commons.JavaUtils;
@@ -80,7 +81,7 @@ public class MappingChain extends Chain<Settings> {
 	private GraphOptions                                  graphOptions;
 	
 	/** The graph arguments. */
-	private ArgumentSet<Graph, GraphOptions>              graphArguments;
+	private ArgumentSet<GraphManager, GraphOptions>       graphArguments;
 	
 	/**
 	 * Instantiates a new mapping chain.
@@ -94,7 +95,7 @@ public class MappingChain extends Chain<Settings> {
 		
 		try {
 			this.databaseOptions = new DatabaseOptions(getSettings().getRoot(), Requirement.required, getName());
-			this.graphOptions = new GraphOptions(getSettings().getRoot(), Requirement.required, getName());
+			this.graphOptions = new GraphOptions(getSettings().getRoot(), Requirement.required);
 			this.graphArguments = ArgumentSetFactory.create(this.graphOptions);
 			this.databaseArguments = ArgumentSetFactory.create(this.databaseOptions);
 			this.mappingOptions = new MappingOptions(getSettings().getRoot(), Requirement.required,
@@ -214,6 +215,8 @@ public class MappingChain extends Chain<Settings> {
 			
 			// save the results in the database
 			new Persister(group, getSettings(), persistenceUtil);
+			// save the results in the graph
+			new Graphify(group, getSettings(), new MappingsGraph(this.graphArguments.getValue()));
 			
 			final List<INode<?, ?>> nodes = group.getThreads();
 			

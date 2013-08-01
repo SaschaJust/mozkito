@@ -28,18 +28,22 @@ import org.mozkito.persons.processing.MergingProcessor;
 
 /**
  * The Class PersonsMerger.
- *
+ * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class PersonsMerger extends Sink<PersonContainer> {
 	
 	/**
 	 * Instantiates a new persons merger.
-	 *
-	 * @param threadGroup the thread group
-	 * @param settings the settings
-	 * @param persistenceUtil the persistence util
-	 * @param processor the processor
+	 * 
+	 * @param threadGroup
+	 *            the thread group
+	 * @param settings
+	 *            the settings
+	 * @param persistenceUtil
+	 *            the persistence util
+	 * @param processor
+	 *            the processor
 	 */
 	public PersonsMerger(final Group threadGroup, final Settings settings, final PersistenceUtil persistenceUtil,
 	        final MergingProcessor processor) {
@@ -52,6 +56,8 @@ public class PersonsMerger extends Sink<PersonContainer> {
 				processor.consolidate();
 				persistenceUtil.commitTransaction();
 			}
+			
+			// TODO try to merge non-conflicting only-fullname entities
 		};
 		
 		new PreExecutionHook<PersonContainer, PersonContainer>(this) {

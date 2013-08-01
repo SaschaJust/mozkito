@@ -100,7 +100,7 @@ public class DescriptionSearchEngine extends SearchEngine {
 				final String fromBody = from.get(FieldKey.BODY).toString();
 				final String toId = to.get(FieldKey.ID).toString();
 				
-				this.parser = new QueryParser(Version.LUCENE_31, "description", luceneStorage.getAnalyzer()); //$NON-NLS-1$
+				this.parser = new QueryParser(Version.LUCENE_42, "description", luceneStorage.getAnalyzer()); //$NON-NLS-1$
 				final Query query = buildQuery(fromBody, this.parser);
 				
 				if (query != null) {

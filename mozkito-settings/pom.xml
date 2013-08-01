@@ -17,6 +17,7 @@
 		<module>mozkito-changecouplings</module>
 		<module>mozkito-codeanalysis</module>
 		<module>mozkito-graphs</module>
+		<module>mozkito-graphs-titandb</module>
 		<module>mozkito-genealogies</module>
 		<module>mozkito-genealogies-metrics</module>
 		<module>mozkito-infozilla</module>
