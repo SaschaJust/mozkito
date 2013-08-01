@@ -13,7 +13,6 @@
 
 package org.mozkito.graphs.settings;
 
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -24,20 +23,15 @@ import java.util.Map;
 
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
-import net.ownhero.dev.hiari.settings.DirectoryArgument;
 import net.ownhero.dev.hiari.settings.EnumArgument;
-import net.ownhero.dev.hiari.settings.EnumArgument.Options;
 import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kisa.Logger;
 
-import org.mozkito.graphs.DatabaseBackend;
-import org.mozkito.graphs.GraphEnvironment;
 import org.mozkito.graphs.GraphManager;
 import org.mozkito.graphs.GraphType;
-import org.mozkito.graphs.SearchBackend;
 import org.mozkito.utilities.loading.classpath.ClassFinder;
 import org.mozkito.utilities.loading.classpath.exceptions.WrongClassSearchMethodException;
 
@@ -49,22 +43,16 @@ import org.mozkito.utilities.loading.classpath.exceptions.WrongClassSearchMethod
 public class GraphOptions extends ArgumentSetOptions<GraphManager, ArgumentSet<GraphManager, GraphOptions>> {
 	
 	/** The Constant TAG. */
-	private static final String             TAG         = "graph";
+	private static final String                                       TAG                 = "graph";
 	
 	/** The Constant DESCRIPTION. */
-	private static final String             DESCRIPTION = "Graph database settings";
+	private static final String                                       DESCRIPTION         = "Graph database settings";
 	
-	private EnumArgument.Options<GraphType> graphTypeOptions;
+	private EnumArgument.Options<GraphType>                           graphTypeOptions;
 	
-	private DirectoryArgument.Options       directoryOptions;
+	private EnumArgument<GraphType>                                   graphTypeArgument;
 	
-	private EnumArgument<GraphType>         graphTypeArgument;
-	
-	private DirectoryArgument               directoryArgument;
-	
-	private Options<SearchBackend>          searchBackendOptions;
-	
-	private Options<DatabaseBackend>        databaseBackendOptions;
+	private final Map<GraphType, ArgumentSetOptions<GraphManager, ?>> graphManagerOptions = new HashMap<>();
 	
 	/**
 	 * Instantiates a new graph options.
@@ -73,8 +61,6 @@ public class GraphOptions extends ArgumentSetOptions<GraphManager, ArgumentSet<G
 	 *            the argument set
 	 * @param requirements
 	 *            the required
-	 * @param name
-	 *            the name
 	 */
 	public GraphOptions(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
 		super(argumentSet, TAG, DESCRIPTION, requirements);
@@ -106,16 +92,12 @@ public class GraphOptions extends ArgumentSetOptions<GraphManager, ArgumentSet<G
 		try {
 			this.graphTypeArgument = getSettings().getArgument(this.graphTypeOptions);
 			final GraphType graphType = this.graphTypeArgument.getValue();
-			this.directoryArgument = getSettings().getArgument(this.directoryOptions);
-			final File directory = this.directoryArgument.getValue();
 			
-			GraphEnvironment environment = null;
+			final ArgumentSetOptions<GraphManager, ?> graphManagerOptionSet = this.graphManagerOptions.get(graphType);
+			@SuppressWarnings ("unchecked")
+			final ArgumentSet<GraphManager, ?> argumentSet = getSettings().getRawArgumentSet(graphManagerOptionSet);
 			
-			if (directory != null) {
-				environment = new GraphEnvironment(graphType, directory);
-			}
-			
-			return GraphManager.createManager(environment);
+			return argumentSet.getValue();
 		} finally {
 			POSTCONDITIONS: {
 				// none
@@ -128,7 +110,7 @@ public class GraphOptions extends ArgumentSetOptions<GraphManager, ArgumentSet<G
 	 * 
 	 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
 	 */
-	@SuppressWarnings ("rawtypes")
+	@SuppressWarnings ({ "rawtypes", "unchecked" })
 	@Override
 	public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> argumentSet) throws ArgumentRegistrationException,
 	                                                                                    SettingsParseError {
@@ -144,23 +126,6 @@ public class GraphOptions extends ArgumentSetOptions<GraphManager, ArgumentSet<G
 			                                                            "Graph database implementation", null,
 			                                                            Requirement.required, GraphType.values());
 			map.put(this.graphTypeOptions.getName(), this.graphTypeOptions);
-			
-			this.directoryOptions = new DirectoryArgument.Options(argumentSet, "directory",
-			                                                      "Used for file database backends like BerkeleyDB",
-			                                                      null, Requirement.optional, false);
-			map.put(this.directoryOptions.getName(), this.directoryOptions);
-			
-			this.searchBackendOptions = new EnumArgument.Options<SearchBackend>(argumentSet, "search",
-			                                                                    "Graph database search index backend",
-			                                                                    SearchBackend.LUCENE,
-			                                                                    Requirement.optional);
-			map.put(this.searchBackendOptions.getName(), this.searchBackendOptions);
-			
-			this.databaseBackendOptions = new EnumArgument.Options<DatabaseBackend>(argumentSet, "backend",
-			                                                                        "Graph database backend",
-			                                                                        DatabaseBackend.BERKELEYDB,
-			                                                                        Requirement.optional);
-			map.put(this.databaseBackendOptions.getName(), this.databaseBackendOptions);
 			
 			final Collection<Class<? extends GraphManager>> managerClasses = GraphManager.getManagerClasses();
 			
@@ -189,6 +154,14 @@ public class GraphOptions extends ArgumentSetOptions<GraphManager, ArgumentSet<G
 						
 					}
 					if (matchingManager) {
+						final String theEnum = managerOptionsClass.getSimpleName()
+						                                          .toUpperCase()
+						                                          .replace(GraphOptions.class.getSimpleName()
+						                                                                     .toUpperCase(), "");
+						final GraphType gType = GraphType.valueOf(theEnum);
+						assert gType != null;
+						// TODO error check
+						
 						Constructor<? extends ArgumentSetOptions> constructor;
 						try {
 							constructor = managerOptionsClass.getConstructor(ArgumentSet.class, Requirement.class);
@@ -196,6 +169,7 @@ public class GraphOptions extends ArgumentSetOptions<GraphManager, ArgumentSet<G
 							if (constructor != null) {
 								final ArgumentSetOptions instance = constructor.newInstance(argumentSet,
 								                                                            Requirement.optional);
+								this.graphManagerOptions.put(gType, instance);
 								map.put(instance.getName(), instance);
 							} else {
 								// this graphmanaaer does not have its own configuration subset

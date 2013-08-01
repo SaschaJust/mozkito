@@ -23,7 +23,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.mozkito</groupId>
-			<artifactId>mozkito-graphs</artifactId>
+			<artifactId>mozkito-graphs-titandb</artifactId>
 			<version>0.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>

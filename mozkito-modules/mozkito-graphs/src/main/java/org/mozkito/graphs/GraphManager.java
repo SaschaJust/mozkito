@@ -20,11 +20,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.tinkerpop.blueprints.Element;
-import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.KeyIndexableGraph;
 import com.tinkerpop.blueprints.Parameter;
 
-import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.utilities.loading.classpath.ClassFinder;
@@ -33,8 +31,6 @@ import org.mozkito.utilities.loading.classpath.exceptions.WrongClassSearchMethod
 /**
  * The Class GraphManager.
  * 
- * @param <T>
- *            the generic type
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 public abstract class GraphManager {
@@ -47,13 +43,25 @@ public abstract class GraphManager {
 			final Collection<Class<? extends GraphManager>> managerClasses = ClassFinder.getClassesExtendingClass(GraphManager.class.getPackage(),
 			                                                                                                      GraphManager.class,
 			                                                                                                      Modifier.ABSTRACT
-			                                                                                                              | Modifier.INTERFACE
-			                                                                                                              | Modifier.PRIVATE
-			                                                                                                              | Modifier.PROTECTED);
+			                                                                                                              | Modifier.INTERFACE);
 			for (final Class<? extends GraphManager> managerClass : managerClasses) {
 				try {
+					try {
+						managerClass.getDeclaredConstructor(new Class<?>[0]);
+					} catch (NoSuchMethodException | SecurityException e) {
+						if (Logger.logError()) {
+							Logger.error("GraphManagers need a default constructor that can be used with reflections. Skipping: %s",
+							             managerClass);
+						}
+						continue;
+					}
+					
 					final GraphManager graphManager = managerClass.newInstance();
-					assert graphManager.provides() != null;
+					
+					SANITY: {
+						assert graphManager != null;
+						assert graphManager.provides() != null;
+					}
 					
 					// check if GraphType knows about this manager class
 					final String managerIdentifier = managerClass.getSimpleName()
@@ -80,36 +88,36 @@ public abstract class GraphManager {
 		}
 	}
 	
-	/**
-	 * Creates the manager.
-	 * 
-	 * @param environment
-	 *            the environment
-	 * @return the graph manager
-	 */
-	public static final GraphManager createManager(@NotNull final GraphEnvironment environment) {
-		
-		if (environment.getType() == null) {
-			if (Logger.logError()) {
-				Logger.error("Type is null. Can't create graph util.");
-			}
-		} else if (!map.containsKey(environment.getType())) {
-			if (Logger.logError()) {
-				Logger.error("Cannot find factory for graph backend: " + environment.getType());
-			}
-		} else {
-			try {
-				final GraphManager graphManager = map.get(environment.getType()).newInstance();
-				return graphManager;
-			} catch (InstantiationException | IllegalAccessException e) {
-				if (Logger.logError()) {
-					Logger.error(e, "Could not create graph manager for backend " + environment.getType() + ".");
-				}
-			}
-		}
-		
-		return null;
-	}
+	// /**
+	// * Creates the manager.
+	// *
+	// * @param environment
+	// * the environment
+	// * @return the graph manager
+	// */
+	// public static final GraphManager createManager(@NotNull final GraphEnvironment environment) {
+	//
+	// if (environment.getType() == null) {
+	// if (Logger.logError()) {
+	// Logger.error("Type is null. Can't create graph util.");
+	// }
+	// } else if (!map.containsKey(environment.getType())) {
+	// if (Logger.logError()) {
+	// Logger.error("Cannot find factory for graph backend: " + environment.getType());
+	// }
+	// } else {
+	// try {
+	// final GraphManager graphManager = map.get(environment.getType()).newInstance();
+	// return graphManager;
+	// } catch (InstantiationException | IllegalAccessException e) {
+	// if (Logger.logError()) {
+	// Logger.error(e, "Could not create graph manager for backend " + environment.getType() + ".");
+	// }
+	// }
+	// }
+	//
+	// return null;
+	// }
 	
 	/**
 	 * Gets the manager classes.
@@ -147,18 +155,18 @@ public abstract class GraphManager {
 	/**
 	 * Creates the util.
 	 * 
-	 * @param environment
-	 *            the environment
 	 * @return the graph
 	 */
-	public abstract KeyIndexableGraph createUtil(@NotNull final GraphEnvironment environment);
+	public abstract KeyIndexableGraph createUtil();
 	
 	/**
 	 * Gets the graph.
 	 * 
+	 * @param <T>
+	 *            the generic type
 	 * @return the graph
 	 */
-	public abstract <T extends Graph> T getGraph();
+	public abstract <T extends KeyIndexableGraph> T getGraph();
 	
 	/**
 	 * Provides.
