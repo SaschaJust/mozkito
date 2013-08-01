@@ -29,7 +29,6 @@ import net.ownhero.dev.hiari.settings.requirements.Requirement;
 
 import org.mozkito.graphs.DatabaseBackend;
 import org.mozkito.graphs.GraphManager;
-import org.mozkito.graphs.GraphType;
 import org.mozkito.graphs.SearchBackend;
 import org.mozkito.graphs.TitanDBGraphManager;
 
@@ -42,22 +41,18 @@ public class TitanDBGraphOptions extends
         ArgumentSetOptions<GraphManager, ArgumentSet<GraphManager, TitanDBGraphOptions>> {
 	
 	/** The Constant TAG. */
-	private static final String             TAG         = "titandb";
+	private static final String       TAG         = "titandb";
 	
 	/** The Constant DESCRIPTION. */
-	private static final String             DESCRIPTION = "TitanDB graph database settings";
+	private static final String       DESCRIPTION = "TitanDB graph database settings";
 	
-	private EnumArgument.Options<GraphType> graphTypeOptions;
+	private DirectoryArgument.Options directoryOptions;
 	
-	private DirectoryArgument.Options       directoryOptions;
+	private DirectoryArgument         directoryArgument;
 	
-	private EnumArgument<GraphType>         graphTypeArgument;
+	private Options<SearchBackend>    searchBackendOptions;
 	
-	private DirectoryArgument               directoryArgument;
-	
-	private Options<SearchBackend>          searchBackendOptions;
-	
-	private Options<DatabaseBackend>        databaseBackendOptions;
+	private Options<DatabaseBackend>  databaseBackendOptions;
 	
 	/**
 	 * Instantiates a new graph options.
@@ -95,8 +90,6 @@ public class TitanDBGraphOptions extends
 		}
 		
 		try {
-			this.graphTypeArgument = getSettings().getArgument(this.graphTypeOptions);
-			this.graphTypeArgument.getValue();
 			this.directoryArgument = getSettings().getArgument(this.directoryOptions);
 			final File directory = this.directoryArgument.getValue();
 			
@@ -125,7 +118,7 @@ public class TitanDBGraphOptions extends
 			
 			this.directoryOptions = new DirectoryArgument.Options(argumentSet, "directory",
 			                                                      "Used for file database backends like BerkeleyDB",
-			                                                      null, Requirement.optional, false);
+			                                                      null, Requirement.required, true);
 			map.put(this.directoryOptions.getName(), this.directoryOptions);
 			
 			this.searchBackendOptions = new EnumArgument.Options<SearchBackend>(argumentSet, "search",
