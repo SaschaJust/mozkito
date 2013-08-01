@@ -334,7 +334,7 @@ public class CoreChangeGenealogy extends ChangeGenealogy<JavaChangeOperation> {
 	}
 	
 	@Override
-	protected JavaChangeOperation getVertexForNode(final Vertex dependentNode) {
+	protected JavaChangeOperation getVertexForNode(@NotNull final Vertex dependentNode) {
 		final Long operationId = (Long) dependentNode.getProperty(ChangeGenealogy.NODE_ID);
 		return this.nodeCache.loadById(operationId);
 	}

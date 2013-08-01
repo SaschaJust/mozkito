@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
@@ -631,6 +632,10 @@ public abstract class ChangeGenealogy<T> {
 	public final Iterator<T> vertexIterator() {
 		final Set<Long> operations = new HashSet<Long>();
 		for (final Vertex node : this.graph.getVertices()) {
+			final Object property = node.getProperty(ChangeGenealogy.NODE_ID);
+			if (property == null) {
+				throw new UnrecoverableError("Error while loading node from GraphDB!");
+			}
 			operations.add((Long) node.getProperty(ChangeGenealogy.NODE_ID));
 		}
 		return new Iterator<T>() {

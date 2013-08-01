@@ -19,8 +19,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 
+import org.junit.Ignore;
 import org.junit.Test;
-
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.genealogies.core.CoreChangeGenealogy;
 import org.mozkito.genealogies.core.GenealogyEdgeType;
@@ -44,6 +44,7 @@ import org.mozkito.utilities.io.exceptions.FilePermissionException;
                    username = "miner",
                    type = DatabaseType.POSTGRESQL,
                    remote = true)
+@Ignore
 public class JungGenealogyGraph_PostgresTest extends DatabaseTest {
 	
 	/**
