@@ -34,6 +34,7 @@ import org.mozkito.genealogies.core.GenealogyEdgeType;
 import org.mozkito.genealogies.utils.ChangeGenealogyUtils;
 import org.mozkito.genealogies.utils.GenealogyTestEnvironment;
 import org.mozkito.genealogies.utils.GenealogyTestEnvironment.TestEnvironmentOperation;
+import org.mozkito.graphs.TitanDBGraphManager;
 import org.mozkito.persistence.ConnectOptions;
 import org.mozkito.persistence.DatabaseType;
 import org.mozkito.persistence.PersistenceUtil;
