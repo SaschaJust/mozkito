@@ -23,13 +23,10 @@ import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 
 import org.mozkito.genealogies.core.CoreChangeGenealogy;
-import org.mozkito.mappings.settings.GraphOptions;
-import org.mozkito.mappings.utils.graph.GraphManager.GraphEnvironment;
+import org.mozkito.graphs.GraphManager;
+import org.mozkito.graphs.settings.GraphOptions;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.settings.DatabaseOptions;
-import org.mozkito.utilities.datastructures.Tuple;
-
-import com.tinkerpop.blueprints.KeyIndexableGraph;
 
 /**
  * The Class GenealogyOptions.
@@ -74,9 +71,8 @@ public class GenealogyOptions extends
 		
 		try {
 			this.persistenceUtil = getSettings().getArgumentSet(this.databaseOptions).getValue();
-			final Tuple<KeyIndexableGraph, GraphEnvironment> graphDetails = getSettings().getArgumentSet(this.graphDbOption)
-			                                                                             .getValue();
-			return new CoreChangeGenealogy(graphDetails.getFirst(), graphDetails.getSecond(), this.persistenceUtil);
+			final GraphManager graphManager = getSettings().getArgumentSet(this.graphDbOption).getValue();
+			return new CoreChangeGenealogy(graphManager, this.persistenceUtil);
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -94,7 +90,7 @@ public class GenealogyOptions extends
 		try {
 			final Map<String, IOptions<?, ?>> map = new HashMap<String, IOptions<?, ?>>();
 			
-			this.graphDbOption = new GraphOptions(set, Requirement.required, "graphdb");
+			this.graphDbOption = new GraphOptions(set, Requirement.required);
 			
 			map.put(this.graphDbOption.getName(), this.graphDbOption);
 			map.put(this.databaseOptions.getName(), this.databaseOptions);

@@ -24,8 +24,8 @@ import org.mozkito.codeanalysis.model.JavaElement;
 import org.mozkito.codeanalysis.model.JavaMethodCall;
 import org.mozkito.codeanalysis.model.JavaMethodDefinition;
 import org.mozkito.genealogies.persistence.JavaChangeOperationCache;
-import org.mozkito.mappings.utils.graph.GraphManager;
-import org.mozkito.mappings.utils.graph.GraphManager.GraphEnvironment;
+import org.mozkito.graphs.GraphManager;
+import org.mozkito.graphs.TitanDBGraphManager;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.utilities.io.FileUtils;
 import org.mozkito.utilities.io.FileUtils.FileShutdownAction;
@@ -51,20 +51,17 @@ public class CoreChangeGenealogy extends ChangeGenealogy<JavaChangeOperation> {
 	/**
 	 * Instantiates a new change genealogy.
 	 * 
-	 * @param graph
-	 *            the graph
-	 * @param graphEnvironment
-	 *            the graph environment
+	 * @param graphManager
+	 *            the graph manager
 	 * @param persistenceUtil
 	 *            the persistence util
 	 */
-	public CoreChangeGenealogy(@NotNull final KeyIndexableGraph graph,
-	        @NotNull final GraphEnvironment graphEnvironment, final PersistenceUtil persistenceUtil) {
+	public CoreChangeGenealogy(final GraphManager graphManager, final PersistenceUtil persistenceUtil) {
 		
-		super(graph);
+		super(graphManager.createUtil());
 		this.persistenceUtil = persistenceUtil;
 		this.nodeCache = new JavaChangeOperationCache(persistenceUtil);
-		final File transactionDbFile = new File(graphEnvironment.getDirectory().getAbsolutePath()
+		final File transactionDbFile = new File(graphManager.getFileHandle().getAbsolutePath()
 		        + FileUtils.fileSeparator + "transactionLayer");
 		try {
 			FileUtils.createDir(transactionDbFile, FileShutdownAction.KEEP);
@@ -75,15 +72,12 @@ public class CoreChangeGenealogy extends ChangeGenealogy<JavaChangeOperation> {
 			
 			@Override
 			public void run() {
-				graph.shutdown();
+				CoreChangeGenealogy.this.graph.shutdown();
 			}
 		});
 		
-		final KeyIndexableGraph transactionGraph = GraphManager.createUtil(new GraphEnvironment(
-		                                                                                        graphEnvironment.getType(),
-		                                                                                        transactionDbFile));
+		final KeyIndexableGraph transactionGraph = new TitanDBGraphManager(transactionDbFile).createUtil();
 		this.transactionGenealogy = new TransactionChangeGenealogy(this, transactionGraph, persistenceUtil);
-		
 	}
 	
 	/**
