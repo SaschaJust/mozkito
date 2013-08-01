@@ -46,12 +46,16 @@ public class TitanDBGraphOptions extends
 	/** The Constant DESCRIPTION. */
 	private static final String       DESCRIPTION = "TitanDB graph database settings";
 	
+	/** The directory options. */
 	private DirectoryArgument.Options directoryOptions;
 	
+	/** The directory argument. */
 	private DirectoryArgument         directoryArgument;
 	
+	/** The search backend options. */
 	private Options<SearchBackend>    searchBackendOptions;
 	
+	/** The database backend options. */
 	private Options<DatabaseBackend>  databaseBackendOptions;
 	
 	/**

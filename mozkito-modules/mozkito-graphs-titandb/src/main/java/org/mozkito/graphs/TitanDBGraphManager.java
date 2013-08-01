@@ -66,6 +66,7 @@ public class TitanDBGraphManager extends GraphManager {
 	/** The storage. */
 	private Configuration                            storage;
 	
+	/** The directory. */
 	private File                                     directory;
 	
 	/**
