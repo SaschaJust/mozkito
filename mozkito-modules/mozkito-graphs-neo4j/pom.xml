@@ -23,65 +23,35 @@
 		<artifactId>mozkito-modules</artifactId>
 		<version>0.4-SNAPSHOT</version>
 	</parent>
-	<artifactId>mozkito-mappings</artifactId>
+	<artifactId>mozkito-graphs-neo4j</artifactId>
 	<packaging>jar</packaging>
-	<name>mappings [module]</name>
+	<name>graphs-neo4j [module]</name>
 	<description>TODO</description>
 	<dependencies>
 		<dependency>
 			<groupId>org.mozkito</groupId>
-			<artifactId>mozkito-infozilla</artifactId>
+			<artifactId>mozkito-io-utilities</artifactId>
 			<version>0.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>org.mozkito</groupId>
-			<artifactId>mozkito-issues</artifactId>
-			<version>0.4-SNAPSHOT</version>
+			<groupId>org.neo4j</groupId>
+			<artifactId>neo4j</artifactId>
+			<version>1.9.1</version>
 		</dependency>
 		<dependency>
-			<groupId>org.mozkito</groupId>
-			<artifactId>mozkito-codeanalysis</artifactId>
-			<version>0.4-SNAPSHOT</version>
+		    <groupId>com.tinkerpop.blueprints</groupId>
+		    <artifactId>blueprints-neo4j-graph</artifactId>
+			<version>2.3.0</version>
 		</dependency>
-		<dependency>
-			<groupId>org.mozkito</groupId>
-			<artifactId>mozkito-graphs</artifactId>
-			<version>0.4-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>net.sf.opencsv</groupId>
-			<artifactId>opencsv</artifactId>
-			<version>2.3</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.lucene</groupId>
-			<artifactId>lucene-core</artifactId>
-			<version>4.2.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.lucene</groupId>
-			<artifactId>lucene-queryparser</artifactId>
-			<version>4.2.1</version>
-		</dependency>
-		<dependency>
-			<groupId>libsvm</groupId>
-			<artifactId>libsvm</artifactId>
-			<version>3.16</version>
-		</dependency>
-		<dependency>
-			<groupId>lingpipe</groupId>
-			<artifactId>lingpipe</artifactId>
-			<version>4.1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>cc.mallet</groupId>
-			<artifactId>mallet</artifactId>
-			<version>2.0.7</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-			<version>4.2.2</version>
-		</dependency>
+			<dependency>
+				<groupId>org.mozkito</groupId>
+				<artifactId>mozkito-graphs</artifactId>
+				<version>0.4-SNAPSHOT</version>
+			</dependency>
+		<!-- <dependency>
+		   <groupId>com.thinkaurelius.titan</groupId>
+		   <artifactId>titan-lucene</artifactId>
+		   <version>0.3.1</version>
+		</dependency> -->
 	</dependencies>
 </project>

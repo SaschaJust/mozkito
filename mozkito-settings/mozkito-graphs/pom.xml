@@ -18,7 +18,7 @@
 	</parent>
 	<artifactId>mozkito-graphs-settings</artifactId>
 	<packaging>jar</packaging>
-	<name>mappings [settings]</name>
+	<name>graphs [settings]</name>
 	<description>TODO</description>
 	<dependencies>
 		<dependency>
@@ -26,6 +26,11 @@
 			<artifactId>mozkito-graphs</artifactId>
 			<version>0.4-SNAPSHOT</version>
 			<type>pom</type>
+		</dependency>
+		<dependency>
+			<groupId>org.mozkito</groupId>
+			<artifactId>mozkito-graphs-titandb-settings</artifactId>
+			<version>0.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

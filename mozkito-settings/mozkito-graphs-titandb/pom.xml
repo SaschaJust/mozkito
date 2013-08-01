@@ -16,11 +16,16 @@
 		<artifactId>mozkito-settings</artifactId>
 		<version>0.4-SNAPSHOT</version>
 	</parent>
-	<artifactId>mozkito-atomicchanges-settings</artifactId>
+	<artifactId>mozkito-graphs-titandb-settings</artifactId>
 	<packaging>jar</packaging>
-	<name>atomicchanges [settings]</name>
+	<name>graphs-titandb [settings]</name>
 	<description>TODO</description>
 	<dependencies>
+		<dependency>
+			<groupId>org.mozkito</groupId>
+			<artifactId>mozkito-graphs</artifactId>
+			<version>0.4-SNAPSHOT</version>
+		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

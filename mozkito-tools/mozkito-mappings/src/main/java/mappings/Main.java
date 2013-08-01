@@ -15,7 +15,6 @@ package mappings;
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
-import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.mappings.chains.MappingChain;
@@ -28,9 +27,9 @@ import org.mozkito.mappings.messages.Messages;
  */
 public class Main {
 	
-	static {
-		KanuniAgent.initialize();
-	}
+	// static {
+	// KanuniAgent.initialize();
+	// }
 	
 	/**
 	 * The main method.

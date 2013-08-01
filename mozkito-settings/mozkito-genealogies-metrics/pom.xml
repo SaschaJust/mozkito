@@ -23,7 +23,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.mozkito</groupId>
-			<artifactId>mozkito-genealogies-metrics</artifactId>
+			<artifactId>mozkito-genealogies</artifactId>
 			<version>0.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>

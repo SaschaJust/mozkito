@@ -53,6 +53,7 @@ public class Test {
 	public static TitanGraph create(final String directory) {
 		
 		final BaseConfiguration config = new BaseConfiguration();
+		
 		final Configuration storage = config.subset(GraphDatabaseConfiguration.STORAGE_NAMESPACE);
 		// configuring local backend
 		storage.setProperty(GraphDatabaseConfiguration.STORAGE_BACKEND_KEY, "local");

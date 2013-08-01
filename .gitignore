@@ -43,7 +43,7 @@ mozkito-*/bin
 persistence.xml
 *-persistence.xml
 mozkito-modules/**/eclipse
-
+database
 /mozkito-modules/mozkito-versions/src/main/resources/RepositoryUML.ucls
 /mozkito-modules/mozkito-versions/src/main/resources/ClassDiagram.ucls
 /mozkito-modules/mozkito-versions/src/main/resources/ClassDiagram.png
