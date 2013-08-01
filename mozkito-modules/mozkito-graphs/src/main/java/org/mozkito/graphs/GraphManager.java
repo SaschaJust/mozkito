@@ -21,6 +21,7 @@ import java.util.Map;
 
 import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.blueprints.Graph;
+import com.tinkerpop.blueprints.KeyIndexableGraph;
 import com.tinkerpop.blueprints.Parameter;
 
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
@@ -150,7 +151,7 @@ public abstract class GraphManager {
 	 *            the environment
 	 * @return the graph
 	 */
-	public abstract Graph createUtil(@NotNull final GraphEnvironment environment);
+	public abstract KeyIndexableGraph createUtil(@NotNull final GraphEnvironment environment);
 	
 	/**
 	 * Gets the graph.
