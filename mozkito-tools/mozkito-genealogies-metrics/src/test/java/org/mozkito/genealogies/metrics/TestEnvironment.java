@@ -80,6 +80,29 @@ public class TestEnvironment {
 		TestEnvironment.genealogy.addVertex("13");
 		TestEnvironment.genealogy.addVertex("14");
 		
+		// TestEnvironment.genealogy.addEdge("2", "1", GenealogyEdgeType.DefinitionOnDefinition);
+		// TestEnvironment.genealogy.addEdge("3", "1", GenealogyEdgeType.DefinitionOnDefinition);
+		// TestEnvironment.genealogy.addEdge("4", "1", GenealogyEdgeType.DefinitionOnDefinition);
+		// TestEnvironment.genealogy.addEdge("7", "1", GenealogyEdgeType.DefinitionOnDefinition);
+		// TestEnvironment.genealogy.addEdge("4", "2", GenealogyEdgeType.DefinitionOnDefinition);
+		// TestEnvironment.genealogy.addEdge("5", "2", GenealogyEdgeType.DefinitionOnDefinition);
+		// TestEnvironment.genealogy.addEdge("6", "3", GenealogyEdgeType.DefinitionOnDefinition);
+		// TestEnvironment.genealogy.addEdge("7", "3", GenealogyEdgeType.DefinitionOnDefinition);
+		// TestEnvironment.genealogy.addEdge("5", "4", GenealogyEdgeType.DefinitionOnDefinition);
+		// TestEnvironment.genealogy.addEdge("8", "4", GenealogyEdgeType.DefinitionOnDefinition);
+		// TestEnvironment.genealogy.addEdge("6", "5", GenealogyEdgeType.DefinitionOnDefinition);
+		// TestEnvironment.genealogy.addEdge("8", "5", GenealogyEdgeType.DefinitionOnDefinition);
+		// TestEnvironment.genealogy.addEdge("4", "6", GenealogyEdgeType.DefinitionOnDefinition);
+		// TestEnvironment.genealogy.addEdge("9", "6", GenealogyEdgeType.DefinitionOnDefinition);
+		// TestEnvironment.genealogy.addEdge("10", "6", GenealogyEdgeType.DefinitionOnDefinition);
+		// TestEnvironment.genealogy.addEdge("11", "8", GenealogyEdgeType.DefinitionOnDefinition);
+		// TestEnvironment.genealogy.addEdge("11", "9", GenealogyEdgeType.DefinitionOnDefinition);
+		// TestEnvironment.genealogy.addEdge("12", "9", GenealogyEdgeType.DefinitionOnDefinition);
+		// TestEnvironment.genealogy.addEdge("13", "10", GenealogyEdgeType.DefinitionOnDefinition);
+		// TestEnvironment.genealogy.addEdge("14", "11", GenealogyEdgeType.DefinitionOnDefinition);
+		// TestEnvironment.genealogy.addEdge("14", "12", GenealogyEdgeType.DefinitionOnDefinition);
+		// TestEnvironment.genealogy.addEdge("14", "13", GenealogyEdgeType.DefinitionOnDefinition);
+		
 		TestEnvironment.genealogy.addEdge("1", "2", GenealogyEdgeType.DefinitionOnDefinition);
 		TestEnvironment.genealogy.addEdge("1", "3", GenealogyEdgeType.DefinitionOnDefinition);
 		TestEnvironment.genealogy.addEdge("1", "4", GenealogyEdgeType.DefinitionOnDefinition);

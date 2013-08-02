@@ -58,8 +58,8 @@ public abstract class ChangeGenealogy<T> {
 	 */
 	public ChangeGenealogy(@NotNull final KeyIndexableGraph graph) {
 		this.graph = graph;
-		graph.createKeyIndex("VertexIndex", Vertex.class);
-		graph.createKeyIndex("EdgeIndex", Edge.class);
+		graph.createKeyIndex(NODE_ID, Vertex.class);
+		graph.createKeyIndex(EDGE_TYPE, Edge.class);
 	}
 	
 	/**
@@ -105,6 +105,7 @@ public abstract class ChangeGenealogy<T> {
 		}
 		if (!edgeAlreadyExists) {
 			final Edge relationship = from.addEdge(edgeType.name(), to);
+			this.graph.addEdge(relationship, from, to, edgeType.name());
 			if (relationship == null) {
 				
 				if (this.graph instanceof TransactionalGraph) {
@@ -116,13 +117,14 @@ public abstract class ChangeGenealogy<T> {
 				return false;
 			}
 			relationship.setProperty(EDGE_TYPE, edgeType);
+			
+			if (isRoot(to)) {
+				to.setProperty(ROOT_VERTICES, false);
+			}
+			
 			if (this.graph instanceof TransactionalGraph) {
 				((TransactionalGraph) this.graph).commit();
 			}
-			if (isRoot(to)) {
-				to.removeProperty(ROOT_VERTICES);
-			}
-			
 		}
 		return true;
 	}
@@ -459,7 +461,11 @@ public abstract class ChangeGenealogy<T> {
 	 * @return the node for vertex
 	 */
 	protected final Vertex getNodeForVertex(final T op) {
-		return this.graph.getVertex(op);
+		final Iterator<Vertex> iterator = this.graph.getVertices(NODE_ID, op).iterator();
+		if (!iterator.hasNext()) {
+			return null;
+		}
+		return iterator.next();
 	}
 	
 	/**
@@ -630,17 +636,17 @@ public abstract class ChangeGenealogy<T> {
 	 * @return the iterator
 	 */
 	public final Iterator<T> vertexIterator() {
-		final Set<Long> operations = new HashSet<Long>();
+		final Set<Object> operations = new HashSet<Object>();
 		for (final Vertex node : this.graph.getVertices()) {
 			final Object property = node.getProperty(ChangeGenealogy.NODE_ID);
 			if (property == null) {
 				throw new UnrecoverableError("Error while loading node from GraphDB!");
 			}
-			operations.add((Long) node.getProperty(ChangeGenealogy.NODE_ID));
+			operations.add(node.getProperty(ChangeGenealogy.NODE_ID));
 		}
 		return new Iterator<T>() {
 			
-			private final Iterator<Long> idIter = operations.iterator();
+			private final Iterator<Object> idIter = operations.iterator();
 			
 			@Override
 			public boolean hasNext() {
@@ -649,8 +655,12 @@ public abstract class ChangeGenealogy<T> {
 			
 			@Override
 			public T next() {
-				final Vertex v = ChangeGenealogy.this.graph.getVertex(this.idIter.next());
-				return getVertexForNode(v);
+				final Object next = this.idIter.next();
+				final Iterator<Vertex> v = ChangeGenealogy.this.graph.getVertices(NODE_ID, next).iterator();
+				if (!v.hasNext()) {
+					throw new UnrecoverableError("Could not load object with ID that must exist.");
+				}
+				return getVertexForNode(v.next());
 			}
 			
 			@Override
