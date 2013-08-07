@@ -27,6 +27,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.tinkerpop.blueprints.Graph;
+import com.tinkerpop.blueprints.KeyIndexableGraph;
+import com.tinkerpop.blueprints.util.io.graphml.GraphMLWriter;
+
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
@@ -38,7 +42,6 @@ import org.mozkito.genealogies.core.CoreChangeGenealogy;
 import org.mozkito.genealogies.core.GenealogyEdgeType;
 import org.mozkito.genealogies.utils.GenealogyTestEnvironment.TestEnvironmentOperation;
 import org.mozkito.graphs.GraphManager;
-import org.mozkito.graphs.TitanDBGraphManager;
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.persons.elements.PersonFactory;
@@ -51,10 +54,6 @@ import org.mozkito.versions.RepositoryType;
 import org.mozkito.versions.exceptions.UnregisteredRepositoryTypeException;
 import org.mozkito.versions.model.ChangeSet;
 import org.mozkito.versions.model.Revision;
-
-import com.tinkerpop.blueprints.Graph;
-import com.tinkerpop.blueprints.KeyIndexableGraph;
-import com.tinkerpop.blueprints.util.io.graphml.GraphMLWriter;
 
 /**
  * The Class ChangeGenealogyUtils.
@@ -530,7 +529,13 @@ public class ChangeGenealogyUtils {
 			                                     + transactionMap.size());
 		}
 		
-		final GraphManager graphManager = new TitanDBGraphManager(tmpGraphDBFile);
+		GraphManager graphManager;
+		try {
+			graphManager = GraphManager.createLocalFileDBGraphManager(tmpGraphDBFile);
+		} catch (NoClassDefFoundError | InstantiationException e) {
+			throw new IOException(e);
+		}
+		
 		final CoreChangeGenealogy changeGenealogy = ChangeGenealogyUtils.readFromDB(graphManager, persistenceUtil);
 		
 		if (changeGenealogy == null) {

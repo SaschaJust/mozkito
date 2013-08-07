@@ -28,13 +28,14 @@ import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 
 import org.junit.Ignore;
 import org.junit.Test;
+
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.genealogies.core.CoreChangeGenealogy;
 import org.mozkito.genealogies.core.GenealogyEdgeType;
 import org.mozkito.genealogies.utils.ChangeGenealogyUtils;
 import org.mozkito.genealogies.utils.GenealogyTestEnvironment;
 import org.mozkito.genealogies.utils.GenealogyTestEnvironment.TestEnvironmentOperation;
-import org.mozkito.graphs.TitanDBGraphManager;
+import org.mozkito.graphs.GraphManager;
 import org.mozkito.persistence.ConnectOptions;
 import org.mozkito.persistence.DatabaseType;
 import org.mozkito.persistence.PersistenceUtil;
@@ -69,9 +70,14 @@ public class CoreChangeGenealogy_PostgresTest extends DatabaseTest {
 	 *             Signals that an I/O exception has occurred.
 	 * @throws FilePermissionException
 	 *             the file permission exception
+	 * @throws InstantiationException
+	 * @throws NoClassDefFoundError
 	 */
 	@Test
-	public void testChangeGenealogy() throws IOException, FilePermissionException {
+	public void testChangeGenealogy() throws IOException,
+	                                 FilePermissionException,
+	                                 NoClassDefFoundError,
+	                                 InstantiationException {
 		final File tmpGraphDBFile = FileUtils.createRandomDir(this.getClass().getSimpleName(), "",
 		                                                      FileShutdownAction.DELETE);
 		
@@ -82,7 +88,8 @@ public class CoreChangeGenealogy_PostgresTest extends DatabaseTest {
 		final Map<TestEnvironmentOperation, JavaChangeOperation> environmentOperations = testEnvironment.getEnvironmentOperations();
 		changeGenealogy.getChangeSetLayer().close();
 		changeGenealogy.close();
-		changeGenealogy = ChangeGenealogyUtils.readFromDB(new TitanDBGraphManager(tmpGraphDBFile), persistenceUtil);
+		changeGenealogy = ChangeGenealogyUtils.readFromDB(GraphManager.createLocalFileDBGraphManager(tmpGraphDBFile),
+		                                                  persistenceUtil);
 		assertEquals(42, changeGenealogy.vertexSize());
 		assertEquals(16, changeGenealogy.edgeSize());
 		

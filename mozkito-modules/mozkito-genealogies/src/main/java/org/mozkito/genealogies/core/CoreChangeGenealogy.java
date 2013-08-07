@@ -14,6 +14,9 @@ package org.mozkito.genealogies.core;
 
 import java.io.File;
 
+import com.tinkerpop.blueprints.KeyIndexableGraph;
+import com.tinkerpop.blueprints.Vertex;
+
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
@@ -25,16 +28,12 @@ import org.mozkito.codeanalysis.model.JavaMethodCall;
 import org.mozkito.codeanalysis.model.JavaMethodDefinition;
 import org.mozkito.genealogies.persistence.JavaChangeOperationCache;
 import org.mozkito.graphs.GraphManager;
-import org.mozkito.graphs.TitanDBGraphManager;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.utilities.io.FileUtils;
 import org.mozkito.utilities.io.FileUtils.FileShutdownAction;
 import org.mozkito.utilities.io.exceptions.FilePermissionException;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.model.ChangeSet;
-
-import com.tinkerpop.blueprints.KeyIndexableGraph;
-import com.tinkerpop.blueprints.Vertex;
 
 /**
  * The Class ChangeGenealogy.
@@ -76,7 +75,12 @@ public class CoreChangeGenealogy extends ChangeGenealogy<JavaChangeOperation> {
 			}
 		});
 		
-		final KeyIndexableGraph transactionGraph = new TitanDBGraphManager(transactionDbFile).createUtil();
+		KeyIndexableGraph transactionGraph;
+		try {
+			transactionGraph = GraphManager.createLocalFileDBGraphManager(transactionDbFile).createUtil();
+		} catch (NoClassDefFoundError | InstantiationException e) {
+			throw new UnrecoverableError(e);
+		}
 		this.transactionGenealogy = new TransactionChangeGenealogy(this, transactionGraph, persistenceUtil);
 	}
 	

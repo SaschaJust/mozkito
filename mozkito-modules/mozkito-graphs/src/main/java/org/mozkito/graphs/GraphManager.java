@@ -94,8 +94,7 @@ public abstract class GraphManager {
 	}
 	
 	/**
-	 * Traverses the classpath uses the first implementation of {@link LocalFileDBGraphManager} that is found to
-	 * instantiate a {@link GraphManager}.
+	 * Creates the local file db graph manager.
 	 * 
 	 * @param directory
 	 *            the directory
@@ -106,6 +105,26 @@ public abstract class GraphManager {
 	 *             the instantiation exception
 	 */
 	public static LocalFileDBGraphManager createLocalFileDBGraphManager(final File directory) throws NoClassDefFoundError,
+	                                                                                         InstantiationException {
+		return createLocalFileDBGraphManager(directory, null);
+	}
+	
+	/**
+	 * Traverses the classpath uses the first implementation of {@link LocalFileDBGraphManager} that is found to
+	 * instantiate a {@link GraphManager}.
+	 * 
+	 * @param directory
+	 *            the directory
+	 * @param type
+	 *            the type
+	 * @return the local file db graph manager
+	 * @throws NoClassDefFoundError
+	 *             the no class def found error
+	 * @throws InstantiationException
+	 *             the instantiation exception
+	 */
+	public static LocalFileDBGraphManager createLocalFileDBGraphManager(final File directory,
+	                                                                    final GraphType type) throws NoClassDefFoundError,
 	                                                                                         InstantiationException {
 		PRECONDITIONS: {
 			if (directory == null) {
@@ -129,7 +148,16 @@ public abstract class GraphManager {
 			while (!success && iterator.hasNext()) {
 				
 				final Class<LocalFileDBGraphManager> c1 = iterator.next();
-				
+				if ((type != null)
+				        && !type.name()
+				                .toUpperCase()
+				                .equals(c1.getSimpleName().toUpperCase()
+				                          .replace(GraphManager.class.getSimpleName().toUpperCase(), ""))) {
+					if (Logger.logInfo()) {
+						Logger.info("Skipping '%s' ", c1.getCanonicalName());
+					}
+					continue;
+				}
 				if (Logger.logInfo()) {
 					Logger.info("Instantiating %s implementation: %s", LocalFileDBGraphManager.class.getSimpleName(),
 					            c1.getCanonicalName());
