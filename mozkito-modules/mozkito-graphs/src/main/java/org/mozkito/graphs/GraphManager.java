@@ -15,9 +15,13 @@ package org.mozkito.graphs;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map;
 
 import com.tinkerpop.blueprints.Element;
@@ -26,7 +30,6 @@ import com.tinkerpop.blueprints.Parameter;
 
 import net.ownhero.dev.kisa.Logger;
 
-import org.mozkito.persistence.DatabaseEnvironment;
 import org.mozkito.utilities.loading.classpath.ClassFinder;
 import org.mozkito.utilities.loading.classpath.exceptions.WrongClassSearchMethodException;
 
@@ -91,12 +94,156 @@ public abstract class GraphManager {
 	}
 	
 	/**
+	 * Traverses the classpath uses the first implementation of {@link LocalFileDBGraphManager} that is found to
+	 * instantiate a {@link GraphManager}.
+	 * 
+	 * @param directory
+	 *            the directory
+	 * @return the local file db graph manager
+	 * @throws NoClassDefFoundError
+	 *             the no class def found error
+	 * @throws InstantiationException
+	 *             the instantiation exception
+	 */
+	public static LocalFileDBGraphManager createLocalFileDBGraphManager(final File directory) throws NoClassDefFoundError,
+	                                                                                         InstantiationException {
+		PRECONDITIONS: {
+			if (directory == null) {
+				throw new NullPointerException("Directory must not be null.");
+			}
+		}
+		
+		final Collection<Class<LocalFileDBGraphManager>> managerClasses = getManagerClasses(LocalFileDBGraphManager.class);
+		
+		SANITY: {
+			assert managerClasses != null;
+		}
+		
+		if (managerClasses.isEmpty()) {
+			throw new NoClassDefFoundError(String.format("There is no implementation of '%s' on the classpath.",
+			                                             LocalFileDBGraphManager.class.getCanonicalName()));
+		} else {
+			boolean success = false;
+			final Iterator<Class<LocalFileDBGraphManager>> iterator = managerClasses.iterator();
+			LocalFileDBGraphManager manager = null;
+			while (!success && iterator.hasNext()) {
+				
+				final Class<LocalFileDBGraphManager> c1 = iterator.next();
+				
+				if (Logger.logInfo()) {
+					Logger.info("Instantiating %s implementation: %s", LocalFileDBGraphManager.class.getSimpleName(),
+					            c1.getCanonicalName());
+				}
+				manager = null;
+				Constructor<LocalFileDBGraphManager> constructor = null;
+				
+				try {
+					constructor = c1.getConstructor(new Class<?>[] { File.class });
+				} catch (NoSuchMethodException | SecurityException ignore) {
+					// ignore
+				}
+				
+				if (constructor != null) {
+					try {
+						manager = constructor.newInstance(directory);
+					} catch (IllegalArgumentException | InvocationTargetException | InstantiationException
+					        | IllegalAccessException ignore) {
+						// ignore
+					}
+					
+					if (manager != null) {
+						success = true;
+						return manager;
+					} else {
+						if (Logger.logWarn()) {
+							Logger.warn("Instantiation of '%s' failed.", c1.getCanonicalName());
+						}
+						continue;
+					}
+				} else {
+					try {
+						manager = c1.newInstance();
+						manager.setDirectory(directory);
+						success = true;
+						return manager;
+					} catch (InstantiationException | IllegalAccessException ignore) {
+						// ignore
+					}
+					
+					if (Logger.logWarn()) {
+						Logger.warn("Instantiation of '%s' failed.", c1.getCanonicalName());
+					}
+					continue;
+				}
+			}
+			if (success) {
+				SANITY: {
+					assert manager != null;
+				}
+				
+				return manager;
+			} else {
+				throw new InstantiationException(String.format("Could not instantiate any instance of '%s'",
+				                                               LocalFileDBGraphManager.class.getSimpleName()));
+			}
+		}
+		
+	}
+	
+	/**
 	 * Gets the manager classes.
 	 * 
 	 * @return the manager classes
 	 */
 	public static final Collection<Class<? extends GraphManager>> getManagerClasses() {
 		return map.values();
+	}
+	
+	/**
+	 * Gets the manager classes.
+	 * 
+	 * @param <T>
+	 *            the generic type
+	 * @param clazz
+	 *            the clazz
+	 * @return the manager classes
+	 */
+	public static final <T extends GraphManager> Collection<Class<T>> getManagerClasses(final Class<T> clazz) {
+		PRECONDITIONS: {
+			if (clazz == null) {
+				throw new NullPointerException("Base class must not be null.");
+			}
+		}
+		
+		final Collection<Class<T>> collection = new LinkedList<>();
+		
+		try {
+			
+			SANITY: {
+				assert map != null;
+			}
+			
+			for (final Class<? extends GraphManager> c : map.values()) {
+				if (clazz.isAssignableFrom(c)) {
+					try {
+						@SuppressWarnings ("unchecked")
+						final Class<T> d = (Class<T>) c;
+						collection.add(d);
+					} catch (final ClassCastException e) {
+						SANITY: {
+							assert false : String.format("Could not cast '%s' to '%s'.", c.getCanonicalName(),
+							                             clazz.getCanonicalName());
+						}
+					}
+				}
+			}
+			
+			return collection;
+		} finally {
+			POSTCONDITIONS: {
+				assert collection != null;
+			}
+		}
 	}
 	
 	/**
@@ -119,9 +266,11 @@ public abstract class GraphManager {
 	 * @param indexParameters
 	 *            the index parameters
 	 */
-	public abstract <X extends Element> void createKeyIndex(String key,
-	                                                        Class<X> elementClass,
-	                                                        Parameter<?, ?>... indexParameters);
+	public <X extends Element> void createKeyIndex(final String key,
+	                                               final Class<X> elementClass,
+	                                               final Parameter<?, ?>... indexParameters) {
+		getGraph().createKeyIndex(key, elementClass, indexParameters);
+	}
 	
 	/**
 	 * Creates the util.
@@ -129,13 +278,6 @@ public abstract class GraphManager {
 	 * @return the graph
 	 */
 	public abstract KeyIndexableGraph createUtil();
-	
-	/**
-	 * Gets the database environment if any.
-	 * 
-	 * @return the database environment or null if the underlying database is file-based.
-	 */
-	public abstract DatabaseEnvironment getDatabaseEnvironment();
 	
 	/**
 	 * Gets the file handle.
