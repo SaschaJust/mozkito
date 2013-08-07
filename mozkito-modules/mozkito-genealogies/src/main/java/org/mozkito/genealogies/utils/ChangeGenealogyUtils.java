@@ -37,9 +37,8 @@ import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.genealogies.core.CoreChangeGenealogy;
 import org.mozkito.genealogies.core.GenealogyEdgeType;
 import org.mozkito.genealogies.utils.GenealogyTestEnvironment.TestEnvironmentOperation;
-import org.mozkito.mappings.utils.graph.GraphManager;
-import org.mozkito.mappings.utils.graph.GraphManager.GraphEnvironment;
-import org.mozkito.mappings.utils.graph.GraphManager.GraphType;
+import org.mozkito.graphs.GraphManager;
+import org.mozkito.graphs.TitanDBGraphManager;
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.persons.elements.PersonFactory;
@@ -531,8 +530,8 @@ public class ChangeGenealogyUtils {
 			                                     + transactionMap.size());
 		}
 		
-		final CoreChangeGenealogy changeGenealogy = ChangeGenealogyUtils.readFromDB(tmpGraphDBFile, GraphType.TITAN_DB,
-		                                                                            persistenceUtil);
+		final GraphManager graphManager = new TitanDBGraphManager(tmpGraphDBFile);
+		final CoreChangeGenealogy changeGenealogy = ChangeGenealogyUtils.readFromDB(graphManager, persistenceUtil);
 		
 		if (changeGenealogy == null) {
 			throw new UnrecoverableError(
@@ -622,24 +621,20 @@ public class ChangeGenealogyUtils {
 	 * within the dbFile directory, the ChangeGenealogy will load the ChangeGenealogy from this directory. Otherwise it
 	 * will create a new one.
 	 * 
-	 * @param dbFile
-	 *            the db file
-	 * @param graphType
-	 *            the graph type
+	 * @param graphManager
+	 *            the graph manager
 	 * @param persistenceUtil
 	 *            the persistence util
 	 * @return the change genealogy stored within5 the graph DB directory, if possible. Otherwise, creates a new
 	 *         ChangeGenealogy using graph DB within specified directory.
 	 */
 	@NoneNull
-	public static CoreChangeGenealogy readFromDB(final File dbFile,
-	                                             final GraphType graphType,
+	public static CoreChangeGenealogy readFromDB(final GraphManager graphManager,
 	                                             final PersistenceUtil persistenceUtil) {
-		final GraphEnvironment graphEnvironment = new GraphEnvironment(graphType, dbFile);
-		final KeyIndexableGraph graph = GraphManager.createUtil(graphEnvironment);
+		final KeyIndexableGraph graph = graphManager.createUtil();
 		registerShutdownHook(graph);
-		final CoreChangeGenealogy genealogy = new CoreChangeGenealogy(graph, graphEnvironment, persistenceUtil);
-		ChangeGenealogyUtils.genealogies.put(genealogy, dbFile);
+		final CoreChangeGenealogy genealogy = new CoreChangeGenealogy(graphManager, persistenceUtil);
+		ChangeGenealogyUtils.genealogies.put(genealogy, graphManager.getFileHandle());
 		return genealogy;
 	}
 	

@@ -23,6 +23,7 @@ import java.util.Set;
 
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.genealogies.core.CoreChangeGenealogy;
@@ -49,6 +50,7 @@ import org.mozkito.utilities.io.exceptions.FilePermissionException;
                    username = "miner",
                    type = DatabaseType.POSTGRESQL,
                    remote = true)
+@Ignore
 public class JavaChangeOperationProcessQueue_PostgresTest extends DatabaseTest {
 	
 	static {

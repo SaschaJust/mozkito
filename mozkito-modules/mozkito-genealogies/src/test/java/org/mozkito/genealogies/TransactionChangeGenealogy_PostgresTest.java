@@ -25,6 +25,7 @@ import java.util.Set;
 
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mozkito.genealogies.core.ChangeGenealogy;
 import org.mozkito.genealogies.core.CoreChangeGenealogy;
@@ -51,6 +52,7 @@ import org.mozkito.versions.model.ChangeSet;
                    username = "miner",
                    type = DatabaseType.POSTGRESQL,
                    remote = true)
+@Ignore
 public class TransactionChangeGenealogy_PostgresTest extends DatabaseTest {
 	
 	static {

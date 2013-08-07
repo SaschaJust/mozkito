@@ -17,9 +17,7 @@ import java.io.File;
 
 import org.mozkito.genealogies.core.ChangeGenealogy;
 import org.mozkito.genealogies.core.CoreChangeGenealogy;
-import org.mozkito.mappings.utils.graph.GraphManager;
-import org.mozkito.mappings.utils.graph.GraphManager.GraphEnvironment;
-import org.mozkito.mappings.utils.graph.GraphManager.GraphType;
+import org.mozkito.graphs.TitanDBGraphManager;
 
 import com.tinkerpop.blueprints.KeyIndexableGraph;
 import com.tinkerpop.blueprints.Vertex;
@@ -39,7 +37,7 @@ public class TestChangeGenealogy extends ChangeGenealogy<String> {
 	 * @return the test change genealogy
 	 */
 	public static TestChangeGenealogy readFromDB(final File dbFile) {
-		final KeyIndexableGraph graph = GraphManager.createUtil(new GraphEnvironment(GraphType.TITAN_DB, dbFile));
+		final KeyIndexableGraph graph = new TitanDBGraphManager(dbFile).createUtil();
 		final TestChangeGenealogy genealogy = new TestChangeGenealogy(graph);
 		return genealogy;
 	}
