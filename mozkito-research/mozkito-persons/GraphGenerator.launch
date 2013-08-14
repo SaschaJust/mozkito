@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.eclipse.jdt.launching.localJavaApplication">
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
+<listEntry value="/mozkito-persons-research/src/main/java/org/mozkito/research/persons/GraphGenerator.java"/>
+</listAttribute>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
+<listEntry value="1"/>
+</listAttribute>
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.mozkito.research.persons.GraphGenerator"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="mozkito-persons-research"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Ddatabase.host=grid1.st.cs.uni-saarland.de -Ddatabase.name=mozkito_rhino_februar2012 -Ddatabase.password=miner -Ddatabase.user=miner -Dgraph.provider=TITANDB -Dgraph.titandb.directory=graphbase"/>
+</launchConfiguration>
