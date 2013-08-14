@@ -37,6 +37,8 @@ import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.io.FileUtils;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
 
 import org.mozkito.graphs.GraphManager;
 import org.mozkito.graphs.settings.GraphOptions;
@@ -207,6 +209,7 @@ public class GraphGenerator implements Runnable {
 			assert this.engines != null;
 			assert !this.engines.isEmpty();
 			assert this.edgeCounter == 0;
+			assert this.progress == 0;
 		}
 		
 		try {
@@ -222,6 +225,31 @@ public class GraphGenerator implements Runnable {
 			if (Logger.logInfo()) {
 				Logger.info("Performing confidence matching on %s entries.", this.entries);
 			}
+			
+			final Thread progressCheck = new Thread() {
+				
+				@Override
+				public void run() {
+					final DateTime start = new DateTime();
+					
+					while (true) {
+						try {
+							Thread.sleep(10 * 60 * 1000);
+						} catch (final InterruptedException ignore) {
+							// ignore
+						}
+						final double percentage = (GraphGenerator.this.progress * 100) / GraphGenerator.this.entries;
+						if (Logger.logAlways()) {
+							Logger.always("Current progress is '%s%%'. Running since %s.", percentage,
+							              start.toString(DateTimeFormat.fullDateTime()));
+						}
+					}
+				};
+			};
+			
+			progressCheck.setDaemon(true);
+			progressCheck.run();
+			
 			for (final Person p1 : list) {
 				if (Logger.logInfo()) {
 					Logger.info("Creating new vertex '%s'.", p1);
