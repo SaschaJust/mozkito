@@ -90,10 +90,10 @@ public class TitanDBGraphManager extends LocalFileDBGraphManager {
 			this.storage.setProperty(GraphDatabaseConfiguration.STORAGE_BACKEND_KEY, "local");
 			this.storage.setProperty(GraphDatabaseConfiguration.STORAGE_DIRECTORY_KEY, directory.getAbsolutePath());
 			this.index = this.storage.subset(GraphDatabaseConfiguration.INDEX_NAMESPACE).subset(INDEX_NAME);
-			this.index.setProperty(INDEX_BACKEND_KEY, "elasticsearch");
+			this.index.setProperty(INDEX_BACKEND_KEY, "lucene");
 			this.index.setProperty("local-mode", true);
 			this.index.setProperty("client-only", false);
-			this.index.setProperty(STORAGE_DIRECTORY_KEY, directory.getAbsolutePath() + File.separator + "es");
+			this.index.setProperty(STORAGE_DIRECTORY_KEY, directory.getAbsolutePath() + File.separator + "lucene");
 		} finally {
 			POSTCONDITIONS: {
 				// none
