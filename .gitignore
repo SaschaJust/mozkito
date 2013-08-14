@@ -64,3 +64,9 @@ database
 /mozkito-utilities/mozkito-commons/.classpath
 /mozkito-utilities/mozkito-clustering/.classpath
 /mozkito-utilities/mozkito-changeimpact/.classpath
+
+/mozkito-research/mozkito-persons/.classpath
+/mozkito-research/mozkito-persons/.project
+/mozkito-research/mozkito-persons/.settings/
+/mozkito-research/mozkito-persons/eclipse/
+/mozkito-research/mozkito-persons/graphbase/
