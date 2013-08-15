@@ -11,7 +11,7 @@
 	<name>persons [research]</name>
 	<description>TODO</description>
 	<properties>
-		<mainClass>org.mozkito.research.persons.GraphGenerator</mainClass>
+		<mainClass>research.persons.Main</mainClass>
 	</properties>
 	<dependencies>
 		<dependency>
