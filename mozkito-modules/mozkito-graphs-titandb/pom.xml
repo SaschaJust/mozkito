@@ -48,20 +48,20 @@
 		   <artifactId>titan-berkeleyje</artifactId>
 		   <version>0.3.1</version>
 		</dependency>
-		<dependency>
+		<!-- <dependency>
 		   <groupId>com.thinkaurelius.titan</groupId>
 		   <artifactId>titan-es</artifactId>
 		   <version>0.3.1</version>
-		</dependency>
+		</dependency> -->
 			<dependency>
 				<groupId>org.mozkito</groupId>
 				<artifactId>mozkito-graphs</artifactId>
 				<version>0.4-SNAPSHOT</version>
 			</dependency>
-		<!-- <dependency>
+		<dependency>
 		   <groupId>com.thinkaurelius.titan</groupId>
 		   <artifactId>titan-lucene</artifactId>
 		   <version>0.3.1</version>
-		</dependency> -->
+		</dependency>
 	</dependencies>
 </project>
