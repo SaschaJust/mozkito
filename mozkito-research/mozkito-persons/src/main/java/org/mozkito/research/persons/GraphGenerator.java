@@ -16,6 +16,7 @@ package org.mozkito.research.persons;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -34,6 +35,7 @@ import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
+import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.io.FileUtils;
@@ -51,17 +53,80 @@ import org.mozkito.utilities.loading.classpath.ClassFinder;
 import org.mozkito.utilities.loading.classpath.exceptions.WrongClassSearchMethodException;
 
 /**
- * @author Sascha Just <sascha.just@mozkito.org>
+ * The Class GraphGenerator.
  * 
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class GraphGenerator implements Runnable {
 	
+	/**
+	 * The Class Monitor.
+	 */
+	public static final class Monitor extends Thread {
+		
+		/** The generator. */
+		private GraphGenerator generator;
+		
+		/**
+		 * Instantiates a new monitor.
+		 * 
+		 * @param generator
+		 *            the generator
+		 */
+		public Monitor(final GraphGenerator generator) {
+			PRECONDITIONS: {
+				// none
+			}
+			
+			try {
+				// body
+				this.generator = generator;
+			} finally {
+				POSTCONDITIONS: {
+					// none
+				}
+			}
+		}
+		
+		/**
+		 * {@inheritDoc}
+		 * 
+		 * @see java.lang.Thread#run()
+		 */
+		@Override
+		public void run() {
+			final DateTime start = new DateTime();
+			
+			while (true) {
+				try {
+					Thread.sleep(10 * 60 * 1000);
+				} catch (final InterruptedException ignore) {
+					// ignore
+				}
+				
+				final double percentage = (this.generator.getProgress() * 100) / this.generator.getEntries();
+				if (Logger.logAlways()) {
+					Logger.always("Current progress is '%s%%'. Running since %s.", percentage,
+					              start.toString(DateTimeFormat.fullDateTime()));
+				}
+			}
+		};
+	}
+	
+	/** The Constant USERNAMES_KEY. */
 	private static final String USERNAMES_KEY = "usernames";
+	
+	/** The Constant FULLNAMES_KEY. */
 	private static final String FULLNAMES_KEY = "fullnames";
+	
+	/** The Constant EMAILS_KEY. */
 	private static final String EMAILS_KEY    = "emails";
 	
 	/**
+	 * The main method.
+	 * 
 	 * @param args
+	 *            the arguments
 	 */
 	public static void main(final String[] args) {
 		PRECONDITIONS: {
@@ -84,22 +149,36 @@ public class GraphGenerator implements Runnable {
 		}
 	}
 	
+	/** The graph options. */
 	private GraphOptions      graphOptions    = null;
+	
+	/** The engines. */
 	private final Set<Engine> engines         = new HashSet<>();
+	
+	/** The graph manager. */
 	private GraphManager      graphManager    = null;
+	
+	/** The graph. */
 	private KeyIndexableGraph graph           = null;
+	
+	/** The database options. */
 	private DatabaseOptions   databaseOptions = null;
+	
+	/** The persistence util. */
 	private PersistenceUtil   persistenceUtil = null;
 	
+	/** The edge counter. */
 	private long              edgeCounter     = 0;
 	
+	/** The entries. */
 	private long              entries         = 0;
 	
+	/** The progress. */
 	private long              progress        = 0;
 	
 	/**
-     * 
-     */
+	 * Instantiates a new graph generator.
+	 */
 	public GraphGenerator() {
 		PRECONDITIONS: {
 			// none
@@ -169,6 +248,63 @@ public class GraphGenerator implements Runnable {
 	}
 	
 	/**
+	 * Gets the edge counter.
+	 * 
+	 * @return the edgeCounter
+	 */
+	public final long getEdgeCounter() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.edgeCounter;
+		} finally {
+			POSTCONDITIONS: {
+				Condition.notNull(this.edgeCounter, "Field '%s' in '%s'.", "edgeCounter", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
+	}
+	
+	/**
+	 * Gets the entries.
+	 * 
+	 * @return the entries
+	 */
+	public final long getEntries() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.entries;
+		} finally {
+			POSTCONDITIONS: {
+				Condition.notNull(this.entries, "Field '%s' in '%s'.", "entries", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
+	}
+	
+	/**
+	 * Gets the progress.
+	 * 
+	 * @return the progress
+	 */
+	public final long getProgress() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.progress;
+		} finally {
+			POSTCONDITIONS: {
+				Condition.notNull(this.progress, "Field '%s' in '%s'.", "progress", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
+	}
+	
+	/**
 	 * Hash code.
 	 * 
 	 * @param p1
@@ -220,51 +356,47 @@ public class GraphGenerator implements Runnable {
 			}
 			final List<Person> list = this.persistenceUtil.load(criteria);
 			
-			this.entries = list.size();
+			if (Logger.logInfo()) {
+				Logger.info("Fetching persons from database into array.");
+			}
+			final ArrayList<Person> persons = new ArrayList<>(list);
+			
+			if (Logger.logInfo()) {
+				Logger.info("Done.");
+			}
+			
+			this.entries = persons.size();
 			int logBarrier = 10;
 			if (Logger.logInfo()) {
 				Logger.info("Performing confidence matching on %s entries.", this.entries);
 			}
 			
-			final Thread progressCheck = new Thread() {
-				
-				@Override
-				public void run() {
-					final DateTime start = new DateTime();
-					
-					while (true) {
-						try {
-							Thread.sleep(10 * 60 * 1000);
-						} catch (final InterruptedException ignore) {
-							// ignore
-						}
-						final double percentage = (GraphGenerator.this.progress * 100) / GraphGenerator.this.entries;
-						if (Logger.logAlways()) {
-							Logger.always("Current progress is '%s%%'. Running since %s.", percentage,
-							              start.toString(DateTimeFormat.fullDateTime()));
-						}
-					}
-				};
-			};
+			final Monitor monitor = new Monitor(this);
+			monitor.setDaemon(true);
+			monitor.run();
 			
-			progressCheck.setDaemon(true);
-			progressCheck.run();
-			
-			for (final Person p1 : list) {
+			int i = 0;
+			for (final Person p1 : persons) {
 				if (Logger.logInfo()) {
 					Logger.info("Creating new vertex '%s'.", p1);
 				}
+				
 				final Vertex vertex = this.graph.addVertex(p1.getGeneratedId());
 				vertex.setProperty(USERNAMES_KEY, p1.getUsernames());
 				vertex.setProperty(EMAILS_KEY, p1.getEmailAddresses());
 				vertex.setProperty(FULLNAMES_KEY, p1.getFullnames());
+				
 				if (Logger.logInfo()) {
 					Logger.info("Vertex created.");
 				}
-				for (final Person p2 : list) {
+				
+				for (int j = i + 1; j < persons.size(); ++j) {
+					final Person p2 = persons.get(j);
+					
 					if (Logger.logTrace()) {
 						Logger.trace("Checking against person " + p2);
 					}
+					
 					if (!p1.equals(p2)) {
 						for (final Engine engine : this.engines) {
 							if (Logger.logTrace()) {
@@ -286,6 +418,7 @@ public class GraphGenerator implements Runnable {
 						}
 					}
 				}
+				
 				++this.progress;
 				final double percentage = (this.progress * 100) / this.entries;
 				if (percentage >= logBarrier) {
@@ -294,6 +427,8 @@ public class GraphGenerator implements Runnable {
 						Logger.info("%s%% done", percentage);
 					}
 				}
+				
+				++i;
 			}
 			
 			if (Logger.logInfo()) {
