@@ -373,7 +373,7 @@ public class GraphGenerator implements Runnable {
 			
 			final Monitor monitor = new Monitor(this);
 			monitor.setDaemon(true);
-			monitor.run();
+			monitor.start();
 			
 			int i = 0;
 			for (final Person p1 : persons) {
