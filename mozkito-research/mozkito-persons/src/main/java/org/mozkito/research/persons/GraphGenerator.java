@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -150,31 +151,33 @@ public class GraphGenerator implements Runnable {
 	}
 	
 	/** The graph options. */
-	private GraphOptions      graphOptions    = null;
+	private GraphOptions                graphOptions    = null;
 	
 	/** The engines. */
-	private final Set<Engine> engines         = new HashSet<>();
+	private final Set<Engine>           engines         = new HashSet<>();
 	
 	/** The graph manager. */
-	private GraphManager      graphManager    = null;
+	private GraphManager                graphManager    = null;
 	
 	/** The graph. */
-	private KeyIndexableGraph graph           = null;
+	private KeyIndexableGraph           graph           = null;
 	
 	/** The database options. */
-	private DatabaseOptions   databaseOptions = null;
+	private DatabaseOptions             databaseOptions = null;
 	
 	/** The persistence util. */
-	private PersistenceUtil   persistenceUtil = null;
+	private PersistenceUtil             persistenceUtil = null;
 	
 	/** The edge counter. */
-	private long              edgeCounter     = 0;
+	private long                        edgeCounter     = 0;
 	
 	/** The entries. */
-	private long              entries         = 0;
+	private long                        entries         = 0;
 	
 	/** The progress. */
-	private long              progress        = 0;
+	private long                        progress        = 0;
+	
+	private final HashMap<Long, Vertex> ids             = new HashMap<>();
 	
 	/**
 	 * Instantiates a new graph generator.
@@ -286,6 +289,35 @@ public class GraphGenerator implements Runnable {
 	}
 	
 	/**
+	 * Gets the or create.
+	 * 
+	 * @param person
+	 *            the person
+	 * @return the or create
+	 */
+	private Vertex getOrCreate(final Person person) {
+		final Long id = person.getGeneratedId();
+		
+		SANITY: {
+			assert id != null;
+			assert id > 0;
+		}
+		
+		if (!this.ids.containsKey(id)) {
+			if (Logger.logInfo()) {
+				Logger.info("Creating new vertex '%s'.", person);
+			}
+			final Vertex vertex = this.graph.addVertex(id);
+			vertex.setProperty(USERNAMES_KEY, person.getUsernames());
+			vertex.setProperty(EMAILS_KEY, person.getEmailAddresses());
+			vertex.setProperty(FULLNAMES_KEY, person.getFullnames());
+			this.ids.put(id, vertex);
+		}
+		
+		return this.ids.get(id);
+	}
+	
+	/**
 	 * Gets the progress.
 	 * 
 	 * @return the progress
@@ -377,18 +409,8 @@ public class GraphGenerator implements Runnable {
 			
 			int i = 0;
 			for (final Person p1 : persons) {
-				if (Logger.logInfo()) {
-					Logger.info("Creating new vertex '%s'.", p1);
-				}
 				
-				final Vertex vertex = this.graph.addVertex(p1.getGeneratedId());
-				vertex.setProperty(USERNAMES_KEY, p1.getUsernames());
-				vertex.setProperty(EMAILS_KEY, p1.getEmailAddresses());
-				vertex.setProperty(FULLNAMES_KEY, p1.getFullnames());
-				
-				if (Logger.logInfo()) {
-					Logger.info("Vertex created.");
-				}
+				final Vertex vertex = getOrCreate(p1);
 				
 				for (int j = i + 1; j < persons.size(); ++j) {
 					final Person p2 = persons.get(j);
@@ -410,7 +432,7 @@ public class GraphGenerator implements Runnable {
 									Logger.info("Adding new edge (%s)", ++this.edgeCounter);
 								}
 								
-								final Vertex vertex2 = this.graph.getVertex(p2.getGeneratedId());
+								final Vertex vertex2 = getOrCreate(p2);
 								final Edge edge = this.graph.addEdge(hashCode(p1, p2, engine), vertex, vertex2,
 								                                     engine.getName());
 								edge.setProperty("confidence", confidence);
