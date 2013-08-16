@@ -49,6 +49,8 @@ public class GravatarEngine extends Engine {
 		}
 		
 		try {
+			double confidence = 0d;
+			
 			OUTERLOOP: for (final String email1 : p1.getEmailAddresses()) {
 				final Gravatar gravatar1 = getGravatar(email1);
 				
@@ -58,14 +60,16 @@ public class GravatarEngine extends Engine {
 						
 						if (gravatar2 != null) {
 							if (gravatar1.equals(gravatar2)) {
-								return 1.0d;
+								// don't break here to make sure we fetch all gravatars, since we need this information
+								// later on
+								confidence = 1.0d;
 							}
 						}
 					}
 				}
 			}
 			
-			return 0d;
+			return confidence;
 		} finally {
 			POSTCONDITIONS: {
 				// none
