@@ -140,7 +140,7 @@ public class GraphAnalyzer implements Runnable {
 			for (final Vertex vertex : vertices) {
 				++numPersons;
 				
-				final List<String> emails = vertex.getProperty(GraphGenerator.EMAILS_KEY);
+				final Set<String> emails = vertex.getProperty(GraphGenerator.EMAILS_KEY);
 				
 				SANITY: {
 					assert emails != null;
