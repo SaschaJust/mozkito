@@ -126,12 +126,12 @@ public class GraphAnalyzer implements Runnable {
 			new GravatarEngine();
 			final Iterable<Vertex> vertices = this.graph.getVertices();
 			
-			long numPersons = 0;
-			long numEmailExists = 0;
-			long maxEmails = 0;
-			long numTotalEmails = 0;
-			long numTotalGravatars = 0;
-			long numDifferentGravatars = 0;
+			double numPersons = 0;
+			double numEmailExists = 0;
+			double maxEmails = 0;
+			double numTotalEmails = 0;
+			double numTotalGravatars = 0;
+			double numDifferentGravatars = 0;
 			
 			final Set<String> emailSet = new HashSet<>();
 			final List<Integer> gravatarCodes = new LinkedList<>();
