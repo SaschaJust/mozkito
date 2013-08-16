@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -247,6 +248,10 @@ public class GraphAnalyzer implements Runnable {
 			System.out.println(String.format("Edges created for %s: %s", gravatarEngine.getName(), numEdgesGravatar));
 			
 			System.out.println(String.format("Edges created for %s: %s", prefixEngine.getName(), numEdgesEmailPrefix));
+			
+			for (final Entry<String, Integer> entry : gravatarMap.entrySet()) {
+				System.out.println(String.format("Email to gravatar hash: %s -> %s", entry.getKey(), entry.getValue()));
+			}
 			
 		} finally {
 			POSTCONDITIONS: {
