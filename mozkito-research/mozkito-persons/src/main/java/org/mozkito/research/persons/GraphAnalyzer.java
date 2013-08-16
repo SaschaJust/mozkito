@@ -18,7 +18,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -172,12 +171,6 @@ public class GraphAnalyzer implements Runnable {
 					gravatarCodes.addAll(gCodes.values());
 				}
 				
-				// for (final String key : vertex.getPropertyKeys()) {
-				// if (Logger.logAlways()) {
-				// Logger.always(String.format("%s: %s", key, vertex.getProperty(key)));
-				// }
-				// }
-				
 				for (final Edge edge : vertex.getEdges(Direction.BOTH)) {
 					final String label = edge.getLabel();
 					
@@ -190,17 +183,6 @@ public class GraphAnalyzer implements Runnable {
 					}
 					
 				}
-				// if (gEngine.getName().equals(edge.getLabel())) {
-				//
-				// }
-				// final Vertex vertex1 = edge.getVertex(Direction.IN);
-				// final Vertex vertex2 = edge.getVertex(Direction.OUT);
-				//
-				// if (Logger.logAlways()) {
-				// Logger.always(String.format("%s <-> %s", vertex1.getId(), vertex2.getId()));
-				// Logger.always(String.format("%s: %s", edge.getLabel(), edge.getProperty("confidence")));
-				// }
-				// }
 			}
 			
 			numTotalEmails = emailSet.size();
@@ -249,9 +231,9 @@ public class GraphAnalyzer implements Runnable {
 			
 			System.out.println(String.format("Edges created for %s: %s", prefixEngine.getName(), numEdgesEmailPrefix));
 			
-			for (final Entry<String, Integer> entry : gravatarMap.entrySet()) {
-				System.out.println(String.format("Email to gravatar hash: %s -> %s", entry.getKey(), entry.getValue()));
-			}
+			// for (final Entry<String, Integer> entry : gravatarMap.entrySet()) {
+			// System.out.println(String.format("Email to gravatar hash: %s -> %s", entry.getKey(), entry.getValue()));
+			// }
 			
 		} finally {
 			POSTCONDITIONS: {

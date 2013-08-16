@@ -8,5 +8,5 @@
 </listAttribute>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.mozkito.research.persons.GraphGenerator"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="mozkito-persons-research"/>
-<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Ddatabase.host=grid1.st.cs.uni-saarland.de -Ddatabase.name=mozkito_rhino_februar2012 -Ddatabase.password=miner -Ddatabase.user=miner -Dgraph.provider=TITANDB -Dgraph.titandb.directory=graphbase"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Ddatabase.host=grid1.st.cs.uni-saarland.de -Ddatabase.name=mozkito_rhino_februar2012 -Ddatabase.password=miner -Ddatabase.user=miner -Dgraph.provider=TITANDB -Dgraph.titandb.directory=graphbase.rhino"/>
 </launchConfiguration>
