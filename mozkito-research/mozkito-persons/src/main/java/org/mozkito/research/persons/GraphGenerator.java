@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.tinkerpop.blueprints.Edge;
@@ -49,6 +50,7 @@ import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.persons.model.Person;
 import org.mozkito.research.persons.engines.Engine;
+import org.mozkito.research.persons.engines.GravatarEngine;
 import org.mozkito.settings.DatabaseOptions;
 import org.mozkito.utilities.loading.classpath.ClassFinder;
 import org.mozkito.utilities.loading.classpath.exceptions.WrongClassSearchMethodException;
@@ -115,13 +117,16 @@ public class GraphGenerator implements Runnable {
 	}
 	
 	/** The Constant USERNAMES_KEY. */
-	private static final String USERNAMES_KEY = "usernames";
+	public static final String USERNAMES_KEY = "usernames";
 	
 	/** The Constant FULLNAMES_KEY. */
-	private static final String FULLNAMES_KEY = "fullnames";
+	public static final String FULLNAMES_KEY = "fullnames";
 	
 	/** The Constant EMAILS_KEY. */
-	private static final String EMAILS_KEY    = "emails";
+	public static final String EMAILS_KEY    = "emails";
+	
+	/** The Constant GRAVATARS_KEY. */
+	public static final String GRAVATARS_KEY = "gravatars";
 	
 	/**
 	 * The main method.
@@ -403,6 +408,14 @@ public class GraphGenerator implements Runnable {
 				Logger.info("Performing confidence matching on %s entries.", this.entries);
 			}
 			
+			GravatarEngine gravatarEngine = null;
+			for (final Engine e : this.engines) {
+				if (e.getClass().equals(GravatarEngine.class)) {
+					gravatarEngine = (GravatarEngine) e;
+					break;
+				}
+			}
+			
 			final Monitor monitor = new Monitor(this);
 			monitor.setDaemon(true);
 			monitor.start();
@@ -438,6 +451,24 @@ public class GraphGenerator implements Runnable {
 								edge.setProperty("confidence", confidence);
 							}
 						}
+					}
+				}
+				
+				if (gravatarEngine != null) {
+					if (Logger.logInfo()) {
+						Logger.info("Checking available gravatars.");
+					}
+					final Map<String, Gravatar> gravatars = gravatarEngine.getExistingGravatars();
+					final Map<String, Integer> gCodes = new HashMap<>();
+					
+					for (final String email : p1.getEmailAddresses()) {
+						if (gravatars.containsKey(email)) {
+							gCodes.put(email, gravatars.get(email).hashCode());
+						}
+					}
+					
+					if (!gCodes.isEmpty()) {
+						vertex.setProperty(GRAVATARS_KEY, gCodes);
 					}
 				}
 				

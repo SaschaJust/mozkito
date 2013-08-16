@@ -18,6 +18,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import net.ownhero.dev.kanuni.conditions.Condition;
+
 import org.mozkito.persons.model.Person;
 import org.mozkito.research.persons.Gravatar;
 
@@ -29,6 +31,7 @@ public class GravatarEngine extends Engine {
 	
 	/** The existing gravatars. */
 	private final Map<String, Gravatar> existingGravatars    = new HashMap<>();
+	
 	/** The not existing gravatars. */
 	private final Set<String>           notExistingGravatars = new HashSet<>();
 	
@@ -71,6 +74,24 @@ public class GravatarEngine extends Engine {
 	}
 	
 	/**
+	 * @return the existingGravatars
+	 */
+	public final Map<String, Gravatar> getExistingGravatars() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.existingGravatars;
+		} finally {
+			POSTCONDITIONS: {
+				Condition.notNull(this.existingGravatars,
+				                  "Field '%s' in '%s'.", "existingGravatars", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
+	}
+	
+	/**
 	 * Gets the gravatar.
 	 * 
 	 * @param email
@@ -93,6 +114,24 @@ public class GravatarEngine extends Engine {
 			return gravatar;
 		}
 		
+	}
+	
+	/**
+	 * @return the notExistingGravatars
+	 */
+	public final Set<String> getNotExistingGravatars() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.notExistingGravatars;
+		} finally {
+			POSTCONDITIONS: {
+				Condition.notNull(this.notExistingGravatars,
+				                  "Field '%s' in '%s'.", "notExistingGravatars", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
 	}
 	
 }

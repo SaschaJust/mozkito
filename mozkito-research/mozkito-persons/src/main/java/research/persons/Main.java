@@ -13,6 +13,7 @@
 
 package research.persons;
 
+import org.mozkito.research.persons.GraphAnalyzer;
 import org.mozkito.research.persons.GraphBrowser;
 import org.mozkito.research.persons.GraphGenerator;
 
@@ -32,12 +33,14 @@ public class Main {
 		
 		try {
 			if (args.length == 0) {
-				System.out.println("Please give a task 'generation' or 'browsing'.");
+				System.out.println("Please give a task 'generation', 'browsing', 'analysis'.");
 			} else {
 				if ("generation".equalsIgnoreCase(args[0])) {
 					GraphGenerator.main(new String[0]);
 				} else if ("browsing".equalsIgnoreCase(args[0])) {
 					GraphBrowser.main(new String[0]);
+				} else if ("analysis".equalsIgnoreCase(args[0])) {
+					GraphAnalyzer.main(new String[0]);
 				} else {
 					System.out.println("Invalid command. Use 'generation' or 'browsing' instead.");
 				}
