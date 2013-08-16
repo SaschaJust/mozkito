@@ -216,7 +216,7 @@ public class GraphAnalyzer implements Runnable {
 			// % of different emails that refer to the same gravatar
 			final Set<Integer> set = new TreeSet<>(gravatarMap.values());
 			System.out.println(String.format("Percentage of different emails referring to the same gravatar: %s",
-			                                 set.size() / gravatarMap.keySet().size()));
+			                                 ((double) set.size()) / ((double) gravatarMap.keySet().size())));
 			
 			// % of emails those gravatar displays the same face
 			
