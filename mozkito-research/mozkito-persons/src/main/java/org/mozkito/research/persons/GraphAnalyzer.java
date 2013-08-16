@@ -21,6 +21,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.KeyIndexableGraph;
 import com.tinkerpop.blueprints.Vertex;
 
@@ -38,6 +40,7 @@ import net.ownhero.dev.kisa.Logger;
 import org.mozkito.graphs.GraphManager;
 import org.mozkito.graphs.settings.GraphOptions;
 import org.mozkito.research.persons.engines.GravatarEngine;
+import org.mozkito.research.persons.engines.UsernameEqualsEmailprefixEngine;
 
 /**
  * The Class GraphAnalyzer.
@@ -123,7 +126,9 @@ public class GraphAnalyzer implements Runnable {
 		}
 		
 		try {
-			new GravatarEngine();
+			final GravatarEngine gravatarEngine = new GravatarEngine();
+			final UsernameEqualsEmailprefixEngine prefixEngine = new UsernameEqualsEmailprefixEngine();
+			
 			final Iterable<Vertex> vertices = this.graph.getVertices();
 			
 			double numPersons = 0;
@@ -136,6 +141,9 @@ public class GraphAnalyzer implements Runnable {
 			final Set<String> emailSet = new HashSet<>();
 			final List<Integer> gravatarCodes = new LinkedList<>();
 			final Map<String, Integer> gravatarMap = new HashMap<>();
+			
+			double numEdgesGravatar = 0;
+			double numEdgesEmailPrefix = 0;
 			
 			for (final Vertex vertex : vertices) {
 				++numPersons;
@@ -169,7 +177,18 @@ public class GraphAnalyzer implements Runnable {
 				// }
 				// }
 				
-				// for (final Edge edge : vertex.getEdges(Direction.BOTH)) {
+				for (final Edge edge : vertex.getEdges(Direction.BOTH)) {
+					final String label = edge.getLabel();
+					
+					assert label != null;
+					
+					if (gravatarEngine.getName().equalsIgnoreCase(label)) {
+						++numEdgesGravatar;
+					} else if (prefixEngine.getName().equalsIgnoreCase(label)) {
+						++numEdgesEmailPrefix;
+					}
+					
+				}
 				// if (gEngine.getName().equals(edge.getLabel())) {
 				//
 				// }
@@ -193,6 +212,9 @@ public class GraphAnalyzer implements Runnable {
 			// number persons having at least one email associated
 			System.out.println(String.format("Number of persons having at least one email associated: %s",
 			                                 numEmailExists));
+			
+			System.out.println(String.format("Percentage of person entities with at least one email: %s",
+			                                 numEmailExists / numPersons));
 			
 			// max number of emails per person
 			System.out.println(String.format("Maximum number of emails per person: %s", maxEmails));
@@ -222,6 +244,9 @@ public class GraphAnalyzer implements Runnable {
 			// % of emails those gravatar displays the same face
 			
 			// number of emails where the prefix is a person's username
+			System.out.println(String.format("Edges created for %s: %s", gravatarEngine.getName(), numEdgesGravatar));
+			
+			System.out.println(String.format("Edges created for %s: %s", prefixEngine.getName(), numEdgesEmailPrefix));
 			
 		} finally {
 			POSTCONDITIONS: {
