@@ -41,6 +41,8 @@ import org.mozkito.issues.model.HistoryElement;
 import org.mozkito.issues.model.IssueTracker;
 import org.mozkito.issues.model.Report;
 import org.mozkito.issues.tracker.ReportLink;
+import org.mozkito.issues.tracker.sourceforge.SourceforgeParser;
+import org.mozkito.issues.tracker.sourceforge.SourceforgeTracker;
 import org.mozkito.persons.elements.PersonFactory;
 import org.mozkito.persons.model.Person;
 import org.mozkito.utilities.datetime.DateTimeUtils;

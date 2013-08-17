@@ -27,6 +27,7 @@ import org.mozkito.issues.elements.Type;
 import org.mozkito.issues.exceptions.InvalidParameterException;
 import org.mozkito.issues.model.IssueTracker;
 import org.mozkito.issues.tracker.ReportLink;
+import org.mozkito.issues.tracker.sourceforge.SourceforgeTracker;
 import org.mozkito.persons.elements.PersonFactory;
 import org.mozkito.utilities.io.FileUtils;
 

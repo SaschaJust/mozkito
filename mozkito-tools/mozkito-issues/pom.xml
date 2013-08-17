@@ -16,7 +16,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.mozkito</groupId>
-			<artifactId>mozkito-issues</artifactId>
+			<artifactId>mozkito-issues-settings</artifactId>
 			<version>0.4-SNAPSHOT</version>
 		</dependency>
 	</dependencies>

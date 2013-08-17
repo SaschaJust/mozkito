@@ -69,6 +69,7 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 	/** The tracker uri options. */
 	private Options                           trackerURIOptions;
 	
+	/** The database options. */
 	private final DatabaseOptions             databaseOptions;
 	
 	/**
@@ -121,6 +122,11 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 	/*
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init(java.util.Map)
+	 */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
 	 */
 	@Override
 	public Tracker init() {
@@ -186,6 +192,11 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 	
 	/*
 	 * (non-Javadoc)
+	 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
+	 */
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
 	 */
 	@Override
