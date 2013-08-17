@@ -35,16 +35,9 @@
 		    <version>2.1.5</version>
 		</dependency>
 		<dependency>
-			<groupId>org.mozkito</groupId>
-			<artifactId>mozkito-versions</artifactId>
-			<version>0.4-SNAPSHOT</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.derby</groupId>
-			<artifactId>derby</artifactId>
-			<version>10.9.1.0</version>
-			<scope>test</scope>
+			<groupId>org.jdom</groupId>
+			<artifactId>jdom2</artifactId>
+			<version>2.0.4</version>
 		</dependency>
 	</dependencies>
 </project>
