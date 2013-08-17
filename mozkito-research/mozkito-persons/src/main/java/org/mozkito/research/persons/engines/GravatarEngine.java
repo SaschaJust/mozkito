@@ -108,7 +108,7 @@ public class GravatarEngine extends Engine {
 		} else if (this.notExistingGravatars.contains(email)) {
 			return null;
 		} else {
-			final Gravatar gravatar = Gravatar.get(email);
+			final Gravatar gravatar = Gravatar.fromEmail(email);
 			if (gravatar != null) {
 				this.existingGravatars.put(email, gravatar);
 			} else {

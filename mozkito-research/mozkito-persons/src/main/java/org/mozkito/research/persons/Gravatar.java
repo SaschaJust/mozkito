@@ -13,16 +13,28 @@
 
 package org.mozkito.research.persons;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Arrays;
 
 import jgravatar.GravatarDownloadException;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
+import org.apache.commons.io.IOUtils;
+
 /**
  * The Class Gravatar.
  */
 public class Gravatar {
+	
+	/** The default size. */
+	public static int          DEFAULT_SIZE = 120;
+	
+	/** The Constant BASE_URL. */
+	public static final String BASE_URL     = "https://1.gravatar.com/avatar/";
 	
 	/**
 	 * Gets the.
@@ -31,7 +43,7 @@ public class Gravatar {
 	 *            the email
 	 * @return the gravatar
 	 */
-	public static Gravatar get(final String email) {
+	public static Gravatar fromEmail(final String email) {
 		final jgravatar.Gravatar gravatar = new jgravatar.Gravatar();
 		byte[] download = null;
 		try {
@@ -43,7 +55,57 @@ public class Gravatar {
 		}
 		
 		if (download != null) {
-			return new Gravatar(email, 80, download);
+			return new Gravatar(email, DEFAULT_SIZE, download);
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * From hash.
+	 * 
+	 * @param hash
+	 *            the hash
+	 * @return the gravatar
+	 */
+	public static Gravatar fromHash(final String hash) {
+		try {
+			final URL url = new URL(BASE_URL + hash + "?size=" + DEFAULT_SIZE);
+			final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+			final InputStream inputStream = connection.getInputStream();
+			
+			final byte[] download = IOUtils.toByteArray(inputStream);
+			
+			if (download != null) {
+				return new Gravatar(null, DEFAULT_SIZE, download);
+			}
+		} catch (final IOException e) {
+			return null;
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Gets the.
+	 * 
+	 * @param url
+	 *            the url
+	 * @return the gravatar
+	 */
+	@Deprecated
+	public static Gravatar fromURL(final URL url) {
+		try {
+			final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+			final InputStream inputStream = connection.getInputStream();
+			
+			final byte[] download = IOUtils.toByteArray(inputStream);
+			
+			if (download != null) {
+				return new Gravatar(null, DEFAULT_SIZE, download);
+			}
+		} catch (final IOException e) {
+			return null;
 		}
 		
 		return null;
@@ -82,6 +144,11 @@ public class Gravatar {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -152,6 +219,11 @@ public class Gravatar {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
