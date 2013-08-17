@@ -39,13 +39,21 @@ import org.mozkito.utilities.io.exceptions.FetchException;
 import org.mozkito.utilities.io.exceptions.UnsupportedProtocolException;
 
 /**
- * @author Sascha Just <sascha.just@mozkito.org>
+ * The Class StackOverflowParser.
  * 
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class StackOverflowParser {
 	
+	/** The Constant BASE_URL. */
 	private static final String BASE_URL = "http://stackoverflow.com/users/filter?search=";
 	
+	/**
+	 * Gets the meta data.
+	 * 
+	 * @param person
+	 *            the person
+	 */
 	public static void getMetaData(final Person person) {
 		try {
 			
@@ -90,6 +98,13 @@ public class StackOverflowParser {
 		}
 	}
 	
+	/**
+	 * The main method.
+	 * 
+	 * @param args
+	 *            the arguments
+	 */
+	@SuppressWarnings ("deprecation")
 	public static void main(final String[] args) {
 		getMetaData(new Person("balusc", null, null));
 	}

@@ -42,21 +42,36 @@ import org.mozkito.utilities.io.exceptions.FetchException;
 import org.mozkito.utilities.io.exceptions.UnsupportedProtocolException;
 
 /**
- * @author Sascha Just <sascha.just@mozkito.org>
+ * The Class StackOverflowSearchHandler.
  * 
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class StackOverflowSearchHandler extends DefaultHandler {
 	
+	/** The in details. */
 	private boolean             inDetails     = false;
+	
+	/** The found username. */
 	private boolean             foundUsername = false;
+	
+	/** The username. */
 	private String              username;
+	
+	/** The path. */
 	private String              path;
+	
+	/** The url. */
 	private String              url;
+	
+	/** The meta. */
 	private Map<String, String> meta;
 	
 	/**
-     * 
-     */
+	 * Instantiates a new stack overflow search handler.
+	 * 
+	 * @param username
+	 *            the username
+	 */
 	public StackOverflowSearchHandler(@NotNull final String username) {
 		PRECONDITIONS: {
 			// none
@@ -104,7 +119,10 @@ public class StackOverflowSearchHandler extends DefaultHandler {
 	}
 	
 	/**
-	 * @param url2
+	 * Collect meta data.
+	 * 
+	 * @param url
+	 *            the url
 	 */
 	private void collectMetaData(final String url) {
 		PRECONDITIONS: {
@@ -186,7 +204,9 @@ public class StackOverflowSearchHandler extends DefaultHandler {
 	}
 	
 	/**
-	 * @return
+	 * Gets the meta.
+	 * 
+	 * @return the meta
 	 */
 	public Map<String, String> getMeta() {
 		PRECONDITIONS: {
@@ -231,6 +251,7 @@ public class StackOverflowSearchHandler extends DefaultHandler {
 						this.path = attributes.getValue("href");
 						this.foundUsername = true;
 					}
+					break;
 				default:
 					break;
 			}

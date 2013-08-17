@@ -21,21 +21,38 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * @author Sascha Just <sascha.just@mozkito.org>
+ * The Class StackOverflowUserHandler.
  * 
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class StackOverflowUserHandler extends DefaultHandler {
 	
+	/** The in data. */
 	private boolean                   inData     = false;
+	
+	/** The table data. */
 	private int                       tableData  = -1;
+	
+	/** The key. */
 	private String                    key        = null;
+	
+	/** The value. */
 	private String                    value      = null;
+	
+	/** The meta. */
 	private final Map<String, String> meta       = new HashMap<String, String>();
+	
+	/** The is td. */
 	private boolean                   isTD       = false;
+	
+	/** The extract url. */
 	private boolean                   extractURL = false;
 	
 	/**
+	 * Instantiates a new stack overflow user handler.
+	 * 
 	 * @param username
+	 *            the username
 	 */
 	public StackOverflowUserHandler(final String username) {
 		PRECONDITIONS: {
@@ -97,8 +114,10 @@ public class StackOverflowUserHandler extends DefaultHandler {
 	}
 	
 	/**
-     * 
-     */
+	 * Gets the meta.
+	 * 
+	 * @return the meta
+	 */
 	public Map<String, String> getMeta() {
 		PRECONDITIONS: {
 			// none
