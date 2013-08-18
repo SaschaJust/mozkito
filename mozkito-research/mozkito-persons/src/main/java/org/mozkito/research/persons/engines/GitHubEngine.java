@@ -14,6 +14,7 @@
 package org.mozkito.research.persons.engines;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -23,9 +24,12 @@ import java.util.Set;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.kisa.Logger;
 
-import org.eclipse.egit.github.core.Repository;
 import org.eclipse.egit.github.core.User;
 import org.eclipse.egit.github.core.client.GitHubClient;
+import org.eclipse.egit.github.core.client.PageIterator;
+import org.eclipse.egit.github.core.event.Event;
+import org.eclipse.egit.github.core.event.EventRepository;
+import org.eclipse.egit.github.core.service.EventService;
 import org.eclipse.egit.github.core.service.RepositoryService;
 
 import org.mozkito.persons.model.Person;
@@ -36,6 +40,8 @@ import org.mozkito.utilities.datastructures.Tuple;
 
 /**
  * The Class GitHubEngine.
+ * 
+ * TODO consider fetch limit TODO read auth token from file TODO somehow set affiliation TODO somehow set repoName
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
@@ -65,40 +71,42 @@ public class GitHubEngine extends Engine {
 	}
 	
 	/** The email to git hub. */
-	private final Map<String, User> emailToGitHub    = new HashMap<>();
+	private final Map<String, User>                           emailToGitHub    = new HashMap<>();
 	
 	/** The user to git hub. */
-	private final Map<String, User> userToGitHub     = new HashMap<>();
+	private final Map<String, User>                           userToGitHub     = new HashMap<>();
 	
 	/** The fullname to git hub. */
-	private final Map<String, User> fullnameToGitHub = new HashMap<>();
+	private final Map<String, User>                           fullnameToGitHub = new HashMap<>();
 	
 	/** The login at git hub. */
-	private final Map<String, User> loginAtGitHub    = new HashMap<>();
+	private final Map<String, User>                           loginAtGitHub    = new HashMap<>();
 	
 	/** The email404. */
-	private final Set<String>       email404         = new HashSet<>();
+	private final Set<String>                                 email404         = new HashSet<>();
 	
 	/** The user404. */
-	private final Set<String>       user404          = new HashSet<>();
+	private final Set<String>                                 user404          = new HashSet<>();
 	
 	/** The fullname404. */
-	private final Set<String>       fullname404      = new HashSet<>();
+	private final Set<String>                                 fullname404      = new HashSet<>();
 	
 	/** The login404. */
-	private final Set<String>       login404         = new HashSet<>();
+	private final Set<String>                                 login404         = new HashSet<>();
 	
 	/** The service. */
-	private ExtendedUserService     service;
+	private ExtendedUserService                               service;
 	
 	/** The affiliation. */
-	private String                  affiliation;
+	private String                                            affiliation;
 	
 	/** The repo name. */
-	private String                  repoName;
+	private String                                            repoName;
 	
 	/** The repo service. */
-	private RepositoryService       repoService;
+	private RepositoryService                                 repoService;
+	
+	private org.eclipse.egit.github.core.service.EventService eventService;
 	
 	/**
 	 * Instantiates a new git hub engine.
@@ -116,7 +124,7 @@ public class GitHubEngine extends Engine {
 			this.repoName = "mozkito";
 			this.service = new ExtendedUserService(client);
 			this.repoService = new RepositoryService(this.service.getClient());
-			
+			this.eventService = new EventService(client);
 		} finally {
 			POSTCONDITIONS: {
 				// none
@@ -302,13 +310,27 @@ public class GitHubEngine extends Engine {
 							for (final SearchUser sUser : users) {
 								final User u = getByLogin(sUser.getLogin());
 								
-								final List<Repository> repositories = this.repoService.getRepositories(u.getLogin());
-								
-								REPOSITORIES: for (final Repository repository : repositories) {
-									if (repository.getName().equalsIgnoreCase(this.repoName)) {
-										candidates.add(u);
+								// check repositories owned by the user
+								// final List<Repository> repositories = this.repoService.getRepositories(u.getLogin());
+								//
+								// REPOSITORIES: for (final Repository repository : repositories) {
+								// if (repository.getName().equalsIgnoreCase(this.repoName)) {
+								// candidates.add(u);
+								// }
+								// break REPOSITORIES;
+								// }
+								//
+								// check repository contributions
+								final PageIterator<Event> userEventsIterator = this.eventService.pageUserEvents(u.getLogin());
+								REPOSITORIES: for (Collection<Event> events = userEventsIterator.next(); userEventsIterator.hasNext(); events = userEventsIterator.next()) {
+									for (final Event event : events) {
+										final EventRepository eventRepository = event.getRepo();
+										if (eventRepository != null) {
+											if (eventRepository.getName().equalsIgnoreCase(this.repoName)) {
+												candidates.add(u);
+											}
+										}
 									}
-									break REPOSITORIES;
 								}
 							}
 						}
