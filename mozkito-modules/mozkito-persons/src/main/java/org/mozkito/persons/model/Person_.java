@@ -16,26 +16,34 @@ package org.mozkito.persons.model;
 import javax.persistence.metamodel.SetAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 
+import org.mozkito.persons.elements.PersonType;
+
 /**
  * The Class Person_.
- * 
- * @author Sascha Just <sascha.just@mozkito.org>
  */
 @javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.persons.model.Person.class)
 @javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
-                             date = "Mon Apr 22 00:09:22 CEST 2013")
+                             date = "Sun Aug 18 20:23:19 CEST 2013")
 public class Person_ {
 	
+	/** The affiliation. */
+	public static volatile SetAttribute<Person, String>     affiliation;
+	
 	/** The email addresses. */
-	public static volatile SetAttribute<Person, String>    emailAddresses;
+	public static volatile SetAttribute<Person, String>     emailAddresses;
 	
 	/** The fullnames. */
-	public static volatile SetAttribute<Person, String>    fullnames;
+	public static volatile SetAttribute<Person, String>     fullnames;
 	
 	/** The generated id. */
-	public static volatile SingularAttribute<Person, Long> generatedId;
+	public static volatile SingularAttribute<Person, Long>  generatedId;
+	
+	/** The location. */
+	public static volatile SetAttribute<Person, String>     location;
+	
+	/** The type. */
+	public static volatile SetAttribute<Person, PersonType> type;
 	
 	/** The usernames. */
-	public static volatile SetAttribute<Person, String>    usernames;
-	
+	public static volatile SetAttribute<Person, String>     usernames;
 }

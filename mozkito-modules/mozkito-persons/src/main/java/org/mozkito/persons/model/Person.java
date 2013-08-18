@@ -22,6 +22,8 @@ import java.util.TreeSet;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -39,6 +41,7 @@ import org.apache.openjpa.persistence.jdbc.Index;
 
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persons.elements.PersonFactory;
+import org.mozkito.persons.elements.PersonType;
 import org.mozkito.utilities.commons.JavaUtils;
 
 /**
@@ -92,16 +95,25 @@ public class Person implements Annotated {
 	}
 	
 	/** The generated id. */
-	private long        generatedId;
+	private long            generatedId;
 	
 	/** The usernames. */
-	private Set<String> usernames      = new TreeSet<String>();
+	private Set<String>     usernames      = new TreeSet<String>();
 	
 	/** The email addresses. */
-	private Set<String> emailAddresses = new TreeSet<String>();
+	private Set<String>     emailAddresses = new TreeSet<String>();
 	
 	/** The fullnames. */
-	private Set<String> fullnames      = new TreeSet<String>();
+	private Set<String>     fullnames      = new TreeSet<String>();
+	
+	/** The affiliation. */
+	private Set<String>     affiliation    = new TreeSet<>();
+	
+	/** The location. */
+	private Set<String>     location       = new TreeSet<>();
+	
+	/** The type. */
+	private Set<PersonType> type           = new TreeSet<>();
 	
 	/**
 	 * Instantiates a new person.
@@ -233,6 +245,11 @@ public class Person implements Annotated {
 	 * (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(final Object obj) {
 		if (this == obj) {
@@ -269,9 +286,31 @@ public class Person implements Annotated {
 		return true;
 	}
 	
+	/**
+	 * @return the affiliation
+	 */
+	public Set<String> getAffiliation() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.affiliation;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see org.mozkito.persistence.Annotated#getHandle()
+	 */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.persistence.Annotated#getClassName()
 	 */
 	@Override
 	@Transient
@@ -313,6 +352,41 @@ public class Person implements Annotated {
 	}
 	
 	/**
+	 * @return the location
+	 */
+	public Set<String> getLocation() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.location;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * @return the type
+	 */
+	@Enumerated (EnumType.STRING)
+	public Set<PersonType> getType() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.type;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
 	 * Gets the usernames.
 	 * 
 	 * @return the usernames
@@ -324,6 +398,11 @@ public class Person implements Annotated {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -365,6 +444,24 @@ public class Person implements Annotated {
 	}
 	
 	/**
+	 * @param affiliation
+	 *            the affiliation to set
+	 */
+	public void setAffiliation(final Set<String> affiliation) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.affiliation = affiliation;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
 	 * Sets the email addresses.
 	 * 
 	 * @param emailAddresses
@@ -395,6 +492,42 @@ public class Person implements Annotated {
 	}
 	
 	/**
+	 * @param location
+	 *            the location to set
+	 */
+	public void setLocation(final Set<String> location) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.location = location;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * @param type
+	 *            the type to set
+	 */
+	public void setType(final Set<PersonType> type) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.type = type;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
 	 * Sets the usernames.
 	 * 
 	 * @param usernames
@@ -406,6 +539,11 @@ public class Person implements Annotated {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
