@@ -54,18 +54,14 @@ public final class Gravatar {
 	/** The Constant DEFAULT_DEFAULT_IMAGE. */
 	private static final GravatarDefaultImage DEFAULT_DEFAULT_IMAGE = GravatarDefaultImage.HTTP_404;
 	
-	public static void main(final String[] args) {
-		System.out.println(new Gravatar().getUrl("sascha.just@own-hero.net"));
-	}
-	
 	/** The size. */
-	private int                  size         = DEFAULT_SIZE;
+	private int                               size                  = DEFAULT_SIZE;
 	
 	/** The rating. */
-	private GravatarRating       rating       = DEFAULT_RATING;
+	private GravatarRating                    rating                = DEFAULT_RATING;
 	
 	/** The default image. */
-	private GravatarDefaultImage defaultImage = DEFAULT_DEFAULT_IMAGE;
+	private GravatarDefaultImage              defaultImage          = DEFAULT_DEFAULT_IMAGE;
 	
 	/**
 	 * Downloads the gravatar for the given URL using Java {@link URL} and returns a byte array containing the gravatar
