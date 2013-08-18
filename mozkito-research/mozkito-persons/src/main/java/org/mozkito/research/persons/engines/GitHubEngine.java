@@ -48,65 +48,46 @@ import org.mozkito.utilities.datastructures.Tuple;
 public class GitHubEngine extends Engine {
 	
 	/** The Constant DEFAULT_CONFIDENCE. */
-	private static final Double DEFAULT_CONFIDENCE = 1.0d;
-	
-	/**
-	 * The main method.
-	 * 
-	 * @param args
-	 *            the arguments
-	 */
-	@SuppressWarnings ("deprecation")
-	public static void main(final String[] args) {
-		final Engine engine = new GitHubEngine();
-		
-		Double confidence = engine.confidence(new Person("sjust83", null, null), new Person(null, null,
-		                                                                                    "sascha.just@mozkito.org"));
-		System.err.println(confidence);
-		confidence = engine.confidence(new Person("sjust83", null, null), new Person(null, null, "sascha@mozkito.org"));
-		System.err.println(confidence);
-		confidence = engine.confidence(new Person("sjust83", null, null),
-		                               new Person(null, null, "sascha.just@st.cs.uni-saarland.de"));
-		System.err.println(confidence);
-	}
+	private static final Double     DEFAULT_CONFIDENCE = 1.0d;
 	
 	/** The email to git hub. */
-	private final Map<String, User>                           emailToGitHub    = new HashMap<>();
+	private final Map<String, User> emailToGitHub      = new HashMap<>();
 	
 	/** The user to git hub. */
-	private final Map<String, User>                           userToGitHub     = new HashMap<>();
+	private final Map<String, User> userToGitHub       = new HashMap<>();
 	
 	/** The fullname to git hub. */
-	private final Map<String, User>                           fullnameToGitHub = new HashMap<>();
+	private final Map<String, User> fullnameToGitHub   = new HashMap<>();
 	
 	/** The login at git hub. */
-	private final Map<String, User>                           loginAtGitHub    = new HashMap<>();
+	private final Map<String, User> loginAtGitHub      = new HashMap<>();
 	
 	/** The email404. */
-	private final Set<String>                                 email404         = new HashSet<>();
+	private final Set<String>       email404           = new HashSet<>();
 	
 	/** The user404. */
-	private final Set<String>                                 user404          = new HashSet<>();
+	private final Set<String>       user404            = new HashSet<>();
 	
 	/** The fullname404. */
-	private final Set<String>                                 fullname404      = new HashSet<>();
+	private final Set<String>       fullname404        = new HashSet<>();
 	
 	/** The login404. */
-	private final Set<String>                                 login404         = new HashSet<>();
+	private final Set<String>       login404           = new HashSet<>();
 	
 	/** The service. */
-	private ExtendedUserService                               service;
+	private ExtendedUserService     service;
 	
 	/** The affiliation. */
-	private String                                            affiliation;
+	private String                  affiliation;
 	
 	/** The repo name. */
-	private String                                            repoName;
+	private String                  repoName;
 	
 	/** The repo service. */
-	private RepositoryService                                 repoService;
+	private RepositoryService       repoService;
 	
-	private org.eclipse.egit.github.core.service.EventService eventService;
+	/** The event service. */
+	private EventService            eventService;
 	
 	/**
 	 * Instantiates a new git hub engine.
