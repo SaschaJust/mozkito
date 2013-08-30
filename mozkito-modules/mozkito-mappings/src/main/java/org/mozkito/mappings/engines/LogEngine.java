@@ -198,6 +198,7 @@ public class LogEngine extends Engine {
 			
 			final Collection<Log> logs = report.getLogs();
 			final ArrayList<Double> minDistances = new ArrayList<>(logs.size());
+			final ArrayList<Double> maxDistances = new ArrayList<>(logs.size());
 			
 			for (final Log log : logs) {
 				for (final LogEntry entry : log.getEntities()) {
@@ -209,11 +210,12 @@ public class LogEngine extends Engine {
 						}
 					}
 					minDistances.add(minValue);
-					
+					maxDistances.add((double) logMessage.length());
 				}
 			}
 			
-			final double localConfidence = harmonicMean(minDistances.toArray(new Double[0]));
+			final double localConfidence = harmonicMean(maxDistances.toArray(new Double[0]))
+			        - harmonicMean(minDistances.toArray(new Double[0]));
 			
 			addFeature(relation, localConfidence, "LOG", JavaUtils.collectionToString(logs), //$NON-NLS-1$
 			           "", "CONSTANT STRINGS", JavaUtils.collectionToString(visitor.getStrings()), ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
