@@ -623,6 +623,29 @@ public class Settings implements ISettings {
 		return getProperties().getProperty(name);
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see net.ownhero.dev.hiari.settings.ISettings#getRawArgumentSet(net.ownhero.dev.hiari.settings.IArgumentSetOptions)
+	 */
+	@SuppressWarnings ("rawtypes")
+	@Override
+	public ArgumentSet getRawArgumentSet(@NotNull final IArgumentSetOptions option) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			synchronized (this.argumentSets) {
+				return this.argumentSets.get(option.getTag());
+			}
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.settings.ISettings#getRootArgumentSet()

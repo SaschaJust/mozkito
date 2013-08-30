@@ -7,7 +7,7 @@
 	<groupId>net.ownhero.dev</groupId>
 	<artifactId>hiari</artifactId>
 	<name>hiari</name>
-	<version>0.2-SNAPSHOT</version>
+	<version>1.0-beta-1</version>
 	<description>Parsing and validating JVM arguments.</description>
 	<url>http://www.st.cs.uni-saarland.de/</url>
 	<inceptionYear>2012</inceptionYear>
@@ -183,12 +183,12 @@
 		<dependency>
 			<groupId>net.ownhero.dev</groupId>
 			<artifactId>kisa</artifactId>
-			<version>0.2-SNAPSHOT</version>
+			<version>1.0-beta-1</version>
 		</dependency>
 		<dependency>
 			<groupId>net.ownhero.dev</groupId>
 			<artifactId>moreregex</artifactId>
-			<version>0.2-SNAPSHOT</version>
+			<version>1.0-beta-1</version>
 		</dependency>
 		<!-- <dependency>
 			<groupId>org.mozkito</groupId>
@@ -198,7 +198,7 @@
 		<dependency>
 			<groupId>net.ownhero.dev</groupId>
 			<artifactId>kanuni</artifactId>
-			<version>0.2-SNAPSHOT</version>
+			<version>1.0-beta-1</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-lang</groupId>
@@ -218,7 +218,7 @@
 		<dependency>
 			<groupId>net.ownhero.dev</groupId>
 			<artifactId>andama-exceptions</artifactId>
-			<version>0.4-SNAPSHOT</version>
+			<version>1.0-beta-1</version>
 		</dependency>
 	</dependencies>
 	<properties>

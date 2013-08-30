@@ -1,5 +1,5 @@
 /***********************************************************************************************************************
- * Copyright 2012 Kim Herzig, Sascha Just
+ * Copyright 2011 Kim Herzig, Sascha Just
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -160,6 +160,16 @@ public interface ISettings {
 	 * @return the property
 	 */
 	String getProperty(String name);
+	
+	/**
+	 * Gets the raw argument set.
+	 * 
+	 * @param option
+	 *            the option
+	 * @return the raw argument set
+	 */
+	@SuppressWarnings ("rawtypes")
+	ArgumentSet getRawArgumentSet(final IArgumentSetOptions option);
 	
 	/**
 	 * Gets the root argument set.
