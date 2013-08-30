@@ -5,10 +5,10 @@
 		<maven>2.2.1</maven>
 	</prerequisites>
 	<groupId>net.ownhero.dev</groupId>
-	<artifactId>moreregex</artifactId>
-	<name>moreregex</name>
+	<artifactId>matchstick</artifactId>
+	<name>matchstick</name>
 	<version>1.0-beta-1</version>
-	<description>moreregex is a library that provides support to create documents that can be rendered to plain-text, html, terminal, xml</description>
+	<description>matchstick is a library that provides support to create documents that can be rendered to plain-text, html, terminal, xml</description>
 	<url>http://www.st.cs.uni-saarland.de/</url>
 	<inceptionYear>2010</inceptionYear>
 	<developers>
