@@ -7,7 +7,7 @@
 	<groupId>net.ownhero.dev</groupId>
 	<artifactId>moreregex</artifactId>
 	<name>moreregex</name>
-	<version>0.2-SNAPSHOT</version>
+	<version>1.0-beta-1</version>
 	<description>moreregex is a library that provides support to create documents that can be rendered to plain-text, html, terminal, xml</description>
 	<url>http://www.st.cs.uni-saarland.de/</url>
 	<inceptionYear>2010</inceptionYear>
@@ -34,22 +34,60 @@
 		<name>dev//own-hero.net</name>
 		<url>http://dev.own-hero.net/</url>
 	</organization>
-	<distributionManagement>
+	<repositories>
 		<repository>
-			<releases>
-				<enabled>true</enabled>
-				<checksumPolicy>warn</checksumPolicy>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-				<checksumPolicy>warn</checksumPolicy>
-			</snapshots>
-			<id>dev.own-hero.net</id>
-			<name>Dev//own-hero.net</name>
-			<url>https://nexus.own-hero.net/content/repositories/dev.own-hero.net</url>
-			<layout>default</layout>
+			<id>own-hero.net-public</id>
+			<name>own-hero.net Public Repositories</name>
+			<url>https://nexus.mozkito.org/content/groups/public</url>
 		</repository>
+		<repository>
+			<id>own-hero.net-private</id>
+			<name>own-hero.net Private Repositories</name>
+			<url>https://nexus.mozkito.org/content/groups/private</url>
+		</repository>
+		<repository>
+			<id>own-hero.net-proxy</id>
+			<name>own-hero.net Proxy Repositories</name>
+			<url>https://nexus.mozkito.org/content/groups/proxy</url>
+		</repository>
+	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>own-hero.net-public</id>
+			<name>own-hero.net Public Repositories</name>
+			<url>https://nexus.mozkito.org/content/groups/public</url>
+		</pluginRepository>
+		<pluginRepository>
+			<id>own-hero.net-private</id>
+			<name>own-hero.net Private Repositories</name>
+			<url>https://nexus.mozkito.org/content/groups/private</url>
+		</pluginRepository>
+		<pluginRepository>
+			<id>own-hero.net-proxy</id>
+			<name>own-hero.net Proxy Repositories</name>
+			<url>https://nexus.mozkito.org/content/groups/proxy</url>
+		</pluginRepository>
+	</pluginRepositories>
+	<distributionManagement>
+		<!-- deploy snapshots to this repository -->
+		<snapshotRepository>
+			<id>mozkito-dev</id>
+			<name>mozkito-dev</name>
+			<url>https://nexus.mozkito.org/content/repositories/mozkito-dev</url>
+		</snapshotRepository>
+		<!-- deploy releases to this repository -->
+		<repository>
+			<id>mozkito</id>
+			<name>mozkito</name>
+			<url>https://nexus.mozkito.org/content/repositories/mozkito/</url>
+		</repository>
+		<!-- configure upload of maven site -->
+		<site>
+			<id>mozkito.org</id>
+			<url>scp://mozkito.org/home/mozkito/public_html/maven</url>
+		</site>
 	</distributionManagement>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -126,43 +164,6 @@
 			</plugin>
 		</plugins>
 	</build>
-	<repositories>
-		<repository>
-			<releases>
-				<enabled>true</enabled>
-				<checksumPolicy>warn</checksumPolicy>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-				<checksumPolicy>warn</checksumPolicy>
-			</snapshots>
-			<id>own-hero.net-public</id>
-			<name>own-hero.net Public Repositories</name>
-			<url>https://nexus.own-hero.net/content/groups/public</url>
-			<layout>default</layout>
-		</repository>
-		<repository>
-			<releases>
-				<enabled>false</enabled>
-				<checksumPolicy>warn</checksumPolicy>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-				<checksumPolicy>warn</checksumPolicy>
-			</snapshots>
-			<id>dev.own-hero.net</id>
-			<name>Dev//own-hero.net</name>
-			<url>https://nexus.own-hero.net/content/repositories/dev.own-hero.net</url>
-			<layout>default</layout>
-		</repository>
-	</repositories>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>codehaus-m2-repository</id>
-			<name>Codehaus Maven 2.x Repository</name>
-			<url>http://repository.codehaus.org</url>
-		</pluginRepository>
-	</pluginRepositories>
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
@@ -173,12 +174,12 @@
 		<dependency>
 			<groupId>net.ownhero.dev</groupId>
 			<artifactId>kanuni</artifactId>
-			<version>0.2-SNAPSHOT</version>
+			<version>1.0-beta-1</version>
 		</dependency>
 		<dependency>
 			<groupId>net.ownhero.dev</groupId>
 			<artifactId>kisa</artifactId>
-			<version>0.2-SNAPSHOT</version>
+			<version>1.0-beta-1</version>
 		</dependency>
 		<dependency>
 			<groupId>jregex</groupId>
