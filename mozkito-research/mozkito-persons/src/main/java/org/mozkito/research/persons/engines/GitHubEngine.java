@@ -14,7 +14,6 @@
 package org.mozkito.research.persons.engines;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -22,19 +21,15 @@ import java.util.Map;
 import java.util.Set;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
+import net.ownhero.dev.kanuni.conditions.CompareCondition;
+import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
 import org.eclipse.egit.github.core.User;
-import org.eclipse.egit.github.core.client.GitHubClient;
-import org.eclipse.egit.github.core.client.PageIterator;
-import org.eclipse.egit.github.core.event.Event;
-import org.eclipse.egit.github.core.event.EventRepository;
-import org.eclipse.egit.github.core.service.EventService;
-import org.eclipse.egit.github.core.service.RepositoryService;
 
 import org.mozkito.persons.model.Person;
 import org.mozkito.research.persons.Gravatar;
-import org.mozkito.research.persons.github.ExtendedUserService;
+import org.mozkito.research.persons.github.GitHubAdapter;
 import org.mozkito.research.persons.github.SearchUser;
 import org.mozkito.utilities.datastructures.Tuple;
 
@@ -59,9 +54,6 @@ public class GitHubEngine extends Engine {
 	/** The fullname to git hub. */
 	private final Map<String, User> fullnameToGitHub   = new HashMap<>();
 	
-	/** The login at git hub. */
-	private final Map<String, User> loginAtGitHub      = new HashMap<>();
-	
 	/** The email404. */
 	private final Set<String>       email404           = new HashSet<>();
 	
@@ -71,23 +63,14 @@ public class GitHubEngine extends Engine {
 	/** The fullname404. */
 	private final Set<String>       fullname404        = new HashSet<>();
 	
-	/** The login404. */
-	private final Set<String>       login404           = new HashSet<>();
-	
-	/** The service. */
-	private ExtendedUserService     service;
-	
 	/** The affiliation. */
 	private String                  affiliation;
 	
 	/** The repo name. */
-	private String                  repoName;
+	private String                  repositoryName;
 	
-	/** The repo service. */
-	private RepositoryService       repoService;
-	
-	/** The event service. */
-	private EventService            eventService;
+	/** The git hub adapter. */
+	private GitHubAdapter           gitHubAdapter;
 	
 	/**
 	 * Instantiates a new git hub engine.
@@ -99,13 +82,9 @@ public class GitHubEngine extends Engine {
 		
 		try {
 			// body
-			final GitHubClient client = new GitHubClient();
-			client.setOAuth2Token("d19785ed2d766f9ece077ecdc16ca80f92704bc4");
 			this.affiliation = "mozkito";
-			this.repoName = "mozkito";
-			this.service = new ExtendedUserService(client);
-			this.repoService = new RepositoryService(this.service.getClient());
-			this.eventService = new EventService(client);
+			this.repositoryName = "mozkito";
+			this.gitHubAdapter = new GitHubAdapter();
 		} finally {
 			POSTCONDITIONS: {
 				// none
@@ -194,7 +173,7 @@ public class GitHubEngine extends Engine {
 		
 		try {
 			try {
-				List<SearchUser> users = this.service.searchUsers(email);
+				List<SearchUser> users = this.gitHubAdapter.searchUsers(email);
 				
 				SANITY: {
 					assert users != null;
@@ -203,7 +182,7 @@ public class GitHubEngine extends Engine {
 				User user = null;
 				if (!users.isEmpty()) {
 					SEARCHUSERS: for (final SearchUser searchUser : users) {
-						final User u = getByLogin(searchUser.getLogin());
+						final User u = this.gitHubAdapter.getUserByLogin(searchUser.getLogin());
 						if (u.getEmail().equalsIgnoreCase(email)) {
 							user = u;
 							break SEARCHUSERS;
@@ -229,7 +208,7 @@ public class GitHubEngine extends Engine {
 					}
 					final String prefix = split[0];
 					final String host = split[1];
-					users = this.service.searchUsers(prefix);
+					users = this.gitHubAdapter.searchUsers(prefix);
 					
 					SANITY: {
 						assert users != null;
@@ -239,7 +218,7 @@ public class GitHubEngine extends Engine {
 						final Set<User> candidates = new HashSet<>();
 						
 						for (final SearchUser sUser : users) {
-							final User u = getByLogin(sUser.getLogin());
+							final User u = this.gitHubAdapter.getUserByLogin(sUser.getLogin());
 							
 							SANITY: {
 								assert u != null;
@@ -289,7 +268,7 @@ public class GitHubEngine extends Engine {
 							// your match)
 							
 							for (final SearchUser sUser : users) {
-								final User u = getByLogin(sUser.getLogin());
+								final User u = this.gitHubAdapter.getUserByLogin(sUser.getLogin());
 								
 								// check repositories owned by the user
 								// final List<Repository> repositories = this.repoService.getRepositories(u.getLogin());
@@ -302,16 +281,22 @@ public class GitHubEngine extends Engine {
 								// }
 								//
 								// check repository contributions
-								final PageIterator<Event> userEventsIterator = this.eventService.pageUserEvents(u.getLogin());
-								REPOSITORIES: for (Collection<Event> events = userEventsIterator.next(); userEventsIterator.hasNext(); events = userEventsIterator.next()) {
-									for (final Event event : events) {
-										final EventRepository eventRepository = event.getRepo();
-										if (eventRepository != null) {
-											if (eventRepository.getName().equalsIgnoreCase(this.repoName)) {
-												candidates.add(u);
-											}
-										}
-									}
+								// final PageIterator<Event> userEventsIterator =
+								// this.gitHubAdapter.pageUserEvents(u.getLogin());
+								// REPOSITORIES: for (Collection<Event> events = userEventsIterator.next();
+								// userEventsIterator.hasNext(); events = userEventsIterator.next()) {
+								// for (final Event event : events) {
+								// final EventRepository eventRepository = event.getRepo();
+								// if (eventRepository != null) {
+								// if (eventRepository.getName().equalsIgnoreCase(this.reposityName)) {
+								// candidates.add(u);
+								// }
+								// }
+								// }
+								// }
+								final Set<String> contributions = this.gitHubAdapter.getContributions(u);
+								if (contributions.contains(this.repositoryName)) {
+									candidates.add(u);
 								}
 							}
 						}
@@ -320,7 +305,7 @@ public class GitHubEngine extends Engine {
 							if (Logger.logWarn()) {
 								Logger.warn("Multiple choices found for email '%s'. Cannot decide.", email);
 								for (final SearchUser sUser : users) {
-									final User theChoice = getByLogin(sUser.getLogin());
+									final User theChoice = this.gitHubAdapter.getUserByLogin(sUser.getLogin());
 									Logger.warn("login=%s, name=%s, email=%s, affiliation=%s", theChoice.getLogin(),
 									            theChoice.getName(), theChoice.getEmail(), theChoice.getCompany());
 								}
@@ -362,7 +347,7 @@ public class GitHubEngine extends Engine {
 			final Map<String, String> parameters = new HashMap<>();
 			parameters.put("login", fullname);
 			try {
-				final List<SearchUser> users = this.service.searchUsers(fullname, parameters);
+				final List<SearchUser> users = this.gitHubAdapter.searchUsers(fullname, parameters);
 				
 				SANITY: {
 					assert users != null;
@@ -376,7 +361,7 @@ public class GitHubEngine extends Engine {
 					}
 					
 					final SearchUser searchUser = users.iterator().next();
-					user = this.service.getUser(searchUser.getLogin());
+					user = this.gitHubAdapter.getUserByLogin(searchUser.getLogin());
 				}
 				
 				return user;
@@ -407,7 +392,7 @@ public class GitHubEngine extends Engine {
 		try {
 			User user = null;
 			try {
-				user = getByLogin(username);
+				user = this.gitHubAdapter.getUserByLogin(username);
 			} catch (final IOException e1) {
 				throw new UnrecoverableError(e1);
 			}
@@ -464,7 +449,7 @@ public class GitHubEngine extends Engine {
 		
 		try {
 			SANITY: {
-				assert this.service != null;
+				assert this.gitHubAdapter != null;
 			}
 			
 			User user = null;
@@ -516,23 +501,42 @@ public class GitHubEngine extends Engine {
 	}
 	
 	/**
-	 * Gets the by login.
+	 * Gets the affiliation.
 	 * 
-	 * @param login
-	 *            the login
-	 * @return the by login
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
+	 * @return the affiliation
 	 */
-	private User getByLogin(final String login) throws IOException {
-		if (this.login404.contains(login)) {
-			return null;
-		} else if (this.loginAtGitHub.containsKey(login)) {
-			return this.loginAtGitHub.get(login);
-		} else {
-			return this.service.getUser(login);
+	public String getAffiliation() {
+		PRECONDITIONS: {
+			// none
 		}
 		
+		try {
+			return this.affiliation;
+		} finally {
+			POSTCONDITIONS: {
+				Condition.notNull(this.affiliation, "Field '%s' in '%s'.", "affiliation", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
+	}
+	
+	/**
+	 * Gets the reposity name.
+	 * 
+	 * @return the reposityName
+	 */
+	public String getReposityName() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.repositoryName;
+		} finally {
+			POSTCONDITIONS: {
+				Condition.notNull(this.repositoryName,
+				                  "Field '%s' in '%s'.", "repositoryName", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
 	}
 	
 	/**
@@ -551,12 +555,58 @@ public class GitHubEngine extends Engine {
 		}
 		
 		try {
-			// TODO Auto-generated method stub
-			// return null;
-			throw new RuntimeException("Method 'personToUserCompare' has not yet been implemented."); //$NON-NLS-1$
+			
+			// TODO improve this
+			if (person.getUsernames().contains(user.getLogin()) || person.getEmailAddresses().contains(user.getEmail())) {
+				return 1d;
+			} else {
+				return 0d;
+			}
 		} finally {
 			POSTCONDITIONS: {
 				// none
+			}
+		}
+	}
+	
+	/**
+	 * Sets the affiliation.
+	 * 
+	 * @param affiliation
+	 *            the affiliation to set
+	 */
+	public void setAffiliation(final String affiliation) {
+		PRECONDITIONS: {
+			Condition.notNull(affiliation, "Argument '%s' in '%s'.", "affiliation", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		
+		try {
+			this.affiliation = affiliation;
+		} finally {
+			POSTCONDITIONS: {
+				CompareCondition.equals(this.affiliation, affiliation,
+				                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter."); //$NON-NLS-1$
+			}
+		}
+	}
+	
+	/**
+	 * Sets the reposity name.
+	 * 
+	 * @param reposityName
+	 *            the reposityName to set
+	 */
+	public void setReposityName(final String reposityName) {
+		PRECONDITIONS: {
+			Condition.notNull(reposityName, "Argument '%s' in '%s'.", "reposityName", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		
+		try {
+			this.repositoryName = reposityName;
+		} finally {
+			POSTCONDITIONS: {
+				CompareCondition.equals(this.repositoryName, reposityName,
+				                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter."); //$NON-NLS-1$
 			}
 		}
 	}

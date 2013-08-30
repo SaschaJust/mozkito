@@ -21,6 +21,7 @@ import static org.eclipse.egit.github.core.client.PagedRequest.PAGE_SIZE;
 
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,9 +33,13 @@ import com.google.gson.reflect.TypeToken;
 import org.eclipse.egit.github.core.IResourceProvider;
 import org.eclipse.egit.github.core.User;
 import org.eclipse.egit.github.core.client.GitHubClient;
+import org.eclipse.egit.github.core.client.NoSuchPageException;
 import org.eclipse.egit.github.core.client.PageIterator;
 import org.eclipse.egit.github.core.client.PagedRequest;
 import org.eclipse.egit.github.core.service.UserService;
+import org.joda.time.DateTime;
+
+import org.mozkito.utilities.datastructures.Tuple;
 
 /**
  * The Class ExtendedUserService.
@@ -64,10 +69,12 @@ public class ExtendedUserService extends UserService {
 	}
 	
 	/** The Constant SEGMENT_SEARCH. */
-	public static final String SEGMENT_SEARCH = "/search";
+	public static final String SEGMENT_SEARCH   = "/search";
 	
 	/** The Constant SEGMENT_USERS. */
-	public static final String SEGMENT_USERS  = "/users";
+	public static final String SEGMENT_USERS    = "/users";
+	
+	Tuple<DateTime, Integer>   searchThrottling = new Tuple<DateTime, Integer>(new DateTime(), 0);
 	
 	/**
 	 * Instantiates a new extended user service.
@@ -95,6 +102,28 @@ public class ExtendedUserService extends UserService {
 				// none
 			}
 		}
+	}
+	
+	/**
+	 * Get paged request by performing multiple requests until no more pages are available or an exception occurs.
+	 * 
+	 * @param <V>
+	 * @param iterator
+	 * @return list of all elements
+	 * @throws IOException
+	 */
+	@Override
+	protected <V> List<V> getAll(final PageIterator<V> iterator) throws IOException {
+		final List<V> elements = new ArrayList<V>();
+		try {
+			while (iterator.hasNext()) {
+				GitHubAdapter.throttlePerMinute(this.searchThrottling, GitHubAdapter.MAX_SEARCH_RATE);
+				elements.addAll(iterator.next());
+			}
+		} catch (final NoSuchPageException pageException) {
+			throw pageException.getCause();
+		}
+		return elements;
 	}
 	
 	/**

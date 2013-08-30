@@ -29,7 +29,7 @@ import org.mozkito.research.persons.test.Description;
  */
 public class GitHubTest {
 	
-	private static Engine        engine;
+	private static GitHubEngine  engine;
 	private static PersonFactory factory;
 	
 	/**
@@ -91,4 +91,27 @@ public class GitHubTest {
 		final Person p2 = factory.get(null, null, "sascha.just@st.cs.uni-saarland.de");
 		matches(p1, p2);
 	}
+	
+	/**
+	 * Test4.
+	 */
+	@Test
+	@Description ("(GitHub login = username) vs (User email address that is NOT on github but  email prefix search leads to a user with a gravatar ID that leads to the same image as the gravatar for the given email address)")
+	public final void test4() {
+		final Person p1 = factory.get("sjust83", null, null);
+		final Person p2 = factory.get(null, null, "sascha.just@mac.com");
+		matches(p1, p2);
+	}
+	
+	// /**
+	// * Test4.
+	// */
+	// @Test
+	// @Description ("(GitHub login = username) vs (User email address that is NOT on github but)")
+	// public final void test4() {
+	// final Person p1 = factory.get("sjust83", null, null);
+	// final Person p2 = factory.get(null, null, "someone@own-hero.net");
+	// engine.setReposityName("mozkito");
+	// matches(p1, p2);
+	// }
 }
