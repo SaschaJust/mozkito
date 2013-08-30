@@ -3,12 +3,12 @@
 	<parent>
 		<groupId>net.ownhero.dev</groupId>
 		<artifactId>andama-eventhandlers</artifactId>
-		<version>0.4-SNAPSHOT</version>
+		<version>1.0-beta-1</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.ownhero.dev</groupId>
 	<artifactId>andama-eventhandler-log</artifactId>
 	<name>andama-eventhandler-log</name>
-	<version>0.4-SNAPSHOT</version>
+	<version>1.0-beta-1</version>
 	<description>Toolchain to process data in a flow model.</description>
 </project>

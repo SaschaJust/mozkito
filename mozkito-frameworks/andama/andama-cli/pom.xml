@@ -3,19 +3,19 @@
 	<parent>
 		<groupId>net.ownhero.dev</groupId>
 		<artifactId>andama</artifactId>
-		<version>0.4-SNAPSHOT</version>
+		<version>1.0-beta-1</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.ownhero.dev</groupId>
 	<artifactId>andama-cli</artifactId>
 	<name>andama-cli</name>
-	<version>0.4-SNAPSHOT</version>
+	<version>1.0-beta-1</version>
 	<description>Command line interface for andama.</description>
 	<dependencies>
 		<dependency>
 			<groupId>net.ownhero.dev</groupId>
 			<artifactId>andama-core</artifactId>
-			<version>0.4-SNAPSHOT</version>
+			<version>1.0-beta-1</version>
 		</dependency>
 	</dependencies>
 </project>

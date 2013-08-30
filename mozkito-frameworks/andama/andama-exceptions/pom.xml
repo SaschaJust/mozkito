@@ -3,13 +3,13 @@
 	<parent>
 		<groupId>net.ownhero.dev</groupId>
 		<artifactId>andama</artifactId>
-		<version>0.4-SNAPSHOT</version>
+		<version>1.0-beta-1</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.ownhero.dev</groupId>
 	<artifactId>andama-exceptions</artifactId>
 	<name>andama-exceptions</name>
-	<version>0.4-SNAPSHOT</version>
+	<version>1.0-beta-1</version>
 	<description>Toolchain to process data in a flow model.</description>
 	<dependencies>
 		<dependency>
@@ -40,17 +40,17 @@
 		<dependency>
 			<groupId>org.mozkito</groupId>
 			<artifactId>mozkito-io-utilities</artifactId>
-			<version>0.4-SNAPSHOT</version>
+			<version>1.0-beta-1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mozkito</groupId>
 			<artifactId>mozkito-loading-utilities</artifactId>
-			<version>0.4-SNAPSHOT</version>
+			<version>1.0-beta-1</version>
 		</dependency>
 		<dependency>
 			<groupId>net.ownhero.dev</groupId>
 			<artifactId>kisa</artifactId>
-			<version>0.2-SNAPSHOT</version>
+			<version>1.0-beta-1</version>
 		</dependency>
 	</dependencies>
 </project>
