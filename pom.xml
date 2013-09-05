@@ -8,7 +8,7 @@
 	<artifactId>mozkito</artifactId>
 	<name>(project) The mozkito data mining collection</name>
 	<description>Data mining and analyzation for various types of software repositories</description>
-	<version>0.4-SNAPSHOT</version>
+	<version>1.0-beta-3</version>
 	<packaging>pom</packaging>
 	<url>https://mozkito.org</url>
 	<inceptionYear>2010</inceptionYear>
@@ -370,7 +370,7 @@
 				<plugin>
 					<groupId>org.mozkito</groupId>
 					<artifactId>mozkito-maven-plugin</artifactId>
-					<version>0.4-SNAPSHOT</version>
+					<version>1.0-beta-3</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -766,7 +766,7 @@
 					<plugin>
 						<groupId>org.mozkito</groupId>
 						<artifactId>mozkito-maven-plugin</artifactId>
-						<version>0.4-SNAPSHOT</version>
+						<version>1.0-beta-3</version>
 					</plugin>
 				    <plugin>
 				      <groupId>org.codehaus.sonar-plugins</groupId>

@@ -14,7 +14,7 @@
 	<parent>
 		<groupId>org.mozkito</groupId>
 		<artifactId>mozkito-settings</artifactId>
-		<version>0.4-SNAPSHOT</version>
+		<version>1.0-beta-3</version>
 	</parent>
 	<artifactId>mozkito-untangling-settings</artifactId>
 	<packaging>jar</packaging>
@@ -24,17 +24,17 @@
 		<dependency>
 			<groupId>org.mozkito</groupId>
 			<artifactId>mozkito-untangling</artifactId>
-			<version>0.4-SNAPSHOT</version>
+			<version>1.0-beta-3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mozkito</groupId>
 			<artifactId>mozkito-persistence-settings</artifactId>
-			<version>0.4-SNAPSHOT</version>
+			<version>1.0-beta-3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mozkito</groupId>
 			<artifactId>mozkito-versions-settings</artifactId>
-			<version>0.4-SNAPSHOT</version>
+			<version>1.0-beta-3</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

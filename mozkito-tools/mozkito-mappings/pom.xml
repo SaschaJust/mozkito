@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.mozkito</groupId>
 		<artifactId>mozkito-tools</artifactId>
-		<version>0.4-SNAPSHOT</version>
+		<version>1.0-beta-3</version>
 	</parent>
 	<artifactId>mozkito-mappings-tool</artifactId>
 	<packaging>jar</packaging>
@@ -17,17 +17,17 @@
 		<dependency>
 			<groupId>org.mozkito</groupId>
 			<artifactId>mozkito-mappings</artifactId>
-			<version>0.4-SNAPSHOT</version>
+			<version>1.0-beta-3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mozkito</groupId>
 			<artifactId>mozkito-mappings-settings</artifactId>
-			<version>0.4-SNAPSHOT</version>
+			<version>1.0-beta-3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mozkito</groupId>
 			<artifactId>mozkito-commons-utilities</artifactId>
-			<version>0.4-SNAPSHOT</version>
+			<version>1.0-beta-3</version>
 		</dependency>
 	</dependencies>
 </project>

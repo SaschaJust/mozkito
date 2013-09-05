@@ -21,7 +21,7 @@
 	<parent>
 		<groupId>org.mozkito</groupId>
 		<artifactId>mozkito-modules</artifactId>
-		<version>0.4-SNAPSHOT</version>
+		<version>1.0-beta-3</version>
 	</parent>
 	<artifactId>mozkito-mappings</artifactId>
 	<packaging>jar</packaging>
@@ -31,27 +31,27 @@
 		<dependency>
 			<groupId>org.mozkito</groupId>
 			<artifactId>mozkito-infozilla</artifactId>
-			<version>0.4-SNAPSHOT</version>
+			<version>1.0-beta-3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mozkito</groupId>
 			<artifactId>mozkito-issues</artifactId>
-			<version>0.4-SNAPSHOT</version>
+			<version>1.0-beta-3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mozkito</groupId>
 			<artifactId>mozkito-codeanalysis</artifactId>
-			<version>0.4-SNAPSHOT</version>
+			<version>1.0-beta-3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mozkito</groupId>
 			<artifactId>mozkito-graphs</artifactId>
-			<version>0.4-SNAPSHOT</version>
+			<version>1.0-beta-3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mozkito</groupId>
 			<artifactId>mozkito-graphs-titandb</artifactId>
-			<version>0.4-SNAPSHOT</version>
+			<version>1.0-beta-3</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.opencsv</groupId>

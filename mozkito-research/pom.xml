@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.mozkito</groupId>
 		<artifactId>mozkito</artifactId>
-		<version>0.4-SNAPSHOT</version>
+		<version>1.0-beta-3</version>
 	</parent>
 	<artifactId>mozkito-research</artifactId>
 	<name>mozkito research [meta]</name>
@@ -22,7 +22,7 @@
 		<dependency>
 			<groupId>org.mozkito</groupId>
 			<artifactId>mozkito-persistence-settings</artifactId>
-			<version>0.4-SNAPSHOT</version>
+			<version>1.0-beta-3</version>
 		</dependency>
 	</dependencies>
 	<build>

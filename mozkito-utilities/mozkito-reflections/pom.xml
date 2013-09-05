@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.mozkito</groupId>
 		<artifactId>mozkito-utilities</artifactId>
-		<version>0.4-SNAPSHOT</version>
+		<version>1.0-beta-3</version>
 	</parent>
 	<artifactId>mozkito-reflections-utilities</artifactId>
 	<packaging>jar</packaging>

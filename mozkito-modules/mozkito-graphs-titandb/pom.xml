@@ -21,7 +21,7 @@
 	<parent>
 		<groupId>org.mozkito</groupId>
 		<artifactId>mozkito-modules</artifactId>
-		<version>0.4-SNAPSHOT</version>
+		<version>1.0-beta-3</version>
 	</parent>
 	<artifactId>mozkito-graphs-titandb</artifactId>
 	<packaging>jar</packaging>
@@ -31,7 +31,7 @@
 		<dependency>
 			<groupId>org.mozkito</groupId>
 			<artifactId>mozkito-io-utilities</artifactId>
-			<version>0.4-SNAPSHOT</version>
+			<version>1.0-beta-3</version>
 		</dependency>
 		<!-- <dependency>
 		   <groupId>com.tinkerpop.blueprints</groupId>
@@ -56,7 +56,7 @@
 			<dependency>
 				<groupId>org.mozkito</groupId>
 				<artifactId>mozkito-graphs</artifactId>
-				<version>0.4-SNAPSHOT</version>
+				<version>1.0-beta-3</version>
 			</dependency>
 		<dependency>
 		   <groupId>com.thinkaurelius.titan</groupId>

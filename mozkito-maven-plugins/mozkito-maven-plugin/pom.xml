@@ -4,11 +4,11 @@
 	<parent>
 		<artifactId>mozkito-maven-plugins</artifactId>
 		<groupId>org.mozkito</groupId>
-		<version>0.4-SNAPSHOT</version>
+		<version>1.0-beta-3</version>
 	</parent>
 	<groupId>org.mozkito</groupId>
 	<artifactId>mozkito-maven-plugin</artifactId>
-	<version>0.4-SNAPSHOT</version>
+	<version>1.0-beta-3</version>
 	<packaging>maven-plugin</packaging>
 	<name>mozkito Maven Plugin</name>
 	<!-- FIXME change it to the project's website -->
@@ -20,7 +20,7 @@
 		<dependency>
 			<groupId>org.mozkito</groupId>
 			<artifactId>mozkito-execution-utilities</artifactId>
-			<version>0.4-SNAPSHOT</version>
+			<version>1.0-beta-3</version>
 		</dependency>
 		<dependency>
 			<groupId>net.ownhero.dev</groupId>
