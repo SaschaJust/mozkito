@@ -22,12 +22,12 @@
 		<dependency>
 			<groupId>net.ownhero.dev</groupId>
 			<artifactId>kisa</artifactId>
-			<version>0.2-SNAPSHOT</version>
+			<version>1.0-beta-1</version>
 		</dependency>
 		<dependency>
 			<groupId>net.ownhero.dev</groupId>
 			<artifactId>andama-exceptions</artifactId>
-			<version>0.4-SNAPSHOT</version>
+			<version>1.0-beta-1</version>
 			</dependency>
 		<dependency>
 			<groupId>org.apache.derby</groupId>
