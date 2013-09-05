@@ -37,7 +37,7 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.openjpa.persistence.jdbc.Index;
 
-import org.mozkito.persistence.Annotated;
+import org.mozkito.persistence.Persistent;
 import org.mozkito.persons.elements.PersonFactory;
 import org.mozkito.utilities.commons.JavaUtils;
 
@@ -48,7 +48,7 @@ import org.mozkito.utilities.commons.JavaUtils;
  */
 @Entity
 @Table (name = "person")
-public class Person implements Annotated {
+public class Person implements Persistent {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -8598414850294255203L;

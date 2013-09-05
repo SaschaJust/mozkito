@@ -21,9 +21,9 @@ import java.util.Set;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
-import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.model.Candidate;
 import org.mozkito.mappings.selectors.Selector;
+import org.mozkito.persistence.model.Artifact;
 import org.mozkito.utilities.datastructures.Tuple;
 
 /**
@@ -38,7 +38,7 @@ import org.mozkito.utilities.datastructures.Tuple;
 public class CandidateFactory<FROM, TO> {
 	
 	/** The factories. */
-	private static Map<Set<Class<? extends MappableEntity>>, CandidateFactory<?, ?>> factories = new HashMap<>();
+	private static Map<Set<Class<? extends Artifact>>, CandidateFactory<?, ?>> factories = new HashMap<>();
 	
 	/**
 	 * Gets the simple name of the class.
@@ -89,10 +89,10 @@ public class CandidateFactory<FROM, TO> {
 	 * @return single instance of CandidateFactory
 	 */
 	@SuppressWarnings ("unchecked")
-	public static final <ONE extends MappableEntity, OTHER extends MappableEntity> CandidateFactory<ONE, OTHER> getInstance(final Class<ONE> from,
+	public static final <ONE extends Artifact, OTHER extends Artifact> CandidateFactory<ONE, OTHER> getInstance(final Class<ONE> from,
 	                                                                                                                        final Class<OTHER> to) {
 		@SuppressWarnings ("serial")
-		final HashSet<Class<? extends MappableEntity>> set = new HashSet<Class<? extends MappableEntity>>() {
+		final HashSet<Class<? extends Artifact>> set = new HashSet<Class<? extends Artifact>>() {
 			
 			{
 				add(from);
@@ -121,8 +121,8 @@ public class CandidateFactory<FROM, TO> {
 	 *            the selectors
 	 * @return the candidate
 	 */
-	public final Candidate add(@NotNull final MappableEntity one,
-	                           @NotNull final MappableEntity other,
+	public final Candidate add(@NotNull final Artifact one,
+	                           @NotNull final Artifact other,
 	                           final Set<Selector> votingSelectors) {
 		@SuppressWarnings ("serial")
 		final HashSet<String> set = new HashSet<String>() {
@@ -134,7 +134,7 @@ public class CandidateFactory<FROM, TO> {
 		};
 		
 		if (!this.candidates.containsKey(set)) {
-			final Candidate candidate = new Candidate(new Tuple<MappableEntity, MappableEntity>(one, other));
+			final Candidate candidate = new Candidate(new Tuple<Artifact, Artifact>(one, other));
 			candidate.addSelectors(votingSelectors);
 			return this.candidates.put(set, candidate);
 		} else {
@@ -151,8 +151,8 @@ public class CandidateFactory<FROM, TO> {
 	 *            the other
 	 * @return true, if is known
 	 */
-	public final boolean contains(@NotNull final MappableEntity one,
-	                              @NotNull final MappableEntity other) {
+	public final boolean contains(@NotNull final Artifact one,
+	                              @NotNull final Artifact other) {
 		@SuppressWarnings ("serial")
 		final HashSet<String> set = new HashSet<String>() {
 			
@@ -174,8 +174,8 @@ public class CandidateFactory<FROM, TO> {
 	 *            the other
 	 * @return the candidate
 	 */
-	public final Candidate get(@NotNull final MappableEntity one,
-	                           @NotNull final MappableEntity other) {
+	public final Candidate get(@NotNull final Artifact one,
+	                           @NotNull final Artifact other) {
 		@SuppressWarnings ("serial")
 		final HashSet<String> set = new HashSet<String>() {
 			

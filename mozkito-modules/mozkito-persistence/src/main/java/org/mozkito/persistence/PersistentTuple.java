@@ -20,7 +20,7 @@ package org.mozkito.persistence;
  *            the generic type
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public interface PersistentTuple<T> extends Annotated {
+public interface PersistentTuple<T> extends Persistent {
 	
 	/**
 	 * Gets the handle.

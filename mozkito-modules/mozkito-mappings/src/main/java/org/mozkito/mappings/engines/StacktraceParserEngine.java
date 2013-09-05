@@ -29,7 +29,6 @@ import org.mozkito.infozilla.model.EnhancedReport;
 import org.mozkito.infozilla.model.stacktrace.Stacktrace;
 import org.mozkito.infozilla.model.stacktrace.StacktraceEntry;
 import org.mozkito.mappings.mappable.model.MappableChangeSet;
-import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.mappable.model.MappableStructuredReport;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Feature;
@@ -42,6 +41,7 @@ import org.mozkito.mappings.storages.PersistenceStorage;
 import org.mozkito.mappings.storages.Storage;
 import org.mozkito.persistence.PPAPersistenceUtil;
 import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.persistence.model.Artifact;
 import org.mozkito.utilities.commons.JavaUtils;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.model.ChangeSet;
@@ -86,8 +86,8 @@ public class StacktraceParserEngine extends Engine {
 		}
 		
 		try {
-			final MappableEntity from = relation.getFrom();
-			final MappableEntity to = relation.getTo();
+			final Artifact from = relation.getFrom();
+			final Artifact to = relation.getTo();
 			final PersistenceStorage persistenceStorage = getStorage(PersistenceStorage.class);
 			
 			SANITY: {

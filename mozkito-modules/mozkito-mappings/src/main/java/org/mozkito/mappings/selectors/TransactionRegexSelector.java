@@ -24,11 +24,11 @@ import net.ownhero.dev.regex.Regex;
 
 import org.mozkito.issues.model.Comment;
 import org.mozkito.issues.model.Report;
-import org.mozkito.mappings.mappable.FieldKey;
-import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.persistence.Criteria;
+import org.mozkito.persistence.FieldKey;
 import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.persistence.model.Artifact;
 import org.mozkito.versions.model.ChangeSet;
 
 /**
@@ -123,7 +123,7 @@ public class TransactionRegexSelector extends Selector {
 	 * @see org.mozkito.mappings.selectors.MappingSelector#parse (java.lang.Object)
 	 */
 	@Override
-	public <T extends MappableEntity> List<T> parse(final MappableEntity element,
+	public <T extends Artifact> List<T> parse(final Artifact element,
 	                                                final Class<T> targetType,
 	                                                final PersistenceUtil util) {
 		final List<T> list = new LinkedList<T>();

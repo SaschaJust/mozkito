@@ -31,8 +31,8 @@ import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.mozkito.mappings.engines.Engine;
-import org.mozkito.mappings.mappable.model.MappableEntity;
-import org.mozkito.persistence.Annotated;
+import org.mozkito.persistence.Persistent;
+import org.mozkito.persistence.model.Artifact;
 import org.mozkito.utilities.commons.JavaUtils;
 
 /**
@@ -41,7 +41,7 @@ import org.mozkito.utilities.commons.JavaUtils;
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 @Entity
-public class Relation implements Annotated {
+public class Relation implements Persistent {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -8606759070008468513L;
@@ -278,7 +278,7 @@ public class Relation implements Annotated {
 	 * @return the from
 	 */
 	@Transient
-	public MappableEntity getFrom() {
+	public Artifact getFrom() {
 		return getCandidate().getFrom();
 	}
 	
@@ -292,7 +292,7 @@ public class Relation implements Annotated {
 	 * @return the to
 	 */
 	@Transient
-	public MappableEntity getTo() {
+	public Artifact getTo() {
 		return getCandidate().getTo();
 	}
 	

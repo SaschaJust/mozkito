@@ -24,7 +24,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import org.mozkito.issues.model.Report;
-import org.mozkito.persistence.Annotated;
+import org.mozkito.persistence.Persistent;
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.DatabaseType;
 import org.mozkito.persistence.PersistenceManager;
@@ -40,7 +40,7 @@ import org.mozkito.versions.model.Handle;
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 @Entity
-public class File2Bugs implements Annotated {
+public class File2Bugs implements Persistent {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -5780165055568852588L;

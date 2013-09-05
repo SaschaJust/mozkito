@@ -48,7 +48,7 @@ import org.mozkito.infozilla.exceptions.EncodingDeterminationException;
 import org.mozkito.infozilla.exceptions.MIMETypeDeterminationException;
 import org.mozkito.infozilla.model.Attachable;
 import org.mozkito.issues.model.AttachmentEntry;
-import org.mozkito.persistence.Annotated;
+import org.mozkito.persistence.Persistent;
 import org.mozkito.utilities.commons.JavaUtils;
 import org.mozkito.utilities.io.IOUtils;
 import org.mozkito.utilities.io.exceptions.FetchException;
@@ -58,7 +58,7 @@ import org.mozkito.utilities.io.exceptions.UnsupportedProtocolException;
  * The Class Attachment.
  */
 @Entity
-public class Attachment implements Annotated {
+public class Attachment implements Persistent {
 	
 	/** The Constant SHA1_SIZE. */
 	private static final int  SHA1_SIZE        = 32;

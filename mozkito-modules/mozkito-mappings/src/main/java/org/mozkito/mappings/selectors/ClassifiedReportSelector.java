@@ -21,11 +21,11 @@ import org.apache.commons.collections.Transformer;
 import org.mozkito.issues.elements.Type;
 import org.mozkito.issues.model.EnhancedReport;
 import org.mozkito.issues.model.Report;
-import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.mappable.model.MappableReport;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.persistence.model.Artifact;
 import org.mozkito.versions.model.ChangeSet;
 
 /**
@@ -63,7 +63,7 @@ public class ClassifiedReportSelector extends Selector {
 	 */
 	@SuppressWarnings ("unchecked")
 	@Override
-	public <T extends MappableEntity> List<T> parse(final MappableEntity entity,
+	public <T extends Artifact> List<T> parse(final Artifact entity,
 	                                                final Class<T> targetType,
 	                                                final PersistenceUtil util) {
 		// PRECONDITIONS

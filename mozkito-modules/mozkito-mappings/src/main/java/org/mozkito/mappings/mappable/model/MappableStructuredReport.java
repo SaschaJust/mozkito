@@ -22,14 +22,15 @@ import javax.persistence.Transient;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.mozkito.infozilla.model.EnhancedReport;
-import org.mozkito.mappings.mappable.FieldKey;
+import org.mozkito.persistence.FieldKey;
+import org.mozkito.persistence.model.Artifact;
 
 /**
  * The Class MappableStructuredReport.
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class MappableStructuredReport extends MappableEntity {
+public class MappableStructuredReport extends Artifact {
 	
 	/** The report. */
 	EnhancedReport            report;

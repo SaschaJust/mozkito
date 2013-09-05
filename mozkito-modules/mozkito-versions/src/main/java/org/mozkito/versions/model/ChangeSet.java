@@ -47,10 +47,12 @@ import net.ownhero.dev.kisa.Logger;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.openjpa.persistence.jdbc.Index;
 import org.joda.time.DateTime;
-import org.mozkito.persistence.Annotated;
+
+import org.mozkito.exceptions.InvalidFieldKeyException;
+import org.mozkito.persistence.FieldKey;
+import org.mozkito.persistence.model.Artifact;
 import org.mozkito.persons.model.Person;
 import org.mozkito.persons.model.PersonContainer;
-import org.mozkito.utilities.commons.JavaUtils;
 import org.mozkito.versions.exceptions.NoSuchHandleException;
 
 /**
@@ -60,7 +62,7 @@ import org.mozkito.versions.exceptions.NoSuchHandleException;
  */
 @Entity
 @Table (name = "changeset")
-public class ChangeSet implements Annotated {
+public class ChangeSet extends Artifact {
 	
 	/** The Constant serialVersionUID. */
 	private static final long    serialVersionUID = -7619009648634901112L;
@@ -247,6 +249,86 @@ public class ChangeSet implements Annotated {
 	}
 	
 	/**
+	 * {@inheritDoc}
+	 * 
+	 * @throws InvalidFieldKeyException
+	 * 
+	 * @see org.mozkito.persistence.model.Artifact#get(org.mozkito.persistence.FieldKey)
+	 */
+	@Override
+	@Transient
+	public <T> T get(final FieldKey key) throws InvalidFieldKeyException {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			switch (key) {
+				case AUTHOR:
+					return (T) getAuthor();
+				case BODY:
+					return (T) getMessage();
+				case CLOSED_TIMESTAMP:
+					return (T) getTimestamp();
+				case CLOSER:
+					return (T) getAuthor();
+				case CREATION_TIMESTAMP:
+					return (T) getTimestamp();
+				case FILE:
+					// this should probably be a collection of mappings-files (own
+					// class for mappings)
+					return (T) getChangedFiles();
+				case PATH:
+					return (T) getChangedFiles();
+				case RESOLUTION_TIMESTAMP:
+					return (T) getTimestamp();
+				case SUMMARY:
+					return (T) getMessage();
+				case ID:
+					return (T) getId();
+				case CHANGER:
+					return (T) getAuthor();
+				case COMMENT:
+					return (T) getMessage();
+				case MODIFICATION_TIMESTAMP:
+					return (T) getTimestamp();
+				default:
+					break;
+			}
+			
+			throw new InvalidFieldKeyException(key);
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.persistence.model.Artifact#get(org.mozkito.persistence.FieldKey, int)
+	 */
+	@Override
+	@Transient
+	public <T> T get(final FieldKey key,
+	                 final int index) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			// TODO Auto-generated method stub
+			// return null;
+			throw new RuntimeException("Method 'get' has not yet been implemented."); //$NON-NLS-1$
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
 	 * Gets the author.
 	 * 
 	 * @return the author
@@ -255,6 +337,29 @@ public class ChangeSet implements Annotated {
 	public Person getAuthor() {
 		assert getPersons() != null;
 		return getPersons().get("author"); //$NON-NLS-1$
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.persistence.model.Artifact#getBaseType()
+	 */
+	@Override
+	@Transient
+	public Class<?> getBaseType() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			// TODO Auto-generated method stub
+			// return null;
+			throw new RuntimeException("Method 'getBaseType' has not yet been implemented."); //$NON-NLS-1$
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/**
@@ -327,20 +432,12 @@ public class ChangeSet implements Annotated {
 		                            : new HashSet<ChangeSet>();
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.persistence.Annotated#getHandle()
-	 */
-	@Override
-	public final String getClassName() {
-		return JavaUtils.getHandle(ChangeSet.class);
-	}
-	
 	/**
 	 * Gets the id.
 	 * 
 	 * @return the id
 	 */
+	@Override
 	@Id
 	@Index (name = "idx_changesetid")
 	public String getId() {
@@ -452,6 +549,29 @@ public class ChangeSet implements Annotated {
 	@ElementCollection
 	public Set<String> getTags() {
 		return this.tags;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.persistence.model.Artifact#getText()
+	 */
+	@Override
+	@Transient
+	public String getText() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			// TODO Auto-generated method stub
+			// return null;
+			throw new RuntimeException("Method 'getText' has not yet been implemented."); //$NON-NLS-1$
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/**
@@ -672,6 +792,29 @@ public class ChangeSet implements Annotated {
 	 */
 	public void setVersionArchive(final VersionArchive versionArchive) {
 		this.versionArchive = versionArchive;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.persistence.model.Artifact#supported()
+	 */
+	@Override
+	@Transient
+	public Set<FieldKey> supported() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			// TODO Auto-generated method stub
+			// return null;
+			throw new RuntimeException("Method 'supported' has not yet been implemented."); //$NON-NLS-1$
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/*

@@ -15,7 +15,7 @@ package org.mozkito.mappings.requirements;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.mozkito.mappings.mappable.model.MappableEntity;
+import org.mozkito.persistence.model.Artifact;
 
 /**
  * The and expression evaluates to true if and only if both inner expressions evaluate to true. Evaluates to false
@@ -51,8 +51,8 @@ public final class And extends Expression {
 	 * org.mozkito.mapping.requirements.Index)
 	 */
 	@Override
-	public boolean check(final Class<? extends MappableEntity> target1,
-	                     final Class<? extends MappableEntity> target2,
+	public boolean check(final Class<? extends Artifact> target1,
+	                     final Class<? extends Artifact> target2,
 	                     final Index oneEquals) {
 		return getExpression1().check(target1, target2, oneEquals)
 		        && getExpression2().check(target1, target2, oneEquals);
@@ -82,8 +82,8 @@ public final class And extends Expression {
 	 * org.mozkito.mapping.requirements.Index)
 	 */
 	@Override
-	public List<Expression> getFailureCause(final Class<? extends MappableEntity> target1,
-	                                        final Class<? extends MappableEntity> target2,
+	public List<Expression> getFailureCause(final Class<? extends Artifact> target1,
+	                                        final Class<? extends Artifact> target2,
 	                                        final Index oneEquals) {
 		List<Expression> failureCause = this.expression1.getFailureCause(target1, target2, oneEquals);
 		final boolean check = check(target1, target2, oneEquals);

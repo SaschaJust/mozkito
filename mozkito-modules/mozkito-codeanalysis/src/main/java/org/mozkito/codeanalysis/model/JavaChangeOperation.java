@@ -30,7 +30,7 @@ import net.ownhero.dev.kisa.Logger;
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 
-import org.mozkito.persistence.Annotated;
+import org.mozkito.persistence.Persistent;
 import org.mozkito.persistence.ModelStorage;
 import org.mozkito.utilities.commons.JavaUtils;
 import org.mozkito.versions.elements.ChangeType;
@@ -43,7 +43,7 @@ import org.mozkito.versions.model.Revision;
  * @author Kim Herzig <herzig@mozkito.org>
  */
 @Entity
-public class JavaChangeOperation implements Annotated {
+public class JavaChangeOperation implements Persistent {
 	
 	/** The transaction tag name. */
 	public static String      TRANSACTION_TAG_NAME = "transaction";

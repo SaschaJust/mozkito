@@ -14,14 +14,14 @@ package org.mozkito.mappings.selectors;
 
 import java.util.List;
 
-import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Candidate;
 import org.mozkito.mappings.register.Node;
 import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.persistence.model.Artifact;
 
 /**
- * Selectors analyze a {@link MappableEntity} and find possible candidates that can be mapped to the entity, due to some
+ * Selectors analyze a {@link Artifact} and find possible candidates that can be mapped to the entity, due to some
  * relation.
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
@@ -48,7 +48,7 @@ public abstract class Selector extends Node {
 	 *            the util
 	 * @return a list of {@link Candidate}s that might be mapped to the given entity
 	 */
-	public abstract <T extends MappableEntity> List<T> parse(MappableEntity entity,
+	public abstract <T extends Artifact> List<T> parse(Artifact entity,
 	                                                         Class<T> targetType,
 	                                                         PersistenceUtil util);
 	

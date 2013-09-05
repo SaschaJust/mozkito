@@ -28,7 +28,6 @@ import difflib.Delta;
 import org.mozkito.infozilla.model.EnhancedReport;
 import org.mozkito.infozilla.model.patch.Patch;
 import org.mozkito.mappings.mappable.model.MappableChangeSet;
-import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.mappable.model.MappableStructuredReport;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Feature;
@@ -39,6 +38,7 @@ import org.mozkito.mappings.requirements.Expression;
 import org.mozkito.mappings.requirements.Index;
 import org.mozkito.mappings.storages.RepositoryStorage;
 import org.mozkito.mappings.storages.Storage;
+import org.mozkito.persistence.model.Artifact;
 import org.mozkito.utilities.commons.JavaUtils;
 import org.mozkito.versions.Repository;
 import org.mozkito.versions.exceptions.NoSuchHandleException;
@@ -91,8 +91,8 @@ public class PatchEngine extends Engine {
 		}
 		
 		try {
-			final MappableEntity from = relation.getFrom();
-			final MappableEntity to = relation.getTo();
+			final Artifact from = relation.getFrom();
+			final Artifact to = relation.getTo();
 			
 			SANITY: {
 				assert from != null;

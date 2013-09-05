@@ -276,7 +276,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 * @see org.mozkito.persistence.PersistenceUtil#delete(de. unisaarland.cs.st.reposuite.persistence.Annotated)
 	 */
 	@Override
-	public synchronized void delete(final Annotated object) {
+	public synchronized void delete(final Persistent object) {
 		this.entityManager.remove(object);
 	}
 	
@@ -330,7 +330,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 * @see org.mozkito.persistence.PersistenceUtil#exmerge(de .unisaarland.cs.st.reposuite.persistence.Annotated)
 	 */
 	@Override
-	public synchronized void exmerge(final Annotated object) {
+	public synchronized void exmerge(final Persistent object) {
 		this.entityManager.detach(object);
 		this.entityManager.merge(object);
 	}
@@ -424,7 +424,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 * @see org.mozkito.persistence.PersistenceUtil#loadById(java .lang.Object, java.lang.Class)
 	 */
 	@Override
-	public <T extends Annotated> T loadById(final Object id,
+	public <T extends Persistent> T loadById(final Object id,
 	                                        final Class<T> clazz) {
 		final String prefix = "get";
 		final int prefixLength = prefix.length();
@@ -472,7 +472,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 * @see org.mozkito.persistence.PersistenceUtil#save(de. unisaarland.cs.st.reposuite.persistence.Annotated)
 	 */
 	@Override
-	public synchronized void save(final Annotated object) {
+	public synchronized void save(final Persistent object) {
 		this.entityManager.persist(object);
 	}
 	
@@ -481,7 +481,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 * @see org.mozkito.persistence.PersistenceUtil#saveOrUpdate (org.mozkito.persistence.Annotated)
 	 */
 	@Override
-	public synchronized void saveOrUpdate(final Annotated object) {
+	public synchronized void saveOrUpdate(final Persistent object) {
 		if (this.entityManager.contains(object)) {
 			update(object);
 		} else {
@@ -505,7 +505,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 * @see org.mozkito.persistence.PersistenceUtil#update(de. unisaarland.cs.st.reposuite.persistence.Annotated)
 	 */
 	@Override
-	public synchronized void update(final Annotated object) {
+	public synchronized void update(final Persistent object) {
 		this.entityManager.merge(object);
 	}
 	

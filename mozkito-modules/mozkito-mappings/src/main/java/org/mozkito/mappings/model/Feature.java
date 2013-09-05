@@ -25,7 +25,7 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.mappings.engines.Engine;
 import org.mozkito.mappings.messages.Messages;
-import org.mozkito.persistence.Annotated;
+import org.mozkito.persistence.Persistent;
 
 /**
  * The Class MappingEngineFeature.
@@ -33,7 +33,7 @@ import org.mozkito.persistence.Annotated;
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 @Embeddable
-public class Feature implements Annotated {
+public class Feature implements Persistent {
 	
 	/** The Constant cache. */
 	private static final Map<String, Class<? extends Engine>> ENGINE_LOOKUP_TABLE = new HashMap<String, Class<? extends Engine>>();

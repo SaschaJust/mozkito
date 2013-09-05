@@ -20,8 +20,6 @@ import org.apache.commons.collections.Predicate;
 
 import org.mozkito.issues.elements.Type;
 import org.mozkito.issues.model.Report;
-import org.mozkito.mappings.mappable.FieldKey;
-import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.mappable.model.MappableReport;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Feature;
@@ -30,6 +28,8 @@ import org.mozkito.mappings.requirements.Atom;
 import org.mozkito.mappings.requirements.Expression;
 import org.mozkito.mappings.requirements.Index;
 import org.mozkito.mappings.requirements.Or;
+import org.mozkito.persistence.FieldKey;
+import org.mozkito.persistence.model.Artifact;
 
 /**
  * The Class ReportTypeEngine.
@@ -122,8 +122,8 @@ public class ReportTypeEngine extends Engine {
 		}
 		
 		try {
-			final MappableEntity from = relation.getFrom();
-			final MappableEntity to = relation.getTo();
+			final Artifact from = relation.getFrom();
+			final Artifact to = relation.getTo();
 			
 			SANITY: {
 				assert from != null;

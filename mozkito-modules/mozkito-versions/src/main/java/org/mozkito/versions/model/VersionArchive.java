@@ -40,7 +40,7 @@ import net.ownhero.dev.kanuni.annotations.string.Length;
 import net.ownhero.dev.kisa.Logger;
 
 import org.joda.time.DateTime;
-import org.mozkito.persistence.Annotated;
+import org.mozkito.persistence.Persistent;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.elements.RevDependencyGraph;
 import org.mozkito.versions.elements.RevDependencyGraph.EdgeType;
@@ -54,7 +54,7 @@ import org.mozkito.versions.exceptions.NotComparableException;
  */
 @Entity
 @Table (name = "version_archive")
-public class VersionArchive implements Annotated {
+public class VersionArchive implements Persistent {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -3701231007051514130L;
@@ -224,7 +224,7 @@ public class VersionArchive implements Annotated {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.persistence.Annotated#getClassName()
+	 * @see org.mozkito.persistence.Persistent#getClassName()
 	 */
 	@Override
 	@Transient

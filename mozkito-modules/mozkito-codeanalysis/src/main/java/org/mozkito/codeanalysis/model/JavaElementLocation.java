@@ -36,7 +36,7 @@ import org.apache.openjpa.persistence.jdbc.Index;
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 
-import org.mozkito.persistence.Annotated;
+import org.mozkito.persistence.Persistent;
 import org.mozkito.utilities.commons.JavaUtils;
 
 /**
@@ -45,7 +45,7 @@ import org.mozkito.utilities.commons.JavaUtils;
  * @author Kim Herzig <herzig@mozkito.org>
  */
 @Entity
-public class JavaElementLocation implements Comparable<JavaElementLocation>, Annotated {
+public class JavaElementLocation implements Comparable<JavaElementLocation>, Persistent {
 	
 	/**
 	 * The Enum LineCover.

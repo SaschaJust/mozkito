@@ -16,7 +16,7 @@ import java.util.List;
 
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.register.Node;
-import org.mozkito.persistence.Annotated;
+import org.mozkito.persistence.Persistent;
 import org.mozkito.persistence.PersistenceUtil;
 
 /**
@@ -46,5 +46,5 @@ public abstract class Splitter extends Node {
 	 *            the util
 	 * @return the list
 	 */
-	public abstract List<Annotated> process(PersistenceUtil util);
+	public abstract List<Persistent> process(PersistenceUtil util);
 }

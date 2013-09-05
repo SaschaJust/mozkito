@@ -28,7 +28,7 @@ import net.ownhero.dev.kanuni.conditions.StringCondition;
 
 import org.jdom2.Element;
 
-import org.mozkito.persistence.Annotated;
+import org.mozkito.persistence.Persistent;
 import org.mozkito.utilities.commons.JavaUtils;
 
 /**
@@ -38,7 +38,7 @@ import org.mozkito.utilities.commons.JavaUtils;
  */
 @Entity
 @DiscriminatorValue ("JAVAMETHODDEFINITION")
-public class JavaMethodDefinition extends JavaElement implements Annotated, Serializable {
+public class JavaMethodDefinition extends JavaElement implements Persistent, Serializable {
 	
 	/** The Constant FULL_QUALIFIED_NAME. */
 	public static final String FULL_QUALIFIED_NAME    = "fullQualifiedName";   //$NON-NLS-1$

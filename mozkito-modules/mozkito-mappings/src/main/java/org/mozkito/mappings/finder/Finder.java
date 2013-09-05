@@ -25,7 +25,6 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.mappings.engines.Engine;
 import org.mozkito.mappings.filters.Filter;
-import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Composite;
 import org.mozkito.mappings.model.Mapping;
@@ -37,8 +36,9 @@ import org.mozkito.mappings.splitters.Splitter;
 import org.mozkito.mappings.storages.Storage;
 import org.mozkito.mappings.strategies.Strategy;
 import org.mozkito.mappings.training.Trainer;
-import org.mozkito.persistence.Annotated;
+import org.mozkito.persistence.Persistent;
 import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.persistence.model.Artifact;
 
 /**
  * The Class MappingFinder.
@@ -260,7 +260,7 @@ public class Finder {
 	 *            the mappable target
 	 * @return the active selectors
 	 */
-	public <T extends MappableEntity, U extends MappableEntity> Set<Selector> getActiveSelectors(final Class<T> mappableSource,
+	public <T extends Artifact, U extends Artifact> Set<Selector> getActiveSelectors(final Class<T> mappableSource,
 	                                                                                             final Class<U> mappableTarget) {
 		if (this.activeSelectors == null) {
 			try {
@@ -289,14 +289,14 @@ public class Finder {
 	 *            the util
 	 * @return the candidates
 	 */
-	public <T extends MappableEntity> Map<T, Set<Selector>> getCandidates(final MappableEntity source,
+	public <T extends Artifact> Map<T, Set<Selector>> getCandidates(final Artifact source,
 	                                                                      final Class<T> targetClass,
 	                                                                      final PersistenceUtil util) {
 		final Map<T, Set<Selector>> candidates = new HashMap<>();
 		
 		try {
 			final Set<Selector> activeSelectors = findSelectors(source.getBaseType(),
-			                                                    ((MappableEntity) targetClass.newInstance()).getBaseType());
+			                                                    ((Artifact) targetClass.newInstance()).getBaseType());
 			
 			for (final Selector selector : activeSelectors) {
 				if (Logger.logDebug()) {
@@ -509,8 +509,8 @@ public class Finder {
 			throw new UnrecoverableError(Messages.getString("Finder.noSupportedFields", engine.getClassName())); //$NON-NLS-1$
 		}
 		
-		final MappableEntity element1 = relation.getFrom();
-		final MappableEntity element2 = relation.getTo();
+		final Artifact element1 = relation.getFrom();
+		final Artifact element2 = relation.getTo();
 		
 		final int check = expression.check(element1.getClass(), element2.getClass());
 		
@@ -534,9 +534,9 @@ public class Finder {
 	 *            the util
 	 * @return the list
 	 */
-	public List<Annotated> split(final Mapping data,
+	public List<Persistent> split(final Mapping data,
 	                             final PersistenceUtil util) {
-		final LinkedList<Annotated> list = new LinkedList<Annotated>();
+		final LinkedList<Persistent> list = new LinkedList<Persistent>();
 		
 		for (final Class<? extends Splitter> key : this.splitters.keySet()) {
 			final Splitter splitter = this.splitters.get(key);

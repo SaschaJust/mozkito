@@ -15,7 +15,7 @@
  */
 package org.mozkito.infozilla.model.attachment;
 
-import org.mozkito.persistence.Annotated;
+import org.mozkito.persistence.Persistent;
 import org.mozkito.utilities.commons.JavaUtils;
 
 /**
@@ -23,7 +23,7 @@ import org.mozkito.utilities.commons.JavaUtils;
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public enum AttachmentType implements Annotated {
+public enum AttachmentType implements Persistent {
 	/** The ARCHIVE. */
 	ARCHIVE,
 	/** The IMAGE. */

@@ -27,10 +27,10 @@ import org.junit.rules.TestName;
 
 import org.mozkito.mappings.engines.AuthorEqualityEngine;
 import org.mozkito.mappings.engines.Engine;
-import org.mozkito.mappings.mappable.FieldKey;
-import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.model.Candidate;
 import org.mozkito.mappings.model.Relation;
+import org.mozkito.persistence.FieldKey;
+import org.mozkito.persistence.model.Artifact;
 import org.mozkito.utilities.datastructures.Tuple;
 
 /**
@@ -61,9 +61,9 @@ public abstract class EngineTest {
 			final TestResources testResources = method.getAnnotation(TestResources.class);
 			if (testResources != null) {
 				this.engine = new AuthorEqualityEngine();
-				final MappableEntity fromEntity = new Dummy(testResources.from());
-				final MappableEntity toEntity = new Dummy(testResources.to());
-				this.relation = new Relation(new Candidate(new Tuple<MappableEntity, MappableEntity>(fromEntity,
+				final Artifact fromEntity = new Dummy(testResources.from());
+				final Artifact toEntity = new Dummy(testResources.to());
+				this.relation = new Relation(new Candidate(new Tuple<Artifact, Artifact>(fromEntity,
 				                                                                                     toEntity)));
 				assertNotNull(this.engine);
 				assertNotNull(this.relation);

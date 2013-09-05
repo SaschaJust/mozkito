@@ -35,7 +35,7 @@ import org.mozkito.issues.elements.Resolution;
 import org.mozkito.issues.elements.Severity;
 import org.mozkito.issues.elements.Status;
 import org.mozkito.issues.elements.Type;
-import org.mozkito.persistence.Annotated;
+import org.mozkito.persistence.Persistent;
 import org.mozkito.persons.model.Person;
 import org.mozkito.persons.model.PersonContainer;
 import org.mozkito.utilities.commons.JavaUtils;
@@ -47,7 +47,7 @@ import org.mozkito.utilities.commons.JavaUtils;
  */
 @Entity
 @Table (name = "enhancedreport")
-public class EnhancedReport implements Annotated, Comparable<EnhancedReport> {
+public class EnhancedReport implements Persistent, Comparable<EnhancedReport> {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 4258778761866638091L;

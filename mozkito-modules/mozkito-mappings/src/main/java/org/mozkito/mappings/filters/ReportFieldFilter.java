@@ -14,12 +14,12 @@ package org.mozkito.mappings.filters;
 
 import org.mozkito.issues.elements.Type;
 import org.mozkito.issues.model.EnhancedReport;
-import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Mapping;
 import org.mozkito.mappings.requirements.Atom;
 import org.mozkito.mappings.requirements.Expression;
 import org.mozkito.mappings.requirements.Index;
+import org.mozkito.persistence.FieldKey;
 
 /**
  * The Class ReportFieldFilter.

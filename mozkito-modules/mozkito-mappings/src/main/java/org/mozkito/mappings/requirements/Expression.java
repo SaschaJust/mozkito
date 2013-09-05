@@ -14,13 +14,13 @@ package org.mozkito.mappings.requirements;
 
 import java.util.List;
 
-import org.mozkito.mappings.mappable.model.MappableEntity;
+import org.mozkito.persistence.model.Artifact;
 
 /**
  * The superclass of all {@link Expression}s that are used to express the support of an engine for specific instances
  * of.
  * 
- * {@link MappableEntity}s.
+ * {@link Artifact}s.
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
@@ -33,13 +33,13 @@ public abstract class Expression {
 	 * check(target2, target1) returns 1. Returns 0 otherwise.
 	 * 
 	 * @param target1
-	 *            the 'from' {@link MappableEntity}
+	 *            the 'from' {@link Artifact}
 	 * @param target2
-	 *            the 'to' {@link MappableEntity}
+	 *            the 'to' {@link Artifact}
 	 * @return the result of the evaluation
 	 */
-	public int check(final Class<? extends MappableEntity> target1,
-	                 final Class<? extends MappableEntity> target2) {
+	public int check(final Class<? extends Artifact> target1,
+	                 final Class<? extends Artifact> target2) {
 		if (check(target1, target2, Index.FROM) || check(target1, target2, Index.TO)) {
 			return 1;
 		} else if (check(target2, target1, Index.FROM) || check(target2, target1, Index.TO)) {
@@ -54,15 +54,15 @@ public abstract class Expression {
 	 * extensions of {@link Expression}.
 	 * 
 	 * @param target1
-	 *            the 'from' {@link MappableEntity}
+	 *            the 'from' {@link Artifact}
 	 * @param target2
-	 *            the 'to' {@link MappableEntity}
+	 *            the 'to' {@link Artifact}
 	 * @param oneEquals
 	 *            the index {@link Index#ONE} refers to in the evaluation
 	 * @return the result of the evaluation
 	 */
-	public abstract boolean check(final Class<? extends MappableEntity> target1,
-	                              final Class<? extends MappableEntity> target2,
+	public abstract boolean check(final Class<? extends Artifact> target1,
+	                              final Class<? extends Artifact> target2,
 	                              final Index oneEquals);
 	
 	/**
@@ -76,7 +76,7 @@ public abstract class Expression {
 	 *            the one equals
 	 * @return the failure cause
 	 */
-	public abstract List<Expression> getFailureCause(final Class<? extends MappableEntity> target1,
-	                                                 final Class<? extends MappableEntity> target2,
+	public abstract List<Expression> getFailureCause(final Class<? extends Artifact> target1,
+	                                                 final Class<? extends Artifact> target2,
 	                                                 final Index oneEquals);
 }

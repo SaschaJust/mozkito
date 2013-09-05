@@ -14,7 +14,7 @@ package org.mozkito.mappings.splitters;
 
 import java.util.List;
 
-import org.mozkito.persistence.Annotated;
+import org.mozkito.persistence.Persistent;
 import org.mozkito.persistence.PersistenceUtil;
 
 /**
@@ -39,7 +39,7 @@ public class Class2BugsSplitter extends Splitter {
 	 * @see org.mozkito.mapping.splitters.MappingSplitter#process(org.mozkito.persistence .PersistenceUtil)
 	 */
 	@Override
-	public List<Annotated> process(final PersistenceUtil util) {
+	public List<Persistent> process(final PersistenceUtil util) {
 		// TODO Auto-generated method stub
 		return null;
 	}

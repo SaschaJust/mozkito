@@ -38,7 +38,7 @@ import org.joda.time.DateTime;
 import org.joda.time.Interval;
 
 import org.mozkito.issues.model.comparators.HistoryElementComparator;
-import org.mozkito.persistence.Annotated;
+import org.mozkito.persistence.Persistent;
 import org.mozkito.persons.model.Person;
 import org.mozkito.utilities.commons.JavaUtils;
 
@@ -48,7 +48,7 @@ import org.mozkito.utilities.commons.JavaUtils;
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 @Entity
-public class History implements Annotated, Iterable<HistoryElement> {
+public class History implements Persistent, Iterable<HistoryElement> {
 	
 	/** The Constant serialVersionUID. */
 	private static final long         serialVersionUID = 1720480073428317973L;

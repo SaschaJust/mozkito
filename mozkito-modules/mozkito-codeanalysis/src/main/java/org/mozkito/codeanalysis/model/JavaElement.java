@@ -30,7 +30,7 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.jdom2.Element;
 
-import org.mozkito.persistence.Annotated;
+import org.mozkito.persistence.Persistent;
 
 /**
  * The Class JavaElement.
@@ -42,7 +42,7 @@ import org.mozkito.persistence.Annotated;
 @DiscriminatorColumn (name = "TYPE", discriminatorType = DiscriminatorType.STRING)
 @DiscriminatorValue ("JAVAELEMENT")
 @Table (uniqueConstraints = { @UniqueConstraint (columnNames = { "elementtype", "fullqualifiedname" }) })
-public abstract class JavaElement implements Annotated {
+public abstract class JavaElement implements Persistent {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -8960043672858454394L;

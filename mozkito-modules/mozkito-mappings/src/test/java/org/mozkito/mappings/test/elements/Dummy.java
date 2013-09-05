@@ -25,8 +25,8 @@ import java.util.Set;
 import javax.persistence.Transient;
 
 import org.mozkito.mappings.engines.AuthorEqualityEngineTest;
-import org.mozkito.mappings.mappable.FieldKey;
-import org.mozkito.mappings.mappable.model.MappableEntity;
+import org.mozkito.persistence.FieldKey;
+import org.mozkito.persistence.model.Artifact;
 import org.mozkito.persons.elements.PersonFactory;
 import org.mozkito.persons.model.Person;
 
@@ -35,7 +35,7 @@ import org.mozkito.persons.model.Person;
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class Dummy extends MappableEntity {
+public class Dummy extends Artifact {
 	
 	/** The Constant serialVersionUID. */
 	private static final long                serialVersionUID = 6342705499695512947L;
@@ -45,7 +45,7 @@ public class Dummy extends MappableEntity {
 	
 	private static final Map<String, Person> persons          = new HashMap<>();
 	
-	private MappableEntity                   entity           = null;
+	private Artifact                   entity           = null;
 	
 	private final PersonFactory              personFactory    = new PersonFactory();
 	
@@ -72,7 +72,7 @@ public class Dummy extends MappableEntity {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.mappings.mappable.model.MappableEntity#get(org.mozkito.mappings.mappable.FieldKey)
+	 * @see org.mozkito.persistence.model.Artifact#get(org.mozkito.persistence.FieldKey)
 	 */
 	@SuppressWarnings ("unchecked")
 	@Override
@@ -108,7 +108,7 @@ public class Dummy extends MappableEntity {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.mappings.mappable.model.MappableEntity#get(org.mozkito.mappings.mappable.FieldKey, int)
+	 * @see org.mozkito.persistence.model.Artifact#get(org.mozkito.persistence.FieldKey, int)
 	 */
 	@SuppressWarnings ("unchecked")
 	@Override
@@ -127,7 +127,7 @@ public class Dummy extends MappableEntity {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.mappings.mappable.model.MappableEntity#getBaseType()
+	 * @see org.mozkito.persistence.model.Artifact#getBaseType()
 	 */
 	@Override
 	@Transient
@@ -150,13 +150,13 @@ public class Dummy extends MappableEntity {
 	 * 
 	 * @return the entity
 	 */
-	private MappableEntity getEntity() {
+	private Artifact getEntity() {
 		if (this.entity == null) {
 			try {
-				final String className = MappableEntity.class.getPackage().getName() + ".Mappable"
+				final String className = Artifact.class.getPackage().getName() + ".Mappable"
 				        + getBaseType().getSimpleName();
 				@SuppressWarnings ("unchecked")
-				final Class<? extends MappableEntity> clazz = (Class<? extends MappableEntity>) Class.forName(className);
+				final Class<? extends Artifact> clazz = (Class<? extends Artifact>) Class.forName(className);
 				this.entity = clazz.newInstance();
 			} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
 				fail(e.getMessage());
@@ -169,7 +169,7 @@ public class Dummy extends MappableEntity {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.mappings.mappable.model.MappableEntity#getId()
+	 * @see org.mozkito.persistence.model.Artifact#getId()
 	 */
 	@Override
 	@Transient
@@ -186,7 +186,7 @@ public class Dummy extends MappableEntity {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.mappings.mappable.model.MappableEntity#getText()
+	 * @see org.mozkito.persistence.model.Artifact#getText()
 	 */
 	@Override
 	@Transient
@@ -203,7 +203,7 @@ public class Dummy extends MappableEntity {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.mappings.mappable.model.MappableEntity#supported()
+	 * @see org.mozkito.persistence.model.Artifact#supported()
 	 */
 	@Override
 	@Transient

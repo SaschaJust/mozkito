@@ -26,9 +26,9 @@ import javax.persistence.Transient;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
-import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.strategies.Strategy;
-import org.mozkito.persistence.Annotated;
+import org.mozkito.persistence.Persistent;
+import org.mozkito.persistence.model.Artifact;
 import org.mozkito.utilities.commons.JavaUtils;
 
 /**
@@ -37,7 +37,7 @@ import org.mozkito.utilities.commons.JavaUtils;
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 @Entity
-public class Composite implements Annotated {
+public class Composite implements Persistent {
 	
 	/** The Constant serialVersionUID. */
 	private static final long    serialVersionUID = 4247288063693897409L;
@@ -202,7 +202,7 @@ public class Composite implements Annotated {
 	 * @return the from
 	 */
 	@Transient
-	public MappableEntity getFrom() {
+	public Artifact getFrom() {
 		return getRelation().getFrom();
 	}
 	
@@ -245,7 +245,7 @@ public class Composite implements Annotated {
 	 * @return the to
 	 */
 	@Transient
-	public MappableEntity getTo() {
+	public Artifact getTo() {
 		return getRelation().getTo();
 	}
 	

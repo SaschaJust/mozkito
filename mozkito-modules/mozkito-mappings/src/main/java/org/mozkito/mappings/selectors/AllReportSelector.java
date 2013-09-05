@@ -22,11 +22,11 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 
 import org.mozkito.issues.model.Report;
-import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.mappable.model.MappableReport;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.persistence.model.Artifact;
 
 /**
  * The Class ReportRegexSelector.
@@ -69,7 +69,7 @@ public class AllReportSelector extends Selector {
 	 */
 	@SuppressWarnings ("unchecked")
 	@Override
-	public <T extends MappableEntity> List<T> parse(final MappableEntity element,
+	public <T extends Artifact> List<T> parse(final Artifact element,
 	                                                final Class<T> targetType,
 	                                                final PersistenceUtil util) {
 		final List<T> list = new LinkedList<T>();

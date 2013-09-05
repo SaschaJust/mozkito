@@ -30,7 +30,7 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 import org.jdom2.Element;
 
 import org.mozkito.codeanalysis.visitors.PPATypeVisitor;
-import org.mozkito.persistence.Annotated;
+import org.mozkito.persistence.Persistent;
 import org.mozkito.utilities.commons.JavaUtils;
 
 /**
@@ -40,7 +40,7 @@ import org.mozkito.utilities.commons.JavaUtils;
  */
 @Entity
 @DiscriminatorValue ("JAVATYPEDEFINITION")
-public class JavaTypeDefinition extends JavaElement implements Annotated {
+public class JavaTypeDefinition extends JavaElement implements Persistent {
 	
 	/** The Constant FULL_QUALIFIED_NAME. */
 	public static final String FULL_QUALIFIED_NAME   = "fullQualifiedName";

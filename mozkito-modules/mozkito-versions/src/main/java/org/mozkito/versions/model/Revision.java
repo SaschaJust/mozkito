@@ -31,7 +31,7 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
-import org.mozkito.persistence.Annotated;
+import org.mozkito.persistence.Persistent;
 import org.mozkito.utilities.commons.JavaUtils;
 import org.mozkito.versions.elements.ChangeType;
 
@@ -42,7 +42,7 @@ import org.mozkito.versions.elements.ChangeType;
  */
 @Entity
 @Table (name = "revision", uniqueConstraints = @UniqueConstraint (columnNames = { "CHANGESET_ID", "CHANGEDFILE_ID" }))
-public class Revision implements Annotated {
+public class Revision implements Persistent {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 2149118675856446526L;

@@ -29,21 +29,22 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.collections.CollectionUtils;
 
-import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.mappings.messages.Messages;
+import org.mozkito.persistence.FieldKey;
+import org.mozkito.persistence.model.Artifact;
 import org.mozkito.versions.model.ChangeSet;
 import org.mozkito.versions.model.Handle;
 
 /**
  * Class that wraps {@link ChangeSet} to be mapped.
  * 
- * @see MappableEntity
+ * @see Artifact
  * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
 @Entity
 @DiscriminatorValue ("MAPPABLETRANSACTION")
-public class MappableChangeSet extends MappableEntity {
+public class MappableChangeSet extends Artifact {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 3493346151115096823L;

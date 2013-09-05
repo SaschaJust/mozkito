@@ -20,7 +20,7 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 
-import org.mozkito.mappings.mappable.model.MappableEntity;
+import org.mozkito.persistence.model.Artifact;
 import org.mozkito.utilities.commons.JavaUtils;
 
 /**
@@ -60,8 +60,8 @@ public final class Any extends Expression {
 	 * org.mozkito.mapping.requirements.Index)
 	 */
 	@Override
-	public boolean check(final Class<? extends MappableEntity> target1,
-	                     final Class<? extends MappableEntity> target2,
+	public boolean check(final Class<? extends Artifact> target1,
+	                     final Class<? extends Artifact> target2,
 	                     final Index oneEquals) {
 		for (final Expression expression : this.expressions) {
 			if (expression.check(target1, target2, oneEquals)) {
@@ -87,8 +87,8 @@ public final class Any extends Expression {
 	 * org.mozkito.mapping.requirements.Index)
 	 */
 	@Override
-	public List<Expression> getFailureCause(final Class<? extends MappableEntity> target1,
-	                                        final Class<? extends MappableEntity> target2,
+	public List<Expression> getFailureCause(final Class<? extends Artifact> target1,
+	                                        final Class<? extends Artifact> target2,
 	                                        final Index oneEquals) {
 		if (!check(target1, target2, oneEquals)) {
 			return new LinkedList<Expression>() {

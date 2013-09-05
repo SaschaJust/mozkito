@@ -34,7 +34,7 @@ import javax.persistence.Transient;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 
-import org.mozkito.persistence.Annotated;
+import org.mozkito.persistence.Persistent;
 
 /**
  * The Class RCSBranch.
@@ -43,7 +43,7 @@ import org.mozkito.persistence.Annotated;
  */
 @Entity
 @Table (name = "branch")
-public class Branch implements Annotated {
+public class Branch implements Persistent {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID   = 5419737140470855522L;

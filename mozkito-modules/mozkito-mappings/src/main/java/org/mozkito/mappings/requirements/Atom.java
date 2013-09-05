@@ -22,8 +22,8 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 
 import org.apache.commons.collections.CollectionUtils;
 
-import org.mozkito.mappings.mappable.FieldKey;
-import org.mozkito.mappings.mappable.model.MappableEntity;
+import org.mozkito.persistence.FieldKey;
+import org.mozkito.persistence.model.Artifact;
 import org.mozkito.utilities.commons.JavaUtils;
 
 /**
@@ -92,8 +92,8 @@ public final class Atom extends Expression {
 	 * org.mozkito.mapping.requirements.Index)
 	 */
 	@Override
-	public boolean check(final Class<? extends MappableEntity> target1,
-	                     final Class<? extends MappableEntity> target2,
+	public boolean check(final Class<? extends Artifact> target1,
+	                     final Class<? extends Artifact> target2,
 	                     final Index oneEquals) {
 		switch (this.idx) {
 			case FROM:
@@ -196,8 +196,8 @@ public final class Atom extends Expression {
 	 * org.mozkito.mapping.requirements.Index)
 	 */
 	@Override
-	public List<Expression> getFailureCause(final Class<? extends MappableEntity> target1,
-	                                        final Class<? extends MappableEntity> target2,
+	public List<Expression> getFailureCause(final Class<? extends Artifact> target1,
+	                                        final Class<? extends Artifact> target2,
 	                                        final Index oneEquals) {
 		return check(target1, target2, oneEquals)
 		                                         ? null

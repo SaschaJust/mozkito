@@ -43,7 +43,7 @@ import net.ownhero.dev.kisa.Logger;
 import org.joda.time.DateTime;
 
 import org.mozkito.issues.elements.TextElement;
-import org.mozkito.persistence.Annotated;
+import org.mozkito.persistence.Persistent;
 import org.mozkito.persistence.model.DateTimeTuple;
 import org.mozkito.persistence.model.EnumTuple;
 import org.mozkito.persistence.model.StringTuple;
@@ -60,7 +60,7 @@ import org.mozkito.utilities.datastructures.Tuple;
  */
 @Entity
 @Table (name = "history_element")
-public class HistoryElement implements Annotated, TextElement, Comparable<HistoryElement> {
+public class HistoryElement implements Persistent, TextElement, Comparable<HistoryElement> {
 	
 	/** The Constant serialVersionUID. */
 	private static final long          serialVersionUID    = -8882135636304256696L;

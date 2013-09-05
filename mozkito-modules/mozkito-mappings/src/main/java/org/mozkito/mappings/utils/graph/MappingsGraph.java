@@ -22,9 +22,9 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import org.mozkito.graphs.GraphIndex;
 import org.mozkito.graphs.GraphManager;
 import org.mozkito.mappings.mappable.model.MappableChangeSet;
-import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.mappable.model.MappableReport;
 import org.mozkito.mappings.model.Mapping;
+import org.mozkito.persistence.model.Artifact;
 
 /**
  * The Class MappingsGraph.
@@ -96,7 +96,7 @@ public class MappingsGraph {
 	 *            the entity
 	 * @return the graph id
 	 */
-	public final String getGraphID(final MappableEntity entity) {
+	public final String getGraphID(final Artifact entity) {
 		return entity.getBaseType().getSimpleName() + "##" + entity.getId();
 	}
 	
@@ -140,7 +140,7 @@ public class MappingsGraph {
 	 *            the entity
 	 * @return the or create
 	 */
-	private Vertex getOrCreateVertex(final MappableEntity entity) {
+	private Vertex getOrCreateVertex(final Artifact entity) {
 		final String fromID = getGraphID(entity);
 		Vertex vertex = this.graphManager.getGraph().getVertex(fromID);
 		if (vertex == null) {
@@ -158,7 +158,7 @@ public class MappingsGraph {
 	 *            the entity
 	 * @return the vertex type
 	 */
-	public final String getVertexType(final MappableEntity entity) {
+	public final String getVertexType(final Artifact entity) {
 		return entity.getClassName();
 	}
 	

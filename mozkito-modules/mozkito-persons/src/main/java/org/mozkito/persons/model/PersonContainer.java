@@ -33,7 +33,7 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 
 import org.apache.openjpa.persistence.jdbc.Index;
 
-import org.mozkito.persistence.Annotated;
+import org.mozkito.persistence.Persistent;
 import org.mozkito.utilities.commons.JavaUtils;
 
 /**
@@ -42,7 +42,7 @@ import org.mozkito.utilities.commons.JavaUtils;
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 @Entity
-public class PersonContainer implements Annotated {
+public class PersonContainer implements Persistent {
 	
 	/** The Constant serialVersionUID. */
 	private static final long   serialVersionUID = -5061178255449904475L;
@@ -106,7 +106,7 @@ public class PersonContainer implements Annotated {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.persistence.Annotated#getClassName()
+	 * @see org.mozkito.persistence.Persistent#getClassName()
 	 */
 	@Transient
 	public final String getClassName() {

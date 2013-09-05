@@ -26,9 +26,7 @@ import org.apache.commons.lang.StringUtils;
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.codeanalysis.model.JavaElement;
 import org.mozkito.codeanalysis.model.JavaMethodDefinition;
-import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.mappings.mappable.model.MappableChangeSet;
-import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Feature;
 import org.mozkito.mappings.model.Relation;
@@ -38,8 +36,10 @@ import org.mozkito.mappings.requirements.Expression;
 import org.mozkito.mappings.requirements.Index;
 import org.mozkito.mappings.storages.PersistenceStorage;
 import org.mozkito.mappings.storages.Storage;
+import org.mozkito.persistence.FieldKey;
 import org.mozkito.persistence.PPAPersistenceUtil;
 import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.persistence.model.Artifact;
 import org.mozkito.utilities.commons.JavaUtils;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.model.ChangeSet;
@@ -119,8 +119,8 @@ public class MethodModificationEngine extends Engine {
 		}
 		
 		try {
-			final MappableEntity from = relation.getFrom();
-			final MappableEntity to = relation.getTo();
+			final Artifact from = relation.getFrom();
+			final Artifact to = relation.getTo();
 			final PersistenceStorage persistenceStorage = getStorage(PersistenceStorage.class);
 			
 			SANITY: {

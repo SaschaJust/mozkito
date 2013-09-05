@@ -17,11 +17,11 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 
-import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Feature;
 import org.mozkito.mappings.model.Relation;
 import org.mozkito.mappings.requirements.Expression;
+import org.mozkito.persistence.model.Artifact;
 
 /**
  * The Class TopicMatchEngine.
@@ -63,8 +63,8 @@ public class TopicMatchEngine extends Engine {
 		}
 		
 		try {
-			final MappableEntity from = relation.getFrom();
-			final MappableEntity to = relation.getTo();
+			final Artifact from = relation.getFrom();
+			final Artifact to = relation.getTo();
 			
 			SANITY: {
 				assert from != null;

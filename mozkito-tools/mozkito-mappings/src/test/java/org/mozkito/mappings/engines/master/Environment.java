@@ -31,14 +31,14 @@ import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 import org.mozkito.issues.model.EnhancedReport;
 import org.mozkito.issues.model.Report;
 import org.mozkito.mappings.finder.Finder;
-import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.model.Candidate;
 import org.mozkito.mappings.model.Composite;
 import org.mozkito.mappings.model.Mapping;
 import org.mozkito.mappings.model.Relation;
 import org.mozkito.mappings.settings.MappingOptions;
-import org.mozkito.persistence.Annotated;
+import org.mozkito.persistence.Persistent;
 import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.persistence.model.Artifact;
 import org.mozkito.utilities.datastructures.Tuple;
 import org.mozkito.utilities.loading.classpath.ClassFinder;
 import org.mozkito.versions.model.ChangeSet;
@@ -65,21 +65,21 @@ public final class Environment {
 	 * @throws Exception
 	 *             the exception
 	 */
-	public static Candidate candidate(final Annotated from,
-	                                  final Annotated to) throws Exception {
-		MappableEntity fromEntity = null;
-		MappableEntity toEntity = null;
+	public static Candidate candidate(final Persistent from,
+	                                  final Persistent to) throws Exception {
+		Artifact fromEntity = null;
+		Artifact toEntity = null;
 		boolean foundFrom = false;
 		boolean foundTo = false;
 		
-		final Collection<Class<? extends MappableEntity>> collection = ClassFinder.getClassesExtendingClass(MappableEntity.class.getPackage(),
-		                                                                                                    MappableEntity.class,
+		final Collection<Class<? extends Artifact>> collection = ClassFinder.getClassesExtendingClass(Artifact.class.getPackage(),
+		                                                                                                    Artifact.class,
 		                                                                                                    Modifier.ABSTRACT
 		                                                                                                            | Modifier.INTERFACE
 		                                                                                                            | Modifier.PRIVATE);
-		for (final Class<? extends MappableEntity> clazz : collection) {
+		for (final Class<? extends Artifact> clazz : collection) {
 			if (!foundFrom && from.getClass().equals(clazz.newInstance().getBaseType())) {
-				final Constructor<? extends MappableEntity> constructor = clazz.getConstructor(from.getClass());
+				final Constructor<? extends Artifact> constructor = clazz.getConstructor(from.getClass());
 				fromEntity = constructor.newInstance(from);
 				foundFrom = true;
 				if (foundTo) {
@@ -88,7 +88,7 @@ public final class Environment {
 			}
 			
 			if (!foundTo && to.getClass().equals(clazz.newInstance().getBaseType())) {
-				final Constructor<? extends MappableEntity> constructor = clazz.getConstructor(to.getClass());
+				final Constructor<? extends Artifact> constructor = clazz.getConstructor(to.getClass());
 				toEntity = constructor.newInstance(to);
 				foundTo = true;
 				if (foundFrom) {
@@ -98,7 +98,7 @@ public final class Environment {
 		}
 		
 		if ((fromEntity != null) && (toEntity != null)) {
-			return new Candidate(new Tuple<MappableEntity, MappableEntity>(fromEntity, toEntity));
+			return new Candidate(new Tuple<Artifact, Artifact>(fromEntity, toEntity));
 		} else {
 			throw new Exception("Could not build Candidate.");
 		}
@@ -115,8 +115,8 @@ public final class Environment {
 	 * @throws Exception
 	 *             the exception
 	 */
-	public static Composite composite(final Annotated from,
-	                                  final Annotated to) throws Exception {
+	public static Composite composite(final Persistent from,
+	                                  final Persistent to) throws Exception {
 		return new Composite(relation(from, to));
 	}
 	
@@ -188,8 +188,8 @@ public final class Environment {
 	 * @throws Exception
 	 *             the exception
 	 */
-	public static Mapping mapping(final Annotated from,
-	                              final Annotated to) throws Exception {
+	public static Mapping mapping(final Persistent from,
+	                              final Persistent to) throws Exception {
 		return new Mapping(composite(from, to));
 	}
 	
@@ -204,8 +204,8 @@ public final class Environment {
 	 * @throws Exception
 	 *             the exception
 	 */
-	public static Relation relation(final Annotated from,
-	                                final Annotated to) throws Exception {
+	public static Relation relation(final Persistent from,
+	                                final Persistent to) throws Exception {
 		return new Relation(candidate(from, to));
 	}
 	

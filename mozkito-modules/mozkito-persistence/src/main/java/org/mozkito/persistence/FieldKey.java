@@ -10,12 +10,11 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  **********************************************************************************************************************/
-package org.mozkito.mappings.mappable;
+package org.mozkito.persistence;
 
 import java.util.Collection;
 
-import org.mozkito.mappings.mappable.model.MappableEntity;
-import org.mozkito.persons.model.Person;
+import org.mozkito.persistence.model.Artifact;
 
 /**
  * The Enum FieldKey.
@@ -23,12 +22,12 @@ import org.mozkito.persons.model.Person;
 public enum FieldKey {
 	
 	/**
-	 * the author of the {@link MappableEntity}, i.e. the one that initially created the original instance encapsulated
-	 * by this entity. (Person)
+	 * the author of the {@link Artifact}, i.e. the one that initially created the original instance encapsulated by
+	 * this entity. (Person)
 	 */
 	AUTHOR,
 	
-	/** the body text of the {@link MappableEntity} (String). */
+	/** the body text of the {@link Artifact} (String). */
 	BODY,
 	/**
 	 * the person(s) that have done modifications to the original entity. If requested without index, represents a
@@ -38,8 +37,8 @@ public enum FieldKey {
 	 */
 	CHANGER,
 	/**
-	 * the timestamp of the {@link MappableEntity} that determines when the original entity has been
-	 * closed/committed/became immutable/sent. (DateTime)
+	 * the timestamp of the {@link Artifact} that determines when the original entity has been closed/committed/became
+	 * immutable/sent. (DateTime)
 	 */
 	CLOSED_TIMESTAMP,
 	/** the person that closed/committed/sent the original entity. */
@@ -52,20 +51,20 @@ public enum FieldKey {
 	 */
 	COMMENT,
 	/**
-	 * the timestamp of the {@link MappableEntity} that represents the point in time the original instance has been
-	 * created. (DateTime)
+	 * the timestamp of the {@link Artifact} that represents the point in time the original instance has been created.
+	 * (DateTime)
 	 */
 	CREATION_TIMESTAMP,
 	
 	/** The FILE. */
 	FILE,
 	
-	/** the id of the MappableEntity (String). */
+	/** the id of the Artifact (String). */
 	ID,
 	/**
-	 * the timestamp(s) of the {@link MappableEntity} that determines the time the original entity has been changed
-	 * (null if never modified). If requested without index, represents a collection of timestamps for all
-	 * modifications, a specific timestamp otherwise. ( <code>Collection<DateTime>/DateTime</code>)
+	 * the timestamp(s) of the {@link Artifact} that determines the time the original entity has been changed (null if
+	 * never modified). If requested without index, represents a collection of timestamps for all modifications, a
+	 * specific timestamp otherwise. ( <code>Collection<DateTime>/DateTime</code>)
 	 */
 	MODIFICATION_TIMESTAMP,
 	

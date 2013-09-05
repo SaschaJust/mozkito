@@ -59,7 +59,7 @@ import org.mozkito.issues.elements.Severity;
 import org.mozkito.issues.elements.Status;
 import org.mozkito.issues.elements.Type;
 import org.mozkito.issues.model.comparators.CommentComparator;
-import org.mozkito.persistence.Annotated;
+import org.mozkito.persistence.Persistent;
 import org.mozkito.persons.model.Person;
 import org.mozkito.persons.model.PersonContainer;
 import org.mozkito.utilities.commons.JavaUtils;
@@ -71,7 +71,7 @@ import org.mozkito.utilities.commons.JavaUtils;
  */
 @Entity
 @Table (name = "report")
-public class Report implements Annotated, Comparable<Report> {
+public class Report implements Persistent, Comparable<Report> {
 	
 	private static final Report DEFAULT_REPORT   = new Report();
 	

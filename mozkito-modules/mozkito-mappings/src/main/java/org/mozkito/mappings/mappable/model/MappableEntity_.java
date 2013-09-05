@@ -14,14 +14,16 @@ package org.mozkito.mappings.mappable.model;
 
 import javax.persistence.metamodel.SingularAttribute;
 
+import org.mozkito.persistence.model.Artifact;
+
 /**
  * The Class MappableEntity_.
  */
-@javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.mappings.mappable.model.MappableEntity.class)
+@javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.persistence.model.Artifact.class)
 @javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
                              date = "Thu Nov 03 18:46:07 CET 2011")
 public class MappableEntity_ {
 	
 	/** The generated id. */
-	public static volatile SingularAttribute<MappableEntity, Long> generatedId;
+	public static volatile SingularAttribute<Artifact, Long> generatedId;
 }

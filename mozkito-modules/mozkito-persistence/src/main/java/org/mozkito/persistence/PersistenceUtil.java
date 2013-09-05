@@ -91,7 +91,7 @@ public interface PersistenceUtil {
 	 * @param object
 	 *            the object
 	 */
-	void delete(final Annotated object);
+	void delete(final Persistent object);
 	
 	/**
 	 * Execute native query.
@@ -125,7 +125,7 @@ public interface PersistenceUtil {
 	 * @param object
 	 *            the object
 	 */
-	void exmerge(final Annotated object);
+	void exmerge(final Persistent object);
 	
 	/**
 	 * Flush.
@@ -189,7 +189,7 @@ public interface PersistenceUtil {
 	 *            the clazz
 	 * @return the t
 	 */
-	<T extends Annotated> T loadById(final Object id,
+	<T extends Persistent> T loadById(final Object id,
 	                                 Class<T> clazz);
 	
 	/**
@@ -203,7 +203,7 @@ public interface PersistenceUtil {
 	 * @param object
 	 *            the object
 	 */
-	void save(final Annotated object);
+	void save(final Persistent object);
 	
 	/**
 	 * Save or update.
@@ -211,7 +211,7 @@ public interface PersistenceUtil {
 	 * @param object
 	 *            the object
 	 */
-	void saveOrUpdate(final Annotated object);
+	void saveOrUpdate(final Persistent object);
 	
 	/**
 	 * Shutdown.
@@ -224,5 +224,5 @@ public interface PersistenceUtil {
 	 * @param object
 	 *            the object
 	 */
-	void update(final Annotated object);
+	void update(final Persistent object);
 }

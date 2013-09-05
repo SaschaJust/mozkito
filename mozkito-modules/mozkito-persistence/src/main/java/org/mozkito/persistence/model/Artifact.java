@@ -10,7 +10,7 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  **********************************************************************************************************************/
-package org.mozkito.mappings.mappable.model;
+package org.mozkito.persistence.model;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -34,13 +34,15 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.apache.commons.collections.CollectionUtils;
 
-import org.mozkito.mappings.mappable.FieldKey;
-import org.mozkito.persistence.Annotated;
+import org.mozkito.exceptions.InvalidFieldKeyException;
+import org.mozkito.persistence.FieldKey;
+import org.mozkito.persistence.IterableFieldKey;
+import org.mozkito.persistence.Persistent;
 import org.mozkito.utilities.io.FileUtils;
 
 /**
  * Superclass that is used to wrap around classes that shall be mapped. Since inheritance based annotations do not work
- * on interfaces we can't simply use {@link Annotated} here.
+ * on interfaces we can't simply use {@link Persistent} here.
  * 
  * Access to the internal data is used through access with {@link FieldKey}s. The corresponding data is mangled to fit
  * the proper format.
@@ -52,8 +54,8 @@ import org.mozkito.utilities.io.FileUtils;
 @Access (AccessType.PROPERTY)
 @Inheritance (strategy = InheritanceType.JOINED)
 @DiscriminatorColumn (name = "TYPE", discriminatorType = DiscriminatorType.STRING)
-@DiscriminatorValue ("MAPPABLEENTITY")
-public abstract class MappableEntity implements Annotated {
+@DiscriminatorValue ("Artifact")
+public abstract class Artifact implements Persistent {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 2350328785752088197L;
@@ -77,7 +79,7 @@ public abstract class MappableEntity implements Annotated {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		final MappableEntity other = (MappableEntity) obj;
+		final Artifact other = (Artifact) obj;
 		if (this.generatedId != other.generatedId) {
 			return false;
 		}
@@ -87,25 +89,48 @@ public abstract class MappableEntity implements Annotated {
 	/**
 	 * Gets the.
 	 * 
+	 * @param <T>
+	 *            the generic type
 	 * @param key
 	 *            the key
 	 * @return the object
+	 * @throws InvalidFieldKeyException
+	 *             the invalid field key exception
 	 */
 	@Transient
-	public abstract <T> T get(FieldKey key);
+	public abstract <T> T get(FieldKey key) throws InvalidFieldKeyException;
 	
 	/**
 	 * Gets the.
 	 * 
+	 * @param <T>
+	 *            the generic type
+	 * @param key
+	 *            the key
+	 * @return the t
+	 * @throws InvalidFieldKeyException
+	 *             the invalid field key exception
+	 */
+	public <T> T get(final IterableFieldKey key) throws InvalidFieldKeyException {
+		return get(key, 0);
+	}
+	
+	/**
+	 * Gets the.
+	 * 
+	 * @param <T>
+	 *            the generic type
 	 * @param key
 	 *            the key
 	 * @param index
 	 *            the index
 	 * @return the object
+	 * @throws InvalidFieldKeyException
+	 *             the invalid field key exception
 	 */
 	@Transient
-	public abstract <T> T get(FieldKey key,
-	                          int index);
+	public abstract <T> T get(IterableFieldKey key,
+	                          int index) throws InvalidFieldKeyException;
 	
 	/**
 	 * Gets the all.
@@ -113,9 +138,11 @@ public abstract class MappableEntity implements Annotated {
 	 * @param keys
 	 *            the keys
 	 * @return the all
+	 * @throws InvalidFieldKeyException
+	 *             the invalid field key exception
 	 */
 	@Transient
-	public Map<FieldKey, Object> getAll(final FieldKey... keys) {
+	public Map<FieldKey, Object> getAll(final FieldKey... keys) throws InvalidFieldKeyException {
 		final Map<FieldKey, Object> ret = new HashMap<FieldKey, Object>();
 		
 		for (final FieldKey key : keys) {
@@ -131,9 +158,11 @@ public abstract class MappableEntity implements Annotated {
 	 * @param keys
 	 *            the keys
 	 * @return the any
+	 * @throws InvalidFieldKeyException
+	 *             the invalid field key exception
 	 */
 	@Transient
-	public Object getAny(final FieldKey... keys) {
+	public Object getAny(final FieldKey... keys) throws InvalidFieldKeyException {
 		Object ret = null;
 		
 		for (final FieldKey key : keys) {
@@ -152,9 +181,11 @@ public abstract class MappableEntity implements Annotated {
 	 * @param keys
 	 *            the keys
 	 * @return the as one string
+	 * @throws InvalidFieldKeyException
+	 *             the invalid field key exception
 	 */
 	@Transient
-	public String getAsOneString(final FieldKey... keys) {
+	public String getAsOneString(final FieldKey... keys) throws InvalidFieldKeyException {
 		final StringBuilder builder = new StringBuilder();
 		Object o = null;
 		
@@ -169,17 +200,9 @@ public abstract class MappableEntity implements Annotated {
 	}
 	
 	/**
-	 * Gets the base type.
-	 * 
-	 * @return the base type
-	 */
-	@Transient
-	public abstract Class<?> getBaseType();
-	
-	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.persistence.Annotated#getClassName()
+	 * @see org.mozkito.persistence.Persistent#getClassName()
 	 */
 	@Override
 	@Transient
@@ -244,9 +267,11 @@ public abstract class MappableEntity implements Annotated {
 	 * @param key
 	 *            the key
 	 * @return the size
+	 * @throws InvalidFieldKeyException
+	 *             the invalid field key exception
 	 */
 	@Transient
-	public int getSize(final FieldKey key) {
+	public int getSize(final IterableFieldKey key) throws InvalidFieldKeyException {
 		final Object o = get(key);
 		assert o instanceof Collection;
 		return o != null

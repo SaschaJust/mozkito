@@ -32,23 +32,24 @@ import org.jsoup.Jsoup;
 import org.mozkito.issues.model.Comment;
 import org.mozkito.issues.model.HistoryElement;
 import org.mozkito.issues.model.Report;
-import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.mappings.messages.Messages;
-import org.mozkito.persistence.Annotated;
+import org.mozkito.persistence.FieldKey;
+import org.mozkito.persistence.Persistent;
+import org.mozkito.persistence.model.Artifact;
 import org.mozkito.persons.model.Person;
 import org.mozkito.utilities.io.FileUtils;
 
 /**
  * Class that wraps {@link Report} to be mapped.
  * 
- * @see MappableEntity
+ * @see Artifact
  * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
 @Entity
 @Access (AccessType.PROPERTY)
 @DiscriminatorValue ("MAPPABLEREPORT")
-public class MappableReport extends MappableEntity implements Annotated {
+public class MappableReport extends Artifact implements Persistent {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1097712059403322470L;

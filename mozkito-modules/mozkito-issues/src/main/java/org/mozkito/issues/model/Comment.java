@@ -37,7 +37,7 @@ import net.ownhero.dev.kanuni.annotations.simple.Positive;
 import org.joda.time.DateTime;
 
 import org.mozkito.issues.elements.TextElement;
-import org.mozkito.persistence.Annotated;
+import org.mozkito.persistence.Persistent;
 import org.mozkito.persons.model.Person;
 import org.mozkito.persons.model.PersonContainer;
 import org.mozkito.utilities.commons.JavaUtils;
@@ -50,7 +50,7 @@ import org.mozkito.utilities.commons.StringUtils;
  */
 @Entity
 @Table (name = "comment", uniqueConstraints = { @UniqueConstraint (columnNames = { "id", "bugreport_id" }) })
-public class Comment implements Annotated, TextElement, Comparable<Comment> {
+public class Comment implements Persistent, TextElement, Comparable<Comment> {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -2410349441783888667L;

@@ -33,7 +33,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.mozkito.persistence.Annotated;
+import org.mozkito.persistence.Persistent;
 import org.mozkito.utilities.commons.JavaUtils;
 import org.mozkito.versions.elements.RevDependencyGraph;
 import org.mozkito.versions.exceptions.NoSuchHandleException;
@@ -45,7 +45,7 @@ import org.mozkito.versions.exceptions.NoSuchHandleException;
  */
 @Entity
 @Table (name = "handle")
-public class Handle implements Annotated, Serializable {
+public class Handle implements Persistent, Serializable {
 	
 	/** The archive. */
 	private VersionArchive        versionArchive   = null;

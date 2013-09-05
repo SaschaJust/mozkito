@@ -33,11 +33,11 @@ import org.apache.lucene.util.Version;
 
 import org.mozkito.issues.model.Comment;
 import org.mozkito.issues.model.Report;
-import org.mozkito.mappings.mappable.FieldKey;
-import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.persistence.Criteria;
+import org.mozkito.persistence.FieldKey;
 import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.persistence.model.Artifact;
 
 /**
  * The Class LuceneStorage.
@@ -67,10 +67,10 @@ public class LuceneStorage extends Storage {
 	private IndexSearcher                         isearcherReports = null;
 	
 	/** The one type. */
-	private final Class<? extends MappableEntity> oneType;
+	private final Class<? extends Artifact> oneType;
 	
 	/** The other type. */
-	private final Class<? extends MappableEntity> otherType;
+	private final Class<? extends Artifact> otherType;
 	
 	/** The Constant DESCRIPTION. */
 	public static final String                    DESCRIPTION      = Messages.getString("LuceneStorage.description"); //$NON-NLS-1$
@@ -94,7 +94,7 @@ public class LuceneStorage extends Storage {
 	 * @param other
 	 *            the other
 	 */
-	public LuceneStorage(final Class<? extends MappableEntity> one, final Class<? extends MappableEntity> other) {
+	public LuceneStorage(final Class<? extends Artifact> one, final Class<? extends Artifact> other) {
 		this.oneType = one;
 		this.otherType = other;
 	}
@@ -170,7 +170,7 @@ public class LuceneStorage extends Storage {
 	 * 
 	 * @return the oneType
 	 */
-	public final Class<? extends MappableEntity> getOneType() {
+	public final Class<? extends Artifact> getOneType() {
 		PRECONDITIONS: {
 			// none
 		}
@@ -189,7 +189,7 @@ public class LuceneStorage extends Storage {
 	 * 
 	 * @return the otherType
 	 */
-	public final Class<? extends MappableEntity> getOtherType() {
+	public final Class<? extends Artifact> getOtherType() {
 		PRECONDITIONS: {
 			// none
 		}

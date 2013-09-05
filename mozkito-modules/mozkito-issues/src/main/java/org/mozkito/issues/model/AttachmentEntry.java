@@ -34,7 +34,7 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 
 import org.joda.time.DateTime;
 
-import org.mozkito.persistence.Annotated;
+import org.mozkito.persistence.Persistent;
 import org.mozkito.persons.model.Person;
 import org.mozkito.persons.model.PersonContainer;
 import org.mozkito.utilities.commons.JavaUtils;
@@ -45,7 +45,7 @@ import org.mozkito.utilities.commons.JavaUtils;
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 @Entity
-public class AttachmentEntry implements Annotated {
+public class AttachmentEntry implements Persistent {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 5533493175917492442L;
