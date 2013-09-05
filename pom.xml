@@ -72,7 +72,6 @@
 		<module>mozkito-modules</module>
 		<module>mozkito-settings</module>
 		<module>mozkito-tools</module>
-		<module>mozkito-research</module>
 	</modules>
 	<dependencies>
 		<dependency>
