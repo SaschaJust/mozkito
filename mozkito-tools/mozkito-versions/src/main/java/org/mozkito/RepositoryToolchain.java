@@ -165,9 +165,6 @@ public class RepositoryToolchain extends Chain<Settings> {
 			throw new UnrecoverableError(e1);
 		}
 		
-		if (!metadata.containsKey("head")) {
-			throw new UnrecoverableError("The metadata.properties file does not contain a value for 'hash'!");
-		}
 		if (!metadata.containsKey("version")) {
 			throw new UnrecoverableError("The metadata.properties file does not contain a value for 'version'!");
 		}
@@ -176,7 +173,9 @@ public class RepositoryToolchain extends Chain<Settings> {
 			this.versionArchive = new VersionArchive(this.repository.getRevDependencyGraph());
 			
 			this.versionArchive.setMiningDate(new DateTime());
-			this.versionArchive.setMozkitoHash(metadata.getProperty("head"));
+			this.versionArchive.setMozkitoHash(metadata.containsKey("head")
+			                                                               ? metadata.getProperty("head")
+			                                                               : "release");
 			this.versionArchive.setMozkitoVersion(metadata.getProperty("version"));
 			this.versionArchive.setUsedSettings(getSettings().toString());
 			
