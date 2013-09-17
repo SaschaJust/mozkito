@@ -15,8 +15,6 @@ package org.mozkito.mappings.model;
 import javax.persistence.metamodel.SetAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 
-import org.mozkito.mappings.mappable.model.MappableEntity;
-
 /**
  * The Class Candidate_.
  */
@@ -26,11 +24,11 @@ import org.mozkito.mappings.mappable.model.MappableEntity;
 public class Candidate_ {
 	
 	/** The from. */
-	public static volatile SingularAttribute<Candidate, MappableEntity> from;
+	public static volatile SingularAttribute<Candidate, String> from;
 	
 	/** The selectors. */
-	public static volatile SetAttribute<Candidate, String>              selectors;
+	public static volatile SetAttribute<Candidate, String>      selectors;
 	
 	/** The to. */
-	public static volatile SingularAttribute<Candidate, MappableEntity> to;
+	public static volatile SingularAttribute<Candidate, String> to;
 }

@@ -30,7 +30,6 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.mozkito.mappings.elements.RelationType;
 import org.mozkito.mappings.filters.Filter;
-import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.utilities.commons.JavaUtils;
@@ -132,46 +131,6 @@ public class Mapping implements Annotated {
 		return true;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.mappings.model.IMapping#getClass1()
-	 */
-	/**
-	 * Gets the class1.
-	 * 
-	 * @return the class1
-	 */
-	@Transient
-	public String getClass1() {
-		// PRECONDITIONS
-		
-		try {
-			return getComposite().getClass1();
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.mappings.model.IMapping#getClass2()
-	 */
-	/**
-	 * Gets the class2.
-	 * 
-	 * @return the class2
-	 */
-	@Transient
-	public String getClass2() {
-		// PRECONDITIONS
-		
-		try {
-			return getComposite().getClass2();
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
 	/**
 	 * Gets the simple name of the class.
 	 * 
@@ -240,7 +199,7 @@ public class Mapping implements Annotated {
 	 * @return the from
 	 */
 	@Transient
-	public MappableEntity getFrom() {
+	public org.mozkito.persistence.Entity getFrom() {
 		// PRECONDITIONS
 		
 		try {
@@ -275,7 +234,7 @@ public class Mapping implements Annotated {
 	 * @return the to
 	 */
 	@Transient
-	public MappableEntity getTo() {
+	public org.mozkito.persistence.Entity getTo() {
 		// PRECONDITIONS
 		
 		try {

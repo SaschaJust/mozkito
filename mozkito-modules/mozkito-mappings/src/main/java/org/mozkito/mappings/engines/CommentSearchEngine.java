@@ -29,8 +29,6 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.util.Version;
 
 import org.mozkito.issues.model.Report;
-import org.mozkito.mappings.mappable.FieldKey;
-import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Feature;
 import org.mozkito.mappings.model.Relation;
@@ -39,6 +37,8 @@ import org.mozkito.mappings.requirements.Atom;
 import org.mozkito.mappings.requirements.Expression;
 import org.mozkito.mappings.requirements.Index;
 import org.mozkito.mappings.storages.LuceneStorage;
+import org.mozkito.persistence.FieldKey;
+import org.mozkito.persistence.IteratableFieldKey;
 
 /**
  * The Class CommentSearchEngine.
@@ -94,8 +94,8 @@ public class CommentSearchEngine extends SearchEngine {
 		}
 		
 		try {
-			final MappableEntity from = relation.getFrom();
-			final MappableEntity to = relation.getTo();
+			final org.mozkito.persistence.Entity from = relation.getFrom();
+			final org.mozkito.persistence.Entity to = relation.getTo();
 			double confidence = 0d;
 			String toContent = null;
 			String toSubstring = null;
@@ -104,9 +104,8 @@ public class CommentSearchEngine extends SearchEngine {
 			SANITY: {
 				assert from != null;
 				assert to != null;
-				CompareCondition.equals(to.getBaseType(), Report.class,
-				                        "The target type has to be a report, but is %s.", //$NON-NLS-1$
-				                        to.getBaseType());
+				CompareCondition.equals(to.getClass(), Report.class, "The target type has to be a report, but is %s.", //$NON-NLS-1$
+				                        to.getClass());
 				Condition.notNull(luceneStorage,
 				                  "Storage 'lucene' must be available when using this engine,  but got null.");
 				Condition.notNull(luceneStorage.getAnalyzer(), "Analyzer must never be null in a lucene storage.");
@@ -140,8 +139,8 @@ public class CommentSearchEngine extends SearchEngine {
 					}
 				}
 				
-				addFeature(relation, confidence, FieldKey.BODY.name(), fromBody, query, FieldKey.COMMENT.name(),
-				           toContent, toSubstring);
+				addFeature(relation, confidence, FieldKey.BODY.name(), fromBody, query,
+				           IteratableFieldKey.COMMENTS.name(), toContent, toSubstring);
 			} catch (final IOException e) {
 				throw new UnrecoverableError(e);
 			}

@@ -22,8 +22,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 
 import org.mozkito.issues.model.Report;
-import org.mozkito.mappings.mappable.model.MappableEntity;
-import org.mozkito.mappings.mappable.model.MappableReport;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
@@ -69,9 +67,9 @@ public class AllReportSelector extends Selector {
 	 */
 	@SuppressWarnings ("unchecked")
 	@Override
-	public <T extends MappableEntity> List<T> parse(final MappableEntity element,
-	                                                final Class<T> targetType,
-	                                                final PersistenceUtil util) {
+	public <T extends org.mozkito.persistence.Entity> List<T> parse(final org.mozkito.persistence.Entity element,
+	                                                                final Class<T> targetType,
+	                                                                final PersistenceUtil util) {
 		final List<T> list = new LinkedList<T>();
 		final Criteria<Report> criteria = util.createCriteria(Report.class);
 		final List<Report> loadedList = util.load(criteria);
@@ -79,8 +77,8 @@ public class AllReportSelector extends Selector {
 		list.addAll(CollectionUtils.collect(loadedList, new Transformer() {
 			
 			@Override
-			public MappableReport transform(final Object input) {
-				return new MappableReport((Report) input);
+			public Report transform(final Object input) {
+				return (Report) input;
 			}
 		}));
 		

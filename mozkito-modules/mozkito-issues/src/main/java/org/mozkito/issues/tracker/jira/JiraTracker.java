@@ -14,6 +14,8 @@ package org.mozkito.issues.tracker.jira;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashSet;
@@ -34,11 +36,14 @@ import org.mozkito.issues.tracker.OverviewParser;
 import org.mozkito.issues.tracker.Parser;
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.issues.tracker.Tracker;
+import org.mozkito.issues.tracker.TrackerType;
 import org.mozkito.persons.elements.PersonFactory;
 import org.mozkito.utilities.datastructures.RawContent;
 import org.mozkito.utilities.io.IOUtils;
 import org.mozkito.utilities.io.exceptions.FetchException;
 import org.mozkito.utilities.io.exceptions.UnsupportedProtocolException;
+
+import sun.reflect.ReflectionFactory;
 
 /**
  * The Class JiraTracker.
@@ -141,6 +146,16 @@ public class JiraTracker extends Tracker implements OverviewParser {
 				sb.append("&pager/start=");
 				sb.append(offset);
 				
+				final ReflectionFactory reflection = ReflectionFactory.getReflectionFactory();
+				try {
+					final Constructor<TrackerType> constructor = TrackerType.class.getConstructor(new Class<?>[0]);
+					reflection.newConstructorAccessor(constructor).newInstance(new Object[] { "HAPPY", 3 });
+				} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalArgumentException
+				        | InvocationTargetException e1) {
+					// TODO Auto-generated catch block
+					
+				}
+				
 				if (Logger.logDebug()) {
 					Logger.debug("Parsing overview URI %s", sb.toString());
 				}
@@ -152,7 +167,18 @@ public class JiraTracker extends Tracker implements OverviewParser {
 				final JiraIDExtractor handler = new JiraIDExtractor();
 				parser.setContentHandler(handler);
 				final InputSource inputSource = new InputSource(new StringReader(overviewContent.getContent()));
-				parser.parse(inputSource);
+				
+				try {
+					parser.parse(inputSource);
+				} catch (final SAXException e) {
+					if (Logger.logError()) {
+						Logger.error("Request: " + overviewUri.toASCIIString());
+						Logger.error("Result: " + overviewContent.getContent());
+						Logger.error(e);
+					}
+					return false;
+				}
+				
 				final List<String> bugIDs = handler.getIds();
 				for (final String id : bugIDs) {
 					final StringBuilder linkBuilder = new StringBuilder();

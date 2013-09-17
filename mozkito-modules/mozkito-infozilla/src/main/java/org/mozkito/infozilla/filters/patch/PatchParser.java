@@ -19,6 +19,8 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.infozilla.model.patch.Patch;
 import org.mozkito.infozilla.model.patch.PatchHunk;
+import org.mozkito.infozilla.model.patch.PatchTextElement;
+import org.mozkito.infozilla.model.patch.PatchTextElement.Type;
 
 /**
  * The Class PatchParser.
@@ -104,7 +106,7 @@ public class PatchParser {
 				if (hunktext.length() > 1) {
 					hunktext = hunktext.substring(0, hunktext.length() - 1);
 				}
-				foundHunks.add(new PatchHunk(hunktext));
+				foundHunks.add(parseHunk(hunktext));
 				hStart = nextHunkStart - 1;
 			}
 		}
@@ -289,6 +291,24 @@ public class PatchParser {
 		
 		// Here is the patch we found
 		return foundPatches;
+	}
+	
+	/**
+	 * Parses the hunk.
+	 * 
+	 * @param text
+	 *            the text
+	 * @return the patch hunk
+	 */
+	private PatchHunk parseHunk(final String text) {
+		final PatchHunk.Builder builder = new PatchHunk.Builder();
+		
+		builder.newStart(0).oldStart(0).newEnd(12).oldEnd(15);
+		
+		builder.addElements(new PatchTextElement(Type.CONTEXT, "lorem ipsum"),
+		                    new PatchTextElement(Type.ADDED, "test"), new PatchTextElement(Type.REMOVED,
+		                                                                                   "bleh\nbla\nblub\nfoo"));
+		return builder.create();
 	}
 	
 	/**

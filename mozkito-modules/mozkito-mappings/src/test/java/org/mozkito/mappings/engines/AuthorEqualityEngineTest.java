@@ -23,11 +23,11 @@ import java.util.Queue;
 
 import org.junit.Ignore;
 
-import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.mappings.model.Feature;
 import org.mozkito.mappings.test.elements.EngineTest;
 import org.mozkito.mappings.test.elements.Fields;
 import org.mozkito.mappings.test.elements.TestResources;
+import org.mozkito.persistence.FieldKey;
 
 /**
  * @author Sascha Just <sascha.just@mozkito.org>

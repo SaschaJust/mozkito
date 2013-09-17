@@ -41,7 +41,6 @@ import org.mozkito.persistence.Annotated;
 import org.mozkito.persons.model.Person;
 import org.mozkito.persons.model.PersonContainer;
 import org.mozkito.utilities.commons.JavaUtils;
-import org.mozkito.utilities.commons.StringUtils;
 
 /**
  * The Class Comment.
@@ -322,7 +321,10 @@ public class Comment implements Annotated, TextElement, Comparable<Comment> {
 		builder.append(", author=");
 		builder.append(getAuthor());
 		builder.append(", message=");
-		builder.append(StringUtils.truncate(getMessage(), short_message_length));
+		final String m = getMessage();
+		builder.append((m != null)
+		                          ? m.substring(0, Math.min(m.length(), short_message_length))
+		                          : "");
 		builder.append(", bugReport=");
 		builder.append(getBugReport() == null
 		                                     ? null

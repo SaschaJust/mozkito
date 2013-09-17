@@ -27,8 +27,11 @@ public class GraphStorage extends Storage {
 	private Graph graph = null;
 	
 	/**
-     * 
-     */
+	 * Instantiates a new graph storage.
+	 * 
+	 * @param graph
+	 *            the graph
+	 */
 	public GraphStorage(@NotNull final Graph graph) {
 		PRECONDITIONS: {
 			// none

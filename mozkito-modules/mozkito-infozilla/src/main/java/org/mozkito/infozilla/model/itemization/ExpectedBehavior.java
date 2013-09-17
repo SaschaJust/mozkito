@@ -12,34 +12,220 @@
  ******************************************************************************/
 package org.mozkito.infozilla.model.itemization;
 
-import org.mozkito.infozilla.model.Inlineable;
+import javax.persistence.Basic;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Transient;
+
+import org.mozkito.infozilla.elements.Inlineable;
+import org.mozkito.persistence.Annotated;
+import org.mozkito.utilities.commons.JavaUtils;
 
 /**
  * The Class ExpectedBehavior.
  */
-public class ExpectedBehavior implements Inlineable {
+@Entity
+public class ExpectedBehavior implements Annotated, Inlineable {
+	
+	/**
+     * 
+     */
+	private static final long serialVersionUID = 5591569825979966886L;
+	
+	/** The end position. */
+	private Integer           endPosition;
+	
+	/** The id. */
+	private int               id;
+	
+	/** The start position. */
+	private Integer           startPosition;
 	
 	/** The text. */
-	String text;
+	private String            text;
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.infozilla.model.Inlineable#getEndPosition()
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.persistence.Annotated#getClassName()
 	 */
 	@Override
-	public int getEndPosition() {
-		// TODO Auto-generated method stub
-		return 0;
+	@Transient
+	public String getClassName() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return JavaUtils.getHandle(this);
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.infozilla.model.Inlineable#getStartPosition()
+	/**
+	 * Gets the end position.
+	 * 
+	 * @return the endPosition
 	 */
-	@Override
-	public int getStartPosition() {
-		// TODO Auto-generated method stub
-		return 0;
+	@Basic
+	public Integer getEndPosition() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.endPosition;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Gets the id.
+	 * 
+	 * @return the id
+	 */
+	@Id
+	@GeneratedValue (strategy = GenerationType.AUTO)
+	public int getId() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.id;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Gets the start position.
+	 * 
+	 * @return the startPosition
+	 */
+	@Basic
+	public Integer getStartPosition() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.startPosition;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Gets the text.
+	 * 
+	 * @return the text
+	 */
+	@Basic
+	public String getText() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.text;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Sets the end position.
+	 * 
+	 * @param endPosition
+	 *            the endPosition to set
+	 */
+	public void setEndPosition(final Integer endPosition) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.endPosition = endPosition;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Sets the id.
+	 * 
+	 * @param id
+	 *            the id to set
+	 */
+	public void setId(final int id) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.id = id;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Sets the start position.
+	 * 
+	 * @param startPosition
+	 *            the startPosition to set
+	 */
+	public void setStartPosition(final Integer startPosition) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.startPosition = startPosition;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Sets the text.
+	 * 
+	 * @param text
+	 *            the text to set
+	 */
+	public void setText(final String text) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.text = text;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 }

@@ -29,8 +29,6 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.util.Version;
 
-import org.mozkito.mappings.mappable.FieldKey;
-import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Feature;
 import org.mozkito.mappings.model.Relation;
@@ -39,6 +37,7 @@ import org.mozkito.mappings.requirements.Atom;
 import org.mozkito.mappings.requirements.Expression;
 import org.mozkito.mappings.requirements.Index;
 import org.mozkito.mappings.storages.LuceneStorage;
+import org.mozkito.persistence.FieldKey;
 
 /**
  * The Class DescriptionSearchEngine.
@@ -77,16 +76,16 @@ public class DescriptionSearchEngine extends SearchEngine {
 		}
 		
 		try {
-			final MappableEntity from = relation.getFrom();
-			final MappableEntity to = relation.getTo();
+			final org.mozkito.persistence.Entity from = relation.getFrom();
+			final org.mozkito.persistence.Entity to = relation.getTo();
 			final LuceneStorage luceneStorage = getStorage(LuceneStorage.class);
 			
 			SANITY: {
 				assert from != null;
 				assert to != null;
-				CompareCondition.equals(to.getBaseType(), DescriptionSearchEngine.TAG,
+				CompareCondition.equals(to, DescriptionSearchEngine.TAG,
 				                        "The target type has to be a report, but is %s.", //$NON-NLS-1$
-				                        to.getBaseType());
+				                        to);
 				Condition.notNull(luceneStorage,
 				                  "Storage 'lucene' must be available when using this engine,  but got null.");
 				Condition.notNull(luceneStorage.getAnalyzer(), "Analyzer must never be null in a lucene storage.");

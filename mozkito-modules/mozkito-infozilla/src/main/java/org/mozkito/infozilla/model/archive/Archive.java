@@ -17,10 +17,27 @@ package org.mozkito.infozilla.model.archive;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 
-import org.mozkito.infozilla.model.Attachable;
+import javax.persistence.CascadeType;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
+
+import org.mozkito.infozilla.elements.Attachable;
 import org.mozkito.infozilla.model.attachment.Attachment;
+import org.mozkito.persistence.Annotated;
+import org.mozkito.utilities.commons.JavaUtils;
+import org.mozkito.utilities.io.FileUtils;
+import org.mozkito.utilities.io.FileUtils.FileShutdownAction;
 import org.mozkito.utilities.io.exceptions.FilePermissionException;
 
 /**
@@ -28,22 +45,49 @@ import org.mozkito.utilities.io.exceptions.FilePermissionException;
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public abstract class Archive implements Attachable {
+@Entity
+public abstract class Archive implements Attachable, Annotated {
 	
-	/** The attachables. */
-	private List<Attachable> attachables;
+	/**
+	 * The Enum Type.
+	 */
+	public static enum Type {
+		
+		/** The BZI p2. */
+		BZIP2,
+		/** The gzip. */
+		GZIP,
+		/** The lzma. */
+		LZMA,
+		/** The tar. */
+		TAR,
+		/** The zip. */
+		ZIP;
+	}
 	
-	/** The attachment. */
-	private Attachment       attachment;
+	/** The Constant serialVersionUID. */
+	private static final long serialVersionUID = 7213529287337098350L;
+	
+	/** The entries. */
+	private List<String>      entries          = new LinkedList<>();
+	
+	/** The id. */
+	private int               id;
+	
+	/** The origin. */
+	private Attachment        origin;
+	
+	private Type              type;
 	
 	/**
 	 * Instantiates a new archive.
 	 * 
-	 * @param attachment
-	 *            the attachment
+	 * @param origin
+	 *            the origin
 	 */
-	public Archive(final Attachment attachment) {
-		setAttachment(attachment);
+	public Archive(final Attachment origin) {
+		super();
+		this.origin = origin;
 	}
 	
 	/**
@@ -55,25 +99,148 @@ public abstract class Archive implements Attachable {
 	 * @throws FilePermissionException
 	 *             the file permission exception
 	 */
-	public abstract File extract() throws IOException, FilePermissionException;
-	
-	/**
-	 * Gets the attachables.
-	 * 
-	 * @return the attachables
-	 */
-	public List<Attachable> getAttachables() {
-		return this.attachables;
+	public File extract() throws IOException, FilePermissionException {
+		switch (getType()) {
+			case BZIP2:
+				return extractBzip2();
+			case GZIP:
+				return extractGzip();
+			case LZMA:
+				return extractLzma();
+			case TAR:
+				return extractTar();
+			case ZIP:
+				return extractZip();
+			default:
+				throw new IOException("Unsupported archive type: " + getType().name());
+		}
 	}
 	
 	/**
-	 * Gets the attachment.
+	 * @return
+	 */
+	private File extractBzip2() throws IOException, FilePermissionException {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			throw new UnsupportedOperationException("not yet implemented");
+			// final File file = FileUtils.createRandomFile(FileShutdownAction.DELETE);
+			// FileUtils.dump(getOrigin().getData(), file);
+			// final File dir = FileUtils.createRandomDir("test", "bleh", FileShutdownAction.DELETE);
+			// FileUtils.bunzip2(file, dir);
+			// return dir;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * @return
+	 */
+	private File extractGzip() throws IOException, FilePermissionException {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			final File file = FileUtils.createRandomFile(FileShutdownAction.DELETE);
+			FileUtils.dump(getOrigin().getData(), file);
+			final File dir = FileUtils.createRandomDir("test", "bleh", FileShutdownAction.DELETE);
+			FileUtils.gunzip(file, dir);
+			return dir;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * @return
+	 */
+	private File extractLzma() throws IOException, FilePermissionException {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			final File file = FileUtils.createRandomFile(FileShutdownAction.DELETE);
+			FileUtils.dump(getOrigin().getData(), file);
+			final File dir = FileUtils.createRandomDir("test", "bleh", FileShutdownAction.DELETE);
+			FileUtils.unlzma(file, dir);
+			return dir;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * @return
+	 */
+	private File extractTar() throws IOException, FilePermissionException {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			final File file = FileUtils.createRandomFile(FileShutdownAction.DELETE);
+			FileUtils.dump(getOrigin().getData(), file);
+			final File dir = FileUtils.createRandomDir("test", "bleh", FileShutdownAction.DELETE);
+			FileUtils.untar(file, dir);
+			return dir;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * @return
+	 */
+	private File extractZip() throws IOException, FilePermissionException {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			final File file = FileUtils.createRandomFile(FileShutdownAction.DELETE);
+			FileUtils.dump(getOrigin().getData(), file);
+			final File dir = FileUtils.createRandomDir("test", "bleh", FileShutdownAction.DELETE);
+			FileUtils.unzip(file, dir);
+			return dir;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
 	 * 
-	 * @return the attachment
+	 * @see org.mozkito.persistence.Annotated#getClassName()
 	 */
 	@Override
-	public Attachment getAttachment() {
-		return this.attachment;
+	@Transient
+	public String getClassName() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return JavaUtils.getHandle(this);
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/**
@@ -81,27 +248,166 @@ public abstract class Archive implements Attachable {
 	 * 
 	 * @return the date
 	 */
-	public byte[] getDate() {
-		return getAttachment().getData();
+	@Transient
+	public byte[] getData() {
+		return getOrigin().getData();
 	}
 	
 	/**
-	 * Sets the attachables.
+	 * Gets the entries.
 	 * 
-	 * @param attachables
-	 *            the attachables to set
+	 * @return the entries
 	 */
-	public void setAttachables(final List<Attachable> attachables) {
-		this.attachables = attachables;
+	@ElementCollection
+	public List<String> getEntries() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.entries;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/**
-	 * Sets the attachment.
+	 * Gets the id.
 	 * 
-	 * @param attachment
-	 *            the attachment to set
+	 * @return the id
 	 */
-	public void setAttachment(final Attachment attachment) {
-		this.attachment = attachment;
+	@Id
+	@GeneratedValue (strategy = GenerationType.AUTO)
+	public int getId() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.id;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
+	
+	/**
+	 * Gets the origin.
+	 * 
+	 * @return the origin
+	 */
+	@ManyToOne (cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+	public Attachment getOrigin() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.origin;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * @return the type
+	 */
+	@Enumerated (EnumType.STRING)
+	public Type getType() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.type;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Sets the entries.
+	 * 
+	 * @param entries
+	 *            the entries to set
+	 */
+	public void setEntries(final List<String> entries) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.entries = entries;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Sets the id.
+	 * 
+	 * @param id
+	 *            the id to set
+	 */
+	public void setId(final int id) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.id = id;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Sets the origin.
+	 * 
+	 * @param origin
+	 *            the origin to set
+	 */
+	public void setOrigin(final Attachment origin) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.origin = origin;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * @param type
+	 *            the type to set
+	 */
+	public void setType(final Type type) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.type = type;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
 }

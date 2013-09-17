@@ -31,7 +31,6 @@ import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.mozkito.mappings.engines.Engine;
-import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.persistence.Annotated;
 import org.mozkito.utilities.commons.JavaUtils;
 
@@ -177,34 +176,6 @@ public class Relation implements Annotated {
 		return this.candidate;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.mapping.model.IMapping#getClass1()
-	 */
-	/**
-	 * Gets the class1.
-	 * 
-	 * @return the class1
-	 */
-	@Transient
-	public String getClass1() {
-		return getCandidate().getClass1();
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.mapping.model.IMapping#getClass2()
-	 */
-	/**
-	 * Gets the class2.
-	 * 
-	 * @return the class2
-	 */
-	@Transient
-	public String getClass2() {
-		return getCandidate().getClass2();
-	}
-	
 	/**
 	 * Gets the simple name of the class.
 	 * 
@@ -278,7 +249,7 @@ public class Relation implements Annotated {
 	 * @return the from
 	 */
 	@Transient
-	public MappableEntity getFrom() {
+	public org.mozkito.persistence.Entity getFrom() {
 		return getCandidate().getFrom();
 	}
 	
@@ -292,7 +263,7 @@ public class Relation implements Annotated {
 	 * @return the to
 	 */
 	@Transient
-	public MappableEntity getTo() {
+	public org.mozkito.persistence.Entity getTo() {
 		return getCandidate().getTo();
 	}
 	

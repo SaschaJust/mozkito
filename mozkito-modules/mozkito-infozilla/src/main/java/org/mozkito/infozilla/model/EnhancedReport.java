@@ -20,12 +20,15 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
+import javax.persistence.Entity;
+
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.mozkito.infozilla.model.attachment.Attachment;
 import org.mozkito.infozilla.model.image.Image;
 import org.mozkito.infozilla.model.itemization.ExpectedBehavior;
+import org.mozkito.infozilla.model.itemization.Listing;
 import org.mozkito.infozilla.model.itemization.ObservedBehavior;
 import org.mozkito.infozilla.model.itemization.StepsToReproduce;
 import org.mozkito.infozilla.model.link.Link;
@@ -33,76 +36,55 @@ import org.mozkito.infozilla.model.log.Log;
 import org.mozkito.infozilla.model.patch.Patch;
 import org.mozkito.infozilla.model.stacktrace.Stacktrace;
 import org.mozkito.issues.model.Report;
+import org.mozkito.persistence.Annotated;
+import org.mozkito.utilities.commons.JavaUtils;
 
 /**
  * The Class EnhancedReport.
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class EnhancedReport {
+@Entity
+public class EnhancedReport implements Annotated {
 	
-	/**
-	 * Parses the.
-	 * 
-	 * @param report
-	 *            the report
-	 * @param enhancedReport
-	 *            the enhanced report
-	 */
-	private static void parse(final Report report,
-	                          final EnhancedReport enhancedReport) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	/** The original report. */
-	Report                       originalReport;
-	
-	/** The modified report. */
-	Report                       modifiedReport;
-	
-	/** The patches. */
-	Collection<Patch>            patches           = new LinkedList<Patch>();
-	
-	/** The images. */
-	Collection<Image>            images            = new LinkedList<Image>();
-	
-	/** The stacktraces. */
-	Collection<Stacktrace>       stacktraces       = new LinkedList<Stacktrace>();
-	
-	/** The code fragments. */
-	Collection<String>           codeFragments     = new LinkedList<>();
-	
-	/** The logs. */
-	Collection<Log>              logs              = new LinkedList<Log>();
-	
-	/** The steps to reproduce. */
-	Collection<StepsToReproduce> stepsToReproduce  = new LinkedList<StepsToReproduce>();
-	
-	/** The observed behaviors. */
-	Collection<ObservedBehavior> observedBehaviors = new LinkedList<ObservedBehavior>();
-	
-	/** The expected behaviors. */
-	Collection<ExpectedBehavior> expectedBehaviors = new LinkedList<ExpectedBehavior>();
-	
-	/** The links. */
-	Collection<Link>             links             = new LinkedList<Link>();
+	/** The Constant serialVersionUID. */
+	private static final long            serialVersionUID  = -6200370567492281526L;
 	
 	/** The attachments. */
-	Map<String, Attachment>      attachments       = new HashMap<String, Attachment>();
+	private Map<String, Attachment>      attachments       = new HashMap<String, Attachment>();
 	
-	/**
-	 * Instantiates a new enhanced report.
-	 * 
-	 * @param report
-	 *            the report
-	 */
-	public EnhancedReport(final Report report) {
-		super();
-		
-		setReport(report);
-		parse(report, this);
-	}
+	/** The code fragments. */
+	private Collection<String>           codeFragments     = new LinkedList<>();
+	
+	/** The expected behaviors. */
+	private Collection<ExpectedBehavior> expectedBehaviors = new LinkedList<ExpectedBehavior>();
+	
+	/** The images. */
+	private Collection<Image>            images            = new LinkedList<Image>();
+	
+	/** The links. */
+	private Collection<Link>             links             = new LinkedList<Link>();
+	
+	/** The listings. */
+	private Collection<Listing>          listings          = new LinkedList<>();
+	
+	/** The logs. */
+	private Collection<Log>              logs              = new LinkedList<Log>();
+	
+	/** The observed behaviors. */
+	private Collection<ObservedBehavior> observedBehaviors = new LinkedList<ObservedBehavior>();
+	
+	/** The original report. */
+	private Report                       originalReport;
+	
+	/** The patches. */
+	private Collection<Patch>            patches           = new LinkedList<Patch>();
+	
+	/** The stacktraces. */
+	private Collection<Stacktrace>       stacktraces       = new LinkedList<Stacktrace>();
+	
+	/** The steps to reproduce. */
+	private Collection<StepsToReproduce> stepsToReproduce  = new LinkedList<StepsToReproduce>();
 	
 	/**
 	 * Gets the attachments.
@@ -111,6 +93,26 @@ public class EnhancedReport {
 	 */
 	public Map<String, Attachment> getAttachments() {
 		return this.attachments;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.persistence.Annotated#getClassName()
+	 */
+	@Override
+	public String getClassName() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return JavaUtils.getHandle(this);
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/**
@@ -157,21 +159,31 @@ public class EnhancedReport {
 	}
 	
 	/**
+	 * Gets the listings.
+	 * 
+	 * @return the listings
+	 */
+	public Collection<Listing> getListings() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.listings;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
 	 * Gets the logs.
 	 * 
 	 * @return the logs
 	 */
 	public Collection<Log> getLogs() {
 		return this.logs;
-	}
-	
-	/**
-	 * Gets the modified report.
-	 * 
-	 * @return the modifiedReport
-	 */
-	public Report getModifiedReport() {
-		return this.modifiedReport;
 	}
 	
 	/**
@@ -288,6 +300,26 @@ public class EnhancedReport {
 	}
 	
 	/**
+	 * Sets the listings.
+	 * 
+	 * @param listings
+	 *            the listings to set
+	 */
+	public void setListings(final Collection<Listing> listings) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.listings = listings;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
 	 * Sets the logs.
 	 * 
 	 * @param logs
@@ -295,16 +327,6 @@ public class EnhancedReport {
 	 */
 	public void setLogs(final Collection<Log> logs) {
 		this.logs = logs;
-	}
-	
-	/**
-	 * Sets the modified report.
-	 * 
-	 * @param modifiedReport
-	 *            the modifiedReport to set
-	 */
-	public void setModifiedReport(final Report modifiedReport) {
-		this.modifiedReport = modifiedReport;
 	}
 	
 	/**

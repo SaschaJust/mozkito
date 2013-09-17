@@ -15,12 +15,12 @@ package org.mozkito.mappings.engines;
 import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 
-import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Relation;
 import org.mozkito.mappings.register.Node;
 import org.mozkito.mappings.requirements.Expression;
-import org.mozkito.utilities.commons.StringUtils;
+import org.mozkito.persistence.FieldKey;
+import org.mozkito.utilities.commons.text.TextUtils;
 
 /**
  * 
@@ -123,26 +123,26 @@ public abstract class Engine extends Node {
 	                             final Object toFieldContent,
 	                             final Object toSubstring) {
 		score.addFeature(confidence,
-		                 StringUtils.truncate(fromFieldName != null
+		                 TextUtils.truncate(fromFieldName != null
 		                                                           ? fromFieldName
 		                                                           : Engine.UNUSED),
-		                 StringUtils.truncate(fromFieldContent != null
+		                 TextUtils.truncate(fromFieldContent != null
 		                                                              ? fromFieldContent.toString()
 		                                                              : Engine.UNKNOWN),
-		                 StringUtils.truncate(fromSubstring != null
+		                 TextUtils.truncate(fromSubstring != null
 		                                                           ? fromSubstring.toString()
-		                                                           : StringUtils.truncate(fromFieldContent != null
+		                                                           : TextUtils.truncate(fromFieldContent != null
 		                                                                                                          ? fromFieldContent.toString()
 		                                                                                                          : Engine.UNKNOWN)),
-		                 StringUtils.truncate(toFieldName != null
+		                 TextUtils.truncate(toFieldName != null
 		                                                         ? toFieldName
 		                                                         : Engine.UNUSED),
-		                 StringUtils.truncate(toFieldContent != null
+		                 TextUtils.truncate(toFieldContent != null
 		                                                            ? toFieldContent.toString()
 		                                                            : Engine.UNKNOWN),
-		                 StringUtils.truncate(toSubstring != null
+		                 TextUtils.truncate(toSubstring != null
 		                                                         ? toSubstring.toString()
-		                                                         : StringUtils.truncate(toFieldContent != null
+		                                                         : TextUtils.truncate(toFieldContent != null
 		                                                                                                      ? toFieldContent.toString()
 		                                                                                                      : Engine.UNKNOWN)),
 		                 getClass());

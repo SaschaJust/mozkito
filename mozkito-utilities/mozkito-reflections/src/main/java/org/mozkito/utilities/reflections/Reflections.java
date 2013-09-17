@@ -14,11 +14,14 @@
 package org.mozkito.utilities.reflections;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
+import sun.reflect.FieldAccessor;
+import sun.reflect.ReflectionFactory;
 
 /**
  * The Class Reflections.
@@ -214,7 +217,13 @@ public class Reflections {
 	}
 	
 	/** The Constant ls. */
-	private static final String ls = System.getProperty("line.separator");
+	private static final String            ls              = System.getProperty("line.separator");
+	
+	/** The Constant MODIFIERS_FIELD. */
+	private static final String            MODIFIERS_FIELD = "modifiers";
+	
+	/** The Constant reflection. */
+	private static final ReflectionFactory reflection      = ReflectionFactory.getReflectionFactory();
 	
 	/**
 	 * Array to string.
@@ -544,6 +553,35 @@ public class Reflections {
 			
 			throw new InstantianException(builder.toString(), e);
 		}
+	}
+	
+	/**
+	 * Sets the static final field.
+	 * 
+	 * @param field
+	 *            the field
+	 * @param value
+	 *            the value
+	 * @throws NoSuchFieldException
+	 *             the no such field exception
+	 * @throws IllegalAccessException
+	 *             the illegal access exception
+	 */
+	public static void setStaticFinalField(final Field field,
+	                                       final Object value) throws NoSuchFieldException, IllegalAccessException {
+		// we mark the field to be public
+		field.setAccessible(true);
+		// next we change the modifier in the Field instance to
+		// not be final anymore, thus tricking reflection into
+		// letting us modify the static final field
+		final Field modifiersField = Field.class.getDeclaredField(MODIFIERS_FIELD);
+		modifiersField.setAccessible(true);
+		int modifiers = modifiersField.getInt(field);
+		// blank out the final bit in the modifiers int
+		modifiers &= ~Modifier.FINAL;
+		modifiersField.setInt(field, modifiers);
+		final FieldAccessor fa = reflection.newFieldAccessor(field, false);
+		fa.set(null, value);
 	}
 	
 	/**

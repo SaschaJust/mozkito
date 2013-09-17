@@ -25,7 +25,6 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.mappings.engines.Engine;
 import org.mozkito.mappings.filters.Filter;
-import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Composite;
 import org.mozkito.mappings.model.Mapping;
@@ -254,19 +253,17 @@ public class Finder {
 	 *            the generic type
 	 * @param <U>
 	 *            the generic type
-	 * @param mappableSource
+	 * @param sourceType
 	 *            the mappable source
-	 * @param mappableTarget
+	 * @param targetType
 	 *            the mappable target
 	 * @return the active selectors
 	 */
-	public <T extends MappableEntity, U extends MappableEntity> Set<Selector> getActiveSelectors(final Class<T> mappableSource,
-	                                                                                             final Class<U> mappableTarget) {
+	public <T extends org.mozkito.persistence.Entity, U extends org.mozkito.persistence.Entity> Set<Selector> getActiveSelectors(final Class<T> sourceType,
+	                                                                                                                             final Class<U> targetType) {
 		if (this.activeSelectors == null) {
 			try {
-				final Class<?> sourceBaseType = mappableSource.newInstance().getBaseType();
-				final Class<?> targetBaseType = mappableTarget.newInstance().getBaseType();
-				this.activeSelectors = findSelectors(sourceBaseType, targetBaseType);
+				this.activeSelectors = findSelectors(sourceType, targetType);
 				return this.activeSelectors;
 			} catch (final Exception e) {
 				throw new UnrecoverableError(e);
@@ -289,14 +286,13 @@ public class Finder {
 	 *            the util
 	 * @return the candidates
 	 */
-	public <T extends MappableEntity> Map<T, Set<Selector>> getCandidates(final MappableEntity source,
-	                                                                      final Class<T> targetClass,
-	                                                                      final PersistenceUtil util) {
+	public <T extends org.mozkito.persistence.Entity> Map<T, Set<Selector>> getCandidates(final org.mozkito.persistence.Entity source,
+	                                                                                      final Class<T> targetClass,
+	                                                                                      final PersistenceUtil util) {
 		final Map<T, Set<Selector>> candidates = new HashMap<>();
 		
 		try {
-			final Set<Selector> activeSelectors = findSelectors(source.getBaseType(),
-			                                                    ((MappableEntity) targetClass.newInstance()).getBaseType());
+			final Set<Selector> activeSelectors = findSelectors(source.getClass(), targetClass);
 			
 			for (final Selector selector : activeSelectors) {
 				if (Logger.logDebug()) {
@@ -509,8 +505,8 @@ public class Finder {
 			throw new UnrecoverableError(Messages.getString("Finder.noSupportedFields", engine.getClassName())); //$NON-NLS-1$
 		}
 		
-		final MappableEntity element1 = relation.getFrom();
-		final MappableEntity element2 = relation.getTo();
+		final org.mozkito.persistence.Entity element1 = relation.getFrom();
+		final org.mozkito.persistence.Entity element2 = relation.getTo();
 		
 		final int check = expression.check(element1.getClass(), element2.getClass());
 		

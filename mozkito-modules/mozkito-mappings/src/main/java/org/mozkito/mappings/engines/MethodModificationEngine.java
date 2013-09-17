@@ -26,9 +26,6 @@ import org.apache.commons.lang.StringUtils;
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.codeanalysis.model.JavaElement;
 import org.mozkito.codeanalysis.model.JavaMethodDefinition;
-import org.mozkito.mappings.mappable.FieldKey;
-import org.mozkito.mappings.mappable.model.MappableChangeSet;
-import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Feature;
 import org.mozkito.mappings.model.Relation;
@@ -38,6 +35,7 @@ import org.mozkito.mappings.requirements.Expression;
 import org.mozkito.mappings.requirements.Index;
 import org.mozkito.mappings.storages.PersistenceStorage;
 import org.mozkito.mappings.storages.Storage;
+import org.mozkito.persistence.FieldKey;
 import org.mozkito.persistence.PPAPersistenceUtil;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.utilities.commons.JavaUtils;
@@ -119,8 +117,8 @@ public class MethodModificationEngine extends Engine {
 		}
 		
 		try {
-			final MappableEntity from = relation.getFrom();
-			final MappableEntity to = relation.getTo();
+			final org.mozkito.persistence.Entity from = relation.getFrom();
+			final org.mozkito.persistence.Entity to = relation.getTo();
 			final PersistenceStorage persistenceStorage = getStorage(PersistenceStorage.class);
 			
 			SANITY: {
@@ -138,7 +136,7 @@ public class MethodModificationEngine extends Engine {
 			final Set<String> subjects = new HashSet<>();
 			
 			final Collection<JavaChangeOperation> changeOperations = PPAPersistenceUtil.getChangeOperation(persistenceUtil,
-			                                                                                               ((MappableChangeSet) from).getChangeSet());
+			                                                                                               (ChangeSet) from);
 			
 			for (final JavaChangeOperation operation : changeOperations) {
 				if (operation.getChangeType().equals(ChangeType.Modified)) {

@@ -25,8 +25,8 @@ import java.util.Set;
 import javax.persistence.Transient;
 
 import org.mozkito.mappings.engines.AuthorEqualityEngineTest;
-import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.mappings.mappable.model.MappableEntity;
+import org.mozkito.persistence.FieldKey;
 import org.mozkito.persons.elements.PersonFactory;
 import org.mozkito.persons.model.Person;
 
@@ -72,7 +72,7 @@ public class Dummy extends MappableEntity {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.mappings.mappable.model.MappableEntity#get(org.mozkito.mappings.mappable.FieldKey)
+	 * @see org.mozkito.mappings.mappable.model.MappableEntity#get(org.mozkito.persistence.FieldKey)
 	 */
 	@SuppressWarnings ("unchecked")
 	@Override
@@ -108,7 +108,7 @@ public class Dummy extends MappableEntity {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.mappings.mappable.model.MappableEntity#get(org.mozkito.mappings.mappable.FieldKey, int)
+	 * @see org.mozkito.mappings.mappable.model.MappableEntity#get(org.mozkito.persistence.FieldKey, int)
 	 */
 	@SuppressWarnings ("unchecked")
 	@Override

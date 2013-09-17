@@ -27,10 +27,10 @@ import org.junit.rules.TestName;
 
 import org.mozkito.mappings.engines.AuthorEqualityEngine;
 import org.mozkito.mappings.engines.Engine;
-import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.model.Candidate;
 import org.mozkito.mappings.model.Relation;
+import org.mozkito.persistence.FieldKey;
 import org.mozkito.utilities.datastructures.Tuple;
 
 /**

@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -31,6 +32,8 @@ import net.ownhero.dev.regex.MultiMatch;
 import net.ownhero.dev.regex.Regex;
 
 import org.mozkito.infozilla.filters.FilterTextRemover;
+import org.mozkito.infozilla.model.source.SourceCode;
+import org.mozkito.infozilla.model.source.SourceCode.Type;
 
 /**
  * The JavaSourceCodeFilter class implements the InfozillaFilter interface for JAVA source code structural elements.
@@ -47,21 +50,44 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 	 *            a List of Code Regions that should be minimized
 	 * @return a minimal inclusion set of Code Regions.
 	 */
-	public static List<CodeRegion> makeMinimalSet(final List<CodeRegion> regionList) {
+	public static List<SourceCode> makeMinimalSet(final List<SourceCode> regionList) {
 		// Create a copy of the Code Region List
-		final List<CodeRegion> sortedRegionList = new ArrayList<CodeRegion>(regionList);
+		final List<SourceCode> sortedRegionList = new ArrayList<SourceCode>(regionList);
 		// Sort it Ascending (by start position)
-		java.util.Collections.sort(sortedRegionList);
+		java.util.Collections.sort(sortedRegionList, new Comparator<SourceCode>() {
+			
+			/**
+			 * {@inheritDoc}
+			 * 
+			 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+			 */
+			@Override
+			public int compare(final SourceCode o1,
+			                   final SourceCode o2) {
+				PRECONDITIONS: {
+					// none
+				}
+				
+				try {
+					return o1.getStartPosition().compareTo(o2.getStartPosition());
+				} finally {
+					POSTCONDITIONS: {
+						// none
+					}
+				}
+			}
+		});
+		
 		// This will hold the minimal set
-		final List<CodeRegion> minimalSet = new ArrayList<CodeRegion>();
+		final List<SourceCode> minimalSet = new ArrayList<SourceCode>();
 		
 		// For each Element, see if it is contained in any previous element
 		for (int i = 0; i < sortedRegionList.size(); i++) {
-			final CodeRegion thisRegion = sortedRegionList.get(i);
+			final SourceCode thisRegion = sortedRegionList.get(i);
 			boolean contained = false;
 			for (int j = 0; j < i; j++) {
-				final CodeRegion thatRegion = sortedRegionList.get(j);
-				if (thatRegion.end >= thisRegion.end) {
+				final SourceCode thatRegion = sortedRegionList.get(j);
+				if (thatRegion.getEndPosition() >= thisRegion.getEndPosition()) {
 					contained = true;
 				}
 			}
@@ -159,6 +185,15 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 		return 0;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.infozilla.filters.sourcecode.SourceCodeFilter#getOutputText()
+	 */
+	@Override
+	public String getOutputText() {
+		return this.textRemover.doDelete();
+	}
+	
 	/**
 	 * Get a List of Source Code Regions contained in a given Text {@link s}.
 	 * 
@@ -166,11 +201,11 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 	 *            the Text we shall look inside for Source Code
 	 * @param minimalSet
 	 *            the minimal set
-	 * @return a List of Source Code Occurences as {@link CodeRegion}s
+	 * @return a List of Source Code Occurences as {@link SourceCode}s
 	 */
-	private List<CodeRegion> getCodeRegions(final String s,
+	private List<SourceCode> getSourceCodes(final String s,
 	                                        final boolean minimalSet) {
-		final List<CodeRegion> codeRegions = new ArrayList<CodeRegion>();
+		final List<SourceCode> codeRegions = new ArrayList<SourceCode>();
 		// for each keyword-pattern pair find the corresponding occurences!
 		for (final String keyword : this.codePatterns.keySet()) {
 			this.codePatterns.get(keyword);
@@ -181,10 +216,10 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 				
 				for (final Match matches : list) {
 					final int offset = findMatch(s, '{', '}', matches.getFullMatch().end());
-					final CodeRegion foundRegion = new CodeRegion(matches.getFullMatch().start(),
-					                                              matches.getFullMatch().end() + offset, keyword,
-					                                              s.substring(matches.getFullMatch().start(),
-					                                                          matches.getFullMatch().end() + offset));
+					final SourceCode foundRegion = new SourceCode(s.substring(matches.getFullMatch().start(),
+					                                                          matches.getFullMatch().end() + offset),
+					                                              Type.JAVA, matches.getFullMatch().start(),
+					                                              matches.getFullMatch().end() + offset);
 					codeRegions.add(foundRegion);
 				}
 			} else {
@@ -192,9 +227,9 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 				final MultiMatch list = regex.findAll(s);
 				
 				for (final Match matches : list) {
-					final CodeRegion foundRegion = new CodeRegion(matches.getFullMatch().start(),
-					                                              matches.getFullMatch().end(), keyword,
-					                                              matches.getFullMatch().getMatch());
+					final SourceCode foundRegion = new SourceCode(matches.getFullMatch().getMatch(), Type.JAVA,
+					                                              matches.getFullMatch().start(),
+					                                              matches.getFullMatch().end());
 					codeRegions.add(foundRegion);
 				}
 			}
@@ -205,15 +240,6 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 			return makeMinimalSet(codeRegions);
 		}
 		return codeRegions;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.infozilla.filters.sourcecode.SourceCodeFilter#getOutputText()
-	 */
-	@Override
-	public String getOutputText() {
-		return this.textRemover.doDelete();
 	}
 	
 	/**
@@ -287,7 +313,7 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 	 * @see org.mozkito.infozilla.filters.sourcecode.SourceCodeFilter#runFilter(java.lang.String)
 	 */
 	@Override
-	public List<CodeRegion> runFilter(final String inputText) {
+	public List<SourceCode> runFilter(final String inputText) {
 		// Initialize a TextRemover
 		this.textRemover = new FilterTextRemover(inputText);
 		
@@ -295,11 +321,11 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 		// want the minimal set
 		// which means the outer most syntactical elements spanning all the
 		// discovered code.
-		final List<CodeRegion> codeRegions = getCodeRegions(inputText, true);
+		final List<SourceCode> codeRegions = getSourceCodes(inputText, true);
 		
 		// Mark the found Regions for deletion
-		for (final CodeRegion region : codeRegions) {
-			this.textRemover.markForDeletion(region.start, region.end);
+		for (final SourceCode region : codeRegions) {
+			this.textRemover.markForDeletion(region.getStartPosition(), region.getEndPosition());
 		}
 		
 		// Return the found source code regions

@@ -15,8 +15,6 @@ package org.mozkito.mappings.requirements;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.mozkito.mappings.mappable.model.MappableEntity;
-
 /**
  * The not expression evaluates to true if the inner expression evaluates to false. Evaluates to true otherwise.
  * 
@@ -44,8 +42,8 @@ public class Not extends Expression {
 	 * org.mozkito.mapping.requirements.Index)
 	 */
 	@Override
-	public boolean check(final Class<? extends MappableEntity> target1,
-	                     final Class<? extends MappableEntity> target2,
+	public boolean check(final Class<? extends org.mozkito.persistence.Entity> target1,
+	                     final Class<? extends org.mozkito.persistence.Entity> target2,
 	                     final Index oneEquals) {
 		return !this.expression.check(target1, target2, oneEquals);
 	}
@@ -65,8 +63,8 @@ public class Not extends Expression {
 	 * org.mozkito.mapping.requirements.Index)
 	 */
 	@Override
-	public List<Expression> getFailureCause(final Class<? extends MappableEntity> target1,
-	                                        final Class<? extends MappableEntity> target2,
+	public List<Expression> getFailureCause(final Class<? extends org.mozkito.persistence.Entity> target1,
+	                                        final Class<? extends org.mozkito.persistence.Entity> target2,
 	                                        final Index oneEquals) {
 		final List<Expression> failureCause = this.expression.getFailureCause(target1, target2, oneEquals);
 		if (failureCause == null) {

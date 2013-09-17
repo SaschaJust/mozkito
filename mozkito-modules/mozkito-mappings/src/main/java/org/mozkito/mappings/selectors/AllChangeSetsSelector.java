@@ -21,8 +21,6 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 
-import org.mozkito.mappings.mappable.model.MappableChangeSet;
-import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
@@ -69,9 +67,9 @@ public class AllChangeSetsSelector extends Selector {
 	 */
 	@SuppressWarnings ("unchecked")
 	@Override
-	public <T extends MappableEntity> List<T> parse(final MappableEntity element,
-	                                                final Class<T> targetType,
-	                                                final PersistenceUtil util) {
+	public <T extends org.mozkito.persistence.Entity> List<T> parse(final org.mozkito.persistence.Entity element,
+	                                                                final Class<T> targetType,
+	                                                                final PersistenceUtil util) {
 		final List<T> list = new LinkedList<T>();
 		final Criteria<ChangeSet> criteria = util.createCriteria(ChangeSet.class);
 		final List<ChangeSet> loadedList = util.load(criteria);
@@ -79,8 +77,8 @@ public class AllChangeSetsSelector extends Selector {
 		list.addAll(CollectionUtils.collect(loadedList, new Transformer() {
 			
 			@Override
-			public MappableChangeSet transform(final Object input) {
-				return new MappableChangeSet((ChangeSet) input);
+			public ChangeSet transform(final Object input) {
+				return (ChangeSet) input;
 			}
 		}));
 		

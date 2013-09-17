@@ -26,6 +26,8 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import org.mozkito.infozilla.filters.enumeration.Enumeration;
+import org.mozkito.infozilla.filters.enumeration.EnumerationEntry;
 import org.mozkito.utilities.io.FileUtils;
 
 /**

@@ -24,8 +24,6 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.util.Version;
 
-import org.mozkito.mappings.mappable.FieldKey;
-import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Feature;
 import org.mozkito.mappings.model.Relation;
@@ -34,6 +32,7 @@ import org.mozkito.mappings.requirements.Atom;
 import org.mozkito.mappings.requirements.Expression;
 import org.mozkito.mappings.requirements.Index;
 import org.mozkito.mappings.storages.LuceneStorage;
+import org.mozkito.persistence.FieldKey;
 
 /**
  * The Class SummarySearchEngine.
@@ -79,8 +78,8 @@ public class SummarySearchEngine extends SearchEngine {
 		}
 		
 		try {
-			final MappableEntity from = relation.getFrom();
-			final MappableEntity to = relation.getTo();
+			final org.mozkito.persistence.Entity from = relation.getFrom();
+			final org.mozkito.persistence.Entity to = relation.getTo();
 			
 			SANITY: {
 				assert from != null;

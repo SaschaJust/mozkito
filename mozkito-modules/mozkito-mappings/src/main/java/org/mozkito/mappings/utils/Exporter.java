@@ -26,7 +26,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.mozkito.issues.model.Report;
-import org.mozkito.mappings.mappable.model.MappableChangeSet;
 import org.mozkito.mappings.model.Mapping;
 import org.mozkito.persistence.DatabaseEnvironment;
 import org.mozkito.persistence.OpenJPAUtil;
@@ -114,8 +113,8 @@ public class Exporter {
 		
 		for (final Mapping mapping : list) {
 			// we assume, that we created a mapping from Reports to ChangeSets
-			assert mapping.getFrom().getBaseType() == Report.class;
-			assert mapping.getTo().getBaseType() == ChangeSet.class;
+			assert mapping.getFrom().getClass() == Report.class;
+			assert mapping.getTo().getClass() == ChangeSet.class;
 			
 			final MappableChangeSet mChangeSet = (MappableChangeSet) mapping.getTo();
 			assert mChangeSet != null;

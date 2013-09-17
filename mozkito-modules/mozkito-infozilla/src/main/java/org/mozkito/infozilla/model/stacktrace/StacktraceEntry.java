@@ -13,6 +13,14 @@
 
 package org.mozkito.infozilla.model.stacktrace;
 
+import javax.persistence.Basic;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Transient;
+
+import org.mozkito.persistence.Annotated;
 import org.mozkito.utilities.commons.JavaUtils;
 
 /**
@@ -20,42 +28,237 @@ import org.mozkito.utilities.commons.JavaUtils;
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public abstract class StacktraceEntry {
+@Entity
+public class StacktraceEntry implements Annotated {
+	
+	/** The Constant serialVersionUID. */
+	private static final long serialVersionUID = 2798770015254567673L;
+	
+	/** The entry class name. */
+	private String            entryClassName;
+	
+	/** The file name. */
+	private String            fileName;
+	
+	/** The id. */
+	private int               id;
+	
+	/** The line number. */
+	private Integer           lineNumber;
+	
+	/** The method name. */
+	private String            methodName;
 	
 	/**
 	 * Gets the simple name of the class.
 	 * 
 	 * @return the simple name of the class.
 	 */
+	@Override
+	@Transient
 	public final String getClassName() {
 		return JavaUtils.getHandle(StacktraceEntry.class);
 	}
 	
 	/**
-	 * Gets the class name.
+	 * Gets the entry class name.
 	 * 
-	 * @return the class name
+	 * @return the entryClassName
 	 */
-	public abstract String getEntryClassName();
+	@Basic
+	public String getEntryClassName() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.entryClassName;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
 	
 	/**
 	 * Gets the file name.
 	 * 
-	 * @return the file name
+	 * @return the fileName
 	 */
-	public abstract String getFileName();
+	@Basic
+	public String getFileName() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.fileName;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Gets the id.
+	 * 
+	 * @return the id
+	 */
+	@Id
+	@GeneratedValue (strategy = GenerationType.AUTO)
+	public int getId() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.id;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
 	
 	/**
 	 * Gets the line number.
 	 * 
-	 * @return the line number
+	 * @return the lineNumber
 	 */
-	public abstract String getLineNumber();
+	@Basic
+	public Integer getLineNumber() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.lineNumber;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
 	
 	/**
 	 * Gets the method name.
 	 * 
-	 * @return the method name
+	 * @return the methodName
 	 */
-	public abstract String getMethodName();
+	@Basic
+	public String getMethodName() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.methodName;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Sets the entry class name.
+	 * 
+	 * @param entryClassName
+	 *            the entryClassName to set
+	 */
+	public void setEntryClassName(final String entryClassName) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.entryClassName = entryClassName;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Sets the file name.
+	 * 
+	 * @param fileName
+	 *            the fileName to set
+	 */
+	public void setFileName(final String fileName) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.fileName = fileName;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Sets the id.
+	 * 
+	 * @param id
+	 *            the id to set
+	 */
+	public void setId(final int id) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.id = id;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Sets the line number.
+	 * 
+	 * @param lineNumber
+	 *            the lineNumber to set
+	 */
+	public void setLineNumber(final Integer lineNumber) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.lineNumber = lineNumber;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Sets the method name.
+	 * 
+	 * @param methodName
+	 *            the methodName to set
+	 */
+	public void setMethodName(final String methodName) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.methodName = methodName;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
 }

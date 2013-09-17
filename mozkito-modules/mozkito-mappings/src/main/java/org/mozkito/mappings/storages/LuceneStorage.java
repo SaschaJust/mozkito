@@ -23,6 +23,7 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
@@ -33,10 +34,10 @@ import org.apache.lucene.util.Version;
 
 import org.mozkito.issues.model.Comment;
 import org.mozkito.issues.model.Report;
-import org.mozkito.mappings.mappable.FieldKey;
-import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.persistence.Criteria;
+import org.mozkito.persistence.FieldKey;
+import org.mozkito.persistence.IteratableFieldKey;
 import org.mozkito.persistence.PersistenceUtil;
 
 /**
@@ -52,32 +53,32 @@ import org.mozkito.persistence.PersistenceUtil;
 public class LuceneStorage extends Storage {
 	
 	/** The analyzer. */
-	private Analyzer                              analyzer         = null;
+	private Analyzer                                              analyzer         = null;
 	
 	/** The report directory. */
-	private final Directory                       reportDirectory  = new RAMDirectory();
+	private final Directory                                       reportDirectory  = new RAMDirectory();
 	
 	/** The iwriter reports. */
-	private IndexWriter                           iwriterReports   = null;
+	private IndexWriter                                           iwriterReports   = null;
 	
 	/** The report documents. */
-	private final HashMap<String, Document>       reportDocuments  = new HashMap<String, Document>();
+	private final HashMap<String, Document>                       reportDocuments  = new HashMap<String, Document>();
 	
 	/** The isearcher reports. */
-	private IndexSearcher                         isearcherReports = null;
+	private IndexSearcher                                         isearcherReports = null;
 	
 	/** The one type. */
-	private final Class<? extends MappableEntity> oneType;
+	private final Class<? extends org.mozkito.persistence.Entity> oneType;
 	
 	/** The other type. */
-	private final Class<? extends MappableEntity> otherType;
+	private final Class<? extends org.mozkito.persistence.Entity> otherType;
 	
 	/** The Constant DESCRIPTION. */
-	public static final String                    DESCRIPTION      = Messages.getString("LuceneStorage.description"); //$NON-NLS-1$
-	                                                                                                                  
+	public static final String                                    DESCRIPTION      = Messages.getString("LuceneStorage.description"); //$NON-NLS-1$
+	                                                                                                                                  
 	/** The Constant TAG. */
-	public static final String                    TAG              = "lucene";                                       //$NON-NLS-1$
-	                                                                                                                  
+	public static final String                                    TAG              = "lucene";                                       //$NON-NLS-1$
+	                                                                                                                                  
 	/**
 	 * Instantiates a new lucene storage.
 	 */
@@ -94,7 +95,8 @@ public class LuceneStorage extends Storage {
 	 * @param other
 	 *            the other
 	 */
-	public LuceneStorage(final Class<? extends MappableEntity> one, final Class<? extends MappableEntity> other) {
+	public LuceneStorage(final Class<? extends org.mozkito.persistence.Entity> one,
+	        final Class<? extends org.mozkito.persistence.Entity> other) {
 		this.oneType = one;
 		this.otherType = other;
 	}
@@ -107,12 +109,12 @@ public class LuceneStorage extends Storage {
 	 */
 	private void addReportDocument(final Report report) {
 		final Document doc = new Document();
-		doc.add(new Field(FieldKey.SUMMARY.name(), report.getSummary(), Field.Store.YES, Field.Index.ANALYZED));
-		doc.add(new Field(FieldKey.DESCRIPTION.name(), report.getDescription(), Field.Store.YES, Field.Index.ANALYZED));
-		doc.add(new Field(FieldKey.ID.name(), report.getId(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+		doc.add(new TextField(FieldKey.SUMMARY.name(), report.getSummary(), Field.Store.YES));
+		doc.add(new TextField(FieldKey.DESCRIPTION.name(), report.getDescription(), Field.Store.YES));
+		doc.add(new TextField(FieldKey.ID.name(), report.getId(), Field.Store.YES));
 		
 		for (final Comment comment : report.getComments()) {
-			doc.add(new Field(FieldKey.COMMENT.name(), comment.getMessage(), Field.Store.YES, Field.Index.ANALYZED));
+			doc.add(new TextField(IteratableFieldKey.COMMENTS.name(), comment.getMessage(), Field.Store.YES));
 		}
 		
 		this.reportDocuments.put(report.getId(), doc);
@@ -170,7 +172,7 @@ public class LuceneStorage extends Storage {
 	 * 
 	 * @return the oneType
 	 */
-	public final Class<? extends MappableEntity> getOneType() {
+	public final Class<? extends org.mozkito.persistence.Entity> getOneType() {
 		PRECONDITIONS: {
 			// none
 		}
@@ -189,7 +191,7 @@ public class LuceneStorage extends Storage {
 	 * 
 	 * @return the otherType
 	 */
-	public final Class<? extends MappableEntity> getOtherType() {
+	public final Class<? extends org.mozkito.persistence.Entity> getOtherType() {
 		PRECONDITIONS: {
 			// none
 		}
@@ -266,7 +268,7 @@ public class LuceneStorage extends Storage {
 	 */
 	public void setAnalyzer(final Analyzer analyzer) {
 		this.analyzer = analyzer;
-		final IndexWriterConfig indexWriterConfig = new IndexWriterConfig(Version.LUCENE_31, analyzer);
+		final IndexWriterConfig indexWriterConfig = new IndexWriterConfig(Version.LUCENE_42, analyzer);
 		try {
 			this.iwriterReports = new IndexWriter(this.reportDirectory, indexWriterConfig);
 		} catch (final Exception e) {

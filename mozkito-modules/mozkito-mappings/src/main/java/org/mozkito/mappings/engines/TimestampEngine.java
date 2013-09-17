@@ -27,9 +27,6 @@ import org.mozkito.issues.elements.Resolution;
 import org.mozkito.issues.model.History;
 import org.mozkito.issues.model.HistoryElement;
 import org.mozkito.issues.model.Report;
-import org.mozkito.mappings.mappable.FieldKey;
-import org.mozkito.mappings.mappable.model.MappableEntity;
-import org.mozkito.mappings.mappable.model.MappableReport;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Feature;
 import org.mozkito.mappings.model.Relation;
@@ -37,6 +34,7 @@ import org.mozkito.mappings.requirements.And;
 import org.mozkito.mappings.requirements.Atom;
 import org.mozkito.mappings.requirements.Expression;
 import org.mozkito.mappings.requirements.Index;
+import org.mozkito.persistence.FieldKey;
 import org.mozkito.persistence.model.EnumTuple;
 import org.mozkito.utilities.datastructures.Tuple;
 
@@ -125,8 +123,8 @@ public class TimestampEngine extends Engine {
 		}
 		
 		try {
-			final MappableEntity from = relation.getFrom();
-			final MappableEntity to = relation.getTo();
+			final org.mozkito.persistence.Entity from = relation.getFrom();
+			final org.mozkito.persistence.Entity to = relation.getTo();
 			
 			SANITY: {
 				assert from != null;
@@ -147,8 +145,8 @@ public class TimestampEngine extends Engine {
 			if ((element1Timestamp != null) && (element2CreationTimestamp != null)
 			        && (element2ResolutionTimestamp != null)) {
 				
-				ClassCondition.instance(to, MappableReport.class, "Required due to 'supported()' expression."); //$NON-NLS-1$
-				final Report report = ((MappableReport) to).getReport();
+				ClassCondition.instance(to, Report.class, "Required due to 'supported()' expression."); //$NON-NLS-1$
+				final Report report = (Report) to;
 				Condition.notNull(report, "Local variable '%s' in '%s:%s'.", "report", getClassName(), "score"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				
 				final Interval localInterval = new Interval(element1Timestamp.plus(getInterval().getStartMillis()),

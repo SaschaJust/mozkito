@@ -19,7 +19,6 @@ import java.util.regex.MatchResult;
 import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.infozilla.filters.FilterTextRemover;
-import org.mozkito.infozilla.model.stacktrace.JavaStacktrace;
 import org.mozkito.infozilla.model.stacktrace.Stacktrace;
 
 /**
@@ -57,7 +56,7 @@ public class JavaStacktraceFilter extends StackTraceFilter {
 	 *            operation!
 	 * @return a Stacktrace as represented by the given String
 	 */
-	private JavaStacktrace createCause(final String stackTraceMatchGroup) {
+	private Stacktrace createCause(final String stackTraceMatchGroup) {
 		// String exception = "";
 		// String reason = "";
 		// List<String> foundFrames = new ArrayList<String>();
@@ -107,7 +106,7 @@ public class JavaStacktraceFilter extends StackTraceFilter {
 	 *            operation!
 	 * @return a Stacktrace as represented by the given String
 	 */
-	private JavaStacktrace createTrace(final String stackTraceMatchGroup) {
+	private Stacktrace createTrace(final String stackTraceMatchGroup) {
 		// String exception = "";
 		// String reason = "";
 		// List<String> foundFrames = new ArrayList<String>();
@@ -277,18 +276,18 @@ public class JavaStacktraceFilter extends StackTraceFilter {
 				// Check if it is a cause or not
 				if (matchText.trim().startsWith("Caused by:")) {
 					// Create a cause
-					final JavaStacktrace cause = createCause(matchText);
+					final Stacktrace cause = createCause(matchText);
 					// Add it to the List of Stack Traces
-					cause.setTraceStart(traceStart);
-					cause.setTraceEnd(traceEnd);
+					cause.setStartPosition(traceStart);
+					cause.setEndPosition(traceEnd);
 					stackTraces.add(cause);
 					
 				} else {
 					// Create a trace
-					final JavaStacktrace trace = createTrace(matchText);
+					final Stacktrace trace = createTrace(matchText);
 					// Add it to the List of Stack Traces
-					trace.setTraceStart(traceStart);
-					trace.setTraceEnd(traceEnd);
+					trace.setStartPosition(traceStart);
+					trace.setEndPosition(traceEnd);
 					stackTraces.add(trace);
 				}
 			}
@@ -317,18 +316,18 @@ public class JavaStacktraceFilter extends StackTraceFilter {
 				// Check if it is a cause or not
 				if (matchText.trim().startsWith("Caused by:")) {
 					// Create a cause
-					final JavaStacktrace cause = createCause(matchText);
+					final Stacktrace cause = createCause(matchText);
 					// Add it to the List of Stack Traces
-					cause.setTraceStart(traceStart);
-					cause.setTraceEnd(traceEnd);
+					cause.setStartPosition(traceStart);
+					cause.setEndPosition(traceEnd);
 					stackTraces.add(cause);
 					
 				} else {
 					// Create a trace
-					final JavaStacktrace trace = createTrace(matchText);
+					final Stacktrace trace = createTrace(matchText);
 					// Add it to the List of Stack Traces
-					trace.setTraceStart(traceStart);
-					trace.setTraceEnd(traceEnd);
+					trace.setStartPosition(traceStart);
+					trace.setEndPosition(traceEnd);
 					stackTraces.add(trace);
 				}
 			}

@@ -21,8 +21,6 @@ import org.apache.commons.collections.Transformer;
 import org.mozkito.issues.elements.Type;
 import org.mozkito.issues.model.EnhancedReport;
 import org.mozkito.issues.model.Report;
-import org.mozkito.mappings.mappable.model.MappableEntity;
-import org.mozkito.mappings.mappable.model.MappableReport;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
@@ -58,14 +56,15 @@ public class ClassifiedReportSelector extends Selector {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.mappings.selectors.Selector#parse(org.mozkito.mappings.mappable.model.MappableEntity,
+	 * @see
+	 * org.mozkito.mappings.selectors.Selector#parse(org.mozkito.mappings.mappable.model.org.mozkito.persistence.Entity,
 	 * java.lang.Class, org.mozkito.persistence.PersistenceUtil)
 	 */
 	@SuppressWarnings ("unchecked")
 	@Override
-	public <T extends MappableEntity> List<T> parse(final MappableEntity entity,
-	                                                final Class<T> targetType,
-	                                                final PersistenceUtil util) {
+	public <T extends org.mozkito.persistence.Entity> List<T> parse(final org.mozkito.persistence.Entity entity,
+	                                                                final Class<T> targetType,
+	                                                                final PersistenceUtil util) {
 		// PRECONDITIONS
 		
 		try {
@@ -88,8 +87,8 @@ public class ClassifiedReportSelector extends Selector {
 			list.addAll(CollectionUtils.collect(load, new Transformer() {
 				
 				@Override
-				public MappableReport transform(final Object input) {
-					return new MappableReport((Report) input);
+				public Report transform(final Object input) {
+					return (Report) input;
 				}
 			}));
 			

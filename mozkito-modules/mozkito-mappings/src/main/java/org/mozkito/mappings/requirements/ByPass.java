@@ -15,11 +15,9 @@ package org.mozkito.mappings.requirements;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.mozkito.mappings.mappable.model.MappableEntity;
-
 /**
  * The Class ByPass.
- *
+ * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 public final class ByPass extends Expression {
@@ -30,8 +28,8 @@ public final class ByPass extends Expression {
 	 * org.mozkito.mapping.requirements.Index)
 	 */
 	@Override
-	public boolean check(final Class<? extends MappableEntity> target1,
-	                     final Class<? extends MappableEntity> target2,
+	public boolean check(final Class<? extends org.mozkito.persistence.Entity> target1,
+	                     final Class<? extends org.mozkito.persistence.Entity> target2,
 	                     final Index oneEquals) {
 		// PRECONDITIONS
 		
@@ -48,8 +46,8 @@ public final class ByPass extends Expression {
 	 * org.mozkito.mapping.requirements.Index)
 	 */
 	@Override
-	public List<Expression> getFailureCause(final Class<? extends MappableEntity> target1,
-	                                        final Class<? extends MappableEntity> target2,
+	public List<Expression> getFailureCause(final Class<? extends org.mozkito.persistence.Entity> target1,
+	                                        final Class<? extends org.mozkito.persistence.Entity> target2,
 	                                        final Index oneEquals) {
 		// PRECONDITIONS
 		

@@ -18,8 +18,6 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 
-import org.mozkito.mappings.mappable.FieldKey;
-import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Feature;
 import org.mozkito.mappings.model.Relation;
@@ -27,6 +25,7 @@ import org.mozkito.mappings.requirements.And;
 import org.mozkito.mappings.requirements.Atom;
 import org.mozkito.mappings.requirements.Expression;
 import org.mozkito.mappings.requirements.Index;
+import org.mozkito.persistence.FieldKey;
 
 /**
  * This engine scores if the 'to' entity contains a reference to the 'from' entity in the body text.
@@ -141,8 +140,8 @@ public class BackrefEngine extends Engine {
 		}
 		
 		try {
-			final MappableEntity from = relation.getFrom();
-			final MappableEntity to = relation.getTo();
+			final org.mozkito.persistence.Entity from = relation.getFrom();
+			final org.mozkito.persistence.Entity to = relation.getTo();
 			
 			SANITY: {
 				assert from != null;
@@ -150,9 +149,9 @@ public class BackrefEngine extends Engine {
 			}
 			
 			final String fullText = to.getText();
-			final String id = from.getId();
+			final String id = from.getIDString();
 			
-			final double localConfidence = compute(from.getId(), from.getText(), to.getId(), to.getText());
+			final double localConfidence = compute(from.getIDString(), from.getText(), to.getIDString(), to.getText());
 			
 			// add results
 			addFeature(relation, localConfidence, FieldKey.ID.name(), id, id, "FULLTEXT", fullText, fullText); //$NON-NLS-1$

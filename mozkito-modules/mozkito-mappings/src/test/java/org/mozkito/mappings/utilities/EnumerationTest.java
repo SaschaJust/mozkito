@@ -32,8 +32,8 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import org.mozkito.mappings.utils.Enumeration;
-import org.mozkito.mappings.utils.EnumerationEntry;
+import org.mozkito.infozilla.filters.enumeration.Enumeration;
+import org.mozkito.infozilla.filters.enumeration.EnumerationEntry;
 import org.mozkito.utilities.commons.JavaUtils;
 import org.mozkito.utilities.io.FileUtils;
 
@@ -99,7 +99,7 @@ public class EnumerationTest {
 	}
 	
 	/**
-	 * Test method for {@link org.mozkito.mappings.utils.Enumeration#extract(java.lang.String)}.
+	 * Test method for {@link org.mozkito.infozilla.filters.enumeration.Enumeration#extract(java.lang.String)}.
 	 */
 	@Test
 	@Ignore
@@ -163,7 +163,7 @@ public class EnumerationTest {
 	}
 	
 	/**
-	 * Test method for {@link org.mozkito.mappings.utils.Enumeration#extract(java.lang.String, int, int)}.
+	 * Test method for {@link org.mozkito.infozilla.filters.enumeration.Enumeration#extract(java.lang.String, int, int)}.
 	 */
 	@Test
 	@Ignore
@@ -174,7 +174,7 @@ public class EnumerationTest {
 	/**
 	 * Test method for.
 	 * 
-	 * {@link org.mozkito.mappings.utils.Enumeration#extract(java.lang.String, org.mozkito.mappings.utils.Enumeration.Type[])}
+	 * {@link org.mozkito.infozilla.filters.enumeration.Enumeration#extract(java.lang.String, org.mozkito.infozilla.filters.enumeration.Enumeration.Type[])}
 	 * .
 	 */
 	@Test
@@ -186,7 +186,7 @@ public class EnumerationTest {
 	/**
 	 * Test method for.
 	 * 
-	 * {@link org.mozkito.mappings.utils.Enumeration#extract(java.lang.String, org.mozkito.mappings.utils.Enumeration.Type[], int, int)}
+	 * {@link org.mozkito.infozilla.filters.enumeration.Enumeration#extract(java.lang.String, org.mozkito.infozilla.filters.enumeration.Enumeration.Type[], int, int)}
 	 * .
 	 */
 	@Test

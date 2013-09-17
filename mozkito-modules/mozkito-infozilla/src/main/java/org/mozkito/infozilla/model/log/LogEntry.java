@@ -15,56 +15,109 @@
  */
 package org.mozkito.infozilla.model.log;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Date;
 
-import net.ownhero.dev.regex.Regex;
+import javax.persistence.Basic;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.joda.time.DateTime;
+
+import org.mozkito.persistence.Annotated;
+import org.mozkito.utilities.commons.JavaUtils;
 
 /**
  * The Class LogEntry.
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class LogEntry {
+@Entity
+public class LogEntry implements Annotated {
 	
-	/** The tokens. */
-	Map<String, String> tokens = new HashMap<String, String>();
+	/**
+     * 
+     */
+	private static final long serialVersionUID = -966097018041268855L;
 	
-	/** The timestamp. */
-	DateTime            timestamp;
+	/** The id. */
+	private int               id;
 	
 	/** The line. */
-	String              line;
+	private String            line;
+	
+	/** The timestamp. */
+	private DateTime          timestamp;
 	
 	/**
 	 * Instantiates a new log entry.
 	 * 
-	 * @param regex
-	 *            the regex
-	 * @param string
-	 *            the string
+	 * @param line
+	 *            the line
+	 * @param timestamp
+	 *            the timestamp
 	 */
-	public LogEntry(final Regex regex, final String string) {
-		regex.find(string);
-		for (final String groupName : regex.getGroupNames()) {
-			this.tokens.put(groupName, regex.getGroup(groupName));
-		}
-		setTimestamp(buildTimestamp(regex));
-		setLine(string);
+	public LogEntry(final String line, final DateTime timestamp) {
+		setTimestamp(timestamp);
+		setLine(line);
 	}
 	
 	/**
-	 * Builds the timestamp.
+	 * {@inheritDoc}
 	 * 
-	 * @param regex
-	 *            the regex
-	 * @return the date time
+	 * @see org.mozkito.persistence.Annotated#getClassName()
 	 */
-	private DateTime buildTimestamp(final Regex regex) {
-		// TODO Auto-generated method stub
-		return new DateTime();
+	@Override
+	public String getClassName() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return JavaUtils.getHandle(this);
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Gets the id.
+	 * 
+	 * @return the id
+	 */
+	@Id
+	@GeneratedValue (strategy = GenerationType.AUTO)
+	public int getId() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.id;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Gets the java timestamp.
+	 * 
+	 * @return the java timestamp
+	 */
+	@Deprecated
+	@Temporal (TemporalType.TIMESTAMP)
+	public Date getJavaTimestamp() {
+		return getTimestamp() != null
+		                             ? getTimestamp().toDate()
+		                             : null;
 	}
 	
 	/**
@@ -72,6 +125,7 @@ public class LogEntry {
 	 * 
 	 * @return the line
 	 */
+	@Basic
 	public String getLine() {
 		return this.line;
 	}
@@ -81,17 +135,42 @@ public class LogEntry {
 	 * 
 	 * @return the timestamp
 	 */
+	@Transient
 	public DateTime getTimestamp() {
 		return this.timestamp;
 	}
 	
 	/**
-	 * Gets the tokens.
+	 * Sets the id.
 	 * 
-	 * @return the tokens
+	 * @param id
+	 *            the id to set
 	 */
-	public Map<String, String> getTokens() {
-		return this.tokens;
+	public void setId(final int id) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.id = id;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Sets the java timestamp.
+	 * 
+	 * @param date
+	 *            the new java timestamp
+	 */
+	@Deprecated
+	public void setJavaTimestamp(final Date date) {
+		setTimestamp(date != null
+		                         ? new DateTime(date)
+		                         : null);
 	}
 	
 	/**
@@ -114,13 +193,4 @@ public class LogEntry {
 		this.timestamp = timestamp;
 	}
 	
-	/**
-	 * Sets the tokens.
-	 * 
-	 * @param tokens
-	 *            the tokens to set
-	 */
-	public void setTokens(final Map<String, String> tokens) {
-		this.tokens = tokens;
-	}
 }

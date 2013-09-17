@@ -15,80 +15,74 @@
  */
 package org.mozkito.infozilla.model.patch;
 
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+
 import net.ownhero.dev.regex.Regex;
 
-import org.mozkito.infozilla.model.Attachable;
-import org.mozkito.infozilla.model.Inlineable;
+import org.joda.time.DateTime;
+
+import org.mozkito.infozilla.elements.Attachable;
+import org.mozkito.infozilla.elements.Inlineable;
 import org.mozkito.infozilla.model.attachment.Attachment;
+import org.mozkito.persistence.Annotated;
+import org.mozkito.utilities.commons.JavaUtils;
 
 /**
  * The Class UnifiedDiff.
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class Patch implements Attachable, Inlineable {
+@Entity
+public class Patch implements Annotated, Attachable, Inlineable {
 	
-	/** The Constant INDEX_OFFSET. */
-	private static final int      INDEX_OFFSET = 7;
-	
-	/** The index. */
-	private String                index        = "";
-	
-	/** The original file. */
-	private String                originalFile = "";
-	
-	/** The modified file. */
-	private String                modifiedFile = "";
-	
-	/** The header. */
-	private String                header       = "";
-	
-	/** The start position. */
-	private int                   startPosition;
+	/** The Constant serialVersionUID. */
+	private static final long serialVersionUID = -8943429916879656072L;
 	
 	/** The end position. */
-	private int                   endPosition;
+	private Integer           endPosition;
 	
 	/** The hunks. */
-	private final List<PatchHunk> hunks;
+	private List<PatchHunk>   hunks;
 	
-	/**
-	 * Instantiates a new unified diff.
-	 */
-	public Patch() {
-		this.hunks = new ArrayList<PatchHunk>();
-		this.startPosition = 0;
-		this.endPosition = 0;
-	}
+	/** The id. */
+	private int               id;
 	
-	/**
-	 * Instantiates a new unified diff.
-	 * 
-	 * @param s
-	 *            the s
-	 */
-	public Patch(final int s) {
-		this.hunks = new ArrayList<PatchHunk>();
-		this.startPosition = s;
-	}
+	/** The index. */
+	private String            index;
 	
-	/**
-	 * Instantiates a new unified diff.
-	 * 
-	 * @param s
-	 *            the s
-	 * @param e
-	 *            the e
-	 */
-	public Patch(final int s, final int e) {
-		this.hunks = new ArrayList<PatchHunk>();
-		this.startPosition = s;
-		this.endPosition = e;
-	}
+	/** The modified file. */
+	private String            modifiedFile;
+	
+	/** The new timestamp. */
+	private DateTime          newTimestamp;
+	
+	/** The old timestamp. */
+	private DateTime          oldTimestamp;
+	
+	/** The origin. */
+	private Attachment        origin;
+	
+	/** The original file. */
+	private String            originalFile;
+	
+	/** The start position. */
+	private Integer           startPosition;
 	
 	/**
 	 * Adds the hunk.
@@ -96,43 +90,41 @@ public class Patch implements Attachable, Inlineable {
 	 * @param hunk
 	 *            the hunk
 	 */
+	@Transient
 	public void addHunk(final PatchHunk hunk) {
-		this.hunks.add(hunk);
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.infozilla.model.Attachable#getAttachment()
-	 */
-	@Override
-	public Attachment getAttachment() {
-		// PRECONDITIONS
-		
-		try {
-			// TODO Auto-generated method stub
-			// return null;
-			throw new RuntimeException("Method 'getAttachment' has not yet been implemented."); //$NON-NLS-1$
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.infozilla.model.Inlineable#getEndPosition()
-	 */
-	@Override
-	public int getEndPosition() {
-		return this.endPosition;
+		getHunks().add(hunk);
 	}
 	
 	/**
-	 * Gets the header.
+	 * {@inheritDoc}
 	 * 
-	 * @return the header
+	 * @see org.mozkito.persistence.Annotated#getClassName()
 	 */
-	public String getHeader() {
-		return this.header;
+	@Override
+	@Transient
+	public String getClassName() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return JavaUtils.getHandle(this);
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.infozilla.elements.Inlineable#getEndPosition()
+	 */
+	@Override
+	@Basic
+	public Integer getEndPosition() {
+		return this.endPosition;
 	}
 	
 	/**
@@ -140,8 +132,30 @@ public class Patch implements Attachable, Inlineable {
 	 * 
 	 * @return the hunks
 	 */
+	@OneToMany (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	public List<PatchHunk> getHunks() {
 		return this.hunks;
+	}
+	
+	/**
+	 * Gets the id.
+	 * 
+	 * @return the id
+	 */
+	@Id
+	@GeneratedValue (strategy = GenerationType.AUTO)
+	public int getId() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.id;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/**
@@ -149,11 +163,19 @@ public class Patch implements Attachable, Inlineable {
 	 * 
 	 * @return the index
 	 */
+	@Basic
 	public String getIndex() {
-		if (this.index.length() > Patch.INDEX_OFFSET) {
-			return (this.index.substring(Patch.INDEX_OFFSET, this.index.length()));
+		PRECONDITIONS: {
+			// none
 		}
-		return this.index;
+		
+		try {
+			return this.index;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/**
@@ -161,8 +183,95 @@ public class Patch implements Attachable, Inlineable {
 	 * 
 	 * @return the modified file
 	 */
+	@Basic
 	public String getModifiedFile() {
-		return PlusMinusLineToFilename(this.modifiedFile);
+		return this.modifiedFile;
+	}
+	
+	/**
+	 * Gets the new java timestamp.
+	 * 
+	 * @return the new java timestamp
+	 */
+	@Column (name = "newTimestamp")
+	@Temporal (TemporalType.TIMESTAMP)
+	public Date getNewJavaTimestamp() {
+		return getNewTimestamp() != null
+		                                ? getNewTimestamp().toDate()
+		                                : null;
+	}
+	
+	/**
+	 * Gets the new timestamp.
+	 * 
+	 * @return the newTimestamp
+	 */
+	@Transient
+	public DateTime getNewTimestamp() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.newTimestamp;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Gets the old java timestamp.
+	 * 
+	 * @return the old java timestamp
+	 */
+	@Temporal (TemporalType.TIMESTAMP)
+	@Column (name = "oldTimestamp")
+	public Date getOldJavaTimestamp() {
+		return getNewTimestamp() != null
+		                                ? getNewTimestamp().toDate()
+		                                : null;
+	}
+	
+	/**
+	 * Gets the old timestamp.
+	 * 
+	 * @return the oldTimestamp
+	 */
+	@Transient
+	public DateTime getOldTimestamp() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.oldTimestamp;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Gets the origin.
+	 * 
+	 * @return the origin
+	 */
+	@ManyToOne (cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+	public Attachment getOrigin() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.origin;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/**
@@ -170,16 +279,19 @@ public class Patch implements Attachable, Inlineable {
 	 * 
 	 * @return the original file
 	 */
+	@Basic
 	public String getOriginalFile() {
-		return PlusMinusLineToFilename(this.originalFile);
+		return this.originalFile;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.infozilla.model.Inlineable#getStartPosition()
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.infozilla.elements.Inlineable#getStartPosition()
 	 */
 	@Override
-	public int getStartPosition() {
+	@Basic
+	public Integer getStartPosition() {
 		return this.startPosition;
 	}
 	
@@ -213,23 +325,83 @@ public class Patch implements Attachable, Inlineable {
 	}
 	
 	/**
-	 * Sets the header.
+	 * Sets the end position.
 	 * 
-	 * @param header
-	 *            the new header
+	 * @param endPosition
+	 *            the endPosition to set
 	 */
-	public void setHeader(final String header) {
-		this.header = header;
+	public void setEndPosition(final Integer endPosition) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.endPosition = endPosition;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Sets the hunks.
+	 * 
+	 * @param hunks
+	 *            the hunks to set
+	 */
+	public void setHunks(final List<PatchHunk> hunks) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.hunks = hunks;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Sets the id.
+	 * 
+	 * @param id
+	 *            the id to set
+	 */
+	public void setId(final int id) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.id = id;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/**
 	 * Sets the index.
 	 * 
 	 * @param index
-	 *            the new index
+	 *            the index to set
 	 */
 	public void setIndex(final String index) {
-		this.index = index;
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.index = index;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/**
@@ -240,6 +412,90 @@ public class Patch implements Attachable, Inlineable {
 	 */
 	public void setModifiedFile(final String modifiedFile) {
 		this.modifiedFile = modifiedFile;
+	}
+	
+	/**
+	 * Sets the new java timestamp.
+	 * 
+	 * @param date
+	 *            the new new java timestamp
+	 */
+	public void setNewJavaTimestamp(final Date date) {
+		setNewTimestamp(date != null
+		                            ? new DateTime(date)
+		                            : null);
+	}
+	
+	/**
+	 * Sets the new timestamp.
+	 * 
+	 * @param newTimestamp
+	 *            the newTimestamp to set
+	 */
+	public void setNewTimestamp(final DateTime newTimestamp) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.newTimestamp = newTimestamp;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Sets the old java timestamp.
+	 * 
+	 * @param date
+	 *            the new old java timestamp
+	 */
+	public void setOldJavaTimestamp(final Date date) {
+		setNewTimestamp(date != null
+		                            ? new DateTime(date)
+		                            : null);
+	}
+	
+	/**
+	 * Sets the old timestamp.
+	 * 
+	 * @param oldTimestamp
+	 *            the oldTimestamp to set
+	 */
+	public void setOldTimestamp(final DateTime oldTimestamp) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.oldTimestamp = oldTimestamp;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Sets the origin.
+	 * 
+	 * @param origin
+	 *            the origin to set
+	 */
+	public void setOrigin(final Attachment origin) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.origin = origin;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/**
@@ -262,19 +518,24 @@ public class Patch implements Attachable, Inlineable {
 		this.startPosition = startPosition;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#toString()
+	/**
+	 * Sets the start position.
+	 * 
+	 * @param startPosition
+	 *            the startPosition to set
 	 */
-	@Override
-	public String toString() {
-		String s = "";
-		final String lineSep = System.getProperty("line.separator");
-		s = s + this.index + lineSep;
-		s = s + "ORIGINAL=" + getOriginalFile() + lineSep;
-		s = s + "MODIFIED=" + getModifiedFile() + lineSep;
-		s = s + "#HUNKS=" + Integer.valueOf(this.hunks.size()) + lineSep;
-		return s;
+	public void setStartPosition(final Integer startPosition) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.startPosition = startPosition;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 }

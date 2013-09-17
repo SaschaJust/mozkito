@@ -22,8 +22,7 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 
 import org.apache.commons.collections.CollectionUtils;
 
-import org.mozkito.mappings.mappable.FieldKey;
-import org.mozkito.mappings.mappable.model.MappableEntity;
+import org.mozkito.persistence.FieldKey;
 import org.mozkito.utilities.commons.JavaUtils;
 
 /**
@@ -92,20 +91,20 @@ public final class Atom extends Expression {
 	 * org.mozkito.mapping.requirements.Index)
 	 */
 	@Override
-	public boolean check(final Class<? extends MappableEntity> target1,
-	                     final Class<? extends MappableEntity> target2,
+	public boolean check(final Class<? extends org.mozkito.persistence.Entity> target1,
+	                     final Class<? extends org.mozkito.persistence.Entity> target2,
 	                     final Index oneEquals) {
 		switch (this.idx) {
 			case FROM:
 				if (this.type != null) {
 					try {
-						return target1.newInstance().getBaseType() == this.type;
+						return target1 == this.type;
 					} catch (final Exception e) {
 						throw new UnrecoverableError(e.getMessage(), e);
 					}
 				} else {
 					try {
-						return target1.newInstance().supported().containsAll(this.keys);
+						return target1.newInstance().supportedFields().containsAll(this.keys);
 					} catch (final Exception e) {
 						throw new UnrecoverableError(e.getMessage(), e);
 					}
@@ -113,13 +112,13 @@ public final class Atom extends Expression {
 			case TO:
 				if (this.type != null) {
 					try {
-						return target2.newInstance().getBaseType() == this.type;
+						return target2 == this.type;
 					} catch (final Exception e) {
 						throw new UnrecoverableError(e.getMessage(), e);
 					}
 				} else {
 					try {
-						return target2.newInstance().supported().containsAll(this.keys);
+						return target2.newInstance().supportedFields().containsAll(this.keys);
 					} catch (final Exception e) {
 						throw new UnrecoverableError(e.getMessage(), e);
 					}
@@ -128,13 +127,13 @@ public final class Atom extends Expression {
 				if (oneEquals.equals(Index.FROM)) {
 					if (this.type != null) {
 						try {
-							return target1.newInstance().getBaseType() == this.type;
+							return target1 == this.type;
 						} catch (final Exception e) {
 							throw new UnrecoverableError(e.getMessage(), e);
 						}
 					} else {
 						try {
-							return target1.newInstance().supported().containsAll(this.keys);
+							return target1.newInstance().supportedFields().containsAll(this.keys);
 						} catch (final Exception e) {
 							throw new UnrecoverableError(e.getMessage(), e);
 						}
@@ -142,13 +141,13 @@ public final class Atom extends Expression {
 				} else {
 					if (this.type != null) {
 						try {
-							return target2.newInstance().getBaseType() == this.type;
+							return target2 == this.type;
 						} catch (final Exception e) {
 							throw new UnrecoverableError(e.getMessage(), e);
 						}
 					} else {
 						try {
-							return target2.newInstance().supported().containsAll(this.keys);
+							return target2.newInstance().supportedFields().containsAll(this.keys);
 						} catch (final Exception e) {
 							throw new UnrecoverableError(e.getMessage(), e);
 						}
@@ -158,13 +157,13 @@ public final class Atom extends Expression {
 				if (!oneEquals.equals(Index.FROM)) {
 					if (this.type != null) {
 						try {
-							return target1.newInstance().getBaseType() == this.type;
+							return target1 == this.type;
 						} catch (final Exception e) {
 							throw new UnrecoverableError(e.getMessage(), e);
 						}
 					} else {
 						try {
-							return target1.newInstance().supported().containsAll(this.keys);
+							return target1.newInstance().supportedFields().containsAll(this.keys);
 						} catch (final Exception e) {
 							throw new UnrecoverableError(e.getMessage(), e);
 						}
@@ -172,13 +171,13 @@ public final class Atom extends Expression {
 				} else {
 					if (this.type != null) {
 						try {
-							return target2.newInstance().getBaseType() == this.type;
+							return target2 == this.type;
 						} catch (final Exception e) {
 							throw new UnrecoverableError(e.getMessage(), e);
 						}
 					} else {
 						try {
-							return target2.newInstance().supported().containsAll(this.keys);
+							return target2.newInstance().supportedFields().containsAll(this.keys);
 						} catch (final Exception e) {
 							throw new UnrecoverableError(e.getMessage(), e);
 						}
@@ -196,8 +195,8 @@ public final class Atom extends Expression {
 	 * org.mozkito.mapping.requirements.Index)
 	 */
 	@Override
-	public List<Expression> getFailureCause(final Class<? extends MappableEntity> target1,
-	                                        final Class<? extends MappableEntity> target2,
+	public List<Expression> getFailureCause(final Class<? extends org.mozkito.persistence.Entity> target1,
+	                                        final Class<? extends org.mozkito.persistence.Entity> target2,
 	                                        final Index oneEquals) {
 		return check(target1, target2, oneEquals)
 		                                         ? null

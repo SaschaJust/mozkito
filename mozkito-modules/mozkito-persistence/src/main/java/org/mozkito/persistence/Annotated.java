@@ -19,17 +19,16 @@ import java.io.Serializable;
 
 /**
  * The Interface Annotated.
- *
+ * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 public interface Annotated extends Serializable {
 	
-	// interface to be used when dynamically loading annotated/persistent classes.
-	
 	/**
 	 * Returns the simple class name of the object.
-	 *
+	 * 
 	 * @return the simple classname
 	 */
 	String getClassName();
+	
 }

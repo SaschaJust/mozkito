@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import javax.persistence.Basic;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -46,7 +47,6 @@ import org.xml.sax.SAXException;
 
 import org.mozkito.infozilla.exceptions.EncodingDeterminationException;
 import org.mozkito.infozilla.exceptions.MIMETypeDeterminationException;
-import org.mozkito.infozilla.model.Attachable;
 import org.mozkito.issues.model.AttachmentEntry;
 import org.mozkito.persistence.Annotated;
 import org.mozkito.utilities.commons.JavaUtils;
@@ -60,14 +60,14 @@ import org.mozkito.utilities.io.exceptions.UnsupportedProtocolException;
 @Entity
 public class Attachment implements Annotated {
 	
-	/** The Constant SHA1_SIZE. */
-	private static final int  SHA1_SIZE        = 32;
-	
 	/** The Constant MD5_SIZE. */
 	private static final int  MD5_SIZE         = 16;
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 3626906010864829890L;
+	
+	/** The Constant SHA1_SIZE. */
+	private static final int  SHA1_SIZE        = 32;
 	
 	/**
 	 * Compute m d5.
@@ -108,18 +108,6 @@ public class Attachment implements Annotated {
 			}
 			return null;
 		}
-	}
-	
-	/**
-	 * Creates the attachable.
-	 * 
-	 * @param attachment
-	 *            the attachment
-	 * @return the attachable
-	 */
-	private static Attachable createAttachable(final Attachment attachment) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 	
 	/**
@@ -211,13 +199,12 @@ public class Attachment implements Annotated {
 			attachment.setMd5(computeMD5(data));
 			attachment.setSha1(computeSHA1(data));
 			
-			attachment.setAttachable(createAttachable(attachment));
+			return attachment;
 		} catch (final UnsupportedProtocolException e) {
 			throw new FetchException(e);
 		} catch (final IOException e) {
 			throw new FetchException(e);
 		}
-		return null;
 	}
 	
 	/**
@@ -292,20 +279,17 @@ public class Attachment implements Annotated {
 	/** The generated id. */
 	private long            generatedId;
 	
-	/** The mime. */
-	private String          mime;
-	
-	/** The type. */
-	private AttachmentType  type = AttachmentType.UNKNOWN;
-	
 	/** The md5. */
 	private byte[]          md5  = new byte[Attachment.MD5_SIZE];
+	
+	/** The mime. */
+	private String          mime;
 	
 	/** The sha1. */
 	private byte[]          sha1 = new byte[Attachment.SHA1_SIZE];
 	
-	/** The attachable. */
-	private Attachable      attachable;
+	/** The type. */
+	private AttachmentType  type = AttachmentType.UNKNOWN;
 	
 	/**
 	 * Instantiates a new attachment.
@@ -318,15 +302,6 @@ public class Attachment implements Annotated {
 	public Attachment(final AttachmentEntry entry, final byte[] data) {
 		setEntry(entry);
 		setData(data);
-	}
-	
-	/**
-	 * Gets the attachable.
-	 * 
-	 * @return the attachable
-	 */
-	public Attachable getAttachable() {
-		return this.attachable;
 	}
 	
 	/*
@@ -343,6 +318,7 @@ public class Attachment implements Annotated {
 	 * 
 	 * @return the data
 	 */
+	@Basic
 	public byte[] getData() {
 		return this.data;
 	}
@@ -352,6 +328,7 @@ public class Attachment implements Annotated {
 	 * 
 	 * @return the encoding
 	 */
+	@Basic
 	public String getEncoding() {
 		return this.encoding;
 	}
@@ -371,6 +348,7 @@ public class Attachment implements Annotated {
 	 * 
 	 * @return the filename
 	 */
+	@Basic
 	public String getFilename() {
 		return this.filename;
 	}
@@ -391,6 +369,7 @@ public class Attachment implements Annotated {
 	 * 
 	 * @return the md5
 	 */
+	@Basic
 	public byte[] getMd5() {
 		return this.md5;
 	}
@@ -400,6 +379,7 @@ public class Attachment implements Annotated {
 	 * 
 	 * @return the mime
 	 */
+	@Basic
 	public String getMime() {
 		return this.mime;
 	}
@@ -409,6 +389,7 @@ public class Attachment implements Annotated {
 	 * 
 	 * @return the sha1
 	 */
+	@Basic
 	public byte[] getSha1() {
 		return this.sha1;
 	}
@@ -418,19 +399,9 @@ public class Attachment implements Annotated {
 	 * 
 	 * @return the type
 	 */
-	@Enumerated (EnumType.ORDINAL)
+	@Enumerated (EnumType.STRING)
 	public AttachmentType getType() {
 		return this.type;
-	}
-	
-	/**
-	 * Sets the attachable.
-	 * 
-	 * @param attachable
-	 *            the attachable to set
-	 */
-	public void setAttachable(final Attachable attachable) {
-		this.attachable = attachable;
 	}
 	
 	/**

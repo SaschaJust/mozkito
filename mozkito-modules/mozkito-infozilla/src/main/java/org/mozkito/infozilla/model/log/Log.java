@@ -13,35 +13,78 @@
 package org.mozkito.infozilla.model.log;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.joda.time.DateTime;
 
-import org.mozkito.infozilla.model.Attachable;
-import org.mozkito.infozilla.model.Inlineable;
+import org.mozkito.infozilla.elements.Attachable;
+import org.mozkito.infozilla.elements.Inlineable;
 import org.mozkito.infozilla.model.attachment.Attachment;
+import org.mozkito.persistence.Annotated;
+import org.mozkito.utilities.commons.JavaUtils;
 
 /**
  * The Class Log.
  */
-public class Log implements Attachable, Inlineable {
+@Entity
+public class Log implements Annotated, Attachable, Inlineable, Iterable<LogEntry> {
 	
-	/** The start. */
-	DateTime            start;
+	/** The Constant serialVersionUID. */
+	private static final long   serialVersionUID = -8298783974899124685L;
 	
 	/** The end. */
-	DateTime            end;
+	private DateTime            end;
+	
+	/** The end position. */
+	private Integer             endPosition;
 	
 	/** The entities. */
-	ArrayList<LogEntry> entities;
+	private ArrayList<LogEntry> entities;
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.infozilla.model.Attachable#getAttachment()
+	/** The id. */
+	private int                 id;
+	
+	/** The origin. */
+	private Attachment          origin;
+	
+	/** The start. */
+	private DateTime            start;
+	
+	/** The start position. */
+	private Integer             startPosition;
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.persistence.Annotated#getClassName()
 	 */
 	@Override
-	public Attachment getAttachment() {
-		// TODO Auto-generated method stub
-		return null;
+	public String getClassName() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return JavaUtils.getHandle(this);
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/**
@@ -49,18 +92,29 @@ public class Log implements Attachable, Inlineable {
 	 * 
 	 * @return the end
 	 */
+	@Transient
 	public DateTime getEnd() {
 		return this.end;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.infozilla.model.Inlineable#getEndPosition()
+	/**
+	 * Gets the end position.
+	 * 
+	 * @return the endPosition
 	 */
-	@Override
-	public int getEndPosition() {
-		// TODO Auto-generated method stub
-		return 0;
+	@Basic
+	public Integer getEndPosition() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.endPosition;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/**
@@ -68,8 +122,64 @@ public class Log implements Attachable, Inlineable {
 	 * 
 	 * @return the entities
 	 */
+	@OneToMany (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	public ArrayList<LogEntry> getEntities() {
 		return this.entities;
+	}
+	
+	/**
+	 * Gets the id.
+	 * 
+	 * @return the id
+	 */
+	@Id
+	@GeneratedValue (strategy = GenerationType.AUTO)
+	public int getId() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.id;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Gets the java end.
+	 * 
+	 * @return the java end
+	 */
+	@Temporal (TemporalType.TIMESTAMP)
+	public Date getJavaEnd() {
+		return getEnd() != null
+		                       ? getEnd().toDate()
+		                       : null;
+	}
+	
+	/**
+	 * Gets the java start.
+	 * 
+	 * @return the java start
+	 */
+	@Temporal (TemporalType.TIMESTAMP)
+	public Date getJavaStart() {
+		return getStart() != null
+		                         ? getStart().toDate()
+		                         : null;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.infozilla.elements.Attachable#getOrigin()
+	 */
+	@ManyToOne (cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+	public Attachment getOrigin() {
+		return this.origin;
 	}
 	
 	/**
@@ -77,31 +187,67 @@ public class Log implements Attachable, Inlineable {
 	 * 
 	 * @return the start
 	 */
+	@Transient
 	public DateTime getStart() {
 		return this.start;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.infozilla.model.Inlineable#getStartPosition()
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.infozilla.elements.Inlineable#getStartPosition()
 	 */
 	@Override
-	public int getStartPosition() {
-		// TODO Auto-generated method stub
-		return 0;
+	@Basic
+	public Integer getStartPosition() {
+		return this.startPosition;
 	}
 	
 	/**
-	 * Gets the text.
+	 * Checks if is inlined.
 	 * 
-	 * @return the text
+	 * @return the inlined
 	 */
-	public String getText() {
-		final StringBuilder builder = new StringBuilder();
-		for (final LogEntry entry : getEntities()) {
-			builder.append(entry.getLine());
+	@Basic
+	public boolean isInlined() {
+		PRECONDITIONS: {
+			// none
 		}
-		return builder.toString();
+		
+		try {
+			final Attachment attachment = getOrigin();
+			final Integer position = getEndPosition();
+			
+			SANITY: {
+				assert ((attachment == null) && (position != null)) || ((attachment != null) && (position == null));
+			}
+			
+			return position != null;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see java.lang.Iterable#iterator()
+	 */
+	@Override
+	public Iterator<LogEntry> iterator() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return getEntities().iterator();
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/**
@@ -115,6 +261,26 @@ public class Log implements Attachable, Inlineable {
 	}
 	
 	/**
+	 * Sets the end position.
+	 * 
+	 * @param endPosition
+	 *            the endPosition to set
+	 */
+	public void setEndPosition(final int endPosition) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.endPosition = endPosition;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
 	 * Sets the entities.
 	 * 
 	 * @param entities
@@ -122,6 +288,70 @@ public class Log implements Attachable, Inlineable {
 	 */
 	public void setEntities(final ArrayList<LogEntry> entities) {
 		this.entities = entities;
+	}
+	
+	/**
+	 * Sets the id.
+	 * 
+	 * @param id
+	 *            the id to set
+	 */
+	public void setId(final int id) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.id = id;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Sets the java end.
+	 * 
+	 * @param date
+	 *            the new java end
+	 */
+	public void setJavaEnd(final Date date) {
+		setEnd(date != null
+		                   ? new DateTime(date)
+		                   : null);
+	}
+	
+	/**
+	 * Sets the java start.
+	 * 
+	 * @param date
+	 *            the new java start
+	 */
+	public void setJavaStart(final Date date) {
+		setStart(date != null
+		                     ? new DateTime(date)
+		                     : null);
+	}
+	
+	/**
+	 * Sets the origin.
+	 * 
+	 * @param origin
+	 *            the origin to set
+	 */
+	public void setOrigin(final Attachment origin) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.origin = origin;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/**
@@ -135,10 +365,31 @@ public class Log implements Attachable, Inlineable {
 	}
 	
 	/**
+	 * Sets the start position.
+	 * 
+	 * @param startPosition
+	 *            the startPosition to set
+	 */
+	public void setStartPosition(final int startPosition) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.startPosition = startPosition;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
 	 * Size.
 	 * 
 	 * @return the int
 	 */
+	@Transient
 	public int size() {
 		return getEntities().size();
 	}

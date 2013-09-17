@@ -61,7 +61,7 @@ public class TextMetadataTest {
 	}
 	
 	/**
-	 * Test method for {@link org.mozkito.mappings.utils.TextMetadata#lines(java.lang.String)}.
+	 * Test method for {@link org.mozkito.utilities.commons.text.TextMetadata#lines(java.lang.String)}.
 	 */
 	@Test
 	@Ignore
@@ -70,7 +70,7 @@ public class TextMetadataTest {
 	}
 	
 	/**
-	 * Test method for {@link org.mozkito.mappings.utils.TextMetadata#paragraphs(java.lang.String)}.
+	 * Test method for {@link org.mozkito.utilities.commons.text.TextMetadata#paragraphs(java.lang.String)}.
 	 */
 	@Test
 	@Ignore
@@ -79,7 +79,7 @@ public class TextMetadataTest {
 	}
 	
 	/**
-	 * Test method for {@link org.mozkito.mappings.utils.TextMetadata#sentences(java.lang.String)}.
+	 * Test method for {@link org.mozkito.utilities.commons.text.TextMetadata#sentences(java.lang.String)}.
 	 */
 	@Test
 	@Ignore
@@ -88,7 +88,7 @@ public class TextMetadataTest {
 	}
 	
 	/**
-	 * Test method for {@link org.mozkito.mappings.utils.TextMetadata#topics(java.util.Iterator, int)}.
+	 * Test method for {@link org.mozkito.utilities.commons.text.TextMetadata#topics(java.util.Iterator, int)}.
 	 */
 	@Test
 	@Ignore
@@ -97,7 +97,7 @@ public class TextMetadataTest {
 	}
 	
 	/**
-	 * Test method for {@link org.mozkito.mappings.utils.TextMetadata#words(java.lang.String)}.
+	 * Test method for {@link org.mozkito.utilities.commons.text.TextMetadata#words(java.lang.String)}.
 	 */
 	@Test
 	@Ignore

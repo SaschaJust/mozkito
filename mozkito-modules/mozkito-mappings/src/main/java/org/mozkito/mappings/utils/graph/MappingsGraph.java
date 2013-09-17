@@ -21,10 +21,8 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 
 import org.mozkito.graphs.GraphIndex;
 import org.mozkito.graphs.GraphManager;
-import org.mozkito.mappings.mappable.model.MappableChangeSet;
-import org.mozkito.mappings.mappable.model.MappableEntity;
-import org.mozkito.mappings.mappable.model.MappableReport;
 import org.mozkito.mappings.model.Mapping;
+import org.mozkito.versions.model.ChangeSet;
 
 /**
  * The Class MappingsGraph.
@@ -77,12 +75,9 @@ public class MappingsGraph {
 		final Vertex otherVertex = getOrCreateVertex(mapping.getTo());
 		
 		Edge edge = null;
-		if (oneVertex instanceof MappableChangeSet) {
-			assert otherVertex instanceof MappableReport;
+		if (oneVertex instanceof ChangeSet) {
 			edge = getOrCreateEdge(oneVertex, otherVertex);
 		} else {
-			assert otherVertex instanceof MappableChangeSet;
-			assert oneVertex instanceof MappableReport;
 			edge = getOrCreateEdge(otherVertex, oneVertex);
 		}
 		
@@ -96,8 +91,8 @@ public class MappingsGraph {
 	 *            the entity
 	 * @return the graph id
 	 */
-	public final String getGraphID(final MappableEntity entity) {
-		return entity.getBaseType().getSimpleName() + "##" + entity.getId();
+	public final String getGraphID(final org.mozkito.persistence.Entity entity) {
+		return entity.getClassName() + "##" + entity.getIDString();
 	}
 	
 	/**
@@ -140,7 +135,7 @@ public class MappingsGraph {
 	 *            the entity
 	 * @return the or create
 	 */
-	private Vertex getOrCreateVertex(final MappableEntity entity) {
+	private Vertex getOrCreateVertex(final org.mozkito.persistence.Entity entity) {
 		final String fromID = getGraphID(entity);
 		Vertex vertex = this.graphManager.getGraph().getVertex(fromID);
 		if (vertex == null) {
@@ -158,7 +153,7 @@ public class MappingsGraph {
 	 *            the entity
 	 * @return the vertex type
 	 */
-	public final String getVertexType(final MappableEntity entity) {
+	public final String getVertexType(final org.mozkito.persistence.Entity entity) {
 		return entity.getClassName();
 	}
 	

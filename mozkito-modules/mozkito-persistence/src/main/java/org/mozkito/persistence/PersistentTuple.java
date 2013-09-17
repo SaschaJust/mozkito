@@ -23,14 +23,6 @@ package org.mozkito.persistence;
 public interface PersistentTuple<T> extends Annotated {
 	
 	/**
-	 * Gets the handle.
-	 * 
-	 * @return the handle
-	 */
-	@Override
-	String getClassName();
-	
-	/**
 	 * Gets the new value.
 	 * 
 	 * @return the new value

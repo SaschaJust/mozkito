@@ -22,6 +22,7 @@
 		<module>mozkito-datastructures</module>
 		<module>mozkito-changeimpact</module>
 		<module>mozkito-clustering</module>
+		<module>mozkito-text</module>
 	</modules>
 	<dependencies>
 		<dependency>

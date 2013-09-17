@@ -28,9 +28,6 @@ import org.mozkito.codeanalysis.model.JavaMethodDefinition;
 import org.mozkito.infozilla.model.EnhancedReport;
 import org.mozkito.infozilla.model.stacktrace.Stacktrace;
 import org.mozkito.infozilla.model.stacktrace.StacktraceEntry;
-import org.mozkito.mappings.mappable.model.MappableChangeSet;
-import org.mozkito.mappings.mappable.model.MappableEntity;
-import org.mozkito.mappings.mappable.model.MappableStructuredReport;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Feature;
 import org.mozkito.mappings.model.Relation;
@@ -86,8 +83,8 @@ public class StacktraceParserEngine extends Engine {
 		}
 		
 		try {
-			final MappableEntity from = relation.getFrom();
-			final MappableEntity to = relation.getTo();
+			final org.mozkito.persistence.Entity from = relation.getFrom();
+			final org.mozkito.persistence.Entity to = relation.getTo();
 			final PersistenceStorage persistenceStorage = getStorage(PersistenceStorage.class);
 			
 			SANITY: {

@@ -28,7 +28,7 @@ import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.Query;
 
 import org.mozkito.mappings.messages.Messages;
-import org.mozkito.mappings.utils.Information;
+import org.mozkito.utilities.commons.text.Information;
 
 /**
  * The Class SearchEngine.

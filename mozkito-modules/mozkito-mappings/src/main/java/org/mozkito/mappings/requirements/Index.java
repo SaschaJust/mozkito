@@ -12,11 +12,10 @@
  **********************************************************************************************************************/
 package org.mozkito.mappings.requirements;
 
-import org.mozkito.mappings.mappable.model.MappableEntity;
 
 /**
  * This enum represents the index that is used in {@link Expression}s to determine relations between 'from' and 'to'
- * entities of {@link MappableEntity}.
+ * entities of {@link org.mozkito.persistence.Entity}.
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  * 

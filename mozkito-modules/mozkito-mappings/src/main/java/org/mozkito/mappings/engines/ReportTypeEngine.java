@@ -20,9 +20,6 @@ import org.apache.commons.collections.Predicate;
 
 import org.mozkito.issues.elements.Type;
 import org.mozkito.issues.model.Report;
-import org.mozkito.mappings.mappable.FieldKey;
-import org.mozkito.mappings.mappable.model.MappableEntity;
-import org.mozkito.mappings.mappable.model.MappableReport;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Feature;
 import org.mozkito.mappings.model.Relation;
@@ -30,6 +27,7 @@ import org.mozkito.mappings.requirements.Atom;
 import org.mozkito.mappings.requirements.Expression;
 import org.mozkito.mappings.requirements.Index;
 import org.mozkito.mappings.requirements.Or;
+import org.mozkito.persistence.FieldKey;
 
 /**
  * The Class ReportTypeEngine.
@@ -122,21 +120,21 @@ public class ReportTypeEngine extends Engine {
 		}
 		
 		try {
-			final MappableEntity from = relation.getFrom();
-			final MappableEntity to = relation.getTo();
+			final org.mozkito.persistence.Entity from = relation.getFrom();
+			final org.mozkito.persistence.Entity to = relation.getTo();
 			
 			SANITY: {
 				assert from != null;
 				assert to != null;
 			}
 			
-			if (from instanceof MappableReport) {
+			if (from instanceof Report) {
 				if (from.get(FieldKey.TYPE) == getType()) {
 					addFeature(relation, getConfidence(), FieldKey.TYPE.name(), from.get(FieldKey.TYPE).toString(),
 					           from.get(FieldKey.TYPE).toString(), Engine.getUnused(), Engine.getUnknown(),
 					           Engine.getUnknown());
 				}
-			} else if (to instanceof MappableReport) {
+			} else if (to instanceof Report) {
 				if (to.get(FieldKey.TYPE) == getType()) {
 					addFeature(relation, getConfidence(), FieldKey.TYPE.name(), to.get(FieldKey.TYPE).toString(),
 					           to.get(FieldKey.TYPE).toString(), Engine.getUnused(), Engine.getUnknown(),

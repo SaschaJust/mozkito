@@ -22,11 +22,11 @@
 			<artifactId>mozkito-changeimpact-utilities</artifactId>
 			<version>0.4-SNAPSHOT</version>
 		</dependency>
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.mozkito</groupId>
 			<artifactId>mozkito-codeanalysis</artifactId>
 			<version>0.4-SNAPSHOT</version>
-		</dependency>
+		</dependency> -->
 		<dependency>
 			<groupId>org.mozkito</groupId>
 			<artifactId>mozkito-persistence</artifactId>

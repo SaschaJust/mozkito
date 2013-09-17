@@ -47,7 +47,9 @@ import net.ownhero.dev.kisa.Logger;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.openjpa.persistence.jdbc.Index;
 import org.joda.time.DateTime;
-import org.mozkito.persistence.Annotated;
+
+import org.mozkito.persistence.FieldKey;
+import org.mozkito.persistence.IteratableFieldKey;
 import org.mozkito.persons.model.Person;
 import org.mozkito.persons.model.PersonContainer;
 import org.mozkito.utilities.commons.JavaUtils;
@@ -60,7 +62,7 @@ import org.mozkito.versions.exceptions.NoSuchHandleException;
  */
 @Entity
 @Table (name = "changeset")
-public class ChangeSet implements Annotated {
+public class ChangeSet implements org.mozkito.persistence.Entity {
 	
 	/** The Constant serialVersionUID. */
 	private static final long    serialVersionUID = -7619009648634901112L;
@@ -247,6 +249,284 @@ public class ChangeSet implements Annotated {
 	}
 	
 	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.persistence.Entity#get(org.mozkito.persistence.FieldKey)
+	 */
+	@Override
+	public <T> T get(final FieldKey key) {
+		PRECONDITIONS: {
+			if (key == null) {
+				throw new NullPointerException();
+			}
+		}
+		
+		try {
+			
+			Object o = null;
+			switch (key) {
+				case AUTHOR:
+					o = getAuthor();
+					break;
+				case BODY:
+					o = getMessage();
+					break;
+				case CREATION_TIMESTAMP:
+					o = getTimestamp();
+					break;
+				case DESCRIPTION:
+					final String[] split = getMessage().split("\\\n\\\n", 2);
+					if (split.length > 1) {
+						o = split[1];
+					} else {
+						o = "";
+					}
+					break;
+				case ID:
+					o = getId();
+					break;
+				case SUMMARY:
+					final String[] split2 = getMessage().split("\\\n\\\n", 2);
+					if (split2.length > 1) {
+						o = split2[0];
+					} else {
+						o = getMessage();
+					}
+					break;
+				case TYPE:
+					o = getClassName();
+					break;
+				default:
+					SANITY: {
+						assert !supportedFields().contains(key);
+					}
+					throw new IllegalArgumentException(key.name());
+			}
+			
+			try {
+				@SuppressWarnings ("unchecked")
+				final T result = (T) o;
+				return result;
+			} catch (final ClassCastException e) {
+				throw new IllegalArgumentException(key.getDeclaringClass().getSimpleName() + " " + key.name()
+				        + " resolves to type " + key.resultType().getCanonicalName(), e);
+			}
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.persistence.Entity#get(org.mozkito.persistence.IteratableFieldKey)
+	 */
+	@SuppressWarnings ("unchecked")
+	@Override
+	public <T> Collection<T> get(final IteratableFieldKey key) {
+		PRECONDITIONS: {
+			if (key == null) {
+				throw new NullPointerException();
+			}
+		}
+		
+		try {
+			
+			Collection<T> collection = null;
+			switch (key) {
+				case INVOLVED:
+					collection = (Collection<T>) new ArrayList<Person>(1) {
+						
+						/**
+                         * 
+                         */
+						private static final long serialVersionUID = 1L;
+						
+						{
+							add(getAuthor());
+						}
+					};
+					break;
+				case FILES:
+					final Collection<Handle> changedFiles = getChangedFiles();
+					SANITY: {
+						assert changedFiles != null;
+					}
+					collection = (Collection<T>) new ArrayList<String>(changedFiles.size());
+					for (final Handle handle : changedFiles) {
+						try {
+							((Collection<String>) collection).add(handle.getPath(this));
+						} catch (final NoSuchHandleException ignore) {
+							if (Logger.logWarn()) {
+								Logger.warn("Handle not found in owning change set: %s should be owned by %s.", handle,
+								            this);
+							}
+						}
+					}
+					break;
+				default:
+					SANITY: {
+						assert !supportedIteratableFields().contains(key);
+					}
+					throw new IllegalArgumentException(key.name());
+			}
+			
+			SANITY: {
+				assert collection != null;
+			}
+			
+			return collection;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.persistence.Entity#get(org.mozkito.persistence.IteratableFieldKey, int)
+	 */
+	@Override
+	public <T> T get(final IteratableFieldKey key,
+	                 final int index) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return org.mozkito.persistence.Entity.Static.get(this, key, index);
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.persistence.Entity#getAll(org.mozkito.persistence.FieldKey[])
+	 */
+	@Override
+	public Map<FieldKey, Object> getAll(final FieldKey... keys) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return org.mozkito.persistence.Entity.Static.getAll(this, keys);
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.persistence.Entity#getAll(org.mozkito.persistence.IteratableFieldKey[])
+	 */
+	@Override
+	public Map<IteratableFieldKey, Object> getAll(final IteratableFieldKey... keys) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return org.mozkito.persistence.Entity.Static.getAll(this, keys);
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.persistence.Entity#getAny(org.mozkito.persistence.FieldKey[])
+	 */
+	@Override
+	public Object getAny(final FieldKey... keys) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return org.mozkito.persistence.Entity.Static.getAny(this, keys);
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.persistence.Entity#getAny(org.mozkito.persistence.IteratableFieldKey[])
+	 */
+	@Override
+	public Object getAny(final IteratableFieldKey... keys) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return org.mozkito.persistence.Entity.Static.getAny(this, keys);
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.persistence.Entity#getAsOneString(org.mozkito.persistence.FieldKey[])
+	 */
+	@Override
+	public String getAsOneString(final FieldKey... fKeys) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return org.mozkito.persistence.Entity.Static.getAsOneString(this, fKeys);
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.persistence.Entity#getAsOneString(org.mozkito.persistence.IteratableFieldKey)
+	 */
+	@Override
+	public String getAsOneString(final IteratableFieldKey iKeys) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return org.mozkito.persistence.Entity.Static.getAsOneString(this, iKeys);
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
 	 * Gets the author.
 	 * 
 	 * @return the author
@@ -348,6 +628,26 @@ public class ChangeSet implements Annotated {
 	}
 	
 	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.persistence.Entity#getIDString()
+	 */
+	@Override
+	public String getIDString() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return getId();
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
 	 * Gets the java timestamp.
 	 * 
 	 * @return the java timestamp
@@ -445,6 +745,26 @@ public class ChangeSet implements Annotated {
 	}
 	
 	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.persistence.Entity#getSize(org.mozkito.persistence.IteratableFieldKey)
+	 */
+	@Override
+	public int getSize(final IteratableFieldKey key) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return org.mozkito.persistence.Entity.Static.getSize(this, key);
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
 	 * Gets the tags.
 	 * 
 	 * @return the tag
@@ -452,6 +772,26 @@ public class ChangeSet implements Annotated {
 	@ElementCollection
 	public Set<String> getTags() {
 		return this.tags;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.persistence.Entity#getText()
+	 */
+	@Override
+	public String getText() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return get(FieldKey.BODY);
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/**
@@ -672,6 +1012,78 @@ public class ChangeSet implements Annotated {
 	 */
 	public void setVersionArchive(final VersionArchive versionArchive) {
 		this.versionArchive = versionArchive;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.persistence.Entity#supportedFields()
+	 */
+	@Override
+	public Set<FieldKey> supportedFields() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			final Set<FieldKey> set = new HashSet<FieldKey>() {
+				
+				/**
+                 * 
+                 */
+				private static final long serialVersionUID = 1L;
+				
+				{
+					add(FieldKey.AUTHOR);
+					add(FieldKey.BODY);
+					add(FieldKey.CREATION_TIMESTAMP);
+					add(FieldKey.DESCRIPTION);
+					add(FieldKey.ID);
+					add(FieldKey.SUMMARY);
+					add(FieldKey.TYPE);
+				}
+			};
+			
+			return set;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.persistence.Entity#supportedIteratableFields()
+	 */
+	@Override
+	public Set<IteratableFieldKey> supportedIteratableFields() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			final Set<IteratableFieldKey> set = new HashSet<IteratableFieldKey>() {
+				
+				/**
+                 * 
+                 */
+				private static final long serialVersionUID = 1L;
+				
+				{
+					add(IteratableFieldKey.COMMENTS);
+					add(IteratableFieldKey.FILES);
+					add(IteratableFieldKey.INVOLVED);
+				}
+			};
+			
+			return set;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/*

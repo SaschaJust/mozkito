@@ -20,8 +20,8 @@ import java.util.List;
 
 import org.junit.Test;
 
-import org.mozkito.mappings.utils.TextSeparator;
 import org.mozkito.utilities.commons.JavaUtils;
+import org.mozkito.utilities.commons.text.TextSeparator;
 import org.mozkito.utilities.io.FileUtils;
 
 /**
@@ -41,7 +41,7 @@ public class TextSeparatorTest {
 	}
 	
 	/**
-	 * Test method for {@link org.mozkito.mappings.utils.TextSeparator#indentationBlocks(java.lang.String)}.
+	 * Test method for {@link org.mozkito.utilities.commons.text.TextSeparator#indentationBlocks(java.lang.String)}.
 	 */
 	@Test
 	public final void testIndentationBlocks() {
@@ -121,7 +121,7 @@ public class TextSeparatorTest {
 	}
 	
 	/**
-	 * Test method for {@link org.mozkito.mappings.utils.TextSeparator#lines(java.lang.String)}.
+	 * Test method for {@link org.mozkito.utilities.commons.text.TextSeparator#lines(java.lang.String)}.
 	 */
 	@Test
 	public final void testLines() {
@@ -134,7 +134,7 @@ public class TextSeparatorTest {
 	}
 	
 	/**
-	 * Test method for {@link org.mozkito.mappings.utils.TextSeparator#paragraphs(java.lang.String)}.
+	 * Test method for {@link org.mozkito.utilities.commons.text.TextSeparator#paragraphs(java.lang.String)}.
 	 */
 	@Test
 	public final void testParagraphs() {
@@ -184,7 +184,7 @@ public class TextSeparatorTest {
 	}
 	
 	/**
-	 * Test method for {@link org.mozkito.mappings.utils.TextSeparator#sentences(java.lang.String)}.
+	 * Test method for {@link org.mozkito.utilities.commons.text.TextSeparator#sentences(java.lang.String)}.
 	 */
 	@Test
 	public final void testSentences() {
@@ -220,7 +220,7 @@ public class TextSeparatorTest {
 	}
 	
 	/**
-	 * Test method for {@link org.mozkito.mappings.utils.TextSeparator#words(java.lang.String)}.
+	 * Test method for {@link org.mozkito.utilities.commons.text.TextSeparator#words(java.lang.String)}.
 	 */
 	@Test
 	public final void testWords() {

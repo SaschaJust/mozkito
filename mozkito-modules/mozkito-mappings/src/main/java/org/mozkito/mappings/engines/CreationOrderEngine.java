@@ -20,8 +20,6 @@ import org.apache.commons.collections.Predicate;
 import org.joda.time.DateTime;
 
 import org.mozkito.issues.model.Report;
-import org.mozkito.mappings.mappable.FieldKey;
-import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Feature;
 import org.mozkito.mappings.model.Relation;
@@ -29,6 +27,7 @@ import org.mozkito.mappings.requirements.And;
 import org.mozkito.mappings.requirements.Atom;
 import org.mozkito.mappings.requirements.Expression;
 import org.mozkito.mappings.requirements.Index;
+import org.mozkito.persistence.FieldKey;
 import org.mozkito.versions.model.ChangeSet;
 
 /**
@@ -111,8 +110,8 @@ public class CreationOrderEngine extends Engine {
 		}
 		
 		try {
-			final MappableEntity from = relation.getFrom();
-			final MappableEntity to = relation.getTo();
+			final org.mozkito.persistence.Entity from = relation.getFrom();
+			final org.mozkito.persistence.Entity to = relation.getTo();
 			
 			SANITY: {
 				assert from != null;

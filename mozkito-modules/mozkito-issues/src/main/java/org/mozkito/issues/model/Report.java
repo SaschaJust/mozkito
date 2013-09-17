@@ -15,12 +15,14 @@ package org.mozkito.issues.model;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -59,10 +61,14 @@ import org.mozkito.issues.elements.Severity;
 import org.mozkito.issues.elements.Status;
 import org.mozkito.issues.elements.Type;
 import org.mozkito.issues.model.comparators.CommentComparator;
-import org.mozkito.persistence.Annotated;
+import org.mozkito.persistence.FieldKey;
+import org.mozkito.persistence.IteratableFieldKey;
+import org.mozkito.persistence.model.EnumTuple;
 import org.mozkito.persons.model.Person;
 import org.mozkito.persons.model.PersonContainer;
+import org.mozkito.persons.model.PersonTuple;
 import org.mozkito.utilities.commons.JavaUtils;
+import org.mozkito.utilities.io.FileUtils;
 
 /**
  * The Class Report.
@@ -71,7 +77,7 @@ import org.mozkito.utilities.commons.JavaUtils;
  */
 @Entity
 @Table (name = "report")
-public class Report implements Annotated, Comparable<Report> {
+public class Report implements org.mozkito.persistence.Entity, Comparable<Report> {
 	
 	private static final Report DEFAULT_REPORT   = new Report();
 	
@@ -335,6 +341,300 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.persistence.Entity#get(org.mozkito.persistence.FieldKey)
+	 */
+	@Override
+	public <T> T get(final FieldKey key) {
+		PRECONDITIONS: {
+			if (key == null) {
+				throw new NullPointerException();
+			}
+		}
+		
+		try {
+			Object o = null;
+			switch (key) {
+				case AUTHOR:
+					o = getSubmitter();
+					break;
+				case BODY:
+					o = new StringBuilder().append(getSummary()).append(FileUtils.lineSeparator)
+					                       .append(getDescription()).toString();
+					break;
+				case CLOSED_TIMESTAMP:
+					o = getClosedTimestamp();
+					break;
+				case CLOSER:
+					o = getClosingPerson();
+					break;
+				case CREATION_TIMESTAMP:
+					o = getCreationTimestamp();
+					break;
+				case DESCRIPTION:
+					o = getDescription();
+					break;
+				case ID:
+					o = getId();
+					break;
+				case MODIFICATION_TIMESTAMP:
+					o = getLatestModificationTimestamp();
+					break;
+				case RESOLUTION_TIMESTAMP:
+					o = getResolutionTimestamp();
+					break;
+				case TYPE:
+					o = getType().name();
+					break;
+				default:
+					SANITY: {
+						assert !supportedFields().contains(key);
+					}
+					throw new IllegalArgumentException(key.name());
+			}
+			
+			try {
+				@SuppressWarnings ("unchecked")
+				final T result = (T) o;
+				return result;
+			} catch (final ClassCastException e) {
+				throw new IllegalArgumentException(key.getDeclaringClass().getSimpleName() + " " + key.name()
+				        + " resolves to type " + key.resultType().getCanonicalName(), e);
+			}
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.persistence.Entity#get(org.mozkito.persistence.IteratableFieldKey)
+	 */
+	@SuppressWarnings ("unchecked")
+	@Override
+	public <T> Collection<T> get(final IteratableFieldKey key) {
+		PRECONDITIONS: {
+			if (key == null) {
+				throw new NullPointerException();
+			}
+		}
+		
+		try {
+			Collection<T> collection = null;
+			
+			switch (key) {
+				case CHANGER:
+					final Collection<Person> changerCollection = new HashSet<Person>();
+					
+					for (final HistoryElement element : getHistory()) {
+						changerCollection.add(element.getAuthor());
+					}
+					
+					collection = (Collection<T>) changerCollection;
+					break;
+				case COMMENTS:
+					final Collection<String> commentsCollection = new ArrayList<String>(getComments().size());
+					
+					for (final Comment comment : getComments()) {
+						commentsCollection.add(comment.getText());
+					}
+					
+					collection = (Collection<T>) commentsCollection;
+					break;
+				case INVOLVED:
+					final Collection<Person> involvedCollection = new HashSet<Person>();
+					for (final HistoryElement element : getHistory()) {
+						involvedCollection.add(element.getAuthor());
+						final Map<String, PersonTuple> persons = element.getChangedPersonValues();
+						for (final PersonTuple tuple : persons.values()) {
+							if (tuple.getOldValue() != null) {
+								involvedCollection.add(tuple.getOldValue());
+							}
+							if (tuple.getNewValue() != null) {
+								involvedCollection.add(tuple.getNewValue());
+							}
+						}
+					}
+					
+					for (final Comment comment : getComments()) {
+						involvedCollection.add(comment.getAuthor());
+					}
+					
+					involvedCollection.add(getAssignedTo());
+					involvedCollection.add(getResolver());
+					involvedCollection.add(getSubmitter());
+					collection = (Collection<T>) involvedCollection;
+					break;
+				case FILES:
+					final Collection<String> filesCollection = new HashSet<>(getAttachmentEntries().size());
+					final List<AttachmentEntry> attachmentEntries = getAttachmentEntries();
+					for (final AttachmentEntry entry : attachmentEntries) {
+						filesCollection.add(entry.getFilename());
+					}
+					collection = (Collection<T>) filesCollection;
+					break;
+				default:
+					SANITY: {
+						assert !supportedIteratableFields().contains(key);
+					}
+					throw new IllegalArgumentException(key.name());
+			}
+			
+			assert collection != null;
+			return collection;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.persistence.Entity#get(org.mozkito.persistence.IteratableFieldKey, int)
+	 */
+	@Override
+	public <T> T get(final IteratableFieldKey key,
+	                 final int index) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return Static.get(this, key, index);
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.persistence.Entity#getAll(org.mozkito.persistence.FieldKey[])
+	 */
+	@Override
+	public Map<FieldKey, Object> getAll(final FieldKey... keys) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return Static.getAll(this, keys);
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.persistence.Entity#getAll(org.mozkito.persistence.IteratableFieldKey[])
+	 */
+	@Override
+	public Map<IteratableFieldKey, Object> getAll(final IteratableFieldKey... keys) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return Static.getAll(this, keys);
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.persistence.Entity#getAny(org.mozkito.persistence.FieldKey[])
+	 */
+	@Override
+	public Object getAny(final FieldKey... keys) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return Static.getAny(this, keys);
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.persistence.Entity#getAny(org.mozkito.persistence.IteratableFieldKey[])
+	 */
+	@Override
+	public Object getAny(final IteratableFieldKey... keys) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return Static.getAny(this, keys);
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.persistence.Entity#getAsOneString(org.mozkito.persistence.FieldKey[])
+	 */
+	@Override
+	public String getAsOneString(final FieldKey... fKeys) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return Static.getAsOneString(this, fKeys);
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.persistence.Entity#getAsOneString(org.mozkito.persistence.IteratableFieldKey)
+	 */
+	@Override
+	public String getAsOneString(final IteratableFieldKey iKeys) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return Static.getAsOneString(this, iKeys);
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
 	 * Gets the assigned to.
 	 * 
 	 * @return the assignedTo
@@ -373,6 +673,65 @@ public class Report implements Annotated, Comparable<Report> {
 	@Override
 	public final String getClassName() {
 		return JavaUtils.getHandle(Report.class);
+	}
+	
+	/**
+	 * Gets the closed timestamp.
+	 * 
+	 * @return the closed timestamp
+	 */
+	@Transient
+	public DateTime getClosedTimestamp() {
+		DateTime timestamp = null;
+		if (Status.CLOSED.equals(getStatus())) {
+			for (final HistoryElement element : getHistory()) {
+				final Map<String, EnumTuple> values = element.getChangedEnumValues();
+				if (!values.isEmpty() && values.containsKey(Status.class.getSimpleName())) {
+					final EnumTuple tuple = values.get(Status.class.getSimpleName());
+					
+					SANITY: {
+						assert tuple != null;
+					}
+					
+					if (Status.CLOSED.equals(tuple.getNewValue())) {
+						SANITY: {
+							assert (timestamp == null) || timestamp.isBefore(element.getTimestamp());
+						}
+						timestamp = element.getTimestamp();
+					}
+				}
+			}
+		}
+		
+		return timestamp;
+	}
+	
+	/**
+	 * Gets the closing person.
+	 * 
+	 * @return the closing person
+	 */
+	@Transient
+	public Person getClosingPerson() {
+		Person person = null;
+		if (Status.CLOSED.equals(getStatus())) {
+			for (final HistoryElement element : getHistory()) {
+				final Map<String, EnumTuple> values = element.getChangedEnumValues();
+				if (!values.isEmpty() && values.containsKey(Status.class.getSimpleName())) {
+					final EnumTuple tuple = values.get(Status.class.getSimpleName());
+					
+					SANITY: {
+						assert tuple != null;
+					}
+					
+					if (Status.CLOSED.equals(tuple.getNewValue())) {
+						person = element.getAuthor();
+					}
+				}
+			}
+		}
+		
+		return person;
 	}
 	
 	/**
@@ -487,6 +846,26 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.persistence.Entity#getIDString()
+	 */
+	@Override
+	public String getIDString() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return getId();
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
 	 * Gets the keywords.
 	 * 
 	 * @return the keywords
@@ -546,6 +925,44 @@ public class Report implements Annotated, Comparable<Report> {
 	@Transient
 	public DateTime getLastUpdateTimestamp() {
 		return this.lastUpdateTimestamp;
+	}
+	
+	/**
+	 * Gets the latest modification timestamp.
+	 * 
+	 * @return the latest modification timestamp
+	 */
+	@Transient
+	public DateTime getLatestModificationTimestamp() {
+		DateTime timestamp = getCreationTimestamp();
+		
+		for (final HistoryElement element : getHistory()) {
+			if (timestamp.isBefore(element.getTimestamp())) {
+				timestamp = element.getTimestamp();
+			}
+		}
+		
+		return timestamp;
+	}
+	
+	/**
+	 * Gets the latest modificator.
+	 * 
+	 * @return the latest modificator
+	 */
+	@Transient
+	public Person getLatestModificator() {
+		DateTime timestamp = getCreationTimestamp();
+		Person person = getSubmitter();
+		
+		for (final HistoryElement element : getHistory()) {
+			if (timestamp.isBefore(element.getTimestamp())) {
+				timestamp = element.getTimestamp();
+				person = element.getAuthor();
+			}
+		}
+		
+		return person;
 	}
 	
 	/**
@@ -661,6 +1078,26 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.persistence.Entity#getSize(org.mozkito.persistence.IteratableFieldKey)
+	 */
+	@Override
+	public int getSize(final IteratableFieldKey key) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return Static.getSize(this, key);
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
 	 * Gets the status.
 	 * 
 	 * @return the status
@@ -705,6 +1142,35 @@ public class Report implements Annotated, Comparable<Report> {
 	@Column (length = 0)
 	public String getSummary() {
 		return this.summary;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.persistence.Entity#getText()
+	 */
+	@Override
+	public String getText() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			final StringBuilder builder = new StringBuilder();
+			
+			builder.append(getSubject()).append(FileUtils.lineSeparator);
+			builder.append(getSummary()).append(FileUtils.lineSeparator);
+			builder.append(getDescription()).append(FileUtils.lineSeparator);
+			for (final Comment comment : getComments()) {
+				builder.append(comment.getMessage()).append(FileUtils.lineSeparator);
+			}
+			
+			return builder.toString();
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/**
@@ -1148,6 +1614,82 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	public void setVersion(final String version) {
 		this.version = version;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.persistence.Entity#supportedFields()
+	 */
+	@Override
+	public Set<FieldKey> supportedFields() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			final Set<FieldKey> set = new HashSet<FieldKey>() {
+				
+				/**
+                 * 
+                 */
+				private static final long serialVersionUID = 1L;
+				
+				{
+					add(FieldKey.AUTHOR);
+					add(FieldKey.BODY);
+					add(FieldKey.CLOSED_TIMESTAMP);
+					add(FieldKey.CLOSER);
+					add(FieldKey.CREATION_TIMESTAMP);
+					add(FieldKey.DESCRIPTION);
+					add(FieldKey.ID);
+					add(FieldKey.MODIFICATION_TIMESTAMP);
+					add(FieldKey.RESOLUTION_TIMESTAMP);
+					add(FieldKey.TYPE);
+				}
+			};
+			
+			return set;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.persistence.Entity#supportedIteratableFields()
+	 */
+	@Override
+	public Set<IteratableFieldKey> supportedIteratableFields() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			final Set<IteratableFieldKey> set = new HashSet<IteratableFieldKey>() {
+				
+				/**
+                 * 
+                 */
+				private static final long serialVersionUID = 1L;
+				
+				{
+					add(IteratableFieldKey.CHANGER);
+					add(IteratableFieldKey.COMMENTS);
+					add(IteratableFieldKey.FILES);
+					add(IteratableFieldKey.INVOLVED);
+				}
+			};
+			
+			return set;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/**

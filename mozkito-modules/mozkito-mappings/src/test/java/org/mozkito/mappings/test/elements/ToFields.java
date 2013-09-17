@@ -16,7 +16,7 @@ package org.mozkito.mappings.test.elements;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import org.mozkito.mappings.mappable.FieldKey;
+import org.mozkito.persistence.FieldKey;
 
 /**
  * @author Sascha Just <sascha.just@mozkito.org>

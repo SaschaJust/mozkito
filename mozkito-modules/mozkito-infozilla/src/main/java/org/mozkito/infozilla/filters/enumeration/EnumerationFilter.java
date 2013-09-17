@@ -22,7 +22,7 @@ import net.ownhero.dev.regex.Regex;
 
 import org.mozkito.infozilla.filters.FilterTextRemover;
 import org.mozkito.infozilla.filters.InfozillaFilter;
-import org.mozkito.infozilla.model.itemization.Itemization;
+import org.mozkito.infozilla.model.itemization.Listing;
 
 /**
  * The Class EnumerationFilter.
@@ -44,9 +44,9 @@ public class EnumerationFilter extends InfozillaFilter {
 	 *            the last line where an enumerator symbol was found
 	 * @param text
 	 *            the complete text where the enumeration is in
-	 * @return an {@link Itemization}
+	 * @return an {@link Listing}
 	 */
-	private Itemization createEnumeration(final int startline,
+	private Listing createEnumeration(final int startline,
 	                                      final int endline,
 	                                      final String text) {
 		assert (startline >= 0);
@@ -83,7 +83,7 @@ public class EnumerationFilter extends InfozillaFilter {
 		}
 		eEnd = eEnd + lines[lastline].length();
 		
-		final Itemization e = new Itemization(enumLines, startline, lastline);
+		final Listing e = new Listing(enumLines, startline, lastline);
 		e.setEnumStart(eStart);
 		e.setEnumEnd(eEnd);
 		return e;
@@ -118,10 +118,10 @@ public class EnumerationFilter extends InfozillaFilter {
 	 * 
 	 * @param s
 	 *            The text to look inside for character enumerations
-	 * @return a List of {@link Itemization}s
+	 * @return a List of {@link Listing}s
 	 */
-	private List<Itemization> getCharEnums(final String s) {
-		final List<Itemization> foundEnumerations = new ArrayList<Itemization>();
+	private List<Listing> getCharEnums(final String s) {
+		final List<Listing> foundEnumerations = new ArrayList<Listing>();
 		
 		// RegEx for Enumerations Start
 		// like A A. A) A.) a a. a) a.) (A) (a) etc.
@@ -179,7 +179,7 @@ public class EnumerationFilter extends InfozillaFilter {
 						enumEnd = previousEnumLineFound;
 					}
 					if (symbolCount > 1) {
-						final Itemization someEnum = createEnumeration(enumStart, enumEnd, s);
+						final Listing someEnum = createEnumeration(enumStart, enumEnd, s);
 						foundEnumerations.add(someEnum);
 					}
 					// Reset the counters
@@ -199,7 +199,7 @@ public class EnumerationFilter extends InfozillaFilter {
 		}
 		
 		if ((enumStart >= 0) && (symbolCount > 1)) {
-			final Itemization lastEnumeration = createEnumeration(enumStart, enumEnd, s);
+			final Listing lastEnumeration = createEnumeration(enumStart, enumEnd, s);
 			foundEnumerations.add(lastEnumeration);
 		}
 		// Return the list of found Enumerations!
@@ -213,25 +213,25 @@ public class EnumerationFilter extends InfozillaFilter {
 	 *            The Text to look inside for enumerations and itemizations
 	 * @return a List of all {@Itemization}s found.
 	 */
-	private List<Itemization> getEnumerationsAndItemizations(final String s) {
+	private List<Listing> getEnumerationsAndItemizations(final String s) {
 		// Create an empty list to put the extracted enumerations in
-		final List<Itemization> enumerations = new ArrayList<Itemization>();
+		final List<Listing> enumerations = new ArrayList<Listing>();
 		
 		// Initialize the text filter with the text "s" we are given
 		setProcessedText(s);
 		
 		// Process all types of enumerations, while extracting already found
 		// items
-		final List<Itemization> charEnums = getCharEnums(s);
+		final List<Listing> charEnums = getCharEnums(s);
 		
-		final List<Itemization> numEnums = getNumEnums(s);
+		final List<Listing> numEnums = getNumEnums(s);
 		
-		final List<Itemization> itemizations = getItemizations(s);
+		final List<Listing> listings = getItemizations(s);
 		
 		// All add discovered items to the final list
 		enumerations.addAll(charEnums);
 		enumerations.addAll(numEnums);
-		enumerations.addAll(itemizations);
+		enumerations.addAll(listings);
 		
 		// Return the list of enumerations - now this.processedText contains the
 		// final text
@@ -244,11 +244,11 @@ public class EnumerationFilter extends InfozillaFilter {
 	 * 
 	 * @param s
 	 *            The text to look inside for itemizations
-	 * @return a list of {@link Itemization}s for each Itemization
+	 * @return a list of {@link Listing}s for each Itemization
 	 */
-	private List<Itemization> getItemizations(final String s) {
+	private List<Listing> getItemizations(final String s) {
 		// All found itemizations will be stored in this list
-		final List<Itemization> foundItemizations = new ArrayList<Itemization>();
+		final List<Listing> foundItemizations = new ArrayList<Listing>();
 		
 		// Split the input into lines
 		final String[] lines = s.split("[\n\r]");
@@ -286,8 +286,8 @@ public class EnumerationFilter extends InfozillaFilter {
 					if ((itemizeBegin >= 0) && (itemizeLineCounter > 1)) {
 						// Create a new itemization
 						itemizeEnd = lastItemizeEnd;
-						final Itemization itemization = createEnumeration(itemizeBegin, itemizeEnd, s);
-						foundItemizations.add(itemization);
+						final Listing listing = createEnumeration(itemizeBegin, itemizeEnd, s);
+						foundItemizations.add(listing);
 					}
 					// And reset the counters
 					itemizeBegin = -1;
@@ -302,8 +302,8 @@ public class EnumerationFilter extends InfozillaFilter {
 		if ((itemizeBegin >= 0) && (itemizeLineCounter > 1)) {
 			// Create a new itemization
 			itemizeEnd = lastItemizeEnd;
-			final Itemization itemization = createEnumeration(itemizeBegin, itemizeEnd, s);
-			foundItemizations.add(itemization);
+			final Listing listing = createEnumeration(itemizeBegin, itemizeEnd, s);
+			foundItemizations.add(listing);
 		}
 		
 		// Return the list of found Enumerations!
@@ -315,10 +315,10 @@ public class EnumerationFilter extends InfozillaFilter {
 	 * 
 	 * @param s
 	 *            The text to look inside for number enumerations
-	 * @return a List of {@link Itemization}s
+	 * @return a List of {@link Listing}s
 	 */
-	private List<Itemization> getNumEnums(final String s) {
-		final List<Itemization> foundEnumerations = new ArrayList<Itemization>();
+	private List<Listing> getNumEnums(final String s) {
+		final List<Listing> foundEnumerations = new ArrayList<Listing>();
 		
 		// RegEx for Enumerations Start
 		// like 1 1. 1) 1.) (1) 1-
@@ -380,7 +380,7 @@ public class EnumerationFilter extends InfozillaFilter {
 						enumEnd = previousEnumLineFound;
 					}
 					if (symbolCount > 1) {
-						final Itemization someEnum = createEnumeration(enumStart, enumEnd, s);
+						final Listing someEnum = createEnumeration(enumStart, enumEnd, s);
 						foundEnumerations.add(someEnum);
 					}
 					// Reset the counters
@@ -400,7 +400,7 @@ public class EnumerationFilter extends InfozillaFilter {
 		}
 		
 		if ((enumStart >= 0) && (symbolCount > 1)) {
-			final Itemization lastEnumeration = createEnumeration(enumStart, enumEnd, s);
+			final Listing lastEnumeration = createEnumeration(enumStart, enumEnd, s);
 			foundEnumerations.add(lastEnumeration);
 		}
 		// Return the list of found Enumerations!
@@ -432,7 +432,7 @@ public class EnumerationFilter extends InfozillaFilter {
 	 * @see org.mozkito.infozilla.filters.InfozillaFilter#runFilter(java.lang.String)
 	 */
 	@Override
-	public List<Itemization> runFilter(final String inputText) {
+	public List<Listing> runFilter(final String inputText) {
 		return getEnumerationsAndItemizations(inputText);
 	}
 	
