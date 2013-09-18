@@ -12,9 +12,13 @@
  ******************************************************************************/
 package org.mozkito.infozilla.filters;
 
+import java.util.LinkedList;
 import java.util.List;
 
+import org.mozkito.infozilla.filters.stacktrace.JavaStacktraceFilter;
 import org.mozkito.infozilla.model.EnhancedReport;
+import org.mozkito.infozilla.model.stacktrace.Stacktrace;
+import org.mozkito.issues.model.Comment;
 import org.mozkito.issues.model.Report;
 
 /**
@@ -25,6 +29,25 @@ import org.mozkito.issues.model.Report;
 public class InfozillaFilterChain {
 	
 	/**
+	 * Parses the.
+	 * 
+	 * @param report
+	 *            the report
+	 * @return the enhanced report
+	 */
+	public static EnhancedReport parse(final Report report) {
+		final EnhancedReport enhancedReport = new EnhancedReport(report.getId());
+		
+		final JavaStacktraceFilter filter = new JavaStacktraceFilter();
+		final List<Stacktrace> stacktraces = new LinkedList<>();
+		for (final Comment comment : report.getComments()) {
+			stacktraces.addAll(filter.runFilter(comment.getMessage()));
+		}
+		enhancedReport.setStacktraces(stacktraces);
+		return enhancedReport;
+	}
+	
+	/**
 	 * Adds the filter.
 	 * 
 	 * @param filter
@@ -32,7 +55,6 @@ public class InfozillaFilterChain {
 	 */
 	public void addFilter(final InfozillaFilter filter) {
 		// TODO Auto-generated method stub
-		
 	}
 	
 	/**
@@ -86,17 +108,6 @@ public class InfozillaFilterChain {
 	 * @return the traces
 	 */
 	public List<?> getTraces() {
-		return null;
-	}
-	
-	/**
-	 * Parses the.
-	 * 
-	 * @param report
-	 *            the report
-	 * @return the enhanced report
-	 */
-	public EnhancedReport parse(final Report report) {
 		return null;
 	}
 	

@@ -14,6 +14,7 @@ package org.mozkito.mappings.engines;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -28,6 +29,7 @@ import org.mozkito.codeanalysis.model.JavaMethodDefinition;
 import org.mozkito.infozilla.model.EnhancedReport;
 import org.mozkito.infozilla.model.stacktrace.Stacktrace;
 import org.mozkito.infozilla.model.stacktrace.StacktraceEntry;
+import org.mozkito.issues.model.Report;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Feature;
 import org.mozkito.mappings.model.Relation;
@@ -35,11 +37,14 @@ import org.mozkito.mappings.requirements.And;
 import org.mozkito.mappings.requirements.Atom;
 import org.mozkito.mappings.requirements.Expression;
 import org.mozkito.mappings.requirements.Index;
+import org.mozkito.mappings.storages.InfozillaStorage;
 import org.mozkito.mappings.storages.PersistenceStorage;
+import org.mozkito.mappings.storages.RepositoryStorage;
 import org.mozkito.mappings.storages.Storage;
 import org.mozkito.persistence.PPAPersistenceUtil;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.utilities.commons.JavaUtils;
+import org.mozkito.versions.Repository;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.model.ChangeSet;
 
@@ -83,26 +88,44 @@ public class StacktraceParserEngine extends Engine {
 		}
 		
 		try {
-			final org.mozkito.persistence.Entity from = relation.getFrom();
-			final org.mozkito.persistence.Entity to = relation.getTo();
+			final Report report = (Report) relation.getFrom();
+			final ChangeSet changeSet = (ChangeSet) relation.getTo();
+			
+			SANITY: {
+				assert report != null;
+				assert changeSet != null;
+			}
+			
+			new LinkedList<>();
+			
+			final InfozillaStorage infozillaStorage = getStorage(InfozillaStorage.class);
+			final RepositoryStorage repositoryStorage = getStorage(RepositoryStorage.class);
 			final PersistenceStorage persistenceStorage = getStorage(PersistenceStorage.class);
 			
 			SANITY: {
-				assert from != null;
-				assert to != null;
+				assert infozillaStorage != null;
+				assert repositoryStorage != null;
 				assert persistenceStorage != null;
-				assert persistenceStorage.getUtil() != null;
 			}
 			
-			final MappableStructuredReport mappableStructuredReport = (MappableStructuredReport) from;
-			final EnhancedReport report = mappableStructuredReport.getReport();
+			final EnhancedReport enhancedReport = infozillaStorage.getEnhancedReport(report);
 			
-			final MappableChangeSet mappableChangeSet = (MappableChangeSet) to;
-			final ChangeSet transaction = mappableChangeSet.getChangeSet();
+			if (enhancedReport == null) {
+				// we can't do anything here. no inline code or attachments found
+				return;
+			}
+			
+			final Repository repository = repositoryStorage.getRepository();
+			
+			SANITY: {
+				assert repository != null;
+			}
+			
+			changeSet.getChangedFiles();
 			final PersistenceUtil persistenceUtil = persistenceStorage.getUtil();
 			final Set<String> subjects = new HashSet<>();
 			final Collection<JavaChangeOperation> changeOperations = PPAPersistenceUtil.getChangeOperation(persistenceUtil,
-			                                                                                               transaction);
+			                                                                                               changeSet);
 			
 			for (final JavaChangeOperation operation : changeOperations) {
 				if (operation.getChangeType().equals(ChangeType.Modified)) {
@@ -115,11 +138,19 @@ public class StacktraceParserEngine extends Engine {
 				}
 			}
 			
-			final Collection<Stacktrace> stacktraces = report.getStacktraces();
+			final Collection<Stacktrace> stacktraces = enhancedReport.getStacktraces();
 			double localConfidence = 0.0d;
 			
 			STACKTRACES: for (final Stacktrace trace : stacktraces) {
-				final List<? extends StacktraceEntry> entries = trace.getEntries();
+				final List<StacktraceEntry> entries = new LinkedList<>();
+				entries.addAll(trace.getTrace());
+				Stacktrace cause = trace;
+				while ((cause = trace.getCause()) != null) {
+					entries.addAll(cause.getTrace());
+				}
+				// TODO set max depth
+				// TODO add package whitelist
+				// TODO add package blacklist
 				assert entries != null;
 				assert entries.iterator().hasNext();
 				final StacktraceEntry entry = entries.iterator().next();

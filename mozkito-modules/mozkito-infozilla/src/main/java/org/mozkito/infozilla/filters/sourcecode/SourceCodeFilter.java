@@ -15,42 +15,16 @@
  */
 package org.mozkito.infozilla.filters.sourcecode;
 
-import java.util.List;
-
 import org.mozkito.infozilla.filters.InfozillaFilter;
+import org.mozkito.infozilla.model.source.SourceCode;
 
 /**
  * The Class SourceCodeFilter.
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public abstract class SourceCodeFilter extends InfozillaFilter {
+public abstract class SourceCodeFilter extends InfozillaFilter<SourceCode> {
 	
-	/**
-	 * Instantiates a new source code filter.
-	 */
-	public SourceCodeFilter() {
-		// REMARK Auto-generated constructor stub
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.infozilla.filters.InfozillaFilter#getOutputText()
-	 */
-	@Override
-	public String getOutputText() {
-		// REMARK Auto-generated method stub
-		return null;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.infozilla.filters.InfozillaFilter#runFilter(java .lang.String)
-	 */
-	@Override
-	public List<?> runFilter(final String inputText) {
-		// REMARK Auto-generated method stub
-		return null;
-	}
+	// stub
 	
 }

@@ -33,7 +33,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import org.mozkito.infozilla.filters.enumeration.Enumeration;
-import org.mozkito.infozilla.filters.enumeration.EnumerationEntry;
 import org.mozkito.utilities.commons.JavaUtils;
 import org.mozkito.utilities.io.FileUtils;
 
@@ -163,7 +162,8 @@ public class EnumerationTest {
 	}
 	
 	/**
-	 * Test method for {@link org.mozkito.infozilla.filters.enumeration.Enumeration#extract(java.lang.String, int, int)}.
+	 * Test method for {@link org.mozkito.infozilla.filters.enumeration.Enumeration#extract(java.lang.String, int, int)}
+	 * .
 	 */
 	@Test
 	@Ignore

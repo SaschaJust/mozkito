@@ -75,6 +75,20 @@ public class Listing implements Annotated, Inlineable, List<ListingEntry> {
 	private Type               type;
 	
 	/**
+	 * @param type
+	 * @param startPosition
+	 * @param endPosition
+	 * @param entries
+	 */
+	public Listing(final Type type, final Integer startPosition, final Integer endPosition) {
+		super();
+		this.type = type;
+		this.startPosition = startPosition;
+		this.endPosition = endPosition;
+		this.entries = this.entries;
+	}
+	
+	/**
 	 * {@inheritDoc}
 	 * 
 	 * @see java.util.List#add(int, java.lang.Object)

@@ -23,11 +23,13 @@ import net.ownhero.dev.regex.Regex;
 import org.mozkito.infozilla.filters.FilterTextRemover;
 import org.mozkito.infozilla.filters.InfozillaFilter;
 import org.mozkito.infozilla.model.itemization.Listing;
+import org.mozkito.infozilla.model.itemization.Listing.Type;
+import org.mozkito.infozilla.model.itemization.ListingEntry;
 
 /**
  * The Class EnumerationFilter.
  */
-public class EnumerationFilter extends InfozillaFilter {
+public class EnumerationFilter extends InfozillaFilter<Listing> {
 	
 	/** The text remover. */
 	private FilterTextRemover textRemover;
@@ -47,8 +49,8 @@ public class EnumerationFilter extends InfozillaFilter {
 	 * @return an {@link Listing}
 	 */
 	private Listing createEnumeration(final int startline,
-	                                      final int endline,
-	                                      final String text) {
+	                                  final int endline,
+	                                  final String text) {
 		assert (startline >= 0);
 		assert (endline >= 0);
 		
@@ -83,9 +85,13 @@ public class EnumerationFilter extends InfozillaFilter {
 		}
 		eEnd = eEnd + lines[lastline].length();
 		
-		final Listing e = new Listing(enumLines, startline, lastline);
-		e.setEnumStart(eStart);
-		e.setEnumEnd(eEnd);
+		final Listing e = new Listing(Type.ENUMERATION, eStart, eEnd);
+		for (final String line : enumLines) {
+			e.add(new ListingEntry("-", 0, 0, line));
+		}
+		
+		// e.setEnumStart(eStart);
+		// e.setEnumEnd(eEnd);
 		return e;
 	}
 	

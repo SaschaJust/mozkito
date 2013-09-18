@@ -16,12 +16,13 @@
 package org.mozkito.infozilla.filters.patch;
 
 import org.mozkito.infozilla.filters.InfozillaFilter;
+import org.mozkito.infozilla.model.patch.Patch;
 
 /**
  * The Class PatchFilter.
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public abstract class PatchFilter extends InfozillaFilter {
+public abstract class PatchFilter extends InfozillaFilter<Patch> {
 	// stub
 }

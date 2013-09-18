@@ -18,10 +18,11 @@ import java.util.List;
 /**
  * This interface describes the method interface for every infoZilla InfozillaFilter.
  * 
+ * @param <T>
+ *            the generic type
  * @author Nicolas Bettenburg, Sascha Just
- * 
  */
-public abstract class InfozillaFilter {
+public abstract class InfozillaFilter<T> {
 	
 	/**
 	 * Gets the output text.
@@ -37,6 +38,6 @@ public abstract class InfozillaFilter {
 	 *            the input text
 	 * @return the list
 	 */
-	public abstract List<?> runFilter(String inputText);
+	public abstract List<T> runFilter(String inputText);
 	
 }

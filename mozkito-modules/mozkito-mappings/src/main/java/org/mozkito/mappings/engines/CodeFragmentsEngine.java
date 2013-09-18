@@ -28,6 +28,7 @@ import org.apache.commons.collections.Predicate;
 import difflib.Delta;
 
 import org.mozkito.infozilla.model.EnhancedReport;
+import org.mozkito.issues.model.Report;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Feature;
 import org.mozkito.mappings.model.Relation;
@@ -35,6 +36,7 @@ import org.mozkito.mappings.requirements.And;
 import org.mozkito.mappings.requirements.Atom;
 import org.mozkito.mappings.requirements.Expression;
 import org.mozkito.mappings.requirements.Index;
+import org.mozkito.mappings.storages.InfozillaStorage;
 import org.mozkito.mappings.storages.RepositoryStorage;
 import org.mozkito.mappings.storages.Storage;
 import org.mozkito.utilities.commons.JavaUtils;
@@ -107,34 +109,38 @@ public class CodeFragmentsEngine extends Engine {
 		}
 		
 		try {
-			final org.mozkito.persistence.Entity from = relation.getFrom();
-			final org.mozkito.persistence.Entity to = relation.getTo();
+			final Report report = (Report) relation.getFrom();
+			final ChangeSet changeSet = (ChangeSet) relation.getTo();
 			
 			SANITY: {
-				assert from != null;
-				assert to != null;
+				assert report != null;
+				assert changeSet != null;
 			}
 			
 			final List<String> patchOriginalLines = new LinkedList<>();
 			
-			final MappableStructuredReport report = (MappableStructuredReport) from;
-			final EnhancedReport enhancedReport = report.getReport();
-			final MappableChangeSet transaction = (MappableChangeSet) to;
+			final InfozillaStorage infozillaStorage = getStorage(InfozillaStorage.class);
 			final RepositoryStorage repositoryStorage = getStorage(RepositoryStorage.class);
 			
 			SANITY: {
+				assert infozillaStorage != null;
 				assert repositoryStorage != null;
+			}
+			
+			final EnhancedReport enhancedReport = infozillaStorage.getEnhancedReport(report);
+			
+			if (enhancedReport == null) {
+				// we can't do anything here. no inline code or attachments found
+				return;
 			}
 			
 			final Repository repository = repositoryStorage.getRepository();
 			
 			SANITY: {
 				assert repository != null;
-				final ChangeSet changeSet = transaction.getChangeSet();
-				assert changeSet != null;
 			}
 			
-			final Collection<Handle> changedFiles = transaction.getChangeSet().getChangedFiles();
+			final Collection<Handle> changedFiles = changeSet.getChangedFiles();
 			
 			SANITY: {
 				assert changedFiles != null;
@@ -142,7 +148,7 @@ public class CodeFragmentsEngine extends Engine {
 			
 			for (final Handle handle : changedFiles) {
 				try {
-					final String path = handle.getPath(transaction.getChangeSet());
+					final String path = handle.getPath(changeSet);
 					
 					SANITY: {
 						assert path != null;
@@ -150,8 +156,7 @@ public class CodeFragmentsEngine extends Engine {
 					
 					Collection<Delta> diff;
 					try {
-						diff = repository.diff(path, transaction.getChangeSet().getBranchParent().getId(),
-						                       transaction.getId());
+						diff = repository.diff(path, changeSet.getBranchParent().getId(), changeSet.getId());
 					} catch (final RepositoryOperationException e) {
 						throw new UnrecoverableError(e);
 					}
@@ -226,6 +231,7 @@ public class CodeFragmentsEngine extends Engine {
 				
 				{
 					add(RepositoryStorage.class);
+					add(InfozillaStorage.class);
 				}
 			};
 		} finally {

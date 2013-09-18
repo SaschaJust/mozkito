@@ -24,6 +24,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 import org.mozkito.infozilla.elements.Attachable;
 import org.mozkito.infozilla.elements.Inlineable;
@@ -40,7 +41,7 @@ public abstract class Stacktrace implements Annotated, Attachable, Inlineable {
 	private static final long     serialVersionUID = 3213193988146023930L;
 	
 	/** The causes. */
-	private List<Stacktrace>      causes           = new LinkedList<>();
+	private Stacktrace            cause            = null;
 	
 	/** The end position. */
 	private Integer               endPosition;
@@ -64,18 +65,16 @@ public abstract class Stacktrace implements Annotated, Attachable, Inlineable {
 	private List<StacktraceEntry> trace            = new LinkedList<>();
 	
 	/**
-	 * Gets the causes.
-	 * 
-	 * @return the causes
+	 * @return the cause
 	 */
-	@ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	public List<Stacktrace> getCauses() {
+	@OneToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	public Stacktrace getCause() {
 		PRECONDITIONS: {
 			// none
 		}
 		
 		try {
-			return this.causes;
+			return this.cause;
 		} finally {
 			POSTCONDITIONS: {
 				// none
@@ -225,18 +224,16 @@ public abstract class Stacktrace implements Annotated, Attachable, Inlineable {
 	}
 	
 	/**
-	 * Sets the causes.
-	 * 
-	 * @param causes
-	 *            the causes to set
+	 * @param cause
+	 *            the cause to set
 	 */
-	public void setCauses(final List<Stacktrace> causes) {
+	public void setCause(final Stacktrace cause) {
 		PRECONDITIONS: {
 			// none
 		}
 		
 		try {
-			this.causes = causes;
+			this.cause = cause;
 		} finally {
 			POSTCONDITIONS: {
 				// none

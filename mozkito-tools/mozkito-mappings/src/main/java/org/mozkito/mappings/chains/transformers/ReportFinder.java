@@ -23,10 +23,9 @@ import net.ownhero.dev.andama.threads.Transformer;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
 
+import org.mozkito.issues.model.Report;
 import org.mozkito.mappings.elements.CandidateFactory;
 import org.mozkito.mappings.finder.Finder;
-import org.mozkito.mappings.mappable.model.MappableChangeSet;
-import org.mozkito.mappings.mappable.model.MappableReport;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Candidate;
 import org.mozkito.mappings.selectors.Selector;
@@ -41,8 +40,8 @@ import org.mozkito.versions.model.ChangeSet;
 public class ReportFinder extends Transformer<ChangeSet, Candidate> {
 	
 	/** The candidate factory. */
-	private final CandidateFactory<MappableReport, MappableChangeSet> candidateFactory = CandidateFactory.getInstance(MappableReport.class,
-	                                                                                                                  MappableChangeSet.class);
+	private final CandidateFactory<Report, ChangeSet> candidateFactory = CandidateFactory.getInstance(Report.class,
+	                                                                                                  ChangeSet.class);
 	
 	/**
 	 * Instantiates a new transaction finder.
@@ -67,25 +66,24 @@ public class ReportFinder extends Transformer<ChangeSet, Candidate> {
 			@Override
 			public void preProcess() {
 				if (candidates.isEmpty()) {
-					final MappableChangeSet mappableTransaction = new MappableChangeSet(getInputData());
-					final Map<MappableReport, Set<Selector>> reportCandidates = finder.getCandidates(mappableTransaction,
-					                                                                                 MappableReport.class,
-					                                                                                 util);
+					final ChangeSet changeSet = getInputData();
+					final Map<Report, Set<Selector>> reportCandidates = finder.getCandidates(changeSet, Report.class,
+					                                                                         util);
 					
 					if (Logger.logInfo()) {
-						Logger.info(Messages.getString("ReportFinder.processing", mappableTransaction.getClassName(), //$NON-NLS-1$
-						                               mappableTransaction.toString(), reportCandidates.size()));
+						Logger.info(Messages.getString("ReportFinder.processing", changeSet.getClassName(), //$NON-NLS-1$
+						                               changeSet.toString(), reportCandidates.size()));
 					}
 					
-					for (final MappableReport mappableReport : reportCandidates.keySet()) {
-						if (ReportFinder.this.candidateFactory.contains(mappableTransaction, mappableReport)) {
+					for (final Report mappableReport : reportCandidates.keySet()) {
+						if (ReportFinder.this.candidateFactory.contains(changeSet, mappableReport)) {
 							if (Logger.logInfo()) {
-								Logger.info(Messages.getString("ReportFinder.skipping", mappableTransaction, mappableReport)); //$NON-NLS-1$
+								Logger.info(Messages.getString("ReportFinder.skipping", changeSet, mappableReport)); //$NON-NLS-1$
 							}
-							ReportFinder.this.candidateFactory.get(mappableTransaction, mappableReport)
+							ReportFinder.this.candidateFactory.get(changeSet, mappableReport)
 							                                  .addSelectors(reportCandidates.get(mappableReport));
 						} else {
-							candidates.add(ReportFinder.this.candidateFactory.add(mappableTransaction, mappableReport,
+							candidates.add(ReportFinder.this.candidateFactory.add(changeSet, mappableReport,
 							                                                      reportCandidates.get(mappableReport)));
 						}
 						

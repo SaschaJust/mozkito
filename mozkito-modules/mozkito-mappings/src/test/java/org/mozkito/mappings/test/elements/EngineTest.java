@@ -18,6 +18,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.lang.reflect.Method;
 
 import org.junit.Before;
@@ -27,9 +28,9 @@ import org.junit.rules.TestName;
 
 import org.mozkito.mappings.engines.AuthorEqualityEngine;
 import org.mozkito.mappings.engines.Engine;
-import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.model.Candidate;
 import org.mozkito.mappings.model.Relation;
+import org.mozkito.persistence.Entity;
 import org.mozkito.persistence.FieldKey;
 import org.mozkito.utilities.datastructures.Tuple;
 
@@ -52,48 +53,54 @@ public abstract class EngineTest {
 	
 	/**
 	 * Setup.
+	 * 
+	 * @throws ClassNotFoundException
 	 */
 	@Before
-	public final void setup() {
+	public final void setup() throws ClassNotFoundException {
 		final String methodName = this.name.getMethodName();
 		try {
 			final Method method = getClass().getMethod(methodName);
 			final TestResources testResources = method.getAnnotation(TestResources.class);
 			if (testResources != null) {
 				this.engine = new AuthorEqualityEngine();
-				final MappableEntity fromEntity = new Dummy(testResources.from());
-				final MappableEntity toEntity = new Dummy(testResources.to());
-				this.relation = new Relation(new Candidate(new Tuple<MappableEntity, MappableEntity>(fromEntity,
-				                                                                                     toEntity)));
+				final ObjectInputStream inputStream = new ObjectInputStream(
+				                                                            getClass().getResourceAsStream(testResources.from()));
+				final Entity fromEntity = (Entity) inputStream.readObject();
+				final ObjectInputStream inputStream2 = new ObjectInputStream(
+				                                                             getClass().getResourceAsStream(testResources.to()));
+				final Entity toEntity = (Entity) inputStream2.readObject();
+				
+				this.relation = new Relation(new Candidate(new Tuple<Entity, Entity>(fromEntity, toEntity)));
 				assertNotNull(this.engine);
 				assertNotNull(this.relation);
 				final Fields fields = method.getAnnotation(Fields.class);
 				if (fields != null) {
 					for (final FieldKey key : fields.from()) {
-						assertNotNull(fromEntity.supported());
-						assertTrue("There is no supported for getting " + key + " for a "
-						        + fromEntity.getBaseType().getSimpleName(), fromEntity.supported().contains(key));
+						assertNotNull(fromEntity.supportedFields());
+						assertTrue("There is no supported for getting " + key + " for a " + fromEntity.getClassName(),
+						           fromEntity.supportedFields().contains(key));
 						assertNotNull("Required accesss to field " + key + " but resource " + testResources.from()
 						        + " is lacking entry.", this.relation.getFrom().get(key));
 					}
 					
 					for (final FieldKey key : fields.to()) {
-						assertNotNull(toEntity.supported());
-						assertTrue("There is no supported for getting " + key + " for a "
-						        + toEntity.getBaseType().getSimpleName(), toEntity.supported().contains(key));
+						assertNotNull(toEntity.supportedFields());
+						assertTrue("There is no supported for getting " + key + " for a " + toEntity.getClassName(),
+						           toEntity.supportedFields().contains(key));
 						assertNotNull("Required accesss to field " + key + " but resource " + testResources.to()
 						        + " is lacking entry.", this.relation.getTo().get(key));
 					}
 					
 					for (final FieldKey key : fields.both()) {
-						assertNotNull(fromEntity.supported());
-						assertTrue("There is no supported for getting " + key + " for a "
-						        + fromEntity.getBaseType().getSimpleName(), fromEntity.supported().contains(key));
+						assertNotNull(fromEntity.supportedFields());
+						assertTrue("There is no supported for getting " + key + " for a " + fromEntity.getClassName(),
+						           fromEntity.supportedFields().contains(key));
 						assertNotNull("Required accesss to field " + key + " but resource " + testResources.from()
 						        + " is lacking entry.", this.relation.getFrom().get(key));
-						assertNotNull(toEntity.supported());
-						assertTrue("There is no supported for getting " + key + " for a "
-						        + toEntity.getBaseType().getSimpleName(), toEntity.supported().contains(key));
+						assertNotNull(toEntity.supportedFields());
+						assertTrue("There is no supported for getting " + key + " for a " + toEntity.getClassName(),
+						           toEntity.supportedFields().contains(key));
 						assertNotNull("Required accesss to field " + key + " but resource " + testResources.to()
 						        + " is lacking entry.", this.relation.getTo().get(key));
 					}

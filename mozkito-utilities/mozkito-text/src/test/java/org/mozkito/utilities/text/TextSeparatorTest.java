@@ -11,7 +11,7 @@
  * specific language governing permissions and limitations under the License.
  **********************************************************************************************************************/
 
-package org.mozkito.mappings.utilities;
+package org.mozkito.utilities.text;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -21,7 +21,6 @@ import java.util.List;
 import org.junit.Test;
 
 import org.mozkito.utilities.commons.JavaUtils;
-import org.mozkito.utilities.commons.text.TextSeparator;
 import org.mozkito.utilities.io.FileUtils;
 
 /**

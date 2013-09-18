@@ -116,10 +116,7 @@ public class Exporter {
 			assert mapping.getFrom().getClass() == Report.class;
 			assert mapping.getTo().getClass() == ChangeSet.class;
 			
-			final MappableChangeSet mChangeSet = (MappableChangeSet) mapping.getTo();
-			assert mChangeSet != null;
-			
-			final ChangeSet changeSet = mChangeSet.getChangeSet();
+			final ChangeSet changeSet = (ChangeSet) mapping.getTo();
 			final Collection<Revision> revisions = changeSet.getRevisions();
 			
 			// we iterate over all revisions in the ChangeSet to assign the bug to all changed files.
@@ -149,7 +146,7 @@ public class Exporter {
 					}
 					
 					// assign the bug ID to the file
-					bugs.add(mapping.getFrom().getId());
+					bugs.add(mapping.getFrom().getIDString());
 				}
 			}
 		}

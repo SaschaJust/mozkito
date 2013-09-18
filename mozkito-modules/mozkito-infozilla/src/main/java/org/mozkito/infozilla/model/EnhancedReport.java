@@ -21,6 +21,7 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import javax.persistence.Entity;
+import javax.persistence.Id;
 
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
@@ -86,6 +87,30 @@ public class EnhancedReport implements Annotated {
 	/** The steps to reproduce. */
 	private Collection<StepsToReproduce> stepsToReproduce  = new LinkedList<StepsToReproduce>();
 	
+	/** The id. */
+	private String                       id;
+	
+	/**
+	 * Instantiates a new enhanced report.
+	 * 
+	 * @param id
+	 *            the id
+	 */
+	public EnhancedReport(final String id) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			// body
+			this.id = id;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
 	/**
 	 * Gets the attachments.
 	 * 
@@ -138,6 +163,26 @@ public class EnhancedReport implements Annotated {
 	 */
 	public Collection<ExpectedBehavior> getExpectedBehaviors() {
 		return this.expectedBehaviors;
+	}
+	
+	/**
+	 * Gets the id.
+	 * 
+	 * @return the id
+	 */
+	@Id
+	public String getId() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.id;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/**
@@ -277,6 +322,26 @@ public class EnhancedReport implements Annotated {
 	 */
 	public void setExpectedBehaviors(final Collection<ExpectedBehavior> expectedBehaviors) {
 		this.expectedBehaviors = expectedBehaviors;
+	}
+	
+	/**
+	 * Sets the id.
+	 * 
+	 * @param id
+	 *            the id to set
+	 */
+	public void setId(final String id) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.id = id;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/**

@@ -36,6 +36,7 @@ import org.mozkito.codeanalysis.utils.PPAUtils;
 import org.mozkito.infozilla.model.EnhancedReport;
 import org.mozkito.infozilla.model.log.Log;
 import org.mozkito.infozilla.model.log.LogEntry;
+import org.mozkito.issues.model.Report;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Feature;
 import org.mozkito.mappings.model.Relation;
@@ -43,6 +44,7 @@ import org.mozkito.mappings.requirements.And;
 import org.mozkito.mappings.requirements.Atom;
 import org.mozkito.mappings.requirements.Expression;
 import org.mozkito.mappings.requirements.Index;
+import org.mozkito.mappings.storages.InfozillaStorage;
 import org.mozkito.mappings.storages.RepositoryStorage;
 import org.mozkito.mappings.storages.Storage;
 import org.mozkito.utilities.commons.JavaUtils;
@@ -152,26 +154,40 @@ public class LogEngine extends Engine {
 		}
 		
 		try {
-			final org.mozkito.persistence.Entity from = relation.getFrom();
-			final org.mozkito.persistence.Entity to = relation.getTo();
+			final Report report = (Report) relation.getFrom();
+			final ChangeSet changeSet = (ChangeSet) relation.getTo();
 			
 			SANITY: {
-				assert from != null;
-				assert to != null;
+				assert report != null;
+				assert changeSet != null;
 			}
 			
-			final MappableStructuredReport mappableStructuredReport = (MappableStructuredReport) from;
-			final EnhancedReport report = mappableStructuredReport.getReport();
+			final InfozillaStorage infozillaStorage = getStorage(InfozillaStorage.class);
+			final RepositoryStorage repositoryStorage = getStorage(RepositoryStorage.class);
 			
-			final MappableChangeSet mappableChangeSet = (MappableChangeSet) to;
-			final ChangeSet transaction = mappableChangeSet.getChangeSet();
-			final Collection<Handle> changedFiles = transaction.getChangedFiles();
-			final RepositoryStorage storage = getStorage(RepositoryStorage.class);
-			final Repository repository = storage.getRepository();
+			SANITY: {
+				assert infozillaStorage != null;
+				assert repositoryStorage != null;
+			}
+			
+			final EnhancedReport enhancedReport = infozillaStorage.getEnhancedReport(report);
+			
+			if (enhancedReport == null) {
+				// we can't do anything here. no inline code or attachments found
+				return;
+			}
+			
+			final Repository repository = repositoryStorage.getRepository();
+			
+			SANITY: {
+				assert repository != null;
+			}
+			
+			final Collection<Handle> changedFiles = changeSet.getChangedFiles();
 			File fil2e;
 			
 			try {
-				fil2e = repository.checkoutPath("/", transaction.getId()); //$NON-NLS-1$
+				fil2e = repository.checkoutPath("/", changeSet.getId()); //$NON-NLS-1$
 			} catch (final RepositoryOperationException e) {
 				throw new UnrecoverableError(e);
 			}
@@ -182,7 +198,7 @@ public class LogEngine extends Engine {
 			for (final Handle file : changedFiles) {
 				try {
 					final File file3 = new File(fil2e.getAbsolutePath() + FileUtils.fileSeparator
-					        + file.getPath(transaction));
+					        + file.getPath(changeSet));
 					final CompilationUnit cu = PPAUtils.getCUNoPPA(file3);
 					cu.accept(visitor);
 					if (!visitor.getStrings().isEmpty()) {
@@ -193,7 +209,7 @@ public class LogEngine extends Engine {
 				}
 			}
 			
-			final Collection<Log> logs = report.getLogs();
+			final Collection<Log> logs = enhancedReport.getLogs();
 			final ArrayList<Double> minDistances = new ArrayList<>(logs.size());
 			final ArrayList<Double> maxDistances = new ArrayList<>(logs.size());
 			
@@ -252,6 +268,7 @@ public class LogEngine extends Engine {
 				
 				{
 					add(RepositoryStorage.class);
+					add(InfozillaStorage.class);
 				}
 			};
 		} finally {

@@ -266,7 +266,7 @@ public class PatchParser {
 				header = header + lines[i] + System.getProperty("line.separator");
 			}
 			header = header + lines[firstHunkLine - 1];
-			patch.setHeader(header);
+			// patch.setHeader(header);
 			
 			// Discover all Hunks!
 			final List<PatchHunk> hunks = findAllHunks(lines, firstHunkLine);
@@ -280,10 +280,10 @@ public class PatchParser {
 		
 		// Locate the Patches in the Source Code
 		for (final Patch p : foundPatches) {
-			final int patchStart = text.indexOf(p.getHeader());
-			
-			final int patchEnd = text.lastIndexOf(p.getHunks().get(p.getHunks().size() - 1).getText())
-			        + p.getHunks().get(p.getHunks().size() - 1).getText().length();
+			final int patchStart = p.getHunks().iterator().next().getStartPosition();
+			final int patchEnd = p.getHunks().listIterator(p.getHunks().size() - 1).previous().getEndPosition();
+			// final int patchEnd = text.lastIndexOf(p.getHunks().get(p.getHunks().size() - 1).getText())
+			// + p.getHunks().get(p.getHunks().size() - 1).getText().length();
 			
 			p.setStartPosition(patchStart);
 			p.setEndPosition(patchEnd);

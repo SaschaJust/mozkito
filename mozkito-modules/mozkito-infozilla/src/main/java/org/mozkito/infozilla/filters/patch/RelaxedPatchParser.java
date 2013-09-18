@@ -19,6 +19,8 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.infozilla.model.patch.Patch;
 import org.mozkito.infozilla.model.patch.PatchHunk;
+import org.mozkito.infozilla.model.patch.PatchTextElement;
+import org.mozkito.infozilla.model.patch.PatchTextElement.Type;
 
 /**
  * The Class RelaxedPatchParser.
@@ -106,7 +108,26 @@ public class RelaxedPatchParser {
 				if (hunktext.length() > 1) {
 					hunktext = hunktext.substring(0, hunktext.length() - 1);
 				}
-				foundHunks.add(new PatchHunk(hunktext));
+				
+				final String[] hunkLines = hunktext.split("\n");
+				final List<PatchTextElement> list = new ArrayList<>(hunkLines.length);
+				for (final String line : hunkLines) {
+					switch (line.charAt(0)) {
+						case ' ':
+							list.add(new PatchTextElement(Type.CONTEXT, line.substring(1)));
+							break;
+						case '+':
+							list.add(new PatchTextElement(Type.ADDED, line.substring(1)));
+							break;
+						case '-':
+							list.add(new PatchTextElement(Type.REMOVED, line.substring(1)));
+							break;
+						default:
+							throw new IllegalStateException();
+					}
+				}
+				final PatchHunk patchHunk = new PatchHunk(list, -1, -1, -1, -1);
+				foundHunks.add(patchHunk);
 				hStart = nextHunkStart - 1;
 			}
 		}
@@ -266,7 +287,7 @@ public class RelaxedPatchParser {
 				header = header + lines[i] + System.getProperty("line.separator");
 			}
 			header = header + lines[firstHunkLine - 1];
-			patch.setHeader(header);
+			// patch.setHeader(header);
 			
 			// Discover all Hunks!
 			final List<PatchHunk> hunks = findAllHunks(lines, firstHunkLine);
@@ -280,14 +301,13 @@ public class RelaxedPatchParser {
 		
 		// Locate the Patches in the Source Code
 		for (final Patch p : foundPatches) {
-			final Patch u = p;
-			final int patchStart = text.indexOf(u.getHeader());
+			final int patchStart = p.getHunks().iterator().next().getStartPosition();
+			final int patchEnd = p.getHunks().listIterator(p.getHunks().size() - 1).previous().getEndPosition();
+			// final int patchEnd = text.lastIndexOf(p.getHunks().get(p.getHunks().size() - 1).getText())
+			// + p.getHunks().get(p.getHunks().size() - 1).getText().length();
 			
-			final int patchEnd = text.lastIndexOf(u.getHunks().get(u.getHunks().size() - 1).getText())
-			        + u.getHunks().get(u.getHunks().size() - 1).getText().length();
-			
-			u.setStartPosition(patchStart);
-			u.setEndPosition(patchEnd);
+			p.setStartPosition(patchStart);
+			p.setEndPosition(patchEnd);
 		}
 		
 		// Here is the patch we found

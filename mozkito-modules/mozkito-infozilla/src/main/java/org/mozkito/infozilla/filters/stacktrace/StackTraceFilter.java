@@ -15,35 +15,16 @@
  */
 package org.mozkito.infozilla.filters.stacktrace;
 
-import java.util.List;
-
 import org.mozkito.infozilla.filters.InfozillaFilter;
+import org.mozkito.infozilla.model.stacktrace.Stacktrace;
 
 /**
  * The Class StackTraceFilter.
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public abstract class StackTraceFilter extends InfozillaFilter {
+public abstract class StackTraceFilter extends InfozillaFilter<Stacktrace> {
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.infozilla.filters.InfozillaFilter#getOutputText()
-	 */
-	@Override
-	public String getOutputText() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.infozilla.filters.InfozillaFilter#runFilter(java .lang.String)
-	 */
-	@Override
-	public List<?> runFilter(final String inputText) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	// stub
 	
 }

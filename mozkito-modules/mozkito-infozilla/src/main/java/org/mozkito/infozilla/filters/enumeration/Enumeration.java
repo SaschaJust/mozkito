@@ -53,7 +53,277 @@ import org.mozkito.utilities.text.TextSeparator;
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class Enumeration {
+public class Enumeration implements Collection<Enumeration.EnumerationEntry> {
+	
+	/**
+	 * The Class EnumerationEntry.
+	 */
+	public static class EnumerationEntry {
+		
+		/** The identifier. */
+		private final String            identifier;
+		
+		/** The start. */
+		private final int               start;
+		
+		/** The end. */
+		private int                     end;
+		
+		/** The parent. */
+		private final Enumeration       parent;
+		
+		/** The child enumerations. */
+		private final List<Enumeration> childEnumerations = new LinkedList<>();
+		
+		/** The child itemizations. */
+		private final List<Itemization> childItemizations = new LinkedList<>();
+		
+		/** The text. */
+		private String                  text;
+		
+		/**
+		 * Instantiates a new enumeration entry.
+		 * 
+		 * @param parent
+		 *            the parent
+		 * @param identifier
+		 *            the identifier
+		 * @param text
+		 *            the text
+		 * @param start
+		 *            the start
+		 * @param end
+		 *            the end
+		 */
+		public EnumerationEntry(final Enumeration parent, final String identifier, final String text, final int start,
+		        final int end) {
+			super();
+			this.identifier = identifier;
+			this.start = start;
+			this.end = end;
+			this.parent = parent;
+			this.text = text;
+		}
+		
+		/**
+		 * Gets the child enumerations.
+		 * 
+		 * @return the childEnumerations
+		 */
+		public List<Enumeration> getChildEnumerations() {
+			PRECONDITIONS: {
+				// none
+			}
+			
+			try {
+				return this.childEnumerations;
+			} finally {
+				POSTCONDITIONS: {
+					// none
+				}
+			}
+		}
+		
+		/**
+		 * Gets the child itemizations.
+		 * 
+		 * @return the childItemizations
+		 */
+		public List<Itemization> getChildItemizations() {
+			PRECONDITIONS: {
+				// none
+			}
+			
+			try {
+				return this.childItemizations;
+			} finally {
+				POSTCONDITIONS: {
+					// none
+				}
+			}
+		}
+		
+		/**
+		 * Gets the end.
+		 * 
+		 * @return the end
+		 */
+		public int getEnd() {
+			PRECONDITIONS: {
+				// none
+			}
+			
+			try {
+				return this.end;
+			} finally {
+				POSTCONDITIONS: {
+					// none
+				}
+			}
+		}
+		
+		/**
+		 * Gets the identifier.
+		 * 
+		 * @return the identifier
+		 */
+		public String getIdentifier() {
+			PRECONDITIONS: {
+				// none
+			}
+			
+			try {
+				return this.identifier;
+			} finally {
+				POSTCONDITIONS: {
+					// none
+				}
+			}
+		}
+		
+		/**
+		 * Gets the parent.
+		 * 
+		 * @return the parent
+		 */
+		public Enumeration getParent() {
+			PRECONDITIONS: {
+				// none
+			}
+			
+			try {
+				return this.parent;
+			} finally {
+				POSTCONDITIONS: {
+					// none
+				}
+			}
+		}
+		
+		/**
+		 * Gets the start.
+		 * 
+		 * @return the start
+		 */
+		public int getStart() {
+			PRECONDITIONS: {
+				// none
+			}
+			
+			try {
+				return this.start;
+			} finally {
+				POSTCONDITIONS: {
+					// none
+				}
+			}
+		}
+		
+		/**
+		 * @return the text
+		 */
+		public String getText() {
+			PRECONDITIONS: {
+				// none
+			}
+			
+			try {
+				return this.text;
+			} finally {
+				POSTCONDITIONS: {
+					// none
+				}
+			}
+		}
+		
+		/**
+		 * Sets the end.
+		 * 
+		 * @param end
+		 *            the end to set
+		 */
+		public void setEnd(final int end) {
+			PRECONDITIONS: {
+				// none
+			}
+			
+			try {
+				this.end = end;
+			} finally {
+				POSTCONDITIONS: {
+					// none
+				}
+			}
+		}
+		
+		/**
+		 * @param text
+		 *            the text to set
+		 */
+		public void setText(final String text) {
+			PRECONDITIONS: {
+				// none
+			}
+			
+			try {
+				this.text = text;
+			} finally {
+				POSTCONDITIONS: {
+					// none
+				}
+			}
+		}
+		
+	}
+	
+	/**
+	 * The Class Itemization.
+	 */
+	public static class Itemization implements Iterable<ItemizationEntry> {
+		
+		/** The itemization entries. */
+		private final List<ItemizationEntry> itemizationEntries = new LinkedList<>();
+		
+		/**
+		 * Instantiates a new itemization.
+		 * 
+		 * @param identifier
+		 *            the identifier
+		 * @param text
+		 *            the text
+		 */
+		public Itemization(final String identifier, final String text) {
+			super();
+		}
+		
+		/**
+		 * {@inheritDoc}
+		 * 
+		 * @see java.lang.Iterable#iterator()
+		 */
+		@Override
+		public Iterator<ItemizationEntry> iterator() {
+			PRECONDITIONS: {
+				// none
+			}
+			
+			try {
+				return this.itemizationEntries.iterator();
+			} finally {
+				POSTCONDITIONS: {
+					// none
+				}
+			}
+		}
+		
+	}
+	
+	/**
+	 * The Class ItemizationEntry.
+	 */
+	public static class ItemizationEntry {
+		// stub
+	}
 	
 	/**
 	 * The Enum Type.
@@ -273,8 +543,9 @@ public class Enumeration {
 						if ((group != null) && "A".equalsIgnoreCase(identifierString)) {
 							boolean done = false;
 							
-							list.add(new EnumerationEntry(enumeration, identifierString, group.start(),
-							                              match.getFullMatch().end()));
+							list.add(new EnumerationEntry(enumeration, identifierString, match.getFullMatch()
+							                                                                  .getMatch(),
+							                              group.start(), match.getFullMatch().end()));
 							
 							while (!done) {
 								++identifier;
@@ -504,8 +775,8 @@ public class Enumeration {
 				final Group idGroup = match.getGroup("ID");
 				if (idGroup.getMatch().equalsIgnoreCase(string) && (bulletGroup.start() > end)
 				        && (bulletGroup.start() < maxIndex)) {
-					return new EnumerationEntry(enumeration, idGroup.getMatch(), bulletGroup.start(),
-					                            match.getFullMatch().end());
+					return new EnumerationEntry(enumeration, idGroup.getMatch(), match.getFullMatch().getMatch(),
+					                            bulletGroup.start(), match.getFullMatch().end());
 				}
 			}
 			
@@ -552,7 +823,8 @@ public class Enumeration {
 							final Group group = match.getGroup("BULLET");
 							final Group idGroup = match.getGroup("ID");
 							if (idGroup.getMatch().equalsIgnoreCase(bulletId) && (group.start() > lastEnd)) {
-								return new EnumerationEntry(enumeration, bulletId, group.start(), group.end());
+								return new EnumerationEntry(enumeration, bulletId, match.getFullMatch().getMatch(),
+								                            group.start(), group.end());
 							}
 						}
 					}
@@ -618,7 +890,7 @@ public class Enumeration {
 		
 		try {
 			String indent = null;
-			for (final EnumerationEntry entry : enumeration) {
+			for (final EnumerationEntry entry : enumeration.getEnumerationEntries()) {
 				final String[] split = entry.getText().split(FileUtils.lineSeparator);
 				for (int i = 1; i < split.length; ++i) {
 					final Regex regex = new Regex("^({SPACE}\\s+)");
@@ -678,7 +950,7 @@ public class Enumeration {
 	 * @return true, if successful
 	 */
 	private static boolean multipleLines(final Enumeration enumeration) {
-		for (final EnumerationEntry entry : enumeration) {
+		for (final EnumerationEntry entry : enumeration.getEnumerationEntries()) {
 			if (entry.getText().contains(FileUtils.lineSeparator)) {
 				return true;
 			}
@@ -719,7 +991,7 @@ public class Enumeration {
 		// PRECONDITIONS
 		
 		try {
-			for (final EnumerationEntry entry : enumeration) {
+			for (final EnumerationEntry entry : enumeration.getEnumerationEntries()) {
 				if ((entry.getStart() == 0)
 				        || FileUtils.lineSeparator.endsWith(enumeration.getText().substring(entry.getStart() - 1,
 				                                                                            entry.getStart()))) {
@@ -778,6 +1050,13 @@ public class Enumeration {
 	 * (non-Javadoc)
 	 * @see java.util.Collection#add(java.lang.Object)
 	 */
+	/**
+	 * Adds the.
+	 * 
+	 * @param e
+	 *            the e
+	 * @return true, if successful
+	 */
 	@Override
 	public boolean add(final EnumerationEntry e) {
 		// PRECONDITIONS
@@ -793,6 +1072,13 @@ public class Enumeration {
 	/*
 	 * (non-Javadoc)
 	 * @see java.util.Collection#addAll(java.util.Collection)
+	 */
+	/**
+	 * Adds the all.
+	 * 
+	 * @param c
+	 *            the c
+	 * @return true, if successful
 	 */
 	@Override
 	public boolean addAll(final Collection<? extends EnumerationEntry> c) {
@@ -810,6 +1096,9 @@ public class Enumeration {
 	 * (non-Javadoc)
 	 * @see java.util.Collection#clear()
 	 */
+	/**
+	 * Clear.
+	 */
 	@Override
 	public void clear() {
 		// PRECONDITIONS
@@ -825,6 +1114,13 @@ public class Enumeration {
 	/*
 	 * (non-Javadoc)
 	 * @see java.util.Collection#contains(java.lang.Object)
+	 */
+	/**
+	 * Contains.
+	 * 
+	 * @param o
+	 *            the o
+	 * @return true, if successful
 	 */
 	@Override
 	public boolean contains(final Object o) {
@@ -845,6 +1141,13 @@ public class Enumeration {
 	/*
 	 * (non-Javadoc)
 	 * @see java.util.Collection#containsAll(java.util.Collection)
+	 */
+	/**
+	 * Contains all.
+	 * 
+	 * @param c
+	 *            the c
+	 * @return true, if successful
 	 */
 	@Override
 	public boolean containsAll(final Collection<?> c) {
@@ -922,6 +1225,11 @@ public class Enumeration {
 	 * (non-Javadoc)
 	 * @see java.util.Collection#isEmpty()
 	 */
+	/**
+	 * Checks if is empty.
+	 * 
+	 * @return true, if is empty
+	 */
 	@Override
 	public boolean isEmpty() {
 		// PRECONDITIONS
@@ -977,6 +1285,13 @@ public class Enumeration {
 	 * (non-Javadoc)
 	 * @see java.util.Collection#remove(java.lang.Object)
 	 */
+	/**
+	 * Removes the.
+	 * 
+	 * @param o
+	 *            the o
+	 * @return true, if successful
+	 */
 	@Override
 	public boolean remove(final Object o) {
 		// PRECONDITIONS
@@ -992,6 +1307,13 @@ public class Enumeration {
 	/*
 	 * (non-Javadoc)
 	 * @see java.util.Collection#removeAll(java.util.Collection)
+	 */
+	/**
+	 * Removes the all.
+	 * 
+	 * @param c
+	 *            the c
+	 * @return true, if successful
 	 */
 	@Override
 	public boolean removeAll(final Collection<?> c) {
@@ -1009,6 +1331,13 @@ public class Enumeration {
 	 * (non-Javadoc)
 	 * @see java.util.Collection#retainAll(java.util.Collection)
 	 */
+	/**
+	 * Retain all.
+	 * 
+	 * @param c
+	 *            the c
+	 * @return true, if successful
+	 */
 	@Override
 	public boolean retainAll(final Collection<?> c) {
 		// PRECONDITIONS
@@ -1024,6 +1353,11 @@ public class Enumeration {
 	/*
 	 * (non-Javadoc)
 	 * @see java.util.Collection#size()
+	 */
+	/**
+	 * Size.
+	 * 
+	 * @return the int
 	 */
 	@Override
 	public int size() {
@@ -1041,6 +1375,11 @@ public class Enumeration {
 	 * (non-Javadoc)
 	 * @see java.util.Collection#toArray()
 	 */
+	/**
+	 * To array.
+	 * 
+	 * @return the object[]
+	 */
 	@Override
 	public Object[] toArray() {
 		// PRECONDITIONS
@@ -1057,6 +1396,15 @@ public class Enumeration {
 	 * (non-Javadoc)
 	 * @see java.util.Collection#toArray(T[])
 	 */
+	/**
+	 * To array.
+	 * 
+	 * @param <T>
+	 *            the generic type
+	 * @param a
+	 *            the a
+	 * @return the t[]
+	 */
 	@Override
 	public <T> T[] toArray(final T[] a) {
 		// PRECONDITIONS
@@ -1071,6 +1419,11 @@ public class Enumeration {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

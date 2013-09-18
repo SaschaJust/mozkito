@@ -20,7 +20,7 @@ import org.mozkito.mappings.model.Relation;
 import org.mozkito.mappings.register.Node;
 import org.mozkito.mappings.requirements.Expression;
 import org.mozkito.persistence.FieldKey;
-import org.mozkito.utilities.commons.text.TextUtils;
+import org.mozkito.utilities.text.TextUtils;
 
 /**
  * 
@@ -124,27 +124,27 @@ public abstract class Engine extends Node {
 	                             final Object toSubstring) {
 		score.addFeature(confidence,
 		                 TextUtils.truncate(fromFieldName != null
-		                                                           ? fromFieldName
-		                                                           : Engine.UNUSED),
-		                 TextUtils.truncate(fromFieldContent != null
-		                                                              ? fromFieldContent.toString()
-		                                                              : Engine.UNKNOWN),
-		                 TextUtils.truncate(fromSubstring != null
-		                                                           ? fromSubstring.toString()
-		                                                           : TextUtils.truncate(fromFieldContent != null
-		                                                                                                          ? fromFieldContent.toString()
-		                                                                                                          : Engine.UNKNOWN)),
-		                 TextUtils.truncate(toFieldName != null
-		                                                         ? toFieldName
+		                                                         ? fromFieldName
 		                                                         : Engine.UNUSED),
-		                 TextUtils.truncate(toFieldContent != null
-		                                                            ? toFieldContent.toString()
+		                 TextUtils.truncate(fromFieldContent != null
+		                                                            ? fromFieldContent.toString()
 		                                                            : Engine.UNKNOWN),
-		                 TextUtils.truncate(toSubstring != null
-		                                                         ? toSubstring.toString()
-		                                                         : TextUtils.truncate(toFieldContent != null
-		                                                                                                      ? toFieldContent.toString()
+		                 TextUtils.truncate(fromSubstring != null
+		                                                         ? fromSubstring.toString()
+		                                                         : TextUtils.truncate(fromFieldContent != null
+		                                                                                                      ? fromFieldContent.toString()
 		                                                                                                      : Engine.UNKNOWN)),
+		                 TextUtils.truncate(toFieldName != null
+		                                                       ? toFieldName
+		                                                       : Engine.UNUSED),
+		                 TextUtils.truncate(toFieldContent != null
+		                                                          ? toFieldContent.toString()
+		                                                          : Engine.UNKNOWN),
+		                 TextUtils.truncate(toSubstring != null
+		                                                       ? toSubstring.toString()
+		                                                       : TextUtils.truncate(toFieldContent != null
+		                                                                                                  ? toFieldContent.toString()
+		                                                                                                  : Engine.UNKNOWN)),
 		                 getClass());
 	}
 	

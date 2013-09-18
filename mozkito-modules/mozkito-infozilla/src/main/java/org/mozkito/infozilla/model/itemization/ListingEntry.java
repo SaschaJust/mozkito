@@ -61,6 +61,21 @@ public class ListingEntry implements Annotated, Inlineable, Iterable<Listing> {
 	private String            text;
 	
 	/**
+	 * @param identifier
+	 * @param startPosition
+	 * @param endPosition
+	 * @param text
+	 */
+	public ListingEntry(final String identifier, final Integer startPosition, final Integer endPosition,
+	        final String text) {
+		super();
+		this.identifier = identifier;
+		this.startPosition = startPosition;
+		this.endPosition = endPosition;
+		this.text = text;
+	}
+	
+	/**
 	 * {@inheritDoc}
 	 * 
 	 * @see org.mozkito.persistence.Annotated#getClassName()

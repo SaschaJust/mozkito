@@ -26,6 +26,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
+import org.mozkito.infozilla.elements.Inlineable;
 import org.mozkito.persistence.Annotated;
 import org.mozkito.utilities.commons.JavaUtils;
 
@@ -33,7 +34,7 @@ import org.mozkito.utilities.commons.JavaUtils;
  * The Class PatchHunk.
  */
 @Entity
-public class PatchHunk implements Annotated {
+public class PatchHunk implements Annotated, Inlineable {
 	
 	/**
 	 * The Class Builder.
@@ -175,6 +176,12 @@ public class PatchHunk implements Annotated {
 	/** The old start. */
 	private Integer                oldStart;
 	
+	/** The start position. */
+	private Integer                startPosition;
+	
+	/** The end position. */
+	private Integer                endPosition;
+	
 	/**
 	 * Instantiates a new patch hunk.
 	 * 
@@ -265,6 +272,26 @@ public class PatchHunk implements Annotated {
 		
 		try {
 			return this.elements;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Gets the end position.
+	 * 
+	 * @return the endPosition
+	 */
+	@Basic
+	public Integer getEndPosition() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.endPosition;
 		} finally {
 			POSTCONDITIONS: {
 				// none
@@ -374,6 +401,26 @@ public class PatchHunk implements Annotated {
 	}
 	
 	/**
+	 * Gets the start position.
+	 * 
+	 * @return the startPosition
+	 */
+	@Basic
+	public Integer getStartPosition() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.startPosition;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
 	 * Sets the elements.
 	 * 
 	 * @param elements
@@ -386,6 +433,26 @@ public class PatchHunk implements Annotated {
 		
 		try {
 			this.elements = elements;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Sets the end position.
+	 * 
+	 * @param endPosition
+	 *            the endPosition to set
+	 */
+	public void setEndPosition(final Integer endPosition) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.endPosition = endPosition;
 		} finally {
 			POSTCONDITIONS: {
 				// none
@@ -486,6 +553,26 @@ public class PatchHunk implements Annotated {
 		
 		try {
 			this.oldStart = oldStart;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Sets the start position.
+	 * 
+	 * @param startPosition
+	 *            the startPosition to set
+	 */
+	public void setStartPosition(final Integer startPosition) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.startPosition = startPosition;
 		} finally {
 			POSTCONDITIONS: {
 				// none

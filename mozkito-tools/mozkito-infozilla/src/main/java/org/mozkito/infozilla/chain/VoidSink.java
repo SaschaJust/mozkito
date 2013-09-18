@@ -11,75 +11,61 @@
  * specific language governing permissions and limitations under the License.
  **********************************************************************************************************************/
 
-package org.mozkito.mappings.storages;
+package org.mozkito.infozilla.chain;
 
-import com.tinkerpop.blueprints.Graph;
+import net.ownhero.dev.andama.threads.Group;
+import net.ownhero.dev.andama.threads.ProcessHook;
+import net.ownhero.dev.andama.threads.Sink;
+import net.ownhero.dev.hiari.settings.ISettings;
+import net.ownhero.dev.kisa.Logger;
 
-import net.ownhero.dev.kanuni.annotations.simple.NotNull;
-import net.ownhero.dev.kanuni.conditions.Condition;
+import org.mozkito.infozilla.model.EnhancedReport;
 
 /**
  * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
-public class GraphStorage extends Storage {
-	
-	private Graph graph = null;
+public class VoidSink extends Sink<EnhancedReport> {
 	
 	/**
-	 * Instantiates a new graph storage.
+	 * Instantiates a new void sink.
 	 * 
-	 * @param graph
-	 *            the graph
+	 * @param threadGroup
+	 *            the thread group
+	 * @param settings
+	 *            the settings
 	 */
-	public GraphStorage(@NotNull final Graph graph) {
+	public VoidSink(final Group threadGroup, final ISettings settings) {
+		super(threadGroup, settings, false);
 		PRECONDITIONS: {
 			// none
 		}
 		
 		try {
 			// body
-			this.graph = graph;
+			
+			new ProcessHook<EnhancedReport, EnhancedReport>(this) {
+				
+				@Override
+				public void process() {
+					PRECONDITIONS: {
+						// none
+					}
+					
+					try {
+						if (Logger.logInfo()) {
+							Logger.info(getInputData().toString());
+						}
+					} finally {
+						POSTCONDITIONS: {
+							// none
+						}
+					}
+				}
+			};
 		} finally {
 			POSTCONDITIONS: {
 				// none
-			}
-		}
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * @see org.mozkito.mappings.register.Node#getDescription()
-	 */
-	@Override
-	public String getDescription() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return getClassName();
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
-	}
-	
-	/**
-	 * @return the graph
-	 */
-	public final Graph getGraph() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.graph;
-		} finally {
-			POSTCONDITIONS: {
-				Condition.notNull(this.graph, "Field '%s' in '%s'.", "graph", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 	}

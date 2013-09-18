@@ -14,6 +14,7 @@ package org.mozkito.mappings.engines;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -27,6 +28,7 @@ import difflib.Delta;
 
 import org.mozkito.infozilla.model.EnhancedReport;
 import org.mozkito.infozilla.model.patch.Patch;
+import org.mozkito.issues.model.Report;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Feature;
 import org.mozkito.mappings.model.Relation;
@@ -34,6 +36,7 @@ import org.mozkito.mappings.requirements.And;
 import org.mozkito.mappings.requirements.Atom;
 import org.mozkito.mappings.requirements.Expression;
 import org.mozkito.mappings.requirements.Index;
+import org.mozkito.mappings.storages.InfozillaStorage;
 import org.mozkito.mappings.storages.RepositoryStorage;
 import org.mozkito.mappings.storages.Storage;
 import org.mozkito.utilities.commons.JavaUtils;
@@ -88,24 +91,40 @@ public class PatchEngine extends Engine {
 		}
 		
 		try {
-			final org.mozkito.persistence.Entity from = relation.getFrom();
-			final org.mozkito.persistence.Entity to = relation.getTo();
+			final Report report = (Report) relation.getFrom();
+			final ChangeSet changeSet = (ChangeSet) relation.getTo();
 			
 			SANITY: {
-				assert from != null;
-				assert to != null;
+				assert report != null;
+				assert changeSet != null;
 			}
 			
-			final MappableStructuredReport mappableStructuredReport = (MappableStructuredReport) from;
-			final EnhancedReport report = mappableStructuredReport.getReport();
+			new LinkedList<>();
 			
-			final MappableChangeSet mappableChangeSet = (MappableChangeSet) to;
-			final ChangeSet transaction = mappableChangeSet.getChangeSet();
+			final InfozillaStorage infozillaStorage = getStorage(InfozillaStorage.class);
+			final RepositoryStorage repositoryStorage = getStorage(RepositoryStorage.class);
 			
-			final RepositoryStorage storage = getStorage(RepositoryStorage.class);
-			final Repository repository = storage.getRepository();
+			SANITY: {
+				assert infozillaStorage != null;
+				assert repositoryStorage != null;
+			}
 			
-			final Collection<Patch> patches = report.getPatches();
+			final EnhancedReport enhancedReport = infozillaStorage.getEnhancedReport(report);
+			
+			if (enhancedReport == null) {
+				// we can't do anything here. no inline code or attachments found
+				return;
+			}
+			
+			final Repository repository = repositoryStorage.getRepository();
+			
+			SANITY: {
+				assert repository != null;
+			}
+			
+			final Collection<Handle> changedFiles = changeSet.getChangedFiles();
+			
+			final Collection<Patch> patches = enhancedReport.getPatches();
 			
 			final List<String> patchedFilesInReport = new java.util.LinkedList<>();
 			for (final Patch patch : patches) {
@@ -120,8 +139,7 @@ public class PatchEngine extends Engine {
 				}
 			}
 			
-			final Collection<Handle> changedFiles = transaction.getChangedFiles();
-			final ChangeSet previousTransaction = transaction.getBranchParent();
+			final ChangeSet previousTransaction = changeSet.getBranchParent();
 			
 			double localConfidence = 0.0d;
 			
@@ -138,7 +156,7 @@ public class PatchEngine extends Engine {
 						final Patch patch = new Patch();
 						Collection<Delta> diff;
 						try {
-							diff = repository.diff(path, previousTransaction.getId(), transaction.getId());
+							diff = repository.diff(path, previousTransaction.getId(), changeSet.getId());
 						} catch (final RepositoryOperationException e) {
 							throw new UnrecoverableError(e);
 						}

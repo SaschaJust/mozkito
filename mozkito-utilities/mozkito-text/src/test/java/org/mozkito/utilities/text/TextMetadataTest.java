@@ -11,7 +11,7 @@
  * specific language governing permissions and limitations under the License.
  **********************************************************************************************************************/
 
-package org.mozkito.mappings.utilities;
+package org.mozkito.utilities.text;
 
 import static org.junit.Assert.fail;
 
