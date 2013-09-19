@@ -19,6 +19,7 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -87,6 +88,7 @@ public class EnumTest {
 	}
 	
 	@Test
+	@Ignore
 	public final void test() {
 		final EnumReflection<HumanState> buster = new EnumReflection<HumanState>(HumanState.class, EnumTest.class);
 		try {

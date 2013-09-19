@@ -12,6 +12,12 @@
  **********************************************************************************************************************/
 package org.mozkito.mappings.elements;
 
+import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -24,7 +30,8 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 import org.mozkito.mappings.model.Candidate;
 import org.mozkito.mappings.selectors.Selector;
 import org.mozkito.persistence.Entity;
-import org.mozkito.utilities.datastructures.Tuple;
+import org.mozkito.utilities.loading.classpath.ClassFinder;
+import org.mozkito.utilities.loading.classpath.exceptions.WrongClassSearchMethodException;
 
 /**
  * A factory for creating Candidate objects.
@@ -35,7 +42,7 @@ import org.mozkito.utilities.datastructures.Tuple;
  *            the generic type
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class CandidateFactory<FROM, TO> {
+public class CandidateFactory<FROM extends Entity, TO extends Entity> {
 	
 	/** The factories. */
 	private static Map<Set<Class<? extends Entity>>, CandidateFactory<?, ?>> factories = new HashMap<>();
@@ -88,7 +95,7 @@ public class CandidateFactory<FROM, TO> {
 	 *            the to
 	 * @return single instance of CandidateFactory
 	 */
-	@SuppressWarnings ("unchecked")
+	@SuppressWarnings ({ "unchecked", "rawtypes" })
 	public static final <ONE extends Entity, OTHER extends Entity> CandidateFactory<ONE, OTHER> getInstance(final Class<ONE> from,
 	                                                                                                        final Class<OTHER> to) {
 		@SuppressWarnings ("serial")
@@ -101,14 +108,58 @@ public class CandidateFactory<FROM, TO> {
 		};
 		
 		if (!CandidateFactory.factories.containsKey(set)) {
-			CandidateFactory.factories.put(set, new CandidateFactory<ONE, OTHER>());
+			Collection<Class<? extends Candidate>> collection = null;
+			try {
+				collection = ClassFinder.getClassesExtendingClass(Candidate.class.getPackage(), Candidate.class,
+				                                                  Modifier.ABSTRACT | Modifier.PRIVATE
+				                                                          | Modifier.INTERFACE);
+			} catch (ClassNotFoundException | WrongClassSearchMethodException | IOException e1) {
+				return null;
+			}
+			for (final Class<? extends Candidate> c : collection) {
+				
+				try {
+					final Method getToMethod = c.getMethod("getTo", new Class<?>[0]);
+					final Method getFromMethod = c.getMethod("getFrom", new Class<?>[0]);
+					
+					if (to.equals(getToMethod.getReturnType()) && from.equals(getFromMethod.getReturnType())) {
+						CandidateFactory.factories.put(set,
+						                               new CandidateFactory<ONE, OTHER>(
+						                                                                (Class<Candidate<ONE, OTHER>>) c));
+					}
+					
+				} catch (NoSuchMethodException | SecurityException e) {
+					return null;
+				}
+				
+			}
+			
 		}
 		
 		return (CandidateFactory<ONE, OTHER>) CandidateFactory.factories.get(set);
 	}
 	
 	/** The candidates. */
-	private final Map<Set<String>, Candidate> candidates = new HashMap<>();
+	private final Map<Set<String>, Candidate<FROM, TO>> candidates     = new HashMap<>();
+	private Class<Candidate<FROM, TO>>                  implementation = null;
+	
+	/**
+	 * @param c
+	 */
+	public CandidateFactory(final Class<Candidate<FROM, TO>> c) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			// body
+			this.implementation = c;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
 	
 	/**
 	 * Adds the.
@@ -121,9 +172,9 @@ public class CandidateFactory<FROM, TO> {
 	 *            the selectors
 	 * @return the candidate
 	 */
-	public final Candidate add(@NotNull final Entity one,
-	                           @NotNull final Entity other,
-	                           final Set<Selector> votingSelectors) {
+	public final Candidate<FROM, TO> add(@NotNull final FROM one,
+	                                     @NotNull final TO other,
+	                                     final Set<Selector> votingSelectors) {
 		@SuppressWarnings ("serial")
 		final HashSet<String> set = new HashSet<String>() {
 			
@@ -134,9 +185,17 @@ public class CandidateFactory<FROM, TO> {
 		};
 		
 		if (!this.candidates.containsKey(set)) {
-			final Candidate candidate = new Candidate(new Tuple<Entity, Entity>(one, other));
-			candidate.addSelectors(votingSelectors);
-			return this.candidates.put(set, candidate);
+			Constructor<Candidate<FROM, TO>> constructor;
+			try {
+				constructor = this.implementation.getConstructor(new Class<?>[] { one.getClass(), other.getClass() });
+				final Candidate<FROM, TO> candidate = constructor.newInstance(one, other);
+				candidate.addSelectors(votingSelectors);
+				return this.candidates.put(set, candidate);
+			} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
+			        | IllegalArgumentException | InvocationTargetException e) {
+				// error
+			}
+			return null;
 		} else {
 			return this.candidates.get(set);
 		}
@@ -151,8 +210,8 @@ public class CandidateFactory<FROM, TO> {
 	 *            the other
 	 * @return true, if is known
 	 */
-	public final boolean contains(@NotNull final Entity one,
-	                              @NotNull final Entity other) {
+	public final boolean contains(@NotNull final FROM one,
+	                              @NotNull final TO other) {
 		@SuppressWarnings ("serial")
 		final HashSet<String> set = new HashSet<String>() {
 			
@@ -174,8 +233,8 @@ public class CandidateFactory<FROM, TO> {
 	 *            the other
 	 * @return the candidate
 	 */
-	public final Candidate get(@NotNull final Entity one,
-	                           @NotNull final Entity other) {
+	public final Candidate<FROM, TO> get(@NotNull final FROM one,
+	                                     @NotNull final TO other) {
 		@SuppressWarnings ("serial")
 		final HashSet<String> set = new HashSet<String>() {
 			
@@ -185,7 +244,7 @@ public class CandidateFactory<FROM, TO> {
 			}
 		};
 		
-		if (!this.candidates.containsKey(set)) {
+		if (this.candidates.containsKey(set)) {
 			return this.candidates.get(set);
 		} else {
 			return null;

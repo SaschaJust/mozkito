@@ -40,6 +40,7 @@ import net.ownhero.dev.kanuni.annotations.string.Length;
 import net.ownhero.dev.kisa.Logger;
 
 import org.joda.time.DateTime;
+
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.elements.RevDependencyGraph;
@@ -86,7 +87,7 @@ public class VersionArchive implements Annotated {
 	private long                   generatedId;
 	
 	/** The change sets. */
-	private Map<String, ChangeSet> changeSets;
+	private Map<String, ChangeSet> changeSets  = new HashMap<String, ChangeSet>();
 	
 	/** The mozkito version. */
 	private String                 mozkitoVersion;
@@ -101,7 +102,7 @@ public class VersionArchive implements Annotated {
 	private DateTime               miningDate;
 	
 	/** The branches. */
-	private Map<String, Branch>    branches;
+	private Map<String, Branch>    branches    = new HashMap<String, Branch>();
 	
 	/** The host info. */
 	private String                 hostInfo;

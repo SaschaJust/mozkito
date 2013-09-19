@@ -12,6 +12,7 @@
  **********************************************************************************************************************/
 package org.mozkito.issues.model.comparators;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 import org.mozkito.issues.model.Comment;
@@ -21,10 +22,18 @@ import org.mozkito.issues.model.Comment;
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class CommentComparator implements Comparator<Comment> {
+public class CommentComparator implements Serializable, Comparator<Comment> {
+	
+	/** The Constant serialVersionUID. */
+	private static final long serialVersionUID = 2833383854445571610L;
 	
 	/*
 	 * (non-Javadoc)
+	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+	 */
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 	 */
 	@Override

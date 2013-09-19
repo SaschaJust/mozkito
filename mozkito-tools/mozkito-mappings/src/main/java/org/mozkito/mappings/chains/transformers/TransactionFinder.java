@@ -37,7 +37,7 @@ import org.mozkito.versions.model.ChangeSet;
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class TransactionFinder extends Transformer<Report, Candidate> {
+public class TransactionFinder extends Transformer<Report, Candidate<Report, ChangeSet>> {
 	
 	/** The candidate factory. */
 	private final CandidateFactory<Report, ChangeSet> candidateFactory = CandidateFactory.getInstance(Report.class,
@@ -59,9 +59,9 @@ public class TransactionFinder extends Transformer<Report, Candidate> {
 	        final PersistenceUtil util) {
 		super(threadGroup, settings, true);
 		
-		final Set<Candidate> candidates = new HashSet<>();
+		final Set<Candidate<Report, ChangeSet>> candidates = new HashSet<>();
 		
-		new PreProcessHook<Report, Candidate>(this) {
+		new PreProcessHook<Report, Candidate<Report, ChangeSet>>(this) {
 			
 			@Override
 			public void preProcess() {
@@ -94,12 +94,12 @@ public class TransactionFinder extends Transformer<Report, Candidate> {
 			}
 		};
 		
-		new ProcessHook<Report, Candidate>(this) {
+		new ProcessHook<Report, Candidate<Report, ChangeSet>>(this) {
 			
 			@Override
 			public void process() {
 				if (!candidates.isEmpty()) {
-					final Candidate candidate = candidates.iterator().next();
+					final Candidate<Report, ChangeSet> candidate = candidates.iterator().next();
 					candidates.remove(candidate);
 					
 					if (Logger.logDebug()) {

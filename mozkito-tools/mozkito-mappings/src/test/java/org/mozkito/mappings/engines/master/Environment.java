@@ -28,14 +28,13 @@ import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 import org.mozkito.issues.model.EnhancedReport;
 import org.mozkito.issues.model.Report;
 import org.mozkito.mappings.finder.Finder;
+import org.mozkito.mappings.model.BugFixCandidate;
 import org.mozkito.mappings.model.Candidate;
 import org.mozkito.mappings.model.Composite;
 import org.mozkito.mappings.model.Mapping;
 import org.mozkito.mappings.model.Relation;
 import org.mozkito.mappings.settings.MappingOptions;
-import org.mozkito.persistence.Entity;
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.utilities.datastructures.Tuple;
 import org.mozkito.versions.model.ChangeSet;
 
 /**
@@ -60,11 +59,12 @@ public final class Environment {
 	 * @throws Exception
 	 *             the exception
 	 */
-	public static Candidate candidate(final Entity from,
-	                                  final Entity to) throws Exception {
+	public static Candidate<Report, ChangeSet> candidate(final Report from,
+	                                                     final ChangeSet to) throws Exception {
 		
 		if ((from != null) && (to != null)) {
-			return new Candidate(new Tuple<Entity, Entity>(from, to));
+			
+			return new BugFixCandidate(from, to);
 		} else {
 			throw new Exception("Could not build Candidate.");
 		}
@@ -81,8 +81,8 @@ public final class Environment {
 	 * @throws Exception
 	 *             the exception
 	 */
-	public static Composite composite(final Entity from,
-	                                  final Entity to) throws Exception {
+	public static Composite composite(final Report from,
+	                                  final ChangeSet to) throws Exception {
 		return new Composite(relation(from, to));
 	}
 	
@@ -154,8 +154,8 @@ public final class Environment {
 	 * @throws Exception
 	 *             the exception
 	 */
-	public static Mapping mapping(final Entity from,
-	                              final Entity to) throws Exception {
+	public static Mapping mapping(final Report from,
+	                              final ChangeSet to) throws Exception {
 		return new Mapping(composite(from, to));
 	}
 	
@@ -170,8 +170,8 @@ public final class Environment {
 	 * @throws Exception
 	 *             the exception
 	 */
-	public static Relation relation(final Entity from,
-	                                final Entity to) throws Exception {
+	public static Relation relation(final Report from,
+	                                final ChangeSet to) throws Exception {
 		return new Relation(candidate(from, to));
 	}
 	

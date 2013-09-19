@@ -12,6 +12,7 @@
  **********************************************************************************************************************/
 package org.mozkito.issues.model.comparators;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 import org.mozkito.issues.model.HistoryElement;
@@ -21,10 +22,18 @@ import org.mozkito.issues.model.HistoryElement;
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class HistoryElementComparator implements Comparator<HistoryElement> {
+public class HistoryElementComparator implements Serializable, Comparator<HistoryElement> {
+	
+	/** The Constant serialVersionUID. */
+	private static final long serialVersionUID = 2988635832288340124L;
 	
 	/*
 	 * (non-Javadoc)
+	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+	 */
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 	 */
 	@Override

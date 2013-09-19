@@ -12,6 +12,8 @@
  **********************************************************************************************************************/
 package org.mozkito.mappings.elements;
 
+import org.mozkito.mappings.model.Candidate;
+
 /**
  * The Class CandidateId.
  * 
@@ -20,12 +22,14 @@ package org.mozkito.mappings.elements;
 public class CandidateId {
 	
 	/** The from. */
-	long from;
+	int            id;
 	
 	/** The to. */
-	long to;
+	Candidate.Type relationType;
 	
-	/* (non-Javadoc)
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -40,69 +44,107 @@ public class CandidateId {
 			return false;
 		}
 		final CandidateId other = (CandidateId) obj;
-		if (this.from != other.from) {
+		if (this.id != other.id) {
 			return false;
 		}
-		if (this.to != other.to) {
+		if (this.relationType != other.relationType) {
 			return false;
 		}
 		return true;
 	}
 	
 	/**
-	 * Gets the from.
+	 * Gets the id.
 	 * 
-	 * @return the from
+	 * @return the id
 	 */
-	public long getFrom() {
+	public int getId() {
+		PRECONDITIONS: {
+			// none
+		}
 		
-		return this.from;
-		
+		try {
+			return this.id;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/**
-	 * Gets the to.
+	 * Gets the relation type.
 	 * 
-	 * @return the to
+	 * @return the relationType
 	 */
-	public long getTo() {
+	public Candidate.Type getRelationType() {
+		PRECONDITIONS: {
+			// none
+		}
 		
-		return this.to;
-		
+		try {
+			return this.relationType;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
-	/* (non-Javadoc)
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = (prime * result) + (int) (this.from ^ (this.from >>> 32));
-		result = (prime * result) + (int) (this.to ^ (this.to >>> 32));
+		result = (prime * result) + this.id;
+		result = (prime * result) + ((this.relationType == null)
+		                                                        ? 0
+		                                                        : this.relationType.hashCode());
 		return result;
 	}
 	
 	/**
-	 * Sets the from.
+	 * Sets the id.
 	 * 
-	 * @param from
-	 *            the new from
+	 * @param id
+	 *            the id to set
 	 */
-	public void setFrom(final long from) {
+	public void setId(final int id) {
+		PRECONDITIONS: {
+			// none
+		}
 		
-		this.from = from;
-		
+		try {
+			this.id = id;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/**
-	 * Sets the to.
+	 * Sets the relation type.
 	 * 
-	 * @param to
-	 *            the new to
+	 * @param relationType
+	 *            the relationType to set
 	 */
-	public void setTo(final long to) {
+	public void setRelationType(final Candidate.Type relationType) {
+		PRECONDITIONS: {
+			// none
+		}
 		
-		this.to = to;
+		try {
+			this.relationType = relationType;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
+	
 }

@@ -37,7 +37,7 @@ import org.mozkito.versions.model.ChangeSet;
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class ReportFinder extends Transformer<ChangeSet, Candidate> {
+public class ReportFinder extends Transformer<ChangeSet, Candidate<Report, ChangeSet>> {
 	
 	/** The candidate factory. */
 	private final CandidateFactory<Report, ChangeSet> candidateFactory = CandidateFactory.getInstance(Report.class,
@@ -59,9 +59,9 @@ public class ReportFinder extends Transformer<ChangeSet, Candidate> {
 	        final PersistenceUtil util) {
 		super(threadGroup, settings, true);
 		
-		final Set<Candidate> candidates = new HashSet<>();
+		final Set<Candidate<Report, ChangeSet>> candidates = new HashSet<>();
 		
-		new PreProcessHook<ChangeSet, Candidate>(this) {
+		new PreProcessHook<ChangeSet, Candidate<Report, ChangeSet>>(this) {
 			
 			@Override
 			public void preProcess() {
@@ -76,14 +76,14 @@ public class ReportFinder extends Transformer<ChangeSet, Candidate> {
 					}
 					
 					for (final Report mappableReport : reportCandidates.keySet()) {
-						if (ReportFinder.this.candidateFactory.contains(changeSet, mappableReport)) {
+						if (ReportFinder.this.candidateFactory.contains(mappableReport, changeSet)) {
 							if (Logger.logInfo()) {
 								Logger.info(Messages.getString("ReportFinder.skipping", changeSet, mappableReport)); //$NON-NLS-1$
 							}
-							ReportFinder.this.candidateFactory.get(changeSet, mappableReport)
+							ReportFinder.this.candidateFactory.get(mappableReport, changeSet)
 							                                  .addSelectors(reportCandidates.get(mappableReport));
 						} else {
-							candidates.add(ReportFinder.this.candidateFactory.add(changeSet, mappableReport,
+							candidates.add(ReportFinder.this.candidateFactory.add(mappableReport, changeSet,
 							                                                      reportCandidates.get(mappableReport)));
 						}
 						
@@ -92,12 +92,12 @@ public class ReportFinder extends Transformer<ChangeSet, Candidate> {
 			}
 		};
 		
-		new ProcessHook<ChangeSet, Candidate>(this) {
+		new ProcessHook<ChangeSet, Candidate<Report, ChangeSet>>(this) {
 			
 			@Override
 			public void process() {
 				if (!candidates.isEmpty()) {
-					final Candidate candidate = candidates.iterator().next();
+					final Candidate<Report, ChangeSet> candidate = candidates.iterator().next();
 					candidates.remove(candidate);
 					
 					if (Logger.logDebug()) {

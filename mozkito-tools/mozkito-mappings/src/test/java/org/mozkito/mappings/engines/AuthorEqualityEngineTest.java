@@ -23,6 +23,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+
 import org.mozkito.issues.model.Report;
 import org.mozkito.mappings.engines.master.Environment;
 import org.mozkito.mappings.finder.Finder;
@@ -89,7 +90,7 @@ public class AuthorEqualityEngineTest extends DatabaseTest {
 		final Report report = Environment.loadReport(getPersistenceUtil(), reportId);
 		assertNotNull("Failed retreiving report from database.", report);
 		
-		final Relation relation = Environment.relation(changeset, report);
+		final Relation relation = Environment.relation(report, changeset);
 		assertNotNull("Failed creating relation from " + changeset + " and " + report, relation);
 		
 		AuthorEqualityEngineTest.finder.score(this.engine, relation);
