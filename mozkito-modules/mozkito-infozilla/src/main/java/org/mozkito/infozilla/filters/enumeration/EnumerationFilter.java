@@ -20,6 +20,7 @@ import net.ownhero.dev.regex.Match;
 import net.ownhero.dev.regex.MultiMatch;
 import net.ownhero.dev.regex.Regex;
 
+import org.mozkito.infozilla.elements.FilterResult;
 import org.mozkito.infozilla.filters.FilterTextRemover;
 import org.mozkito.infozilla.filters.InfozillaFilter;
 import org.mozkito.infozilla.model.itemization.Listing;
@@ -413,15 +414,6 @@ public class EnumerationFilter extends InfozillaFilter<Listing> {
 		return foundEnumerations;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.infozilla.filters.InfozillaFilter#getOutputText()
-	 */
-	@Override
-	public String getOutputText() {
-		return getProcessedText();
-	}
-	
 	/**
 	 * get the text after being processed by getEnumerationsAndItemizations() method this is initially empty string.
 	 * 
@@ -438,8 +430,9 @@ public class EnumerationFilter extends InfozillaFilter<Listing> {
 	 * @see org.mozkito.infozilla.filters.InfozillaFilter#runFilter(java.lang.String)
 	 */
 	@Override
-	public List<Listing> runFilter(final String inputText) {
-		return getEnumerationsAndItemizations(inputText);
+	public List<FilterResult<Listing>> runFilter(final String inputText) {
+		return null;
+		// return getEnumerationsAndItemizations(inputText);
 	}
 	
 	// This method shall only be used internally !!
