@@ -15,9 +15,17 @@ package org.mozkito.infozilla.filters;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.mozkito.infozilla.filters.stacktrace.JavaStacktraceFilter;
+import net.ownhero.dev.kisa.Logger;
+
+import org.apache.commons.lang.StringEscapeUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document.OutputSettings;
+import org.jsoup.safety.Whitelist;
+
+import org.mozkito.infozilla.elements.FilterResult;
+import org.mozkito.infozilla.filters.log.LogFilter;
 import org.mozkito.infozilla.model.EnhancedReport;
-import org.mozkito.infozilla.model.stacktrace.Stacktrace;
+import org.mozkito.infozilla.model.log.Log;
 import org.mozkito.issues.model.Comment;
 import org.mozkito.issues.model.Report;
 
@@ -38,13 +46,92 @@ public class InfozillaFilterChain {
 	public static EnhancedReport parse(final Report report) {
 		final EnhancedReport enhancedReport = new EnhancedReport(report.getId());
 		
-		final JavaStacktraceFilter filter = new JavaStacktraceFilter();
-		final List<Stacktrace> stacktraces = new LinkedList<>();
-		for (final Comment comment : report.getComments()) {
-			stacktraces.addAll(filter.runFilter(comment.getMessage()));
+		// final JavaStackTraceFilter filter = new JavaStackTraceFilter();
+		// final List<Stacktrace> stacktraces = new LinkedList<>();
+		// final String description = stripHTML(report.getDescription());
+		// for (final FilterResult<Stacktrace> result : filter.runFilter(description)) {
+		// stacktraces.add(result.third);
+		// }
+		//
+		// for (final Comment comment : report.getComments()) {
+		// final String message = stripHTML(comment.getMessage());
+		// for (final FilterResult<Stacktrace> result : filter.runFilter(message)) {
+		// stacktraces.add(result.third);
+		// }
+		// }
+		
+		// enhancedReport.setStacktraces(stacktraces);
+		// final List<Patch> patches = new LinkedList<>();
+		
+		// final UnifiedDiffPatchFilter patchFilter = new UnifiedDiffPatchFilter();
+		
+		// final String description = stripHTML(report.getDescription());
+		// for (final FilterResult<Patch> result : patchFilter.runFilter(description)) {
+		// patches.add(result.third);
+		// }
+		//
+		// for (final Comment comment : report.getComments()) {
+		// final String message = stripHTML(comment.getMessage());
+		// for (final FilterResult<Patch> result : patchFilter.runFilter(message)) {
+		// patches.add(result.third);
+		// }
+		// }
+		
+		// enhancedReport.setPatches(patches);
+		
+		// final List<SourceCode> codeFragments = new LinkedList<>();
+		// final JavaSourceCodeFilter sourceCodeFilter = new JavaSourceCodeFilter();
+		//
+		// final String description = stripHTML(report.getDescription());
+		// for (final FilterResult<SourceCode> result : sourceCodeFilter.runFilter(description)) {
+		// codeFragments.add(result.third);
+		// }
+		//
+		// for (final Comment comment : report.getComments()) {
+		// final String message = stripHTML(comment.getMessage());
+		// for (final FilterResult<SourceCode> result : sourceCodeFilter.runFilter(message)) {
+		// codeFragments.add(result.third);
+		// }
+		// }
+		//
+		// for (final SourceCode code : codeFragments) {
+		// Logger.always(code.toString());
+		// }
+		
+		final List<Log> logs = new LinkedList<>();
+		final LogFilter logFilter = new LogFilter();
+		
+		final String description = stripHTML(report.getDescription());
+		for (final FilterResult<Log> result : logFilter.runFilter(description)) {
+			logs.add(result.third);
 		}
-		enhancedReport.setStacktraces(stacktraces);
+		
+		for (final Comment comment : report.getComments()) {
+			final String message = stripHTML(comment.getMessage());
+			for (final FilterResult<Log> result : logFilter.runFilter(message)) {
+				logs.add(result.third);
+			}
+		}
+		
+		for (final Log log : logs) {
+			Logger.always(log.toString());
+		}
+		
 		return enhancedReport;
+	}
+	
+	/**
+	 * Strip html.
+	 * 
+	 * @param string
+	 *            the string
+	 * @return the string
+	 */
+	private static String stripHTML(final String string) {
+		String input = Jsoup.clean(string, "", Whitelist.none().addTags("br", "p"),
+		                           new OutputSettings().prettyPrint(true));;
+		input = Jsoup.clean(input, "", Whitelist.none(), new OutputSettings().prettyPrint(false));
+		return StringEscapeUtils.unescapeHtml(input);
 	}
 	
 	/**
@@ -53,7 +140,7 @@ public class InfozillaFilterChain {
 	 * @param filter
 	 *            the filter
 	 */
-	public void addFilter(final InfozillaFilter filter) {
+	public void addFilter(final InfozillaFilter<?> filter) {
 		// TODO Auto-generated method stub
 	}
 	
