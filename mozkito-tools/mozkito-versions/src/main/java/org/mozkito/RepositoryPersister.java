@@ -78,6 +78,7 @@ public class RepositoryPersister extends Sink<ChangeSet> {
 				// }
 				
 				persistenceUtil.saveOrUpdate(data);
+				persistenceUtil.detach(data);
 			}
 		};
 		

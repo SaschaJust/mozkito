@@ -94,6 +94,14 @@ public interface PersistenceUtil {
 	void delete(final Annotated object);
 	
 	/**
+	 * Detach.
+	 * 
+	 * @param object
+	 *            the object
+	 */
+	void detach(Annotated object);
+	
+	/**
 	 * Execute native query.
 	 * 
 	 * @param query

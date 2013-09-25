@@ -20,7 +20,7 @@ import java.util.Collection;
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public enum IteratableFieldKey {
+public enum IterableFieldKey {
 	
 	/** The comments. */
 	COMMENTS,
