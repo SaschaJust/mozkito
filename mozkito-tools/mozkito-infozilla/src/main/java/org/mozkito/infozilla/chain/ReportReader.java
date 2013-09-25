@@ -53,6 +53,7 @@ public class ReportReader extends Source<Report> {
 			
 			@Override
 			public void preExecution() {
+				// .eq("id", "JRUBY-5735")x
 				final Criteria<Report> criteria = persistenceUtil.createCriteria(Report.class);
 				final List<Report> list = persistenceUtil.load(criteria);
 				ReportReader.this.iterator = list.iterator();
@@ -66,8 +67,8 @@ public class ReportReader extends Source<Report> {
 				if (ReportReader.this.iterator.hasNext()) {
 					final Report report = ReportReader.this.iterator.next();
 					
-					if (Logger.logInfo()) {
-						Logger.info("Providing %s", report); //$NON-NLS-1$
+					if (Logger.logDebug()) {
+						Logger.debug("Providing %s", report); //$NON-NLS-1$
 					}
 					
 					providePartialOutputData(report);
