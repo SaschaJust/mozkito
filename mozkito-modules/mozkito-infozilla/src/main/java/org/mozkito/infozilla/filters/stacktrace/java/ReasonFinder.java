@@ -23,7 +23,7 @@ import net.ownhero.dev.regex.Match;
 import net.ownhero.dev.regex.MultiMatch;
 import net.ownhero.dev.regex.Regex;
 
-import org.mozkito.infozilla.filters.stacktrace.JavaStackTraceFilter2;
+import org.mozkito.infozilla.filters.stacktrace.JavaStackTraceFilter;
 
 /**
  * The Class ReasonFinder.
@@ -173,26 +173,26 @@ public class ReasonFinder implements Iterable<ReasonFinder.Reason> {
 	 * @return true, if successful
 	 */
 	public boolean find() {
-		final Regex regex = new Regex(JavaStackTraceFilter2.JAVA_REASON, REFlags.DOTALL | REFlags.MULTILINE);
+		final Regex regex = new Regex(JavaStackTraceFilter.JAVA_REASON, REFlags.DOTALL | REFlags.MULTILINE);
 		final MultiMatch multiMatch = regex.findAll(this.text);
 		if (multiMatch != null) {
 			for (final Match match : multiMatch) {
-				final String className = JavaStackTraceFilter2.LINE_BREAKS_REGEX.removeAll(match.getGroup(JavaStackTraceFilter2.CLASSNAME_GROUP)
+				final String className = JavaStackTraceFilter.LINE_BREAKS_REGEX.removeAll(match.getGroup(JavaStackTraceFilter.CLASSNAME_GROUP)
 				                                                                        .getMatch());
-				final String methodName = JavaStackTraceFilter2.LINE_BREAKS_REGEX.removeAll(match.getGroup(JavaStackTraceFilter2.METHODNAME_GROUP)
+				final String methodName = JavaStackTraceFilter.LINE_BREAKS_REGEX.removeAll(match.getGroup(JavaStackTraceFilter.METHODNAME_GROUP)
 				                                                                         .getMatch());
-				String fileName = match.getGroup(JavaStackTraceFilter2.FILENAME_GROUP).getMatch();
+				String fileName = match.getGroup(JavaStackTraceFilter.FILENAME_GROUP).getMatch();
 				if (fileName != null) {
-					fileName = JavaStackTraceFilter2.LINE_BREAKS_REGEX.removeAll(fileName);
+					fileName = JavaStackTraceFilter.LINE_BREAKS_REGEX.removeAll(fileName);
 				}
 				
 				Integer lineNumber = null;
-				final Group lineGroup = match.getGroup(JavaStackTraceFilter2.LINENUMBER_GROUP);
+				final Group lineGroup = match.getGroup(JavaStackTraceFilter.LINENUMBER_GROUP);
 				String lineNumberStr = lineGroup != null
 				                                        ? lineGroup.getMatch()
 				                                        : null;
 				if (lineNumberStr != null) {
-					lineNumberStr = JavaStackTraceFilter2.LINE_BREAKS_REGEX.removeAll(lineNumberStr).trim();
+					lineNumberStr = JavaStackTraceFilter.LINE_BREAKS_REGEX.removeAll(lineNumberStr).trim();
 					lineNumber = Integer.parseInt(lineNumberStr);
 				} else if ("Native Method".equals(fileName)) {
 					// see StackTraceElement JavaDoc:

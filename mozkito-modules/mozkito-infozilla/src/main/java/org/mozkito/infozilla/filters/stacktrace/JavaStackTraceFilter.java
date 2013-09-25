@@ -36,7 +36,7 @@ import org.mozkito.utilities.datastructures.Tuple;
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class JavaStackTraceFilter2 extends StackTraceFilter {
+public class JavaStackTraceFilter extends StackTraceFilter {
 
 	/** The Constant lineBreaks. */
 	public static final Regex  LINE_BREAKS_REGEX       = new Regex("(\\r\\n|\\r|\\n)");
@@ -111,7 +111,7 @@ public class JavaStackTraceFilter2 extends StackTraceFilter {
 	/**
 	 * Instantiates a new java stack trace filter.
 	 */
-	public JavaStackTraceFilter2() {
+	public JavaStackTraceFilter() {
 		PRECONDITIONS: {
 			// none
 		}
