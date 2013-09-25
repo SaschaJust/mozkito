@@ -12,9 +12,10 @@
  ******************************************************************************/
 package org.mozkito.infozilla.model.log;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -44,28 +45,40 @@ import org.mozkito.utilities.commons.JavaUtils;
 public class Log implements Annotated, Attachable, Inlineable, Iterable<LogEntry> {
 	
 	/** The Constant serialVersionUID. */
-	private static final long   serialVersionUID = -8298783974899124685L;
+	private static final long serialVersionUID = -8298783974899124685L;
 	
 	/** The end. */
-	private DateTime            end;
+	private DateTime          end;
 	
 	/** The end position. */
-	private Integer             endPosition;
+	private Integer           endPosition;
 	
-	/** The entities. */
-	private ArrayList<LogEntry> entities;
+	/** The entries. */
+	private List<LogEntry>    entries          = new LinkedList<>();
 	
 	/** The id. */
-	private int                 id;
+	private int               id;
 	
 	/** The origin. */
-	private Attachment          origin;
+	private Attachment        origin;
 	
 	/** The start. */
-	private DateTime            start;
+	private DateTime          start;
 	
 	/** The start position. */
-	private Integer             startPosition;
+	private Integer           startPosition;
+	
+	/**
+	 * Adds the.
+	 * 
+	 * @param entry
+	 *            the entry
+	 * @return true, if successful
+	 */
+	@Transient
+	public boolean add(final LogEntry entry) {
+		return getEntries().add(entry);
+	}
 	
 	/**
 	 * {@inheritDoc}
@@ -118,13 +131,13 @@ public class Log implements Annotated, Attachable, Inlineable, Iterable<LogEntry
 	}
 	
 	/**
-	 * Gets the entities.
+	 * Gets the entries.
 	 * 
-	 * @return the entities
+	 * @return the entries
 	 */
 	@OneToMany (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	public ArrayList<LogEntry> getEntities() {
-		return this.entities;
+	public List<LogEntry> getEntries() {
+		return this.entries;
 	}
 	
 	/**
@@ -242,7 +255,7 @@ public class Log implements Annotated, Attachable, Inlineable, Iterable<LogEntry
 		}
 		
 		try {
-			return getEntities().iterator();
+			return getEntries().iterator();
 		} finally {
 			POSTCONDITIONS: {
 				// none
@@ -281,13 +294,13 @@ public class Log implements Annotated, Attachable, Inlineable, Iterable<LogEntry
 	}
 	
 	/**
-	 * Sets the entities.
+	 * Sets the entries.
 	 * 
-	 * @param entities
-	 *            the entities to set
+	 * @param entries
+	 *            the entries to set
 	 */
-	public void setEntities(final ArrayList<LogEntry> entities) {
-		this.entities = entities;
+	public void setEntries(final List<LogEntry> entries) {
+		this.entries = entries;
 	}
 	
 	/**
@@ -391,6 +404,25 @@ public class Log implements Annotated, Attachable, Inlineable, Iterable<LogEntry
 	 */
 	@Transient
 	public int size() {
-		return getEntities().size();
+		return getEntries().size();
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		final StringBuilder builder = new StringBuilder();
+		builder.append("Log [start=");
+		builder.append(this.start);
+		builder.append(", end=");
+		builder.append(this.end);
+		builder.append("]");
+		for (final LogEntry entry : getEntries()) {
+			builder.append(System.getProperty("line.separator")).append(entry);
+		}
+		return builder.toString();
 	}
 }

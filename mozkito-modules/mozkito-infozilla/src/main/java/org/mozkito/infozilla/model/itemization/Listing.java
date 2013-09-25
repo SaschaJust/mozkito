@@ -75,17 +75,20 @@ public class Listing implements Annotated, Inlineable, List<ListingEntry> {
 	private Type               type;
 	
 	/**
+	 * Instantiates a new listing.
+	 * 
 	 * @param type
+	 *            the type
 	 * @param startPosition
+	 *            the start position
 	 * @param endPosition
-	 * @param entries
+	 *            the end position
 	 */
 	public Listing(final Type type, final Integer startPosition, final Integer endPosition) {
 		super();
 		this.type = type;
 		this.startPosition = startPosition;
 		this.endPosition = endPosition;
-		this.entries = this.entries;
 	}
 	
 	/**

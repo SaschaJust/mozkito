@@ -360,4 +360,36 @@ public class SourceCode implements Annotated, Inlineable, Attachable {
 		}
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		final StringBuilder builder = new StringBuilder();
+		builder.append("SourceCode (");
+		builder.append(getType());
+		builder.append(")").append(System.getProperty("line.separator"));
+		final String code = getCode();
+		final String output = code;
+		// final CodeFormatter formatter = ToolFactory.createCodeFormatter(null);
+		// formatter.format(1, null, 1, 1, 1, "");
+		// final TextEdit textEdit = formatter.format(CodeFormatter.K_UNKNOWN, code, 0, code.length(), 0, null);
+		//
+		// final IDocument doc = new Document(code);
+		// try {
+		// textEdit.apply(doc);
+		// output = doc.get();
+		// } catch (final MalformedTreeException e) {
+		// e.printStackTrace();
+		// } catch (final BadLocationException e) {
+		// e.printStackTrace();
+		// }
+		
+		builder.append(output);
+		builder.append("]");
+		return builder.toString();
+	}
+	
 }
