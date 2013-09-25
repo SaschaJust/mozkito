@@ -214,8 +214,8 @@ public class LogEngine extends Engine {
 			final ArrayList<Double> maxDistances = new ArrayList<>(logs.size());
 			
 			for (final Log log : logs) {
-				for (final LogEntry entry : log.getEntities()) {
-					final String logMessage = entry.getLine();
+				for (final LogEntry entry : log.getEntries()) {
+					final String logMessage = entry.getMessage();
 					double minValue = logMessage.length();
 					for (final List<String> stringList : map.values()) {
 						for (final String constantString : stringList) {

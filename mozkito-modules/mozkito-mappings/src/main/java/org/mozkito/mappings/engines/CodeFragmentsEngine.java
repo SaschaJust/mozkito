@@ -86,14 +86,17 @@ public class CodeFragmentsEngine extends Engine {
 	/**
 	 * Partially contains.
 	 * 
-	 * @param container
-	 *            the container
-	 * @param sub
-	 *            the sub
+	 * @param originalLines
+	 *            the original lines
+	 * @param revisedLines
+	 *            the revised lines
+	 * @param codeFragmentList
+	 *            the code fragment list
 	 * @return the int
 	 */
-	private int partiallyContains(final List<String> container,
-	                              final List<String> sub) {
+	private int partiallyContains(final List<String> originalLines,
+	                              final List<String> revisedLines,
+	                              final List<String> codeFragmentList) {
 		return 0;
 	}
 	
@@ -118,6 +121,7 @@ public class CodeFragmentsEngine extends Engine {
 			}
 			
 			final List<String> patchOriginalLines = new LinkedList<>();
+			final List<String> patchRevisedLines = new LinkedList<>();
 			
 			final InfozillaStorage infozillaStorage = getStorage(InfozillaStorage.class);
 			final RepositoryStorage repositoryStorage = getStorage(RepositoryStorage.class);
@@ -165,6 +169,9 @@ public class CodeFragmentsEngine extends Engine {
 						@SuppressWarnings ("unchecked")
 						final List<String> lines = (List<String>) delta.getOriginal().getLines();
 						patchOriginalLines.addAll(lines);
+						@SuppressWarnings ("unchecked")
+						final List<String> lines2 = (List<String>) delta.getRevised().getLines();
+						patchRevisedLines.addAll(lines2);
 					}
 				} catch (final NoSuchHandleException e1) {
 					// TODO @just please consider the case that handle.getPath does not find the file
@@ -188,7 +195,9 @@ public class CodeFragmentsEngine extends Engine {
 			}
 			
 			// determine maximum confidence
-			final double localConfidence = Math.max(0.0d, partiallyContains(patchOriginalLines, codeFragmentList));
+			final double localConfidence = Math.max(0.0d,
+			                                        partiallyContains(patchOriginalLines, patchRevisedLines,
+			                                                          codeFragmentList));
 			
 			// add result
 			addFeature(relation,
