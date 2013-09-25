@@ -23,7 +23,7 @@ import net.ownhero.dev.regex.Match;
 import net.ownhero.dev.regex.MultiMatch;
 import net.ownhero.dev.regex.Regex;
 
-import org.mozkito.infozilla.filters.stacktrace.JavaStackTraceFilter;
+import org.mozkito.infozilla.filters.stacktrace.JavaStackTraceFilter2;
 
 /**
  * The Class EntryFinder.
@@ -256,9 +256,9 @@ public class EntryFinder implements Iterable<EntryFinder.Entry> {
 				this.entries.add(new Entry(
 				                           match.getFullMatch().start() + leadingSpaces,
 				                           match.getFullMatch().end(),
-				                           match.getGroup(JavaStackTraceFilter.EXCEPTION_GROUP).getMatch(),
-				                           match.getGroup(JavaStackTraceFilter.MESSAGE_GROUP) != null
-				                                                                                     ? match.getGroup(JavaStackTraceFilter.MESSAGE_GROUP)
+				                           match.getGroup(JavaStackTraceFilter2.EXCEPTION_GROUP).getMatch(),
+				                           match.getGroup(JavaStackTraceFilter2.MESSAGE_GROUP) != null
+				                                                                                     ? match.getGroup(JavaStackTraceFilter2.MESSAGE_GROUP)
 				                                                                                            .getMatch()
 				                                                                                     : ""));
 			}
@@ -274,7 +274,7 @@ public class EntryFinder implements Iterable<EntryFinder.Entry> {
 	 * @return true, if successful
 	 */
 	public boolean findCause() {
-		final Regex causeRegex = new Regex(JavaStackTraceFilter.JAVA_CAUSE, REFlags.MULTILINE | REFlags.DOTALL);
+		final Regex causeRegex = new Regex(JavaStackTraceFilter2.JAVA_CAUSE, REFlags.MULTILINE | REFlags.DOTALL);
 		return find(causeRegex);
 	}
 	
@@ -284,7 +284,7 @@ public class EntryFinder implements Iterable<EntryFinder.Entry> {
 	 * @return true, if successful
 	 */
 	public boolean findException() {
-		final Regex exceptionRegex = new Regex(JavaStackTraceFilter.JAVA_EXCEPTION, REFlags.MULTILINE | REFlags.DOTALL);
+		final Regex exceptionRegex = new Regex(JavaStackTraceFilter2.JAVA_EXCEPTION, REFlags.MULTILINE | REFlags.DOTALL);
 		
 		return find(exceptionRegex);
 	}

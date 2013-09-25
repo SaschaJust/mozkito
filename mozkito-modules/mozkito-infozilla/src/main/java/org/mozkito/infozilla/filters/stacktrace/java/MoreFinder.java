@@ -22,7 +22,7 @@ import net.ownhero.dev.regex.Match;
 import net.ownhero.dev.regex.MultiMatch;
 import net.ownhero.dev.regex.Regex;
 
-import org.mozkito.infozilla.filters.stacktrace.JavaStackTraceFilter;
+import org.mozkito.infozilla.filters.stacktrace.JavaStackTraceFilter2;
 
 /**
  * The Class MoreFinder.
@@ -152,12 +152,12 @@ public class MoreFinder implements Iterable<MoreFinder.Entry> {
 	 * @return true, if successful
 	 */
 	public boolean find() {
-		final Regex regex = new Regex(JavaStackTraceFilter.JAVA_MORE, Pattern.MULTILINE | Pattern.DOTALL);
+		final Regex regex = new Regex(JavaStackTraceFilter2.JAVA_MORE, Pattern.MULTILINE | Pattern.DOTALL);
 		final MultiMatch multiMatch = regex.findAll(this.text);
 		if (multiMatch != null) {
 			for (final Match match : multiMatch) {
 				this.entries.add(new Entry(match.getFullMatch().start(), match.getFullMatch().end(),
-				                           Integer.parseInt(match.getGroup(JavaStackTraceFilter.MORE_GROUP).getMatch())));
+				                           Integer.parseInt(match.getGroup(JavaStackTraceFilter2.MORE_GROUP).getMatch())));
 			}
 			
 			return true;

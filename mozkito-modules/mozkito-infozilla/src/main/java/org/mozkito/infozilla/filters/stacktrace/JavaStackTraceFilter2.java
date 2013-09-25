@@ -36,44 +36,16 @@ import org.mozkito.utilities.datastructures.Tuple;
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class JavaStackTraceFilter extends StackTraceFilter {
+public class JavaStackTraceFilter2 extends StackTraceFilter {
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	
 	/** The Constant lineBreaks. */
-	public static final Regex  lineBreaks       = new Regex("(\\r\\n|\\r|\\n)");
+	public static final Regex  LINE_BREAKS_REGEX       = new Regex("(\\r\\n|\\r|\\n)");
 
 	/** The Constant EXCEPTION_GROUP_NAME. */
-	public final static String EXCEPTION_GROUP  = "EXCEPTION_GROUP";
+	public static final String EXCEPTION_GROUP  = "EXCEPTION_GROUP";
 	
 	/** The Constant MESSAGE_GROUP_NAME. */
-	public final static String MESSAGE_GROUP    = "MESSAGE_GROUP";
+	public static final String MESSAGE_GROUP    = "MESSAGE_GROUP";
 	
 	/** The Constant CLASSNAME_GROUP. */ 
 	public static final String CLASSNAME_GROUP  = "CLASSNAME_GROUP";
@@ -124,7 +96,7 @@ public class JavaStackTraceFilter extends StackTraceFilter {
 	// @formatter:on
 	
 	/** The Constant JAVA_MORE. */
-	public static final String JAVA_MORE        = "...\\s+({" + MORE_GROUP + "}\\d+)\\s+more";
+	public static final String JAVA_MORE         = "...\\s+({" + MORE_GROUP + "}\\d+)\\s+more";
 	
 	// @formatter:off
 	/** The Constant JAVA_CAUSE. */
@@ -139,7 +111,7 @@ public class JavaStackTraceFilter extends StackTraceFilter {
 	/**
 	 * Instantiates a new java stack trace filter.
 	 */
-	public JavaStackTraceFilter() {
+	public JavaStackTraceFilter2() {
 		PRECONDITIONS: {
 			// none
 		}
@@ -199,17 +171,17 @@ public class JavaStackTraceFilter extends StackTraceFilter {
 			endPosition += offset;
 			
 			final Stacktrace stacktrace = new Stacktrace(startPosition, endPosition,
-			                                             lineBreaks.removeAll(exceptionType),
-			                                             lineBreaks.removeAll(message), moreValue);
+			                                             LINE_BREAKS_REGEX.removeAll(exceptionType),
+			                                             LINE_BREAKS_REGEX.removeAll(message), moreValue);
 			
 			for (final Reason reason : reasons) {
 				stacktrace.add(new StacktraceEntry(
-				                                   lineBreaks.removeAll(reason.getElement().getClassName()),
+				                                   LINE_BREAKS_REGEX.removeAll(reason.getElement().getClassName()),
 				                                   reason.getElement().getFileName() != null
-				                                                                            ? lineBreaks.removeAll(reason.getElement()
-				                                                                                                         .getFileName())
+				                                                                            ? LINE_BREAKS_REGEX.removeAll(reason.getElement()
+				                                                                                                                .getFileName())
 				                                                                            : null,
-				                                   lineBreaks.removeAll(reason.getElement().getMethodName()),
+				                                   LINE_BREAKS_REGEX.removeAll(reason.getElement().getMethodName()),
 				                                   reason.getElement().getLineNumber()));
 			}
 			
