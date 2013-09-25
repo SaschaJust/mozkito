@@ -16,6 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.ownhero.dev.kisa.Logger;
+import net.ownhero.dev.regex.Match;
+import net.ownhero.dev.regex.MultiMatch;
+import net.ownhero.dev.regex.Regex;
 
 import org.mozkito.infozilla.model.patch.Patch;
 import org.mozkito.infozilla.model.patch.PatchHunk;
@@ -26,6 +29,12 @@ import org.mozkito.infozilla.model.patch.PatchTextElement.Type;
  * The Class PatchParser.
  */
 public class PatchParser {
+	
+	/** The Constant HUNK_HEADER_PATTERN. */
+	private static final String HUNK_HEADER_PATTERN = "@@\\s+-(\\d+),(\\d+)\\s+\\+(\\d+),(\\d+)\\s+@@";
+	
+	/** The Constant non-breakable space. */
+	public static final char    NBSP                = 160;
 	
 	/**
 	 * Find and extract all Hunks in a Patch.
@@ -76,7 +85,7 @@ public class PatchParser {
 					Logger.debug("<>>> Will look for HunkLines from " + (hStart + 1) + " to " + (searchEnd - 1));
 				}
 				String hunktext = "";
-				for (int i = hStart + 1; i < searchEnd; i++) {
+				for (int i = hStart; i < searchEnd; i++) {
 					if (Logger.logDebug()) {
 						Logger.debug("<>>> Checking if Hunkline: " + lines[i]);
 					}
@@ -217,7 +226,8 @@ public class PatchParser {
 	 * @return true if the {@link line} is a Hunk line, false otherwise.
 	 */
 	private boolean isHunkLine(final String line) {
-		final boolean isHunkLine = ((line.startsWith("+")) || (line.startsWith("-")) || (line.startsWith(" ")));
+		final boolean isHunkLine = (!line.isEmpty() && (('+' == line.charAt(0)) || ('-' == line.charAt(0))
+		        || (' ' == line.charAt(0)) || (NBSP == line.charAt(0)))); // char 160 = &nbsp;
 		return isHunkLine;
 	}
 	
@@ -275,13 +285,21 @@ public class PatchParser {
 			for (final PatchHunk h : hunks) {
 				patch.addHunk(h);
 			}
-			foundPatches.add(patch);
+			if (!patch.getHunks().isEmpty()) {
+				foundPatches.add(patch);
+			}
 		}
 		
 		// Locate the Patches in the Source Code
 		for (final Patch p : foundPatches) {
-			final int patchStart = p.getHunks().iterator().next().getStartPosition();
-			final int patchEnd = p.getHunks().listIterator(p.getHunks().size() - 1).previous().getEndPosition();
+			SANITY: {
+				assert p != null;
+				assert p != p.getHunks();
+				assert !p.getHunks().isEmpty();
+			}
+			
+			final Integer patchStart = p.getHunks().iterator().next().getStartPosition();
+			final Integer patchEnd = p.getHunks().listIterator(p.getHunks().size()).previous().getEndPosition();
 			// final int patchEnd = text.lastIndexOf(p.getHunks().get(p.getHunks().size() - 1).getText())
 			// + p.getHunks().get(p.getHunks().size() - 1).getText().length();
 			
@@ -301,14 +319,93 @@ public class PatchParser {
 	 * @return the patch hunk
 	 */
 	private PatchHunk parseHunk(final String text) {
-		final PatchHunk.Builder builder = new PatchHunk.Builder();
+		PRECONDITIONS: {
+			if (text == null) {
+				throw new NullPointerException();
+			}
+		}
 		
-		builder.newStart(0).oldStart(0).newEnd(12).oldEnd(15);
-		
-		builder.addElements(new PatchTextElement(Type.CONTEXT, "lorem ipsum"),
-		                    new PatchTextElement(Type.ADDED, "test"), new PatchTextElement(Type.REMOVED,
-		                                                                                   "bleh\nbla\nblub\nfoo"));
-		return builder.create();
+		try {
+			if (text.isEmpty()) {
+				return null;
+			}
+			
+			SANITY: {
+				assert text.charAt(0) == '@';
+			}
+			
+			final Regex regex = new Regex(HUNK_HEADER_PATTERN);
+			final MultiMatch multiMatch = regex.findAll(text);
+			
+			SANITY: {
+				assert multiMatch != null : String.format("Regular expression '%s' did not match: %s",
+				                                          HUNK_HEADER_PATTERN, text);
+				assert multiMatch.size() == 1;
+			}
+			
+			final Match match = multiMatch.iterator().next();
+			final PatchHunk.Builder builder = new PatchHunk.Builder();
+			
+			SANITY: {
+				assert match.getGroupCount() == 4;
+			}
+			
+			final int oldStart = Integer.parseInt(match.getGroup(1).getMatch());
+			final int oldEnd = Integer.parseInt(match.getGroup(2).getMatch());
+			final int newStart = Integer.parseInt(match.getGroup(3).getMatch());
+			final int newEnd = Integer.parseInt(match.getGroup(4).getMatch());
+			
+			builder.newStart(newStart).oldStart(oldStart).newEnd(newEnd).oldEnd(oldEnd).create();
+			
+			SANITY: {
+				assert (match.getFullMatch().end() + 1) < text.length();
+			}
+			
+			final String string = text.substring(match.getFullMatch().end() + 1);
+			final String[] split = string.split("\\r\\n|\\r|\\n");
+			
+			SANITY: {
+				assert split != null;
+				assert split.length > 0;
+			}
+			
+			PatchTextElement previousElement = null;
+			for (final String line : split) {
+				SANITY: {
+					assert !line.isEmpty();
+				}
+				
+				switch (line.charAt(0)) {
+					case ' ':
+					case NBSP:
+						builder.addElement(previousElement = new PatchTextElement(Type.CONTEXT, line.substring(1)));
+						break;
+					case '+':
+						builder.addElement(previousElement = new PatchTextElement(Type.ADDED, line.substring(1)));
+						break;
+					case '-':
+						builder.addElement(previousElement = new PatchTextElement(Type.REMOVED, line.substring(1)));
+						break;
+					default:
+						if (previousElement != null) {
+							previousElement.setText(previousElement.getText() + ' ' + line);
+							if (Logger.logWarn()) {
+								Logger.warn("Assuming line break. Adding '%s' to previous line resulting in: %s", line,
+								            previousElement.getText());
+							}
+						} else {
+							assert false : String.format("Hunk starts with unsupported character '%s' (%s).",
+							                             line.charAt(0), (int) line.charAt(0));
+						}
+				}
+			}
+			
+			return builder.create();
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/**
