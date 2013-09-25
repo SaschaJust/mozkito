@@ -181,6 +181,7 @@ public class RepositoryToolchain extends Chain<Settings> {
 			
 			this.persistenceUtil.beginTransaction();
 			this.persistenceUtil.save(this.versionArchive);
+			this.persistenceUtil.detach(this.versionArchive);
 			this.persistenceUtil.commitTransaction();
 			
 			new RepositoryReader(this.threadPool.getThreadGroup(), getSettings(), this.repository);
@@ -193,6 +194,7 @@ public class RepositoryToolchain extends Chain<Settings> {
 			}
 			this.persistenceUtil.beginTransaction();
 			this.persistenceUtil.saveOrUpdate(this.versionArchive);
+			this.persistenceUtil.detach(this.versionArchive);
 			this.persistenceUtil.commitTransaction();
 		} catch (final RepositoryOperationException e) {
 			throw new UnrecoverableError(e);
