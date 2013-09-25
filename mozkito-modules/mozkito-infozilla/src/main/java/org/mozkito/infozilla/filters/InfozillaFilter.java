@@ -15,6 +15,8 @@ package org.mozkito.infozilla.filters;
 
 import java.util.List;
 
+import org.mozkito.infozilla.elements.FilterResult;
+
 /**
  * This interface describes the method interface for every infoZilla InfozillaFilter.
  * 
@@ -25,19 +27,12 @@ import java.util.List;
 public abstract class InfozillaFilter<T> {
 	
 	/**
-	 * Gets the output text.
-	 * 
-	 * @return the output text
-	 */
-	public abstract String getOutputText();
-	
-	/**
 	 * Run filter.
 	 * 
 	 * @param inputText
 	 *            the input text
 	 * @return the list
 	 */
-	public abstract List<T> runFilter(String inputText);
+	public abstract List<FilterResult<T>> runFilter(String inputText);
 	
 }
