@@ -176,6 +176,7 @@ public class LogEntry implements Annotated, Inlineable {
 	 * Gets the java timestamp.
 	 * 
 	 * @return the java timestamp
+	 * @deprecated this has to remain for JPA
 	 */
 	@Deprecated
 	@Temporal (TemporalType.TIMESTAMP)
@@ -317,6 +318,7 @@ public class LogEntry implements Annotated, Inlineable {
 	/**
 	 * Sets the java timestamp.
 	 * 
+	 * @deprecated this has to remain for JPA
 	 * @param date
 	 *            the new java timestamp
 	 */
@@ -437,25 +439,25 @@ public class LogEntry implements Annotated, Inlineable {
 		return builder.toString();
 	}
 	
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
-	public String toString2() {
-		final StringBuilder builder = new StringBuilder();
-		
-		builder.append("LogEntry [");
-		builder.append(this.timestamp);
-		builder.append("] [");
-		builder.append(this.level);
-		builder.append("]");
-		if (getSourceClass() != null) {
-			builder.append(" [").append(getSourceClass()).append("]");
-		}
-		builder.append(" ").append(this.message);
-		
-		return builder.toString();
-	}
+	// /**
+	// * {@inheritDoc}
+	// *
+	// * @see java.lang.Object#toString()
+	// */
+	// public String toString2() {
+	// final StringBuilder builder = new StringBuilder();
+	//
+	// builder.append("LogEntry [");
+	// builder.append(this.timestamp);
+	// builder.append("] [");
+	// builder.append(this.level);
+	// builder.append("]");
+	// if (getSourceClass() != null) {
+	// builder.append(" [").append(getSourceClass()).append("]");
+	// }
+	// builder.append(" ").append(this.message);
+	//
+	// return builder.toString();
+	// }
 	
 }

@@ -190,6 +190,7 @@ public class Log implements Annotated, Attachable, Inlineable, Iterable<LogEntry
 	 * 
 	 * @see org.mozkito.infozilla.elements.Attachable#getOrigin()
 	 */
+	@Override
 	@ManyToOne (cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
 	public Attachment getOrigin() {
 		return this.origin;
