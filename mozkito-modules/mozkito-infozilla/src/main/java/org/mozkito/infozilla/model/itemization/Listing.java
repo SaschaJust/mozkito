@@ -802,4 +802,24 @@ public class Listing implements Annotated, Inlineable, List<ListingEntry> {
 		}
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		final StringBuilder builder = new StringBuilder();
+		
+		builder.append("Listing [type=");
+		builder.append(getType());
+		builder.append("]");
+		
+		for (final ListingEntry entry : getEntries()) {
+			builder.append(System.getProperty("line.separator")).append(entry);
+		}
+		
+		return builder.toString();
+	}
+	
 }

@@ -20,6 +20,8 @@ import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -28,6 +30,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
 import org.mozkito.infozilla.elements.Inlineable;
+import org.mozkito.infozilla.model.itemization.Listing.Type;
 import org.mozkito.persistence.Annotated;
 import org.mozkito.utilities.commons.JavaUtils;
 
@@ -38,6 +41,12 @@ import org.mozkito.utilities.commons.JavaUtils;
  */
 @Entity
 public class ListingEntry implements Annotated, Inlineable, Iterable<Listing> {
+	
+	/** The type. */
+	private Type              type;
+	
+	/** The ordinal. */
+	private Integer           ordinal;
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1815282586177047074L;
@@ -50,7 +59,6 @@ public class ListingEntry implements Annotated, Inlineable, Iterable<Listing> {
 	
 	/** The identifier. */
 	private String            identifier;
-	
 	/** The start position. */
 	private Integer           startPosition;
 	
@@ -60,19 +68,34 @@ public class ListingEntry implements Annotated, Inlineable, Iterable<Listing> {
 	/** The text. */
 	private String            text;
 	
+	/** The stop. */
+	private String            stop;
+	
 	/**
+	 * Instantiates a new listing entry.
+	 * 
 	 * @param identifier
+	 *            the identifier
+	 * @param stop
+	 *            the stop
+	 * @param type
+	 *            the type
 	 * @param startPosition
+	 *            the start position
 	 * @param endPosition
+	 *            the end position
 	 * @param text
+	 *            the text
 	 */
-	public ListingEntry(final String identifier, final Integer startPosition, final Integer endPosition,
-	        final String text) {
+	public ListingEntry(final String identifier, final String stop, final Type type, final Integer startPosition,
+	        final Integer endPosition, final String text) {
 		super();
 		this.identifier = identifier;
 		this.startPosition = startPosition;
 		this.endPosition = endPosition;
 		this.text = text;
+		this.stop = stop;
+		this.type = type;
 	}
 	
 	/**
@@ -158,6 +181,25 @@ public class ListingEntry implements Annotated, Inlineable, Iterable<Listing> {
 	}
 	
 	/**
+	 * Gets the ordinal.
+	 * 
+	 * @return the ordinal
+	 */
+	public Integer getOrdinal() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.ordinal;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
 	 * Gets the start position.
 	 * 
 	 * @return the startPosition
@@ -170,6 +212,26 @@ public class ListingEntry implements Annotated, Inlineable, Iterable<Listing> {
 		
 		try {
 			return this.startPosition;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Gets the stop.
+	 * 
+	 * @return the stop
+	 */
+	@Basic
+	public String getStop() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.stop;
 		} finally {
 			POSTCONDITIONS: {
 				// none
@@ -210,6 +272,26 @@ public class ListingEntry implements Annotated, Inlineable, Iterable<Listing> {
 		
 		try {
 			return this.text;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Gets the type.
+	 * 
+	 * @return the type
+	 */
+	@Enumerated (EnumType.STRING)
+	public Type getType() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.type;
 		} finally {
 			POSTCONDITIONS: {
 				// none
@@ -298,6 +380,26 @@ public class ListingEntry implements Annotated, Inlineable, Iterable<Listing> {
 	}
 	
 	/**
+	 * Sets the ordinal.
+	 * 
+	 * @param ordinal
+	 *            the ordinal to set
+	 */
+	public void setOrdinal(final Integer ordinal) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.ordinal = ordinal;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
 	 * Sets the start position.
 	 * 
 	 * @param startPosition
@@ -310,6 +412,26 @@ public class ListingEntry implements Annotated, Inlineable, Iterable<Listing> {
 		
 		try {
 			this.startPosition = startPosition;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Sets the stop.
+	 * 
+	 * @param stop
+	 *            the stop to set
+	 */
+	public void setStop(final String stop) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.stop = stop;
 		} finally {
 			POSTCONDITIONS: {
 				// none
@@ -355,6 +477,52 @@ public class ListingEntry implements Annotated, Inlineable, Iterable<Listing> {
 				// none
 			}
 		}
+	}
+	
+	/**
+	 * Sets the type.
+	 * 
+	 * @param type
+	 *            the type to set
+	 */
+	public void setType(final Type type) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.type = type;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		final StringBuilder builder = new StringBuilder();
+		builder.append("ListingEntry [type=");
+		builder.append(this.type);
+		builder.append(", identifier=");
+		builder.append(this.identifier);
+		builder.append(", stop=");
+		builder.append(this.stop);
+		builder.append(", ordinal=");
+		builder.append(this.ordinal);
+		builder.append(", text=");
+		builder.append(this.text);
+		builder.append("]");
+		
+		for (final Listing listing : getSubListings()) {
+			builder.append(System.getProperty("line.separator")).append(listing);
+		}
+		return builder.toString();
 	}
 	
 }

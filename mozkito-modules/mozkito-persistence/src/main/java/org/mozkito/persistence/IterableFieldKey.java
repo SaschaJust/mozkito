@@ -30,9 +30,8 @@ public enum IterableFieldKey {
 	INVOLVED,
 	/**
 	 * the person(s) that have done modifications to the original entity. If requested without index, represents a
-	 * {@link Collection} of {@link Person}s, a specific {@link Person} otherwise. Represents an empty
-	 * {@link Collection}/ <code>null</code> if there weren't any changes at all, respectively. (
-	 * <code>Collection<Person>/Person</code>)
+	 * {@link Collection} of Persons, a specific Person otherwise. Represents an empty {@link Collection}/
+	 * <code>null</code> if there weren't any changes at all, respectively. ( <code>Collection<Person>/Person</code>)
 	 */
 	CHANGER;
 	

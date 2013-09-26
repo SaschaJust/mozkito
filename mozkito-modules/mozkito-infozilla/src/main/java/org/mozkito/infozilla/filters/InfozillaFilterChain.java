@@ -23,9 +23,9 @@ import org.jsoup.nodes.Document.OutputSettings;
 import org.jsoup.safety.Whitelist;
 
 import org.mozkito.infozilla.elements.FilterResult;
-import org.mozkito.infozilla.filters.log.LogFilter;
+import org.mozkito.infozilla.filters.enumeration.AdaptiveListingFilter;
 import org.mozkito.infozilla.model.EnhancedReport;
-import org.mozkito.infozilla.model.log.Log;
+import org.mozkito.infozilla.model.itemization.Listing;
 import org.mozkito.issues.model.Comment;
 import org.mozkito.issues.model.Report;
 
@@ -98,23 +98,41 @@ public class InfozillaFilterChain {
 		// Logger.always(code.toString());
 		// }
 		
-		final List<Log> logs = new LinkedList<>();
-		final LogFilter logFilter = new LogFilter();
+		// final List<Log> logs = new LinkedList<>();
+		// final LogFilter logFilter = new LogFilter();
+		//
+		// final String description = stripHTML(report.getDescription());
+		// for (final FilterResult<Log> result : logFilter.runFilter(description)) {
+		// logs.add(result.third);
+		// }
+		//
+		// for (final Comment comment : report.getComments()) {
+		// final String message = stripHTML(comment.getMessage());
+		// for (final FilterResult<Log> result : logFilter.runFilter(message)) {
+		// logs.add(result.third);
+		// }
+		// }
+		//
+		// for (final Log log : logs) {
+		// Logger.always(log.toString());
+		// }
+		final List<Listing> listings = new LinkedList<>();
+		final AdaptiveListingFilter logFilter = new AdaptiveListingFilter();
 		
 		final String description = stripHTML(report.getDescription());
-		for (final FilterResult<Log> result : logFilter.runFilter(description)) {
-			logs.add(result.third);
+		for (final FilterResult<Listing> result : logFilter.runFilter(description)) {
+			listings.add(result.third);
 		}
 		
 		for (final Comment comment : report.getComments()) {
 			final String message = stripHTML(comment.getMessage());
-			for (final FilterResult<Log> result : logFilter.runFilter(message)) {
-				logs.add(result.third);
+			for (final FilterResult<Listing> result : logFilter.runFilter(message)) {
+				listings.add(result.third);
 			}
 		}
 		
-		for (final Log log : logs) {
-			Logger.always(log.toString());
+		for (final Listing listing : listings) {
+			Logger.always(listing.toString());
 		}
 		
 		return enhancedReport;

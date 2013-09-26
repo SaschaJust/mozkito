@@ -88,7 +88,7 @@ public class EnumerationFilter extends InfozillaFilter<Listing> {
 		
 		final Listing e = new Listing(Type.ENUMERATION, eStart, eEnd);
 		for (final String line : enumLines) {
-			e.add(new ListingEntry("-", 0, 0, line));
+			e.add(new ListingEntry("-", "", Listing.Type.ITEMIZATION, 0, 0, line));
 		}
 		
 		// e.setEnumStart(eStart);
