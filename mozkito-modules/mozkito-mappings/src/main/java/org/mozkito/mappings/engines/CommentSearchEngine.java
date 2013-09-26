@@ -38,7 +38,7 @@ import org.mozkito.mappings.requirements.Expression;
 import org.mozkito.mappings.requirements.Index;
 import org.mozkito.mappings.storages.LuceneStorage;
 import org.mozkito.persistence.FieldKey;
-import org.mozkito.persistence.IteratableFieldKey;
+import org.mozkito.persistence.IterableFieldKey;
 
 /**
  * The Class CommentSearchEngine.
@@ -140,7 +140,7 @@ public class CommentSearchEngine extends SearchEngine {
 				}
 				
 				addFeature(relation, confidence, FieldKey.BODY.name(), fromBody, query,
-				           IteratableFieldKey.COMMENTS.name(), toContent, toSubstring);
+				           IterableFieldKey.COMMENTS.name(), toContent, toSubstring);
 			} catch (final IOException e) {
 				throw new UnrecoverableError(e);
 			}

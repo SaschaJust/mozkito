@@ -11,29 +11,43 @@
  * specific language governing permissions and limitations under the License.
  **********************************************************************************************************************/
 
-package org.mozkito.persistence;
-
-import java.util.Collection;
+package org.mozkito.infozilla.elements;
 
 /**
- * The Enum IteratableFieldKey.
+ * The Class Triple.
  * 
+ * @param <A>
+ *            the generic type
+ * @param <B>
+ *            the generic type
+ * @param <C>
+ *            the generic type
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public enum IteratableFieldKey {
+public class Triple<A, B, C> {
 	
-	/** The comments. */
-	COMMENTS,
-	/** The files. */
-	FILES,
-	/** The involved. */
-	INVOLVED,
+	/** The first. */
+	public A first;
+	
+	/** The second. */
+	public B second;
+	
+	/** The third. */
+	public C third;
+	
 	/**
-	 * the person(s) that have done modifications to the original entity. If requested without index, represents a
-	 * {@link Collection} of {@link Person}s, a specific {@link Person} otherwise. Represents an empty
-	 * {@link Collection}/ <code>null</code> if there weren't any changes at all, respectively. (
-	 * <code>Collection<Person>/Person</code>)
+	 * Instantiates a new triple.
+	 * 
+	 * @param first
+	 *            the first
+	 * @param second
+	 *            the second
+	 * @param third
+	 *            the third
 	 */
-	CHANGER;
-	
+	public Triple(final A first, final B second, final C third) {
+		this.first = first;
+		this.second = second;
+		this.third = third;
+	}
 }

@@ -143,7 +143,7 @@ public abstract class JavaElement implements Annotated {
 	 * 
 	 * @return the fullQualifiedName
 	 */
-	@Column (length = 0)
+	@Column (length = 65535)
 	public String getFullQualifiedName() {
 		return this.fullQualifiedName;
 	}

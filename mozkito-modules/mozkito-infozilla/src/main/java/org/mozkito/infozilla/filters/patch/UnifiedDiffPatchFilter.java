@@ -12,9 +12,12 @@
  ******************************************************************************/
 package org.mozkito.infozilla.filters.patch;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import org.mozkito.infozilla.filters.FilterTextRemover;
+import net.ownhero.dev.kisa.Logger;
+
+import org.mozkito.infozilla.elements.FilterResult;
 import org.mozkito.infozilla.model.patch.Patch;
 
 /**
@@ -26,25 +29,13 @@ import org.mozkito.infozilla.model.patch.Patch;
  */
 public class UnifiedDiffPatchFilter extends PatchFilter {
 	
-	/** The text remover. */
-	private FilterTextRemover textRemover;
-	
 	/** The relaxed. */
-	private boolean           relaxed = false;
+	private boolean relaxed = false;
 	
 	/**
 	 * Instantiates a new unified diff patch filter.
 	 */
 	public UnifiedDiffPatchFilter() {
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.infozilla.filters.InfozillaFilter#getOutputText()
-	 */
-	@Override
-	public String getOutputText() {
-		return this.textRemover.doDelete();
 	}
 	
 	/**
@@ -55,9 +46,7 @@ public class UnifiedDiffPatchFilter extends PatchFilter {
 	 * @return a List of {@link Patch}es.
 	 */
 	@SuppressWarnings ("unchecked")
-	private List<Patch> getPatches(final String text) {
-		// Setup Helper classes
-		this.textRemover = new FilterTextRemover(text);
+	private List<FilterResult<Patch>> getPatches(final String text) {
 		
 		// Find Patches
 		List<Patch> foundPatches = null;
@@ -69,11 +58,20 @@ public class UnifiedDiffPatchFilter extends PatchFilter {
 			foundPatches = (List<Patch>) pp.parseForPatches(text);
 		}
 		
-		// InfozillaFilter them out
+		// // InfozillaFilter them out
+		// for (final Patch patch : foundPatches) {
+		// this.textRemover.markForDeletion(patch.getStartPosition(), patch.getEndPosition());
+		// }
+		
+		final List<FilterResult<Patch>> list = new ArrayList<>(foundPatches.size());
 		for (final Patch patch : foundPatches) {
-			this.textRemover.markForDeletion(patch.getStartPosition(), patch.getEndPosition());
+			if (Logger.logAlways()) {
+				Logger.always("Found patch:");
+				Logger.always(patch.toString());
+			}
+			list.add(new FilterResult<Patch>(-1, -1, patch));
 		}
-		return foundPatches;
+		return list;
 	}
 	
 	/**
@@ -90,7 +88,7 @@ public class UnifiedDiffPatchFilter extends PatchFilter {
 	 * @see org.mozkito.infozilla.filters.InfozillaFilter#runFilter(java.lang.String)
 	 */
 	@Override
-	public List<Patch> runFilter(final String inputText) {
+	public List<FilterResult<Patch>> runFilter(final String inputText) {
 		return getPatches(inputText);
 	}
 	

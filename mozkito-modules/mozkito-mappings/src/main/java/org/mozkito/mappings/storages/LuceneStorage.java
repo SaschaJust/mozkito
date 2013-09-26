@@ -37,7 +37,7 @@ import org.mozkito.issues.model.Report;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.FieldKey;
-import org.mozkito.persistence.IteratableFieldKey;
+import org.mozkito.persistence.IterableFieldKey;
 import org.mozkito.persistence.PersistenceUtil;
 
 /**
@@ -114,7 +114,7 @@ public class LuceneStorage extends Storage {
 		doc.add(new TextField(FieldKey.ID.name(), report.getId(), Field.Store.YES));
 		
 		for (final Comment comment : report.getComments()) {
-			doc.add(new TextField(IteratableFieldKey.COMMENTS.name(), comment.getMessage(), Field.Store.YES));
+			doc.add(new TextField(IterableFieldKey.COMMENTS.name(), comment.getMessage(), Field.Store.YES));
 		}
 		
 		this.reportDocuments.put(report.getId(), doc);

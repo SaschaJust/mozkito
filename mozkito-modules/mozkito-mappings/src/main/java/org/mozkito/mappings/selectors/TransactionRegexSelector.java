@@ -26,7 +26,7 @@ import org.mozkito.issues.model.Comment;
 import org.mozkito.issues.model.Report;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.persistence.Criteria;
-import org.mozkito.persistence.IteratableFieldKey;
+import org.mozkito.persistence.IterableFieldKey;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.model.ChangeSet;
 
@@ -133,8 +133,8 @@ public class TransactionRegexSelector extends Selector {
 			
 			final Criteria<?> criteria = util.createCriteria(targetType);
 			
-			for (int i = 0; i < element.getSize(IteratableFieldKey.COMMENTS); ++i) {
-				final Comment comment = (Comment) element.get(IteratableFieldKey.COMMENTS, i);
+			for (int i = 0; i < element.getSize(IterableFieldKey.COMMENTS); ++i) {
+				final Comment comment = (Comment) element.get(IterableFieldKey.COMMENTS, i);
 				final MultiMatch multiMatch = regex.findAll(comment.getMessage());
 				
 				if (multiMatch != null) {

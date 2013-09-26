@@ -16,6 +16,7 @@
 package org.mozkito.infozilla.model.patch;
 
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -58,7 +59,7 @@ public class Patch implements Annotated, Attachable, Inlineable {
 	private Integer           endPosition;
 	
 	/** The hunks. */
-	private List<PatchHunk>   hunks;
+	private List<PatchHunk>   hunks            = new LinkedList<>();
 	
 	/** The id. */
 	private int               id;
@@ -536,6 +537,30 @@ public class Patch implements Annotated, Attachable, Inlineable {
 				// none
 			}
 		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		final StringBuilder builder = new StringBuilder();
+		builder.append("Patch [index=");
+		builder.append(this.index);
+		builder.append(", originalFile=");
+		builder.append(this.originalFile);
+		builder.append(", modifiedFile=");
+		builder.append(this.modifiedFile);
+		builder.append(", oldTimestamp=");
+		builder.append(this.oldTimestamp);
+		builder.append(", newTimestamp=");
+		builder.append(this.newTimestamp);
+		builder.append(", hunks=");
+		builder.append(this.hunks);
+		builder.append("]");
+		return builder.toString();
 	}
 	
 }

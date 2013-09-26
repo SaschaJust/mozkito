@@ -62,7 +62,7 @@ import org.mozkito.issues.elements.Status;
 import org.mozkito.issues.elements.Type;
 import org.mozkito.issues.model.comparators.CommentComparator;
 import org.mozkito.persistence.FieldKey;
-import org.mozkito.persistence.IteratableFieldKey;
+import org.mozkito.persistence.IterableFieldKey;
 import org.mozkito.persistence.model.EnumTuple;
 import org.mozkito.persons.model.Person;
 import org.mozkito.persons.model.PersonContainer;
@@ -412,11 +412,11 @@ public class Report implements org.mozkito.persistence.Entity, Comparable<Report
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.persistence.Entity#get(org.mozkito.persistence.IteratableFieldKey)
+	 * @see org.mozkito.persistence.Entity#get(org.mozkito.persistence.IterableFieldKey)
 	 */
 	@SuppressWarnings ("unchecked")
 	@Override
-	public <T> Collection<T> get(final IteratableFieldKey key) {
+	public <T> Collection<T> get(final IterableFieldKey key) {
 		PRECONDITIONS: {
 			if (key == null) {
 				throw new NullPointerException();
@@ -496,10 +496,10 @@ public class Report implements org.mozkito.persistence.Entity, Comparable<Report
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.persistence.Entity#get(org.mozkito.persistence.IteratableFieldKey, int)
+	 * @see org.mozkito.persistence.Entity#get(org.mozkito.persistence.IterableFieldKey, int)
 	 */
 	@Override
-	public <T> T get(final IteratableFieldKey key,
+	public <T> T get(final IterableFieldKey key,
 	                 final int index) {
 		PRECONDITIONS: {
 			// none
@@ -537,10 +537,10 @@ public class Report implements org.mozkito.persistence.Entity, Comparable<Report
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.persistence.Entity#getAll(org.mozkito.persistence.IteratableFieldKey[])
+	 * @see org.mozkito.persistence.Entity#getAll(org.mozkito.persistence.IterableFieldKey[])
 	 */
 	@Override
-	public Map<IteratableFieldKey, Object> getAll(final IteratableFieldKey... keys) {
+	public Map<IterableFieldKey, Object> getAll(final IterableFieldKey... keys) {
 		PRECONDITIONS: {
 			// none
 		}
@@ -577,10 +577,10 @@ public class Report implements org.mozkito.persistence.Entity, Comparable<Report
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.persistence.Entity#getAny(org.mozkito.persistence.IteratableFieldKey[])
+	 * @see org.mozkito.persistence.Entity#getAny(org.mozkito.persistence.IterableFieldKey[])
 	 */
 	@Override
-	public Object getAny(final IteratableFieldKey... keys) {
+	public Object getAny(final IterableFieldKey... keys) {
 		PRECONDITIONS: {
 			// none
 		}
@@ -617,10 +617,10 @@ public class Report implements org.mozkito.persistence.Entity, Comparable<Report
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.persistence.Entity#getAsOneString(org.mozkito.persistence.IteratableFieldKey)
+	 * @see org.mozkito.persistence.Entity#getAsOneString(org.mozkito.persistence.IterableFieldKey)
 	 */
 	@Override
-	public String getAsOneString(final IteratableFieldKey iKeys) {
+	public String getAsOneString(final IterableFieldKey iKeys) {
 		PRECONDITIONS: {
 			// none
 		}
@@ -1080,10 +1080,10 @@ public class Report implements org.mozkito.persistence.Entity, Comparable<Report
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.persistence.Entity#getSize(org.mozkito.persistence.IteratableFieldKey)
+	 * @see org.mozkito.persistence.Entity#getSize(org.mozkito.persistence.IterableFieldKey)
 	 */
 	@Override
-	public int getSize(final IteratableFieldKey key) {
+	public int getSize(final IterableFieldKey key) {
 		PRECONDITIONS: {
 			// none
 		}
@@ -1663,13 +1663,13 @@ public class Report implements org.mozkito.persistence.Entity, Comparable<Report
 	 * @see org.mozkito.persistence.Entity#supportedIteratableFields()
 	 */
 	@Override
-	public Set<IteratableFieldKey> supportedIteratableFields() {
+	public Set<IterableFieldKey> supportedIteratableFields() {
 		PRECONDITIONS: {
 			// none
 		}
 		
 		try {
-			final Set<IteratableFieldKey> set = new HashSet<IteratableFieldKey>() {
+			final Set<IterableFieldKey> set = new HashSet<IterableFieldKey>() {
 				
 				/**
                  * 
@@ -1677,10 +1677,10 @@ public class Report implements org.mozkito.persistence.Entity, Comparable<Report
 				private static final long serialVersionUID = 1L;
 				
 				{
-					add(IteratableFieldKey.CHANGER);
-					add(IteratableFieldKey.COMMENTS);
-					add(IteratableFieldKey.FILES);
-					add(IteratableFieldKey.INVOLVED);
+					add(IterableFieldKey.CHANGER);
+					add(IterableFieldKey.COMMENTS);
+					add(IterableFieldKey.FILES);
+					add(IterableFieldKey.INVOLVED);
 				}
 			};
 			

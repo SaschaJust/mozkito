@@ -11,28 +11,28 @@
  * specific language governing permissions and limitations under the License.
  **********************************************************************************************************************/
 
-package org.mozkito.infozilla.filters;
+package org.mozkito.persistence;
 
-import java.util.List;
-
-import org.mozkito.infozilla.elements.FilterResult;
+import java.util.Collection;
 
 /**
- * This interface describes the method interface for every infoZilla InfozillaFilter.
+ * The Enum IteratableFieldKey.
  * 
- * @param <T>
- *            the generic type
- * @author Nicolas Bettenburg, Sascha Just
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
-public abstract class InfozillaFilter<T> {
+public enum IterableFieldKey {
 	
+	/** The comments. */
+	COMMENTS,
+	/** The files. */
+	FILES,
+	/** The involved. */
+	INVOLVED,
 	/**
-	 * Run filter.
-	 * 
-	 * @param inputText
-	 *            the input text
-	 * @return the list
+	 * the person(s) that have done modifications to the original entity. If requested without index, represents a
+	 * {@link Collection} of Persons, a specific Person otherwise. Represents an empty {@link Collection}/
+	 * <code>null</code> if there weren't any changes at all, respectively. ( <code>Collection<Person>/Person</code>)
 	 */
-	public abstract List<FilterResult<T>> runFilter(String inputText);
+	CHANGER;
 	
 }

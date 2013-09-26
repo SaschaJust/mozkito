@@ -15,14 +15,14 @@ package org.mozkito.infozilla.filters.sourcecode;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.io.InputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import com.Ostermiller.util.CSVParser;
 
@@ -31,7 +31,7 @@ import net.ownhero.dev.regex.Match;
 import net.ownhero.dev.regex.MultiMatch;
 import net.ownhero.dev.regex.Regex;
 
-import org.mozkito.infozilla.filters.FilterTextRemover;
+import org.mozkito.infozilla.elements.FilterResult;
 import org.mozkito.infozilla.model.source.SourceCode;
 import org.mozkito.infozilla.model.source.SourceCode.Type;
 
@@ -99,23 +99,24 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 	}
 	
 	/** Stores the codePatterns read from Java_CodeDB.txt */
-	private final HashMap<String, Pattern> codePatterns;
+	private final HashMap<String, Regex>  codePatterns       = new HashMap<>();
 	
 	/** Stores the code pattern options, read from Java_CodeDB.txt */
-	private final HashMap<String, String>  codePatternOptions;
-	
-	/** The classes own textRemover. */
-	private FilterTextRemover              textRemover;
+	private final HashMap<String, String> codePatternOptions = new HashMap<>();
 	
 	/** The option length. */
-	private final int                      OPTION_LENGTH = 3;
+	private final int                     OPTION_LENGTH      = 3;
 	
 	/**
 	 * Standard Constructor.
 	 */
 	public JavaSourceCodeFilter() {
-		this.codePatterns = new HashMap<String, Pattern>();
-		this.codePatternOptions = new HashMap<String, String>();
+		try {
+			readCodePatterns(new InputStreamReader(getClass().getResourceAsStream("/Java_CodeDB.txt")));
+		} catch (final Exception e) {
+			throw new UnrecoverableError("Error while reading Java Source Code Patterns!");
+		}
+		
 	}
 	
 	/**
@@ -125,10 +126,8 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 	 *            the name of the file to read Code Patterns from.
 	 */
 	public JavaSourceCodeFilter(final String filename) {
-		this.codePatterns = new HashMap<String, Pattern>();
-		this.codePatternOptions = new HashMap<String, String>();
 		try {
-			readCodePatterns(filename);
+			readCodePatterns(new FileReader(filename));
 		} catch (final Exception e) {
 			throw new UnrecoverableError("Error while reading Java Source Code Patterns!");
 		}
@@ -141,10 +140,8 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 	 *            a URL to a file to read Code Patterns from.
 	 */
 	public JavaSourceCodeFilter(final URL fileurl) {
-		this.codePatterns = new HashMap<String, Pattern>();
-		this.codePatternOptions = new HashMap<String, String>();
 		try {
-			readCodePatterns(fileurl.openStream());
+			readCodePatterns(new InputStreamReader(fileurl.openStream()));
 		} catch (final Exception e) {
 			throw new UnrecoverableError("Error while reading Java Source Code Patterns!");
 		}
@@ -185,15 +182,6 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 		return 0;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.infozilla.filters.sourcecode.SourceCodeFilter#getOutputText()
-	 */
-	@Override
-	public String getOutputText() {
-		return this.textRemover.doDelete();
-	}
-	
 	/**
 	 * Get a List of Source Code Regions contained in a given Text {@link s}.
 	 * 
@@ -201,36 +189,41 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 	 *            the Text we shall look inside for Source Code
 	 * @param minimalSet
 	 *            the minimal set
-	 * @return a List of Source Code Occurences as {@link SourceCode}s
+	 * @return a List of Source Code occurrences as {@link SourceCode}s
 	 */
 	private List<SourceCode> getSourceCodes(final String s,
 	                                        final boolean minimalSet) {
 		final List<SourceCode> codeRegions = new ArrayList<SourceCode>();
-		// for each keyword-pattern pair find the corresponding occurences!
+		// for each keyword-pattern pair find the corresponding occurrences!
 		for (final String keyword : this.codePatterns.keySet()) {
-			this.codePatterns.get(keyword);
 			final String patternOptions = this.codePatternOptions.get(keyword);
+			
 			if (patternOptions.contains("MATCH")) {
-				final Regex regex = new Regex(this.codePatterns.get(keyword).pattern());
+				final Regex regex = this.codePatterns.get(keyword);
 				final MultiMatch list = regex.findAll(s);
 				
-				for (final Match matches : list) {
-					final int offset = findMatch(s, '{', '}', matches.getFullMatch().end());
-					final SourceCode foundRegion = new SourceCode(s.substring(matches.getFullMatch().start(),
-					                                                          matches.getFullMatch().end() + offset),
-					                                              Type.JAVA, matches.getFullMatch().start(),
-					                                              matches.getFullMatch().end() + offset);
-					codeRegions.add(foundRegion);
+				if (list != null) {
+					for (final Match matches : list) {
+						final int offset = findMatch(s, '{', '}', matches.getFullMatch().end());
+						final SourceCode foundRegion = new SourceCode(
+						                                              s.substring(matches.getFullMatch().start(),
+						                                                          matches.getFullMatch().end() + offset),
+						                                              Type.JAVA, matches.getFullMatch().start(),
+						                                              matches.getFullMatch().end() + offset);
+						codeRegions.add(foundRegion);
+					}
 				}
 			} else {
-				final Regex regex = new Regex(this.codePatterns.get(keyword).pattern());
+				final Regex regex = this.codePatterns.get(keyword);
 				final MultiMatch list = regex.findAll(s);
 				
-				for (final Match matches : list) {
-					final SourceCode foundRegion = new SourceCode(matches.getFullMatch().getMatch(), Type.JAVA,
-					                                              matches.getFullMatch().start(),
-					                                              matches.getFullMatch().end());
-					codeRegions.add(foundRegion);
+				if (list != null) {
+					for (final Match matches : list) {
+						final SourceCode foundRegion = new SourceCode(matches.getFullMatch().getMatch(), Type.JAVA,
+						                                              matches.getFullMatch().start(),
+						                                              matches.getFullMatch().end());
+						codeRegions.add(foundRegion);
+					}
 				}
 			}
 			
@@ -243,47 +236,15 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 	}
 	
 	/**
-	 * Read in some Code Patterns from an input stream name {@link instream}.
-	 * 
-	 * @param instream
-	 *            the input stream to read the code patterns from
-	 * @throws Exception
-	 *             if something goes wrong with I/O
-	 */
-	private void readCodePatterns(final InputStream instream) throws Exception {
-		final BufferedReader fileInput = new BufferedReader(new InputStreamReader(instream));
-		// Read patterns from the file
-		String inputLine = null;
-		while ((inputLine = fileInput.readLine()) != null) {
-			// Input comes in the format: "keyword","PATTERN","OPTIONS"
-			// A line can be commented out by using //
-			if (!"//".equalsIgnoreCase(inputLine.substring(0, 2))) {
-				// we use Ostermillers CSV Parser for sake of ease
-				final String[][] parsedLine = CSVParser.parse(inputLine);
-				final String keyword = parsedLine[0][0];
-				final String pattern = parsedLine[0][1];
-				if (parsedLine[0].length == this.OPTION_LENGTH) {
-					final String options = parsedLine[0][2];
-					this.codePatternOptions.put(keyword, options);
-				} else {
-					this.codePatternOptions.put(keyword, "");
-				}
-				final Pattern somePattern = Pattern.compile(pattern);
-				this.codePatterns.put(keyword, somePattern);
-			}
-		}
-	}
-	
-	/**
 	 * Read in some Code Patterns from a file named {@link filename}.
 	 * 
-	 * @param filename
-	 *            the full qualified filename from which to read the code patterns.
-	 * @throws Exception
-	 *             if there did something go wrong with I/O
+	 * @param reader
+	 *            the reader
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
-	private void readCodePatterns(final String filename) throws Exception {
-		try (final BufferedReader fileInput = new BufferedReader(new FileReader(filename));) {
+	private void readCodePatterns(final Reader reader) throws IOException {
+		try (final BufferedReader fileInput = new BufferedReader(reader)) {
 			// Read patterns from the file
 			String inputLine = null;
 			while ((inputLine = fileInput.readLine()) != null) {
@@ -301,8 +262,8 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 					} else {
 						this.codePatternOptions.put(keyword, "");
 					}
-					final Pattern somePattern = Pattern.compile(pattern);
-					this.codePatterns.put(keyword, somePattern);
+					final Regex someRegex = new Regex(pattern);
+					this.codePatterns.put(keyword, someRegex);
 				}
 			}
 		}
@@ -313,23 +274,19 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 	 * @see org.mozkito.infozilla.filters.sourcecode.SourceCodeFilter#runFilter(java.lang.String)
 	 */
 	@Override
-	public List<SourceCode> runFilter(final String inputText) {
-		// Initialize a TextRemover
-		this.textRemover = new FilterTextRemover(inputText);
-		
+	public List<FilterResult<SourceCode>> runFilter(final String inputText) {
 		// Find all Code Regions in the given Text inputText - by default we
 		// want the minimal set
 		// which means the outer most syntactical elements spanning all the
 		// discovered code.
 		final List<SourceCode> codeRegions = getSourceCodes(inputText, true);
 		
-		// Mark the found Regions for deletion
-		for (final SourceCode region : codeRegions) {
-			this.textRemover.markForDeletion(region.getStartPosition(), region.getEndPosition());
+		final List<FilterResult<SourceCode>> list = new ArrayList<>(codeRegions.size());
+		for (final SourceCode code : codeRegions) {
+			list.add(new FilterResult<SourceCode>(code.getStartPosition(), code.getEndPosition(), code));
 		}
-		
 		// Return the found source code regions
-		return codeRegions;
+		return list;
 	}
 	
 }

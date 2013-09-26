@@ -454,4 +454,42 @@ public class EnhancedReport implements Annotated {
 		this.stepsToReproduce = stepsToReproduce;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		final StringBuilder builder = new StringBuilder();
+		builder.append("EnhancedReport [attachments=");
+		builder.append(JavaUtils.mapToString(this.attachments));
+		builder.append(", codeFragments=");
+		builder.append(JavaUtils.collectionToString(this.codeFragments));
+		builder.append(", expectedBehaviors=");
+		builder.append(JavaUtils.collectionToString(this.expectedBehaviors));
+		builder.append(", images=");
+		builder.append(JavaUtils.collectionToString(this.images));
+		builder.append(", links=");
+		builder.append(JavaUtils.collectionToString(this.links));
+		builder.append(", listings=");
+		builder.append(JavaUtils.collectionToString(this.listings));
+		builder.append(", logs=");
+		builder.append(JavaUtils.collectionToString(this.logs));
+		builder.append(", observedBehaviors=");
+		builder.append(JavaUtils.collectionToString(this.observedBehaviors));
+		builder.append(", originalReport=");
+		builder.append(this.originalReport);
+		builder.append(", patches=");
+		builder.append(JavaUtils.collectionToString(this.patches));
+		builder.append(", stacktraces=");
+		builder.append(JavaUtils.collectionToString(this.stacktraces));
+		builder.append(", stepsToReproduce=");
+		builder.append(JavaUtils.collectionToString(this.stepsToReproduce));
+		builder.append(", id=");
+		builder.append(this.id);
+		builder.append("]");
+		return builder.toString();
+	}
+	
 }

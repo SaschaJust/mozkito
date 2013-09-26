@@ -11,28 +11,29 @@
  * specific language governing permissions and limitations under the License.
  **********************************************************************************************************************/
 
-package org.mozkito.infozilla.filters;
-
-import java.util.List;
-
-import org.mozkito.infozilla.elements.FilterResult;
+package org.mozkito.infozilla.elements;
 
 /**
- * This interface describes the method interface for every infoZilla InfozillaFilter.
+ * The Class FilterResult.
  * 
  * @param <T>
  *            the generic type
- * @author Nicolas Bettenburg, Sascha Just
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
-public abstract class InfozillaFilter<T> {
+public class FilterResult<T> extends Triple<Integer, Integer, T> {
 	
 	/**
-	 * Run filter.
+	 * Instantiates a new filter result.
 	 * 
-	 * @param inputText
-	 *            the input text
-	 * @return the list
+	 * @param startPosition
+	 *            the start position
+	 * @param endPosition
+	 *            the end position
+	 * @param data
+	 *            the data
 	 */
-	public abstract List<FilterResult<T>> runFilter(String inputText);
+	public FilterResult(final Integer startPosition, final Integer endPosition, final T data) {
+		super(startPosition, endPosition, data);
+	}
 	
 }

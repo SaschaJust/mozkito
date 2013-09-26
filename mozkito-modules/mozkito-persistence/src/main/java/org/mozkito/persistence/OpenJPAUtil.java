@@ -47,6 +47,7 @@ import org.apache.openjpa.persistence.OpenJPAEntityManagerFactory;
 import org.apache.openjpa.persistence.OpenJPAPersistence;
 import org.apache.openjpa.persistence.criteria.OpenJPACriteriaBuilder;
 import org.apache.openjpa.persistence.criteria.OpenJPACriteriaQuery;
+
 import org.mozkito.utilities.commons.JavaUtils;
 import org.mozkito.utilities.io.FileUtils;
 import org.mozkito.utilities.loading.classpath.ClassFinder;
@@ -278,6 +279,26 @@ public class OpenJPAUtil implements PersistenceUtil {
 	@Override
 	public synchronized void delete(final Annotated object) {
 		this.entityManager.remove(object);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.persistence.PersistenceUtil#detach(org.mozkito.persistence.Annotated)
+	 */
+	@Override
+	public void detach(final Annotated object) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.entityManager.detach(object);
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/*

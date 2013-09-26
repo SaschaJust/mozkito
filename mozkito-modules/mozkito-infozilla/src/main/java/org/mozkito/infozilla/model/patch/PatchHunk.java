@@ -29,6 +29,7 @@ import javax.persistence.Transient;
 import org.mozkito.infozilla.elements.Inlineable;
 import org.mozkito.persistence.Annotated;
 import org.mozkito.utilities.commons.JavaUtils;
+import org.mozkito.utilities.io.FileUtils;
 
 /**
  * The Class PatchHunk.
@@ -578,6 +579,30 @@ public class PatchHunk implements Annotated, Inlineable {
 				// none
 			}
 		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		final StringBuilder builder = new StringBuilder();
+		builder.append("@@ -");
+		builder.append(getOldStart());
+		builder.append(",");
+		builder.append(getOldLength());
+		builder.append(", +");
+		builder.append(getNewStart());
+		builder.append(",");
+		builder.append(getNewLenght());
+		builder.append(" @@");
+		for (final PatchTextElement element : getElements()) {
+			builder.append(FileUtils.lineSeparator);
+			builder.append(element);
+		}
+		return builder.toString();
 	}
 	
 }

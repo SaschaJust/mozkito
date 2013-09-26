@@ -48,7 +48,7 @@ public interface Entity extends Annotated {
 		 */
 		@SuppressWarnings ("unchecked")
 		public static <T> T get(final Entity entity,
-		                        final IteratableFieldKey key,
+		                        final IterableFieldKey key,
 		                        final int index) {
 			PRECONDITIONS: {
 				if (entity == null) {
@@ -59,7 +59,7 @@ public interface Entity extends Annotated {
 					throw new NullPointerException();
 				}
 				
-				final Set<IteratableFieldKey> supportedFields = entity.supportedIteratableFields();
+				final Set<IterableFieldKey> supportedFields = entity.supportedIteratableFields();
 				
 				SANITY: {
 					assert supportedFields != null;
@@ -138,8 +138,8 @@ public interface Entity extends Annotated {
 		 *            the keys
 		 * @return the all
 		 */
-		public static Map<IteratableFieldKey, Object> getAll(final Entity entity,
-		                                                     final IteratableFieldKey... keys) {
+		public static Map<IterableFieldKey, Object> getAll(final Entity entity,
+		                                                     final IterableFieldKey... keys) {
 			PRECONDITIONS: {
 				if (entity == null) {
 					throw new NullPointerException();
@@ -149,13 +149,13 @@ public interface Entity extends Annotated {
 					throw new NullPointerException();
 				}
 				
-				final Set<IteratableFieldKey> supportedFields = entity.supportedIteratableFields();
+				final Set<IterableFieldKey> supportedFields = entity.supportedIteratableFields();
 				
 				SANITY: {
 					assert supportedFields != null;
 				}
 				
-				for (final IteratableFieldKey key : keys) {
+				for (final IterableFieldKey key : keys) {
 					if (key == null) {
 						throw new NullPointerException();
 					}
@@ -166,9 +166,9 @@ public interface Entity extends Annotated {
 				}
 			}
 			
-			final Map<IteratableFieldKey, Object> ret = new HashMap<IteratableFieldKey, Object>();
+			final Map<IterableFieldKey, Object> ret = new HashMap<IterableFieldKey, Object>();
 			
-			for (final IteratableFieldKey key : keys) {
+			for (final IterableFieldKey key : keys) {
 				ret.put(key, entity.get(key));
 			}
 			
@@ -234,7 +234,7 @@ public interface Entity extends Annotated {
 		 * @return the any
 		 */
 		public static Object getAny(final Entity entity,
-		                            final IteratableFieldKey... keys) {
+		                            final IterableFieldKey... keys) {
 			PRECONDITIONS: {
 				if (entity == null) {
 					throw new NullPointerException();
@@ -244,13 +244,13 @@ public interface Entity extends Annotated {
 					throw new NullPointerException();
 				}
 				
-				final Set<IteratableFieldKey> supportedFields = entity.supportedIteratableFields();
+				final Set<IterableFieldKey> supportedFields = entity.supportedIteratableFields();
 				
 				SANITY: {
 					assert supportedFields != null;
 				}
 				
-				for (final IteratableFieldKey key : keys) {
+				for (final IterableFieldKey key : keys) {
 					if (key == null) {
 						throw new NullPointerException();
 					}
@@ -263,7 +263,7 @@ public interface Entity extends Annotated {
 			
 			Object ret = null;
 			
-			for (final IteratableFieldKey key : keys) {
+			for (final IterableFieldKey key : keys) {
 				ret = entity.get(key);
 				if (ret != null) {
 					return ret;
@@ -333,7 +333,7 @@ public interface Entity extends Annotated {
 		 * @return the as one string
 		 */
 		public static String getAsOneString(final Entity entity,
-		                                    final IteratableFieldKey... keys) {
+		                                    final IterableFieldKey... keys) {
 			PRECONDITIONS: {
 				if (entity == null) {
 					throw new NullPointerException();
@@ -343,13 +343,13 @@ public interface Entity extends Annotated {
 					throw new NullPointerException();
 				}
 				
-				final Set<IteratableFieldKey> supportedFields = entity.supportedIteratableFields();
+				final Set<IterableFieldKey> supportedFields = entity.supportedIteratableFields();
 				
 				SANITY: {
 					assert supportedFields != null;
 				}
 				
-				for (final IteratableFieldKey key : keys) {
+				for (final IterableFieldKey key : keys) {
 					if (key == null) {
 						throw new NullPointerException();
 					}
@@ -363,7 +363,7 @@ public interface Entity extends Annotated {
 			final StringBuilder builder = new StringBuilder();
 			Collection<Object> objectCollection = null;
 			
-			for (final IteratableFieldKey key : keys) {
+			for (final IterableFieldKey key : keys) {
 				if ((objectCollection = entity.get(key)) != null) {
 					for (final Object o : objectCollection) {
 						builder.append(o.toString());
@@ -385,7 +385,7 @@ public interface Entity extends Annotated {
 		 * @return the size
 		 */
 		public static int getSize(final Entity entity,
-		                          final IteratableFieldKey key) {
+		                          final IterableFieldKey key) {
 			PRECONDITIONS: {
 				if (entity == null) {
 					throw new NullPointerException();
@@ -395,7 +395,7 @@ public interface Entity extends Annotated {
 					throw new NullPointerException();
 				}
 				
-				final Set<IteratableFieldKey> supportedFields = entity.supportedIteratableFields();
+				final Set<IterableFieldKey> supportedFields = entity.supportedIteratableFields();
 				
 				SANITY: {
 					assert supportedFields != null;
@@ -437,7 +437,7 @@ public interface Entity extends Annotated {
 	 *            the key
 	 * @return the collection
 	 */
-	<T> Collection<T> get(IteratableFieldKey key);
+	<T> Collection<T> get(IterableFieldKey key);
 	
 	/**
 	 * Gets the.
@@ -450,7 +450,7 @@ public interface Entity extends Annotated {
 	 *            the index
 	 * @return the t
 	 */
-	<T> T get(IteratableFieldKey key,
+	<T> T get(IterableFieldKey key,
 	          int index);
 	
 	/**
@@ -469,7 +469,7 @@ public interface Entity extends Annotated {
 	 *            the keys
 	 * @return the all
 	 */
-	Map<IteratableFieldKey, Object> getAll(final IteratableFieldKey... keys);
+	Map<IterableFieldKey, Object> getAll(final IterableFieldKey... keys);
 	
 	/**
 	 * Gets the any.
@@ -487,7 +487,7 @@ public interface Entity extends Annotated {
 	 *            the keys
 	 * @return the any
 	 */
-	Object getAny(final IteratableFieldKey... keys);
+	Object getAny(final IterableFieldKey... keys);
 	
 	/**
 	 * Gets the as one string.
@@ -505,7 +505,7 @@ public interface Entity extends Annotated {
 	 *            the i keys
 	 * @return the as one string
 	 */
-	String getAsOneString(final IteratableFieldKey iKeys);
+	String getAsOneString(final IterableFieldKey iKeys);
 	
 	/**
 	 * Gets the iD string.
@@ -521,7 +521,7 @@ public interface Entity extends Annotated {
 	 *            the key
 	 * @return the size
 	 */
-	int getSize(final IteratableFieldKey key);
+	int getSize(final IterableFieldKey key);
 	
 	/**
 	 * Gets the text.
@@ -542,5 +542,5 @@ public interface Entity extends Annotated {
 	 * 
 	 * @return the sets the
 	 */
-	Set<IteratableFieldKey> supportedIteratableFields();
+	Set<IterableFieldKey> supportedIteratableFields();
 }

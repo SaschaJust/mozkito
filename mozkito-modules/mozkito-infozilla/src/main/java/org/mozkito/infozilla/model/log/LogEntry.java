@@ -19,6 +19,8 @@ import java.util.Date;
 
 import javax.persistence.Basic;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -28,6 +30,7 @@ import javax.persistence.Transient;
 
 import org.joda.time.DateTime;
 
+import org.mozkito.infozilla.elements.Inlineable;
 import org.mozkito.persistence.Annotated;
 import org.mozkito.utilities.commons.JavaUtils;
 
@@ -37,33 +40,76 @@ import org.mozkito.utilities.commons.JavaUtils;
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 @Entity
-public class LogEntry implements Annotated {
+public class LogEntry implements Annotated, Inlineable {
 	
 	/**
-     * 
-     */
+	 * The Enum Level.
+	 */
+	public static enum Level {
+		
+		/** The trace. */
+		TRACE,
+		/** The debug. */
+		DEBUG,
+		/** The fine. */
+		FINE,
+		/** The info. */
+		INFO,
+		/** The warn. */
+		WARN,
+		/** The error. */
+		ERROR,
+		/** The fatal. */
+		FATAL,
+		/** The unknown. */
+		UNKNOWN;
+	}
+	
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -966097018041268855L;
 	
 	/** The id. */
 	private int               id;
 	
 	/** The line. */
-	private String            line;
+	private String            message;
+	
+	/** The source class. */
+	private String            sourceClass;
 	
 	/** The timestamp. */
 	private DateTime          timestamp;
 	
+	/** The level. */
+	private Level             level            = Level.UNKNOWN;
+	
+	/** The start position. */
+	private Integer           startPosition;
+	
+	/** The end position. */
+	private Integer           endPosition;
+	
 	/**
 	 * Instantiates a new log entry.
 	 * 
-	 * @param line
-	 *            the line
+	 * @param startPosition
+	 *            the start position
+	 * @param endPosition
+	 *            the end position
+	 * @param message
+	 *            the message
+	 * @param level
+	 *            the level
 	 * @param timestamp
 	 *            the timestamp
 	 */
-	public LogEntry(final String line, final DateTime timestamp) {
+	public LogEntry(final Integer startPosition, final Integer endPosition, final String message, final Level level,
+	        final DateTime timestamp) {
+		setStartPosition(startPosition);
+		setEndPosition(endPosition);
 		setTimestamp(timestamp);
-		setLine(line);
+		setMessage(message);
+		setLevel(level);
 	}
 	
 	/**
@@ -79,6 +125,25 @@ public class LogEntry implements Annotated {
 		
 		try {
 			return JavaUtils.getHandle(this);
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Gets the end position.
+	 * 
+	 * @return the endPosition
+	 */
+	public Integer getEndPosition() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.endPosition;
 		} finally {
 			POSTCONDITIONS: {
 				// none
@@ -111,6 +176,7 @@ public class LogEntry implements Annotated {
 	 * Gets the java timestamp.
 	 * 
 	 * @return the java timestamp
+	 * @deprecated this has to remain for JPA
 	 */
 	@Deprecated
 	@Temporal (TemporalType.TIMESTAMP)
@@ -121,13 +187,82 @@ public class LogEntry implements Annotated {
 	}
 	
 	/**
-	 * Gets the line.
+	 * Gets the level.
 	 * 
-	 * @return the line
+	 * @return the level
+	 */
+	@Enumerated (EnumType.STRING)
+	public Level getLevel() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.level;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Gets the message.
+	 * 
+	 * @return the message
 	 */
 	@Basic
-	public String getLine() {
-		return this.line;
+	public String getMessage() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.message;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Gets the source class.
+	 * 
+	 * @return the sourceClass
+	 */
+	@Basic
+	public String getSourceClass() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.sourceClass;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Gets the start position.
+	 * 
+	 * @return the startPosition
+	 */
+	public Integer getStartPosition() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.startPosition;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/**
@@ -138,6 +273,26 @@ public class LogEntry implements Annotated {
 	@Transient
 	public DateTime getTimestamp() {
 		return this.timestamp;
+	}
+	
+	/**
+	 * Sets the end position.
+	 * 
+	 * @param endPosition
+	 *            the endPosition to set
+	 */
+	public void setEndPosition(final Integer endPosition) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.endPosition = endPosition;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/**
@@ -163,6 +318,7 @@ public class LogEntry implements Annotated {
 	/**
 	 * Sets the java timestamp.
 	 * 
+	 * @deprecated this has to remain for JPA
 	 * @param date
 	 *            the new java timestamp
 	 */
@@ -174,13 +330,83 @@ public class LogEntry implements Annotated {
 	}
 	
 	/**
-	 * Sets the line.
+	 * Sets the level.
 	 * 
-	 * @param line
-	 *            the line to set
+	 * @param level
+	 *            the level to set
 	 */
-	public void setLine(final String line) {
-		this.line = line;
+	public void setLevel(final Level level) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.level = level;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Sets the message.
+	 * 
+	 * @param message
+	 *            the message to set
+	 */
+	public void setMessage(final String message) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.message = message;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Sets the source class.
+	 * 
+	 * @param sourceClass
+	 *            the sourceClass to set
+	 */
+	public void setSourceClass(final String sourceClass) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.sourceClass = sourceClass;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Sets the start position.
+	 * 
+	 * @param startPosition
+	 *            the startPosition to set
+	 */
+	public void setStartPosition(final Integer startPosition) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.startPosition = startPosition;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/**
@@ -192,5 +418,46 @@ public class LogEntry implements Annotated {
 	public void setTimestamp(final DateTime timestamp) {
 		this.timestamp = timestamp;
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		final StringBuilder builder = new StringBuilder();
+		builder.append("LogEntry [level=");
+		builder.append(this.level);
+		builder.append(", timestamp=");
+		builder.append(this.timestamp);
+		builder.append(", sourceClass=");
+		builder.append(this.sourceClass);
+		builder.append(", message=");
+		builder.append(this.message);
+		builder.append("]");
+		return builder.toString();
+	}
+	
+	// /**
+	// * {@inheritDoc}
+	// *
+	// * @see java.lang.Object#toString()
+	// */
+	// public String toString2() {
+	// final StringBuilder builder = new StringBuilder();
+	//
+	// builder.append("LogEntry [");
+	// builder.append(this.timestamp);
+	// builder.append("] [");
+	// builder.append(this.level);
+	// builder.append("]");
+	// if (getSourceClass() != null) {
+	// builder.append(" [").append(getSourceClass()).append("]");
+	// }
+	// builder.append(" ").append(this.message);
+	//
+	// return builder.toString();
+	// }
 	
 }

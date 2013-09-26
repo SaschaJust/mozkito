@@ -21,6 +21,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import org.mozkito.infozilla.filters.patch.PatchParser;
 import org.mozkito.persistence.Annotated;
 import org.mozkito.utilities.commons.JavaUtils;
 
@@ -43,6 +44,21 @@ public class PatchTextElement implements Annotated {
 		CONTEXT,
 		/** The removed. */
 		REMOVED;
+		
+		@Override
+		public String toString() {
+			switch (this) {
+				case ADDED:
+					return "+";
+				case CONTEXT:
+					return PatchParser.NBSP + "";
+				case REMOVED:
+					return "-";
+				default:
+					assert false;
+			}
+			return null;
+		}
 	}
 	
 	/** The Constant serialVersionUID. */
@@ -206,5 +222,18 @@ public class PatchTextElement implements Annotated {
 				// none
 			}
 		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		final StringBuilder builder = new StringBuilder();
+		builder.append(this.type);
+		builder.append(this.text);
+		return builder.toString();
 	}
 }

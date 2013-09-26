@@ -25,17 +25,19 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 
 import org.mozkito.infozilla.elements.Attachable;
 import org.mozkito.infozilla.elements.Inlineable;
 import org.mozkito.infozilla.model.attachment.Attachment;
 import org.mozkito.persistence.Annotated;
+import org.mozkito.utilities.commons.JavaUtils;
 
 /**
  * The Class Stacktrace.
  */
 @Entity
-public abstract class Stacktrace implements Annotated, Attachable, Inlineable {
+public class Stacktrace implements Annotated, Attachable, Inlineable {
 	
 	/** The Constant serialVersionUID. */
 	private static final long     serialVersionUID = 3213193988146023930L;
@@ -64,7 +66,67 @@ public abstract class Stacktrace implements Annotated, Attachable, Inlineable {
 	/** The trace. */
 	private List<StacktraceEntry> trace            = new LinkedList<>();
 	
+	/** Denotes the number of truncated (following but not shown) trace entries. */
+	private Integer               more;
+	
 	/**
+	 * Instantiates a new stacktrace.
+	 * 
+	 * @param origin
+	 *            the origin
+	 * @param exceptionType
+	 *            the exception type
+	 * @param reason
+	 *            the reason
+	 * @param more
+	 *            the more
+	 */
+	public Stacktrace(final Attachment origin, final String exceptionType, final String reason, final Integer more) {
+		super();
+		this.origin = origin;
+		this.exceptionType = exceptionType;
+		this.reason = reason;
+		this.more = more;
+	}
+	
+	/**
+	 * Instantiates a new stacktrace.
+	 * 
+	 * @param startPosition
+	 *            the start position
+	 * @param endPosition
+	 *            the end position
+	 * @param exceptionType
+	 *            the exception type
+	 * @param reason
+	 *            the reason
+	 * @param more
+	 *            the more
+	 */
+	public Stacktrace(final Integer startPosition, final Integer endPosition, final String exceptionType,
+	        final String reason, final Integer more) {
+		super();
+		this.startPosition = startPosition;
+		this.endPosition = endPosition;
+		this.exceptionType = exceptionType;
+		this.reason = reason;
+		this.more = more;
+	}
+	
+	/**
+	 * Adds the.
+	 * 
+	 * @param entry
+	 *            the entry
+	 * @return true, if successful
+	 */
+	public boolean add(final StacktraceEntry entry) {
+		return getTrace().add(entry);
+	}
+	
+	/**
+	 * Gets the cause.
+	 * 
 	 * @return the cause
 	 */
 	@OneToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -75,6 +137,27 @@ public abstract class Stacktrace implements Annotated, Attachable, Inlineable {
 		
 		try {
 			return this.cause;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.persistence.Annotated#getClassName()
+	 */
+	@Override
+	@Transient
+	public String getClassName() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return JavaUtils.getHandle(this);
 		} finally {
 			POSTCONDITIONS: {
 				// none
@@ -136,6 +219,26 @@ public abstract class Stacktrace implements Annotated, Attachable, Inlineable {
 		
 		try {
 			return this.id;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Gets the more.
+	 * 
+	 * @return the more
+	 */
+	@Basic
+	public Integer getMore() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.more;
 		} finally {
 			POSTCONDITIONS: {
 				// none
@@ -224,6 +327,8 @@ public abstract class Stacktrace implements Annotated, Attachable, Inlineable {
 	}
 	
 	/**
+	 * Sets the cause.
+	 * 
 	 * @param cause
 	 *            the cause to set
 	 */
@@ -294,6 +399,26 @@ public abstract class Stacktrace implements Annotated, Attachable, Inlineable {
 		
 		try {
 			this.id = id;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Sets the more.
+	 * 
+	 * @param more
+	 *            the more to set
+	 */
+	public void setMore(final Integer more) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.more = more;
 		} finally {
 			POSTCONDITIONS: {
 				// none
@@ -379,6 +504,40 @@ public abstract class Stacktrace implements Annotated, Attachable, Inlineable {
 				// none
 			}
 		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		final StringBuilder builder = new StringBuilder();
+		builder.append("Stacktrace [startPosition=");
+		builder.append(this.startPosition);
+		builder.append(", endPosition=");
+		builder.append(this.endPosition);
+		builder.append("]");
+		builder.append('\n');
+		builder.append(this.exceptionType);
+		builder.append(": ");
+		builder.append(this.reason);
+		
+		for (final StacktraceEntry entry : this.trace) {
+			builder.append('\n').append(entry);
+		}
+		
+		if (this.more != null) {
+			builder.append('\n').append("... ").append(this.more).append(" more");
+		}
+		
+		if (this.cause != null) {
+			builder.append('\n').append("Caused by: ");
+			builder.append(this.cause);
+		}
+		
+		return builder.toString();
 	}
 	
 }

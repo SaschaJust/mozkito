@@ -50,6 +50,21 @@ public class StacktraceEntry implements Annotated {
 	private String            methodName;
 	
 	/**
+	 * @param entryClassName
+	 * @param fileName
+	 * @param methodName
+	 * @param lineNumber
+	 */
+	public StacktraceEntry(final String entryClassName, final String fileName, final String methodName,
+	        final Integer lineNumber) {
+		super();
+		this.entryClassName = entryClassName;
+		this.fileName = fileName;
+		this.methodName = methodName;
+		this.lineNumber = lineNumber;
+	}
+	
+	/**
 	 * Gets the simple name of the class.
 	 * 
 	 * @return the simple name of the class.
@@ -259,6 +274,26 @@ public class StacktraceEntry implements Annotated {
 				// none
 			}
 		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		final StringBuilder builder = new StringBuilder();
+		builder.append("  at ");
+		builder.append(this.entryClassName);
+		builder.append(".");
+		builder.append(this.methodName);
+		builder.append("(");
+		builder.append(this.fileName);
+		builder.append(":");
+		builder.append(this.lineNumber);
+		builder.append(")");
+		return builder.toString();
 	}
 	
 }
