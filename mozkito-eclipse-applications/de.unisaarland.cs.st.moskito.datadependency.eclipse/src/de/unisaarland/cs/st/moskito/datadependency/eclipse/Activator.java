@@ -16,8 +16,7 @@ package de.unisaarland.cs.st.moskito.datadependency.eclipse;
 import java.net.URL;
 import java.util.Dictionary;
 
-import net.ownhero.dev.ioda.ClassFinder;
-
+import org.mozkito.utilities.loading.classpath.ClassFinder;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
