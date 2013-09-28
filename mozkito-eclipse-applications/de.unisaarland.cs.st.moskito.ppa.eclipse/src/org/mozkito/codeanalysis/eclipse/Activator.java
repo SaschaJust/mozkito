@@ -11,7 +11,7 @@
  * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 
-package de.unisaarland.cs.st.moskito.ppa.eclipse;
+package org.mozkito.codeanalysis.eclipse;
 
 import java.net.URL;
 import java.util.Dictionary;
