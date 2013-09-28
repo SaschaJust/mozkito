@@ -235,7 +235,7 @@ public class GitRepository extends DistributedCommandLineRepository {
 		Tuple<Integer, List<String>> returnValue;
 		try {
 			returnValue = CommandExecutor.execute("git",
-			                                      new String[] { "clone", "-n", "-q", URIUtils.Uri2String(getUri()),
+			                                      new String[] { "clone", "-n", "-q", URIUtils.uri2String(getUri()),
 			                                              destDir }, this.cloneDir, inputStream,
 			                                      new HashMap<String, String>());
 		} catch (final IOException e) {
@@ -248,13 +248,13 @@ public class GitRepository extends DistributedCommandLineRepository {
 			if (!this.cloneDir.exists()) {
 				final StringBuilder message = new StringBuilder();
 				message.append("Could not clone git repository `");
-				message.append(URIUtils.Uri2String(getUri()));
+				message.append(URIUtils.uri2String(getUri()));
 				message.append("` to directory `");
 				message.append(destDir);
 				message.append("`");
 				message.append(FileUtils.lineSeparator);
 				message.append("Used command: `git clone -n -q ");
-				message.append(URIUtils.Uri2String(getUri()));
+				message.append(URIUtils.uri2String(getUri()));
 				message.append(" ");
 				message.append(destDir);
 				message.append("`.");

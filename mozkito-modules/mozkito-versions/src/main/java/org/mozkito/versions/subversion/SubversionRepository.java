@@ -733,9 +733,9 @@ public class SubversionRepository extends Repository {
 				}
 				try {
 					if (Logger.logInfo()) {
-						Logger.info("Parsing URL: " + URIUtils.Uri2String(getUri()));
+						Logger.info("Parsing URL: " + URIUtils.uri2String(getUri()));
 					}
-					this.svnurl = SVNURL.parseURIEncoded(SVNEncodingUtil.autoURIEncode(URIUtils.Uri2String(getUri())));
+					this.svnurl = SVNURL.parseURIEncoded(SVNEncodingUtil.autoURIEncode(URIUtils.uri2String(getUri())));
 					if (Logger.logTrace()) {
 						Logger.trace("Done parsing URL: " + getUri().toString() + " resulting in: "
 						        + this.svnurl.toString());

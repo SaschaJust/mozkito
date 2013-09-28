@@ -28,6 +28,7 @@ import org.apache.commons.collections.Predicate;
 import difflib.Delta;
 
 import org.mozkito.infozilla.model.EnhancedReport;
+import org.mozkito.infozilla.model.source.SourceCode;
 import org.mozkito.issues.model.Report;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Feature;
@@ -178,7 +179,7 @@ public class CodeFragmentsEngine extends Engine {
 				}
 			}
 			
-			final Collection<String> codeFragments = enhancedReport.getCodeFragments();
+			final Collection<SourceCode> codeFragments = enhancedReport.getCodeFragments();
 			
 			SANITY: {
 				assert codeFragments != null;
@@ -186,8 +187,8 @@ public class CodeFragmentsEngine extends Engine {
 			
 			final List<String> codeFragmentList = new LinkedList<>();
 			
-			for (final String codeBlock : codeFragments) {
-				final String[] split = codeBlock.split(FileUtils.lineSeparator);
+			for (final SourceCode codeFragment : codeFragments) {
+				final String[] split = codeFragment.getCode().split(FileUtils.lineSeparator);
 				
 				if (split != null) {
 					codeFragmentList.addAll(Arrays.asList(split));
