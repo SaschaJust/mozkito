@@ -1,4 +1,5 @@
 package org.mozkito.utilities.commons;
+
 /***********************************************************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
@@ -12,12 +13,12 @@ package org.mozkito.utilities.commons;
  * specific language governing permissions and limitations under the License.
  **********************************************************************************************************************/
 
-
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import net.ownhero.dev.kanuni.conditions.Condition;
 
@@ -43,7 +44,7 @@ public final class JavaUtils {
 	 *            array of objects to be tested for being null
 	 * @return true iff any of the objects in the array is null
 	 */
-	public static boolean AnyNull(final Object... objects) {
+	public static boolean anyNull(final Object... objects) {
 		for (final Object object : objects) {
 			if (object == null) {
 				return true;
@@ -282,15 +283,15 @@ public final class JavaUtils {
 			builder.append("[(null)]");
 		} else {
 			builder.append("[");
-			for (final Object key : map.keySet()) {
+			for (final Entry<?, ?> entry : map.entrySet()) {
 				if (builder.length() > 1) {
 					builder.append(",");
 				}
 				
 				builder.append("[");
-				builder.append(checkDescent(key));
+				builder.append(checkDescent(entry.getKey()));
 				builder.append(":");
-				builder.append(checkDescent(map.get(key)));
+				builder.append(checkDescent(entry.getValue()));
 				builder.append("]");
 			}
 			builder.append("]");
