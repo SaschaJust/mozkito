@@ -15,17 +15,20 @@
  */
 package org.mozkito.infozilla.model;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
-import net.ownhero.dev.kanuni.conditions.CompareCondition;
-import net.ownhero.dev.kanuni.conditions.Condition;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 
+import org.mozkito.infozilla.filters.InfozillaFilterChain.Region;
 import org.mozkito.infozilla.model.attachment.Attachment;
 import org.mozkito.infozilla.model.image.Image;
 import org.mozkito.infozilla.model.itemization.ExpectedBehavior;
@@ -35,10 +38,13 @@ import org.mozkito.infozilla.model.itemization.StepsToReproduce;
 import org.mozkito.infozilla.model.link.Link;
 import org.mozkito.infozilla.model.log.Log;
 import org.mozkito.infozilla.model.patch.Patch;
+import org.mozkito.infozilla.model.source.SourceCode;
 import org.mozkito.infozilla.model.stacktrace.Stacktrace;
+import org.mozkito.issues.model.Comment;
 import org.mozkito.issues.model.Report;
 import org.mozkito.persistence.Annotated;
 import org.mozkito.utilities.commons.JavaUtils;
+import org.mozkito.utilities.io.FileUtils;
 
 /**
  * The Class EnhancedReport.
@@ -48,6 +54,26 @@ import org.mozkito.utilities.commons.JavaUtils;
 @Entity
 public class EnhancedReport implements Annotated {
 	
+	/**
+	 * The Enum Type.
+	 */
+	public static enum Type {
+		
+		/** The sourcecode. */
+		SOURCECODE,
+		/** The listing. */
+		LISTING,
+		/** The log. */
+		LOG,
+		/** The patch. */
+		PATCH,
+		/** The stacktrace. */
+		STACKTRACE;
+	}
+	
+	/** The extracted regions. */
+	private Map<Region, Type>            extractedRegions  = new HashMap<>();
+	
 	/** The Constant serialVersionUID. */
 	private static final long            serialVersionUID  = -6200370567492281526L;
 	
@@ -55,7 +81,7 @@ public class EnhancedReport implements Annotated {
 	private Map<String, Attachment>      attachments       = new HashMap<String, Attachment>();
 	
 	/** The code fragments. */
-	private Collection<String>           codeFragments     = new LinkedList<>();
+	private Collection<SourceCode>       codeFragments     = new LinkedList<>();
 	
 	/** The expected behaviors. */
 	private Collection<ExpectedBehavior> expectedBehaviors = new LinkedList<ExpectedBehavior>();
@@ -89,6 +115,12 @@ public class EnhancedReport implements Annotated {
 	
 	/** The id. */
 	private String                       id;
+	
+	/** The filtered description. */
+	private String                       filteredDescription;
+	
+	/** The filtered comments. */
+	private List<Comment>                filteredComments  = new LinkedList<>();
 	
 	/**
 	 * Instantiates a new enhanced report.
@@ -145,14 +177,13 @@ public class EnhancedReport implements Annotated {
 	 * 
 	 * @return the code fragments
 	 */
-	public Collection<String> getCodeFragments() {
+	public Collection<SourceCode> getCodeFragments() {
 		// PRECONDITIONS
 		
 		try {
 			return this.codeFragments;
 		} finally {
 			// POSTCONDITIONS
-			Condition.notNull(this.codeFragments, "Field '%s' in '%s'.", "codeFragments", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
@@ -163,6 +194,63 @@ public class EnhancedReport implements Annotated {
 	 */
 	public Collection<ExpectedBehavior> getExpectedBehaviors() {
 		return this.expectedBehaviors;
+	}
+	
+	/**
+	 * Gets the extracted regions.
+	 * 
+	 * @return the extractedRegions
+	 */
+	public Map<Region, Type> getExtractedRegions() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.extractedRegions;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Gets the filtered comments.
+	 * 
+	 * @return the filteredComments
+	 */
+	public List<Comment> getFilteredComments() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.filteredComments;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Gets the filtered description.
+	 * 
+	 * @return the filteredDescription
+	 */
+	public String getFilteredDescription() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.filteredDescription;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/**
@@ -299,18 +387,35 @@ public class EnhancedReport implements Annotated {
 	 * Sets the code fragments.
 	 * 
 	 * @param codeFragments
-	 *            the new code fragments
+	 *            the codeFragments to set
 	 */
-	public void setCodeFragments(final Collection<String> codeFragments) {
-		// PRECONDITIONS
-		Condition.notNull(codeFragments, "Argument '%s' in '%s'.", "codeFragments", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+	public void setCodeFragments(final Collection<SourceCode> codeFragments) {
+		PRECONDITIONS: {
+			// none
+		}
 		
 		try {
 			this.codeFragments = codeFragments;
 		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Sets the code fragments.
+	 * 
+	 * @param results
+	 *            the new code fragments
+	 */
+	public void setCodeFragments(final List<SourceCode> results) {
+		// PRECONDITIONS
+		
+		try {
+			this.codeFragments = results;
+		} finally {
 			// POSTCONDITIONS
-			CompareCondition.equals(this.codeFragments, codeFragments,
-			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter."); //$NON-NLS-1$
 		}
 	}
 	
@@ -322,6 +427,66 @@ public class EnhancedReport implements Annotated {
 	 */
 	public void setExpectedBehaviors(final Collection<ExpectedBehavior> expectedBehaviors) {
 		this.expectedBehaviors = expectedBehaviors;
+	}
+	
+	/**
+	 * Sets the extracted regions.
+	 * 
+	 * @param extractedRegions
+	 *            the extractedRegions to set
+	 */
+	public void setExtractedRegions(final Map<Region, Type> extractedRegions) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.extractedRegions = extractedRegions;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Sets the filtered comments.
+	 * 
+	 * @param filteredComments
+	 *            the filteredComments to set
+	 */
+	public void setFilteredComments(final List<Comment> filteredComments) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.filteredComments = filteredComments;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Sets the filtered description.
+	 * 
+	 * @param filteredDescription
+	 *            the filteredDescription to set
+	 */
+	public void setFilteredDescription(final String filteredDescription) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.filteredDescription = filteredDescription;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/**
@@ -462,33 +627,50 @@ public class EnhancedReport implements Annotated {
 	@Override
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
-		builder.append("EnhancedReport [attachments=");
-		builder.append(JavaUtils.mapToString(this.attachments));
-		builder.append(", codeFragments=");
-		builder.append(JavaUtils.collectionToString(this.codeFragments));
-		builder.append(", expectedBehaviors=");
-		builder.append(JavaUtils.collectionToString(this.expectedBehaviors));
-		builder.append(", images=");
-		builder.append(JavaUtils.collectionToString(this.images));
-		builder.append(", links=");
-		builder.append(JavaUtils.collectionToString(this.links));
-		builder.append(", listings=");
-		builder.append(JavaUtils.collectionToString(this.listings));
-		builder.append(", logs=");
-		builder.append(JavaUtils.collectionToString(this.logs));
-		builder.append(", observedBehaviors=");
-		builder.append(JavaUtils.collectionToString(this.observedBehaviors));
-		builder.append(", originalReport=");
-		builder.append(this.originalReport);
-		builder.append(", patches=");
-		builder.append(JavaUtils.collectionToString(this.patches));
-		builder.append(", stacktraces=");
-		builder.append(JavaUtils.collectionToString(this.stacktraces));
-		builder.append(", stepsToReproduce=");
-		builder.append(JavaUtils.collectionToString(this.stepsToReproduce));
-		builder.append(", id=");
-		builder.append(this.id);
-		builder.append("]");
+		builder.append("EnhancedReport [id=");
+		builder.append(getId()).append("]");
+		if (CollectionUtils.exists(Arrays.asList(new Collection<?>[] { getStacktraces(), getPatches(),
+		                                   getCodeFragments(), getLogs(), getListings() }), new Predicate() {
+			                           
+			                           @Override
+			                           public boolean evaluate(final Object object) {
+				                           final Collection<?> c = (Collection<?>) object;
+				                           return !c.isEmpty();
+			                           }
+		                           })) {
+			builder.append(FileUtils.lineSeparator).append("## filtered Description=").append(getFilteredDescription());
+			
+			builder.append(FileUtils.lineSeparator).append("## filtered Comments=");
+			for (final Comment comment : getFilteredComments()) {
+				builder.append(FileUtils.lineSeparator).append(comment);
+			}
+			
+			builder.append(FileUtils.lineSeparator).append("## Stacktraces=");
+			for (final Stacktrace stacktrace : getStacktraces()) {
+				builder.append(FileUtils.lineSeparator).append(stacktrace);
+			}
+			
+			builder.append(FileUtils.lineSeparator).append("## Patches=");
+			for (final Patch patch : getPatches()) {
+				builder.append(FileUtils.lineSeparator).append(patch);
+			}
+			
+			builder.append(FileUtils.lineSeparator).append("## Code Fragments=");
+			for (final SourceCode sourceCode : getCodeFragments()) {
+				builder.append(FileUtils.lineSeparator).append(sourceCode);
+			}
+			
+			builder.append(FileUtils.lineSeparator).append("## Logs=");
+			for (final Log log : getLogs()) {
+				builder.append(FileUtils.lineSeparator).append(log);
+			}
+			
+			builder.append(FileUtils.lineSeparator).append("## Listings=");
+			for (final Listing listing : getListings()) {
+				builder.append(FileUtils.lineSeparator).append(listing);
+			}
+		}
+		
 		return builder.toString();
 	}
 	

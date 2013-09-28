@@ -31,6 +31,7 @@ import org.joda.time.Duration;
 
 import org.mozkito.infozilla.elements.FilterResult;
 import org.mozkito.infozilla.filters.InfozillaFilter;
+import org.mozkito.infozilla.model.EnhancedReport;
 import org.mozkito.infozilla.model.log.Log;
 import org.mozkito.infozilla.model.log.LogEntry;
 import org.mozkito.infozilla.model.log.LogEntry.Level;
@@ -282,6 +283,28 @@ public class LogFilter extends InfozillaFilter<Log> {
 				final String message = prepareMessage(entry.getMessage().substring(0, match.getFullMatch().start())
 				        + entry.getMessage().substring(match.getFullMatch().end()));
 				entry.setMessage(message);
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.infozilla.filters.InfozillaFilter#apply(java.util.List,
+	 *      org.mozkito.infozilla.model.EnhancedReport)
+	 */
+	@Override
+	public void apply(final List<Log> results,
+	                  final EnhancedReport enhancedReport) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			enhancedReport.setLogs(results);
+		} finally {
+			POSTCONDITIONS: {
+				// none
 			}
 		}
 	}

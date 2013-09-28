@@ -27,6 +27,7 @@ import org.mozkito.infozilla.filters.stacktrace.java.EntryFinder.Entry;
 import org.mozkito.infozilla.filters.stacktrace.java.MoreFinder;
 import org.mozkito.infozilla.filters.stacktrace.java.ReasonFinder;
 import org.mozkito.infozilla.filters.stacktrace.java.ReasonFinder.Reason;
+import org.mozkito.infozilla.model.EnhancedReport;
 import org.mozkito.infozilla.model.stacktrace.Stacktrace;
 import org.mozkito.infozilla.model.stacktrace.StacktraceEntry;
 import org.mozkito.utilities.datastructures.Tuple;
@@ -37,6 +38,7 @@ import org.mozkito.utilities.datastructures.Tuple;
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class JavaStackTraceFilter extends StackTraceFilter {
+
 
 	/** The Constant lineBreaks. */
 	public static final Regex  LINE_BREAKS_REGEX       = new Regex("(\\r\\n|\\r|\\n)");
@@ -126,6 +128,28 @@ public class JavaStackTraceFilter extends StackTraceFilter {
 	}
 	
 	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.infozilla.filters.InfozillaFilter#apply(java.util.List,
+	 *      org.mozkito.infozilla.model.EnhancedReport)
+	 */
+	@Override
+	public void apply(final List<Stacktrace> results,
+	                  final EnhancedReport enhancedReport) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			enhancedReport.setStacktraces(results);
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
 	 * @param stacktraceEntry
 	 * @param reasons
 	 * @param moreEntry
@@ -137,7 +161,15 @@ public class JavaStackTraceFilter extends StackTraceFilter {
 	                                    final MoreFinder.Entry moreEntry,
 	                                    final int offset) {
 		PRECONDITIONS: {
-			// none
+			if (stacktraceEntry == null) {
+				throw new NullPointerException();
+			}
+			if (reasons == null) {
+				throw new NullPointerException();
+			}
+			if (offset < 0) {
+				throw new IllegalArgumentException();
+			}
 		}
 		
 		try {

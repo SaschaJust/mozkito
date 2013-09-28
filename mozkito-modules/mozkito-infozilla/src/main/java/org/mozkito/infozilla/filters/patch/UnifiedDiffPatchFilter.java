@@ -10,6 +10,7 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  ******************************************************************************/
+
 package org.mozkito.infozilla.filters.patch;
 
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import java.util.List;
 import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.infozilla.elements.FilterResult;
+import org.mozkito.infozilla.model.EnhancedReport;
 import org.mozkito.infozilla.model.patch.Patch;
 
 /**
@@ -36,6 +38,28 @@ public class UnifiedDiffPatchFilter extends PatchFilter {
 	 * Instantiates a new unified diff patch filter.
 	 */
 	public UnifiedDiffPatchFilter() {
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.infozilla.filters.InfozillaFilter#apply(java.util.List,
+	 *      org.mozkito.infozilla.model.EnhancedReport)
+	 */
+	@Override
+	public void apply(final List<Patch> results,
+	                  final EnhancedReport enhancedReport) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			enhancedReport.setPatches(results);
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/**

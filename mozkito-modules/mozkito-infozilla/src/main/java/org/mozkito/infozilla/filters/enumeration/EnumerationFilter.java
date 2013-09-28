@@ -23,6 +23,7 @@ import net.ownhero.dev.regex.Regex;
 import org.mozkito.infozilla.elements.FilterResult;
 import org.mozkito.infozilla.filters.FilterTextRemover;
 import org.mozkito.infozilla.filters.InfozillaFilter;
+import org.mozkito.infozilla.model.EnhancedReport;
 import org.mozkito.infozilla.model.itemization.Listing;
 import org.mozkito.infozilla.model.itemization.Listing.Type;
 import org.mozkito.infozilla.model.itemization.ListingEntry;
@@ -37,6 +38,28 @@ public class EnumerationFilter extends InfozillaFilter<Listing> {
 	
 	/** The processed text. */
 	private String            processedText = "";
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.infozilla.filters.InfozillaFilter#apply(java.util.List,
+	 *      org.mozkito.infozilla.model.EnhancedReport)
+	 */
+	@Override
+	public void apply(final List<Listing> results,
+	                  final EnhancedReport enhancedReport) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			enhancedReport.setListings(results);
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
 	
 	/**
 	 * Create an Itemization by a given regions.
@@ -427,6 +450,11 @@ public class EnumerationFilter extends InfozillaFilter<Listing> {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see org.mozkito.infozilla.filters.InfozillaFilter#runFilter(java.lang.String)
+	 */
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see org.mozkito.infozilla.filters.InfozillaFilter#runFilter(java.lang.String)
 	 */
 	@Override

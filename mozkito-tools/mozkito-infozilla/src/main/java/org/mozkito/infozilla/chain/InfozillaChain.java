@@ -28,7 +28,6 @@ import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
-import org.mozkito.infozilla.filters.InfozillaFilterChain;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.settings.DatabaseOptions;
 import org.mozkito.utilities.commons.JavaUtils;
@@ -115,7 +114,7 @@ public class InfozillaChain extends Chain<Settings> {
 			
 			// load sources
 			new ReportReader(group, getSettings(), persistenceUtil);
-			new StacktraceFilter(group, getSettings(), new InfozillaFilterChain());
+			new StacktraceFilter(group, getSettings(), null);
 			new VoidSink(group, getSettings());
 			
 			// final IRCThread t = new IRCThread("mapping");

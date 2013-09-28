@@ -23,6 +23,7 @@ import net.ownhero.dev.regex.Regex;
 
 import org.mozkito.infozilla.elements.FilterResult;
 import org.mozkito.infozilla.filters.InfozillaFilter;
+import org.mozkito.infozilla.model.EnhancedReport;
 import org.mozkito.infozilla.model.itemization.Listing;
 import org.mozkito.infozilla.model.itemization.ListingEntry;
 
@@ -126,6 +127,28 @@ public class AdaptiveListingFilter extends InfozillaFilter<Listing> {
 	
 	/** The Constant ITEMIZATION_PATTERN. */
 	private static final String ITEMIZATION_PATTERN = "(?<!\\w)({BULLET}(-+|\\*+|\\++))\\s+";
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.infozilla.filters.InfozillaFilter#apply(java.util.List,
+	 *      org.mozkito.infozilla.model.EnhancedReport)
+	 */
+	@Override
+	public void apply(final List<Listing> results,
+	                  final EnhancedReport enhancedReport) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			enhancedReport.setListings(results);
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
 	
 	/**
 	 * Gets the entry points.

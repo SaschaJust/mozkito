@@ -47,6 +47,7 @@ public class StacktraceFilter extends Transformer<Report, EnhancedReport> {
 		
 		try {
 			// body
+			
 			new ProcessHook<Report, EnhancedReport>(this) {
 				
 				/**
@@ -62,10 +63,12 @@ public class StacktraceFilter extends Transformer<Report, EnhancedReport> {
 					
 					try {
 						final Report data = getInputData();
+						
 						EnhancedReport enhancedReport = null;
 						
 						if (data != null) {
-							enhancedReport = InfozillaFilterChain.parse(data);
+							final InfozillaFilterChain chain = new InfozillaFilterChain(data);
+							enhancedReport = chain.parse();
 						}
 						
 						provideOutputData(enhancedReport);

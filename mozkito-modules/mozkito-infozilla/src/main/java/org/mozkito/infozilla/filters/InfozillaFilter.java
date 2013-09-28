@@ -16,6 +16,7 @@ package org.mozkito.infozilla.filters;
 import java.util.List;
 
 import org.mozkito.infozilla.elements.FilterResult;
+import org.mozkito.infozilla.model.EnhancedReport;
 
 /**
  * This interface describes the method interface for every infoZilla InfozillaFilter.
@@ -27,6 +28,17 @@ import org.mozkito.infozilla.elements.FilterResult;
 public abstract class InfozillaFilter<T> {
 	
 	/**
+	 * Apply.
+	 * 
+	 * @param results
+	 *            the results
+	 * @param enhancedReport
+	 *            the enhanced report
+	 */
+	public abstract void apply(List<T> results,
+	                           EnhancedReport enhancedReport);
+	
+	/**
 	 * Run filter.
 	 * 
 	 * @param inputText
@@ -34,5 +46,4 @@ public abstract class InfozillaFilter<T> {
 	 * @return the list
 	 */
 	public abstract List<FilterResult<T>> runFilter(String inputText);
-	
 }

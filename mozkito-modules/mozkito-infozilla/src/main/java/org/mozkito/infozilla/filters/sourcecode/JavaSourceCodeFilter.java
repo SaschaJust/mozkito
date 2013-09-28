@@ -32,6 +32,7 @@ import net.ownhero.dev.regex.MultiMatch;
 import net.ownhero.dev.regex.Regex;
 
 import org.mozkito.infozilla.elements.FilterResult;
+import org.mozkito.infozilla.model.EnhancedReport;
 import org.mozkito.infozilla.model.source.SourceCode;
 import org.mozkito.infozilla.model.source.SourceCode.Type;
 
@@ -144,6 +145,28 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 			readCodePatterns(new InputStreamReader(fileurl.openStream()));
 		} catch (final Exception e) {
 			throw new UnrecoverableError("Error while reading Java Source Code Patterns!");
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.infozilla.filters.InfozillaFilter#apply(java.util.List,
+	 *      org.mozkito.infozilla.model.EnhancedReport)
+	 */
+	@Override
+	public void apply(final List<SourceCode> results,
+	                  final EnhancedReport enhancedReport) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			enhancedReport.setCodeFragments(results);
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
 		}
 	}
 	
