@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="de.unisaarland.cs.st.moskito.callgraph.eclipse.product" uid="de.unisaarland.cs.st.moskito.callgraph.eclipse.product" id="de.unisaarland.cs.st.moskito.callgraph.eclipse.moskito_callgraph_eclipse" application="de.unisaarland.cs.st.moskito.callgraph.eclipse.application" version="1.0.0" useFeatures="false" includeLaunchers="true">
+<product name="org.mozkito.callgraph.eclipse.product" uid="org.mozkito.callgraph.eclipse.product" id="org.mozkito.callgraph.eclipse.mzokito_callgraph_eclipse" application="org.mozkito.callgraph.eclipse.application" version="1.0.0" useFeatures="false" includeLaunchers="true">
 
    <configIni use="default">
    </configIni>

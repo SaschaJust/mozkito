@@ -7,7 +7,7 @@
          point="org.eclipse.core.runtime.applications">
       <application>
          <run
-               class="de.unisaarland.cs.st.moskito.callgraph.eclipse.Application">
+               class="org.mozkito.callgraph.eclipse.Application">
          </run>
       </application>
    </extension>
@@ -33,6 +33,14 @@
                name="appName"
                value="de.unisaarland.cs.st.moskito.callgraph.eclipse.product">
          </property>
+      </product>
+   </extension>
+   <extension
+         id="mzokito_callgraph_eclipse"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="org.mozkito.callgraph.eclipse.application"
+            name="org.mozkito.callgraph.eclipse.product">
       </product>
    </extension>
 

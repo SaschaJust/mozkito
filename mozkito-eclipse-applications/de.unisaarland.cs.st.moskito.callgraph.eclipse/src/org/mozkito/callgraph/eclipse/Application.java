@@ -11,7 +11,7 @@
  * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 
-package de.unisaarland.cs.st.moskito.callgraph.eclipse;
+package org.mozkito.callgraph.eclipse;
 
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
