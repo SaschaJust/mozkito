@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="de.unisaarland.cs.st.moskito.datadependency.eclipse.product" uid="de.unisaarland.cs.st.moskito.datadependency.eclipse.product" id="de.unisaarland.cs.st.moskito.datadependency.eclipse.moskito_datadepenedency_eclipse" application="de.unisaarland.cs.st.moskito.datadependency.eclipse.application" version="1.0.0.qualifier" useFeatures="false" includeLaunchers="true">
+<product name="de.unisaarland.cs.st.moskito.datadependency.eclipse.product" uid="org.mozkito.datadependency.eclipse.product" id="org.mozkito.datadependency.eclipse.mozkito_datadependency_eclipse" application="org.mozkito.datadependency.eclipse.application" version="1.0.0.qualifier" useFeatures="false" includeLaunchers="true">
 
    <configIni use="default">
    </configIni>

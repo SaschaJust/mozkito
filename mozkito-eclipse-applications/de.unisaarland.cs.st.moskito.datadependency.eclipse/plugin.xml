@@ -7,7 +7,7 @@
          point="org.eclipse.core.runtime.applications">
       <application>
          <run
-               class="de.unisaarland.cs.st.moskito.datadependency.eclipse.Application">
+               class="org.mozkito.datadependency.eclipse.Application">
          </run>
       </application>
    </extension>
@@ -21,6 +21,14 @@
                name="appName"
                value="de.unisaarland.cs.st.moskito.datadependency.eclipse.product">
          </property>
+      </product>
+   </extension>
+   <extension
+         id="mozkito_datadependency_eclipse"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="org.mozkito.datadependency.eclipse.application"
+            name="de.unisaarland.cs.st.moskito.datadependency.eclipse.product">
       </product>
    </extension>
 

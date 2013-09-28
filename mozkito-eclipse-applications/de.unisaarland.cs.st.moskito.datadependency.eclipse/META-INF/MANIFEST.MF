@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Eclipse
-Bundle-SymbolicName: de.unisaarland.cs.st.moskito.datadependency.eclipse;singleton:=true
+Bundle-SymbolicName: org.mozkito.datadependency.eclipse;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: de.unisaarland.cs.st.moskito.datadependency.eclipse.Activator
+Bundle-Activator: org.mozkito.datadependency.eclipse.Activator
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources;bundle-version="3.6.1",
  org.eclipse.jdt.core;bundle-version="3.6.2",

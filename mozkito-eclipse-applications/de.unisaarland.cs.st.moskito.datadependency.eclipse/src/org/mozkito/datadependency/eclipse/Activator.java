@@ -11,7 +11,7 @@
  * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 
-package de.unisaarland.cs.st.moskito.datadependency.eclipse;
+package org.mozkito.datadependency.eclipse;
 
 import java.net.URL;
 import java.util.Dictionary;
