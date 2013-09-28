@@ -89,7 +89,7 @@ public class URIUtils {
 	 *            the uri
 	 * @return the string
 	 */
-	public static String Uri2String(final URI uri) {
+	public static String uri2String(final URI uri) {
 		String result = uri.toString();
 		if (result.startsWith("file:/") && (!result.startsWith("file:///"))) {
 			result = result.substring(6);
