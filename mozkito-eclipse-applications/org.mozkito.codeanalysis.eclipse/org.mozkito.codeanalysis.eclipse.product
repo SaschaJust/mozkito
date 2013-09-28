@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="de.unisaarland.cs.st.moskito.ppa.eclipse.product" uid="de.unisaarland.cs.st.moskito.ppa.eclipse.product" id="de.unisaarland.cs.st.moskito.ppa.eclipse.moskito_ppa_eclipse" application="de.unisaarland.cs.st.moskito.ppa.eclipse.application" version="1.0.0.qualifier" useFeatures="false" includeLaunchers="true">
+<product name="org.mozkito.codeanalysis.eclipse.product" uid="org.mozkito.codeanalysis.eclipse.product" id="org.mozkito.codeanalysis.eclipse.mozkito_codeanalysis_eclipse" application="org.mozkito.codeanalysis.eclipse.application" version="1.0.0.qualifier" useFeatures="false" includeLaunchers="true">
 
    <configIni use="default">
    </configIni>
@@ -9,6 +9,8 @@
    <launcherArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>
+
+   <windowImages/>
 
    <launcher>
       <solaris/>
@@ -24,7 +26,6 @@
       <plugin id="ca.mcgill.cs.swevo.ppa" fragment="true"/>
       <plugin id="ca.mcgill.cs.swevo.ppa.ui"/>
       <plugin id="com.ibm.icu"/>
-      <plugin id="de.unisaarland.cs.st.moskito.ppa.eclipse"/>
       <plugin id="org.apache.log4j"/>
       <plugin id="org.eclipse.compare"/>
       <plugin id="org.eclipse.compare.core"/>
@@ -90,6 +91,7 @@
       <plugin id="org.eclipse.ui.views.properties.tabbed"/>
       <plugin id="org.eclipse.ui.workbench"/>
       <plugin id="org.eclipse.ui.workbench.texteditor"/>
+      <plugin id="org.mozkito.codeanalysis.eclipse"/>
    </plugins>
 
 
