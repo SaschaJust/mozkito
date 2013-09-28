@@ -143,7 +143,7 @@ public abstract class JavaElement implements Annotated {
 	 * 
 	 * @return the fullQualifiedName
 	 */
-	@Column (length = 65535)
+	@Column (length = 32672 /* this is the maximum value for VARCHAR in derby; if you increase this, tests will fail */)
 	public String getFullQualifiedName() {
 		return this.fullQualifiedName;
 	}
