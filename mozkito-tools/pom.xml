@@ -82,7 +82,7 @@
 					<dependency>
 						<groupId>com.cenqua.clover</groupId>
 						<artifactId>clover</artifactId>
-						<version>3.1.10</version>
+						<version>3.1.12</version>
 					</dependency>
 				</dependencies>
 			</plugin>
@@ -156,7 +156,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-checkstyle-plugin</artifactId>
-						<version>2.10-SNAPSHOT</version>
+						<version>2.10</version>
 						<configuration>
 							<enableRulesSummary>true</enableRulesSummary>
 							<configLocation>https://users.own-hero.net/~methos/dropbox/checkstyle.xml</configLocation>
@@ -165,7 +165,7 @@
 					<plugin>
 						<groupId>com.atlassian.maven.plugins</groupId>
 						<artifactId>maven-clover2-plugin</artifactId>
-						<version>3.1.10.1</version>
+						<version>3.1.12</version>
 						<configuration>
 							<generateHtml>true</generateHtml>
 							<generateXml>true</generateXml>
