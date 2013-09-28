@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         id="application"
+         point="org.eclipse.core.runtime.applications">
+      <application>
+         <run
+               class="org.mozkito.codeanalysis.eclipse.Application">
+         </run>
+      </application>
+   </extension>
+   <extension
+         id="product"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="de.unisaarland.cs.st.moskito.ppa.eclipse.application"
+            name="de.unisaarland.cs.st.moskito.ppa.eclipse.product">
+         <property
+               name="appName"
+               value="de.unisaarland.cs.st.moskito.ppa.eclipse.product">
+         </property>
+      </product>
+   </extension>
+   <extension
+         id="moskito_ppa_eclipse"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="de.unisaarland.cs.st.moskito.ppa.eclipse.application"
+            name="de.unisaarland.cs.st.moskito.ppa.eclipse.product">
+         <property
+               name="appName"
+               value="de.unisaarland.cs.st.moskito.ppa.eclipse.product">
+         </property>
+      </product>
+   </extension>
+   <extension
+         id="mozkito_codeanalysis_eclipse"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="org.mozkito.codeanalysis.eclipse.application"
+            name="org.mozkito.codeanalysis.eclipse.product">
+         <property
+               name="appName"
+               value="org.mozkito.codeanalysis.eclipse.product">
+         </property>
+      </product>
+   </extension>
+
+</plugin>

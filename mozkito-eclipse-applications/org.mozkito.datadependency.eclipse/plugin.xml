@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         id="application"
+         point="org.eclipse.core.runtime.applications">
+      <application>
+         <run
+               class="org.mozkito.datadependency.eclipse.Application">
+         </run>
+      </application>
+   </extension>
+   <extension
+         id="moskito_datadepenedency_eclipse"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="de.unisaarland.cs.st.moskito.datadependency.eclipse.application"
+            name="de.unisaarland.cs.st.moskito.datadependency.eclipse.product">
+         <property
+               name="appName"
+               value="de.unisaarland.cs.st.moskito.datadependency.eclipse.product">
+         </property>
+      </product>
+   </extension>
+   <extension
+         id="mozkito_datadependency_eclipse"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="org.mozkito.datadependency.eclipse.application"
+            name="de.unisaarland.cs.st.moskito.datadependency.eclipse.product">
+      </product>
+   </extension>
+
+</plugin>
