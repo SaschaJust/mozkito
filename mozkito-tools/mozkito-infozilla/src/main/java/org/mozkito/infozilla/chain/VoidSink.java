@@ -53,8 +53,8 @@ public class VoidSink extends Sink<EnhancedReport> {
 					}
 					
 					try {
-						if (Logger.logDebug()) {
-							Logger.debug(getInputData().toString());
+						if (Logger.logInfo()) {
+							Logger.info(getInputData().toString());
 						}
 					} finally {
 						POSTCONDITIONS: {
