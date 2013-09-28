@@ -24,15 +24,15 @@ import net.ownhero.dev.hiari.settings.InputFileArgument;
 import net.ownhero.dev.hiari.settings.OutputFileArgument;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
-import net.ownhero.dev.ioda.FileUtils;
 
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.mozkito.codeanalysis.utils.PPAUtils;
+import org.mozkito.utilities.io.FileUtils;
 
 import ca.mcgill.cs.swevo.ppa.PPAOptions;
-import de.unisaarland.cs.st.moskito.ppa.utils.PPAUtils;
 
 /**
  * This class controls all aspects of the application's execution.
