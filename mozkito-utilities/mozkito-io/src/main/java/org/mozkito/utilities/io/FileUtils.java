@@ -1115,28 +1115,37 @@ public class FileUtils {
 		BufferedOutputStream dest = null;
 		final FileInputStream fis = new FileInputStream(tarFile);
 		final TarArchiveInputStream zis = new TarArchiveInputStream(new BufferedInputStream(fis));
-		ArchiveEntry entry;
-		while ((entry = zis.getNextEntry()) != null) {
-			if (entry.isDirectory()) {
-				(new File(directory.getAbsolutePath() + FileUtils.fileSeparator + entry.getName())).mkdir();
-				continue;
+		
+		try {
+			ArchiveEntry entry;
+			while ((entry = zis.getNextEntry()) != null) {
+				if (entry.isDirectory()) {
+					final boolean success = (new File(directory.getAbsolutePath() + FileUtils.fileSeparator
+					        + entry.getName())).mkdir();
+					if (!success) {
+						throw new IOException("Creating directory failed: " + directory.getAbsolutePath()
+						        + FileUtils.fileSeparator + entry.getName());
+					}
+					continue;
+				}
+				if (Logger.logDebug()) {
+					Logger.debug("Extracting: " + entry);
+				}
+				int count;
+				final byte[] data = new byte[BUFFER];
+				// write the files to the disk
+				final FileOutputStream fos = new FileOutputStream(new File(directory.getAbsolutePath()
+				        + FileUtils.fileSeparator + entry.getName()));
+				dest = new BufferedOutputStream(fos, BUFFER);
+				while ((count = zis.read(data, 0, BUFFER)) != -1) {
+					dest.write(data, 0, count);
+				}
+				dest.flush();
+				dest.close();
 			}
-			if (Logger.logDebug()) {
-				Logger.debug("Extracting: " + entry);
-			}
-			int count;
-			final byte[] data = new byte[BUFFER];
-			// write the files to the disk
-			final FileOutputStream fos = new FileOutputStream(new File(directory.getAbsolutePath()
-			        + FileUtils.fileSeparator + entry.getName()));
-			dest = new BufferedOutputStream(fos, BUFFER);
-			while ((count = zis.read(data, 0, BUFFER)) != -1) {
-				dest.write(data, 0, count);
-			}
-			dest.flush();
-			dest.close();
+		} finally {
+			zis.close();
 		}
-		zis.close();
 		
 	}
 	
@@ -1164,28 +1173,37 @@ public class FileUtils {
 		BufferedOutputStream dest = null;
 		final FileInputStream fis = new FileInputStream(zipFile);
 		final ZipInputStream zis = new ZipInputStream(new BufferedInputStream(fis));
-		ZipEntry entry;
-		while ((entry = zis.getNextEntry()) != null) {
-			if (entry.isDirectory()) {
-				(new File(directory.getAbsolutePath() + FileUtils.fileSeparator + entry.getName())).mkdir();
-				continue;
+		
+		try {
+			ZipEntry entry;
+			while ((entry = zis.getNextEntry()) != null) {
+				if (entry.isDirectory()) {
+					final boolean success = (new File(directory.getAbsolutePath() + FileUtils.fileSeparator
+					        + entry.getName())).mkdir();
+					if (!success) {
+						throw new IOException("Creating directory failed: " + directory.getAbsolutePath()
+						        + FileUtils.fileSeparator + entry.getName());
+					}
+					continue;
+				}
+				if (Logger.logDebug()) {
+					Logger.debug("Extracting: " + entry);
+				}
+				int count;
+				final byte[] data = new byte[BUFFER];
+				// write the files to the disk
+				final FileOutputStream fos = new FileOutputStream(new File(directory.getAbsolutePath()
+				        + FileUtils.fileSeparator + entry.getName()));
+				dest = new BufferedOutputStream(fos, BUFFER);
+				while ((count = zis.read(data, 0, BUFFER)) != -1) {
+					dest.write(data, 0, count);
+				}
+				dest.flush();
+				dest.close();
 			}
-			if (Logger.logDebug()) {
-				Logger.debug("Extracting: " + entry);
-			}
-			int count;
-			final byte[] data = new byte[BUFFER];
-			// write the files to the disk
-			final FileOutputStream fos = new FileOutputStream(new File(directory.getAbsolutePath()
-			        + FileUtils.fileSeparator + entry.getName()));
-			dest = new BufferedOutputStream(fos, BUFFER);
-			while ((count = zis.read(data, 0, BUFFER)) != -1) {
-				dest.write(data, 0, count);
-			}
-			dest.flush();
-			dest.close();
+		} finally {
+			zis.close();
 		}
-		zis.close();
 	}
 	
 	/**
