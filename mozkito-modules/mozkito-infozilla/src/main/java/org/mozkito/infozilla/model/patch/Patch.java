@@ -153,17 +153,7 @@ public class Patch implements Annotated, Attachable, Inlineable {
 	@Id
 	@GeneratedValue (strategy = GenerationType.AUTO)
 	public int getId() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.id;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.id;
 	}
 	
 	/**
@@ -173,17 +163,7 @@ public class Patch implements Annotated, Attachable, Inlineable {
 	 */
 	@Basic
 	public String getIndex() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.index;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.index;
 	}
 	
 	/**
@@ -282,17 +262,7 @@ public class Patch implements Annotated, Attachable, Inlineable {
 	 */
 	@ManyToOne (cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
 	public Attachment getOrigin() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.origin;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.origin;
 	}
 	
 	/**
@@ -312,17 +282,7 @@ public class Patch implements Annotated, Attachable, Inlineable {
 	 */
 	@ManyToOne
 	public Person getPostedBy() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.postedBy;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.postedBy;
 	}
 	
 	/**
@@ -332,17 +292,7 @@ public class Patch implements Annotated, Attachable, Inlineable {
 	 */
 	@Transient
 	public DateTime getPostedOn() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.postedOn;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.postedOn;
 	}
 	
 	/**
@@ -392,17 +342,7 @@ public class Patch implements Annotated, Attachable, Inlineable {
 	 *            the endPosition to set
 	 */
 	public void setEndPosition(final Integer endPosition) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.endPosition = endPosition;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.endPosition = endPosition;
 	}
 	
 	/**
@@ -412,17 +352,7 @@ public class Patch implements Annotated, Attachable, Inlineable {
 	 *            the hunks to set
 	 */
 	public void setHunks(final List<PatchHunk> hunks) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.hunks = hunks;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.hunks = hunks;
 	}
 	
 	/**
@@ -432,17 +362,7 @@ public class Patch implements Annotated, Attachable, Inlineable {
 	 *            the id to set
 	 */
 	public void setId(final int id) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.id = id;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.id = id;
 	}
 	
 	/**
@@ -452,17 +372,7 @@ public class Patch implements Annotated, Attachable, Inlineable {
 	 *            the index to set
 	 */
 	public void setIndex(final String index) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.index = index;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.index = index;
 	}
 	
 	/**
@@ -508,17 +418,7 @@ public class Patch implements Annotated, Attachable, Inlineable {
 	 *            the newTimestamp to set
 	 */
 	public void setNewTimestamp(final DateTime newTimestamp) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.newTimestamp = newTimestamp;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.newTimestamp = newTimestamp;
 	}
 	
 	/**
@@ -540,17 +440,7 @@ public class Patch implements Annotated, Attachable, Inlineable {
 	 *            the oldTimestamp to set
 	 */
 	public void setOldTimestamp(final DateTime oldTimestamp) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.oldTimestamp = oldTimestamp;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.oldTimestamp = oldTimestamp;
 	}
 	
 	/**
@@ -560,17 +450,7 @@ public class Patch implements Annotated, Attachable, Inlineable {
 	 *            the origin to set
 	 */
 	public void setOrigin(final Attachment origin) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.origin = origin;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.origin = origin;
 	}
 	
 	/**
@@ -590,17 +470,7 @@ public class Patch implements Annotated, Attachable, Inlineable {
 	 *            the postedBy to set
 	 */
 	public void setPostedBy(final Person postedBy) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.postedBy = postedBy;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.postedBy = postedBy;
 	}
 	
 	/**
@@ -610,17 +480,7 @@ public class Patch implements Annotated, Attachable, Inlineable {
 	 *            the postedOn to set
 	 */
 	public void setPostedOn(final DateTime postedOn) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.postedOn = postedOn;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.postedOn = postedOn;
 	}
 	
 	/**
@@ -640,17 +500,7 @@ public class Patch implements Annotated, Attachable, Inlineable {
 	 *            the startPosition to set
 	 */
 	public void setStartPosition(final Integer startPosition) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.startPosition = startPosition;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.startPosition = startPosition;
 	}
 	
 	/**
@@ -661,19 +511,21 @@ public class Patch implements Annotated, Attachable, Inlineable {
 	@Override
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
+		
 		builder.append("Patch [index=");
-		builder.append(this.index);
+		builder.append(getIndex());
 		builder.append(", originalFile=");
-		builder.append(this.originalFile);
+		builder.append(getOriginalFile());
 		builder.append(", modifiedFile=");
-		builder.append(this.modifiedFile);
+		builder.append(getModifiedFile());
 		builder.append(", oldTimestamp=");
-		builder.append(this.oldTimestamp);
+		builder.append(getOldTimestamp());
 		builder.append(", newTimestamp=");
-		builder.append(this.newTimestamp);
+		builder.append(getNewTimestamp());
 		builder.append(", hunks=");
-		builder.append(this.hunks);
+		builder.append(JavaUtils.collectionToString(getHunks()));
 		builder.append("]");
+		
 		return builder.toString();
 	}
 	
