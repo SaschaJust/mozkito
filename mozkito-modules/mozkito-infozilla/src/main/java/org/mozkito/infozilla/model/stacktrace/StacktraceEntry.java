@@ -149,7 +149,7 @@ public class StacktraceEntry implements Annotated {
 	 */
 	@Transient
 	public boolean isNativeMethod() {
-		return this.lineNumber == -2;
+		return getLineNumber() == -2;
 	}
 	
 	/**

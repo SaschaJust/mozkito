@@ -243,7 +243,7 @@ public class PatchHunk implements Annotated, Inlineable {
 	@Transient
 	public Collection<PatchTextElement> getAdded() {
 		final Collection<PatchTextElement> collection = new LinkedList<>();
-		for (final PatchTextElement element : this.elements) {
+		for (final PatchTextElement element : getElements()) {
 			if (PatchTextElement.Type.ADDED.equals(element.getType())) {
 				collection.add(element);
 			}
@@ -280,7 +280,7 @@ public class PatchHunk implements Annotated, Inlineable {
 	@Transient
 	public Collection<PatchTextElement> getDeleted() {
 		final Collection<PatchTextElement> collection = new LinkedList<>();
-		for (final PatchTextElement element : this.elements) {
+		for (final PatchTextElement element : getElements()) {
 			if (PatchTextElement.Type.REMOVED.equals(element.getType())) {
 				collection.add(element);
 			}

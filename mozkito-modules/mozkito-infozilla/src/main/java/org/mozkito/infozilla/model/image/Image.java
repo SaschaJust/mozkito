@@ -98,17 +98,7 @@ public abstract class Image implements Attachable, Annotated {
 	 */
 	@Basic
 	public byte[] getData() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.data;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.data;
 	}
 	
 	/**
@@ -119,17 +109,7 @@ public abstract class Image implements Attachable, Annotated {
 	@Id
 	@GeneratedValue (strategy = GenerationType.AUTO)
 	public int getId() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.id;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.id;
 	}
 	
 	/**
@@ -139,17 +119,7 @@ public abstract class Image implements Attachable, Annotated {
 	 */
 	@ManyToOne (cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
 	public Attachment getOrigin() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.origin;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.origin;
 	}
 	
 	/**
@@ -159,17 +129,7 @@ public abstract class Image implements Attachable, Annotated {
 	 */
 	@Enumerated (EnumType.STRING)
 	public Type getType() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.type;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.type;
 	}
 	
 	/**
@@ -179,17 +139,7 @@ public abstract class Image implements Attachable, Annotated {
 	 *            the data to set
 	 */
 	public void setData(final byte[] data) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.data = data;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.data = data;
 	}
 	
 	/**
@@ -199,17 +149,8 @@ public abstract class Image implements Attachable, Annotated {
 	 *            the id to set
 	 */
 	public void setId(final int id) {
-		PRECONDITIONS: {
-			// none
-		}
+		this.id = id;
 		
-		try {
-			this.id = id;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
 	}
 	
 	/**
@@ -219,17 +160,7 @@ public abstract class Image implements Attachable, Annotated {
 	 *            the origin to set
 	 */
 	public void setOrigin(final Attachment origin) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.origin = origin;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.origin = origin;
 	}
 	
 	/**
@@ -239,17 +170,7 @@ public abstract class Image implements Attachable, Annotated {
 	 *            the type to set
 	 */
 	public void setType(final Type type) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.type = type;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.type = type;
 	}
 	
 }

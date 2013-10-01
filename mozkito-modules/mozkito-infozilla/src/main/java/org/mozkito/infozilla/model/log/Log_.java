@@ -26,7 +26,7 @@ import org.mozkito.persons.model.Person;
  */
 @javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.infozilla.model.log.Log.class)
 @javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
-                             date = "Tue Oct 01 04:23:11 CEST 2013")
+                             date = "Tue Oct 01 05:19:30 CEST 2013")
 public class Log_ {
 	
 	/** The end position. */

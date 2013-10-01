@@ -47,6 +47,7 @@ import org.apache.tika.sax.BodyContentHandler;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
+import org.mozkito.infozilla.elements.AttachmentType;
 import org.mozkito.infozilla.exceptions.EncodingDeterminationException;
 import org.mozkito.infozilla.exceptions.MIMETypeDeterminationException;
 import org.mozkito.infozilla.model.archive.Archive;
