@@ -15,7 +15,8 @@
  */
 package org.mozkito.infozilla.filters.patch;
 
-import org.mozkito.infozilla.filters.InfozillaFilter;
+import org.mozkito.infozilla.filters.Filter;
+import org.mozkito.infozilla.model.EnhancedReport;
 import org.mozkito.infozilla.model.patch.Patch;
 
 /**
@@ -23,6 +24,12 @@ import org.mozkito.infozilla.model.patch.Patch;
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public abstract class PatchFilter extends InfozillaFilter<Patch> {
-	// stub
+public abstract class PatchFilter extends Filter<Patch> {
+	
+	/**
+	 * @param enhancedReport
+	 */
+	public PatchFilter(final EnhancedReport enhancedReport) {
+		super(enhancedReport);
+	}
 }

@@ -114,7 +114,8 @@ public class InfozillaChain extends Chain<Settings> {
 			
 			// load sources
 			new ReportReader(group, getSettings(), persistenceUtil);
-			new StacktraceFilter(group, getSettings(), null);
+			new InlineFilter(group, getSettings(), null);
+			// new AttachmentFilter(group, getSettings(), null);
 			new VoidSink(group, getSettings());
 			
 			// final IRCThread t = new IRCThread("mapping");

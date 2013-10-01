@@ -18,7 +18,8 @@ import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.andama.threads.Transformer;
 import net.ownhero.dev.hiari.settings.ISettings;
 
-import org.mozkito.infozilla.filters.InfozillaFilterChain;
+import org.mozkito.infozilla.AttachmentFilterManager;
+import org.mozkito.infozilla.IFilterManager;
 import org.mozkito.infozilla.model.EnhancedReport;
 import org.mozkito.issues.model.Report;
 
@@ -27,7 +28,7 @@ import org.mozkito.issues.model.Report;
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class StacktraceFilter extends Transformer<Report, EnhancedReport> {
+public class AttachmentFilter extends Transformer<Report, EnhancedReport> {
 	
 	/**
 	 * Instantiates a new stacktrace filter.
@@ -39,7 +40,7 @@ public class StacktraceFilter extends Transformer<Report, EnhancedReport> {
 	 * @param filterChain
 	 *            the filter chain
 	 */
-	public StacktraceFilter(final Group threadGroup, final ISettings settings, final InfozillaFilterChain filterChain) {
+	public AttachmentFilter(final Group threadGroup, final ISettings settings, final IFilterManager filterChain) {
 		super(threadGroup, settings, false);
 		PRECONDITIONS: {
 			// none
@@ -67,7 +68,7 @@ public class StacktraceFilter extends Transformer<Report, EnhancedReport> {
 						EnhancedReport enhancedReport = null;
 						
 						if (data != null) {
-							final InfozillaFilterChain chain = new InfozillaFilterChain(data);
+							final IFilterManager chain = new AttachmentFilterManager(data);
 							enhancedReport = chain.parse();
 						}
 						

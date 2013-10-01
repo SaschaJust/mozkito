@@ -16,6 +16,8 @@ package infozilla;
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
+import net.ownhero.dev.kisa.Highlighter;
+import net.ownhero.dev.kisa.LogLevel;
 import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.infozilla.chain.InfozillaChain;
@@ -36,6 +38,27 @@ public class Main {
 		try {
 			final Settings settings = new Settings();
 			final InfozillaChain infozilla = new InfozillaChain(settings);
+			
+			Logger.addHighlighter(new Highlighter(LogLevel.INFO, LogLevel.ERROR) {
+				
+				@Override
+				public boolean matches(final String message,
+				                       final LogLevel level,
+				                       final String prefix) {
+					PRECONDITIONS: {
+						// none
+					}
+					
+					try {
+						return message.startsWith("Analyzing URL");
+					} finally {
+						POSTCONDITIONS: {
+							// none
+						}
+					}
+				}
+			});
+			
 			infozilla.setName(infozilla.getClass().getSimpleName());
 			infozilla.start();
 			infozilla.join();

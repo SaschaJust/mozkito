@@ -30,4 +30,9 @@ public interface Attachable {
 	 * @return the attachment
 	 */
 	Attachment getOrigin();
+	
+	/**
+	 * @param attachment
+	 */
+	void setOrigin(Attachment attachment);
 }

@@ -14,6 +14,7 @@ package org.mozkito.infozilla.model.attachment;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -26,6 +27,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 
 import net.ownhero.dev.kisa.Logger;
 import net.sf.jmimemagic.Magic;
@@ -47,6 +49,7 @@ import org.xml.sax.SAXException;
 
 import org.mozkito.infozilla.exceptions.EncodingDeterminationException;
 import org.mozkito.infozilla.exceptions.MIMETypeDeterminationException;
+import org.mozkito.infozilla.model.archive.Archive;
 import org.mozkito.issues.model.AttachmentEntry;
 import org.mozkito.persistence.Annotated;
 import org.mozkito.utilities.commons.JavaUtils;
@@ -294,6 +297,27 @@ public class Attachment implements Annotated {
 	/**
 	 * Instantiates a new attachment.
 	 * 
+	 * @param archive
+	 *            the archive
+	 */
+	public Attachment(final Archive archive) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			// body
+			throw new UnsupportedOperationException();
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Instantiates a new attachment.
+	 * 
 	 * @param entry
 	 *            the entry
 	 * @param data
@@ -308,9 +332,35 @@ public class Attachment implements Annotated {
 	 * (non-Javadoc)
 	 * @see org.mozkito.persistence.Annotated#getHandle()
 	 */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.persistence.Annotated#getClassName()
+	 */
 	@Override
+	@Transient
 	public final String getClassName() {
 		return JavaUtils.getHandle(Attachment.class);
+	}
+	
+	/**
+	 * Gets the content.
+	 * 
+	 * @return the content
+	 */
+	@Transient
+	public String getContent() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return new String(getData(), Charset.defaultCharset());
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/**

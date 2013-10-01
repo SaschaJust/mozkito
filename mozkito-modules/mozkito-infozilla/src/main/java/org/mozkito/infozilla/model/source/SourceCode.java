@@ -13,8 +13,11 @@
 
 package org.mozkito.infozilla.model.source;
 
+import java.util.Date;
+
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -23,12 +26,17 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
-import org.mozkito.infozilla.elements.Attachable;
+import org.joda.time.DateTime;
+
 import org.mozkito.infozilla.elements.Inlineable;
 import org.mozkito.infozilla.model.attachment.Attachment;
 import org.mozkito.persistence.Annotated;
+import org.mozkito.persons.model.Person;
 import org.mozkito.utilities.commons.JavaUtils;
 
 /**
@@ -37,7 +45,7 @@ import org.mozkito.utilities.commons.JavaUtils;
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 @Entity
-public class SourceCode implements Annotated, Inlineable, Attachable {
+public class SourceCode implements Annotated, Inlineable {
 	
 	/**
 	 * The Enum Type.
@@ -69,10 +77,21 @@ public class SourceCode implements Annotated, Inlineable, Attachable {
 	/** The type. */
 	private Type              type;
 	
+	/** The posted on. */
+	private DateTime          postedOn;
+	
+	/** The posted by. */
+	private Person            postedBy;
+	
 	/**
+	 * Instantiates a new source code.
+	 * 
 	 * @param code
+	 *            the code
 	 * @param type
+	 *            the type
 	 * @param origin
+	 *            the origin
 	 */
 	public SourceCode(final String code, final Type type, final Attachment origin) {
 		super();
@@ -84,10 +103,16 @@ public class SourceCode implements Annotated, Inlineable, Attachable {
 	}
 	
 	/**
+	 * Instantiates a new source code.
+	 * 
 	 * @param code
+	 *            the code
 	 * @param type
+	 *            the type
 	 * @param startPosition
+	 *            the start position
 	 * @param endPosition
+	 *            the end position
 	 */
 	public SourceCode(final String code, final Type type, final Integer startPosition, final Integer endPosition) {
 		super();
@@ -181,6 +206,19 @@ public class SourceCode implements Annotated, Inlineable, Attachable {
 	}
 	
 	/**
+	 * Gets the java posted on.
+	 * 
+	 * @return the java posted on
+	 */
+	@Temporal (TemporalType.TIMESTAMP)
+	@Column (name = "postedOn")
+	public Date getJavaPostedOn() {
+		return getPostedOn() != null
+		                            ? getPostedOn().toDate()
+		                            : null;
+	}
+	
+	/**
 	 * Gets the origin.
 	 * 
 	 * @return the origin
@@ -193,6 +231,46 @@ public class SourceCode implements Annotated, Inlineable, Attachable {
 		
 		try {
 			return this.origin;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Gets the posted by.
+	 * 
+	 * @return the postedBy
+	 */
+	@ManyToOne
+	public Person getPostedBy() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.postedBy;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Gets the posted on.
+	 * 
+	 * @return the postedOn
+	 */
+	@Transient
+	public DateTime getPostedOn() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.postedOn;
 		} finally {
 			POSTCONDITIONS: {
 				// none
@@ -301,6 +379,20 @@ public class SourceCode implements Annotated, Inlineable, Attachable {
 	}
 	
 	/**
+	 * Sets the java posted on.
+	 * 
+	 * @param timestamp
+	 *            the new java posted on
+	 */
+	public void setJavaPostedOn(final Date timestamp) {
+		if (timestamp != null) {
+			setPostedOn(new DateTime(timestamp));
+		} else {
+			setPostedOn(null);
+		}
+	}
+	
+	/**
 	 * Sets the origin.
 	 * 
 	 * @param origin
@@ -313,6 +405,46 @@ public class SourceCode implements Annotated, Inlineable, Attachable {
 		
 		try {
 			this.origin = origin;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Sets the posted by.
+	 * 
+	 * @param postedBy
+	 *            the postedBy to set
+	 */
+	public void setPostedBy(final Person postedBy) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.postedBy = postedBy;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Sets the posted on.
+	 * 
+	 * @param postedOn
+	 *            the postedOn to set
+	 */
+	public void setPostedOn(final DateTime postedOn) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.postedOn = postedOn;
 		} finally {
 			POSTCONDITIONS: {
 				// none

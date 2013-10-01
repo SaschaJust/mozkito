@@ -21,7 +21,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -46,7 +45,7 @@ import org.mozkito.utilities.io.exceptions.FilePermissionException;
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 @Entity
-public abstract class Archive implements Attachable, Annotated {
+public class Archive implements Attachable, Annotated {
 	
 	/**
 	 * The Enum Type.
@@ -69,7 +68,7 @@ public abstract class Archive implements Attachable, Annotated {
 	private static final long serialVersionUID = 7213529287337098350L;
 	
 	/** The entries. */
-	private List<String>      entries          = new LinkedList<>();
+	private List<Attachment>  entries          = new LinkedList<>();
 	
 	/** The id. */
 	private int               id;
@@ -77,6 +76,7 @@ public abstract class Archive implements Attachable, Annotated {
 	/** The origin. */
 	private Attachment        origin;
 	
+	/** The type. */
 	private Type              type;
 	
 	/**
@@ -117,7 +117,13 @@ public abstract class Archive implements Attachable, Annotated {
 	}
 	
 	/**
-	 * @return
+	 * Extract bzip2.
+	 * 
+	 * @return the file
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 * @throws FilePermissionException
+	 *             the file permission exception
 	 */
 	private File extractBzip2() throws IOException, FilePermissionException {
 		PRECONDITIONS: {
@@ -139,7 +145,13 @@ public abstract class Archive implements Attachable, Annotated {
 	}
 	
 	/**
-	 * @return
+	 * Extract gzip.
+	 * 
+	 * @return the file
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 * @throws FilePermissionException
+	 *             the file permission exception
 	 */
 	private File extractGzip() throws IOException, FilePermissionException {
 		PRECONDITIONS: {
@@ -160,7 +172,13 @@ public abstract class Archive implements Attachable, Annotated {
 	}
 	
 	/**
-	 * @return
+	 * Extract lzma.
+	 * 
+	 * @return the file
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 * @throws FilePermissionException
+	 *             the file permission exception
 	 */
 	private File extractLzma() throws IOException, FilePermissionException {
 		PRECONDITIONS: {
@@ -181,7 +199,13 @@ public abstract class Archive implements Attachable, Annotated {
 	}
 	
 	/**
-	 * @return
+	 * Extract tar.
+	 * 
+	 * @return the file
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 * @throws FilePermissionException
+	 *             the file permission exception
 	 */
 	private File extractTar() throws IOException, FilePermissionException {
 		PRECONDITIONS: {
@@ -202,7 +226,13 @@ public abstract class Archive implements Attachable, Annotated {
 	}
 	
 	/**
-	 * @return
+	 * Extract zip.
+	 * 
+	 * @return the file
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 * @throws FilePermissionException
+	 *             the file permission exception
 	 */
 	private File extractZip() throws IOException, FilePermissionException {
 		PRECONDITIONS: {
@@ -258,8 +288,7 @@ public abstract class Archive implements Attachable, Annotated {
 	 * 
 	 * @return the entries
 	 */
-	@ElementCollection
-	public List<String> getEntries() {
+	public List<Attachment> getEntries() {
 		PRECONDITIONS: {
 			// none
 		}
@@ -315,6 +344,8 @@ public abstract class Archive implements Attachable, Annotated {
 	}
 	
 	/**
+	 * Gets the type.
+	 * 
 	 * @return the type
 	 */
 	@Enumerated (EnumType.STRING)
@@ -338,7 +369,7 @@ public abstract class Archive implements Attachable, Annotated {
 	 * @param entries
 	 *            the entries to set
 	 */
-	public void setEntries(final List<String> entries) {
+	public void setEntries(final List<Attachment> entries) {
 		PRECONDITIONS: {
 			// none
 		}
@@ -393,6 +424,8 @@ public abstract class Archive implements Attachable, Annotated {
 	}
 	
 	/**
+	 * Sets the type.
+	 * 
 	 * @param type
 	 *            the type to set
 	 */

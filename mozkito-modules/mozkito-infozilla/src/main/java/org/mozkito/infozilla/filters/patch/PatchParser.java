@@ -28,13 +28,13 @@ import org.mozkito.infozilla.model.patch.PatchTextElement.Type;
 /**
  * The Class PatchParser.
  */
-public class PatchParser {
+public class PatchParser implements IPatchParser {
 	
 	/** The Constant HUNK_HEADER_PATTERN. */
-	private static final String HUNK_HEADER_PATTERN = "@@\\s+-(\\d+),(\\d+)\\s+\\+(\\d+),(\\d+)\\s+@@";
+	public static final String HUNK_HEADER_PATTERN = "@@\\s+-(\\d+),(\\d+)\\s+\\+(\\d+),(\\d+)\\s+@@";
 	
 	/** The Constant non-breakable space. */
-	public static final char    NBSP                = 160;
+	public static final char   NBSP                = 160;
 	
 	/**
 	 * Find and extract all Hunks in a Patch.
@@ -115,7 +115,11 @@ public class PatchParser {
 				if (hunktext.length() > 1) {
 					hunktext = hunktext.substring(0, hunktext.length() - 1);
 				}
-				foundHunks.add(parseHunk(hunktext));
+				
+				final PatchHunk hunk = parseHunk(hunktext);
+				if (hunk != null) {
+					foundHunks.add(hunk);
+				}
 				hStart = nextHunkStart - 1;
 			}
 		}
@@ -227,7 +231,7 @@ public class PatchParser {
 	 */
 	private boolean isHunkLine(final String line) {
 		final boolean isHunkLine = (!line.isEmpty() && (('+' == line.charAt(0)) || ('-' == line.charAt(0))
-		        || (' ' == line.charAt(0)) || (NBSP == line.charAt(0)))); // char 160 = &nbsp;
+		        || (' ' == line.charAt(0)) || (PatchParser.NBSP == line.charAt(0)))); // char 160 = &nbsp;
 		return isHunkLine;
 	}
 	
@@ -238,7 +242,7 @@ public class PatchParser {
 	 *            The text to extract Patches from.
 	 * @return a list of found Patches.
 	 */
-	public List<? extends Patch> parseForPatches(final String text) {
+	public List<Patch> parseForPatches(final String text) {
 		// Start with an empty list of Patches
 		final List<Patch> foundPatches = new ArrayList<Patch>();
 		
@@ -282,9 +286,26 @@ public class PatchParser {
 			final List<PatchHunk> hunks = findAllHunks(lines, firstHunkLine);
 			
 			// And add the Hunks to the List of Hunks for this patch
-			for (final PatchHunk h : hunks) {
-				patch.addHunk(h);
+			for (final PatchHunk hunk : hunks) {
+				SANITY: {
+					assert hunk != null;
+					assert hunk.getStartPosition() != null;
+					assert hunk.getStartPosition() >= 0;
+					assert hunk.getEndPosition() != null;
+					assert hunk.getStartPosition() < hunk.getEndPosition();
+				}
+				
+				patch.setStartPosition(patch.getStartPosition() == null
+				                                                       ? hunk.getStartPosition()
+				                                                       : Math.min(patch.getStartPosition(),
+				                                                                  hunk.getStartPosition()));
+				patch.setStartPosition(patch.getEndPosition() == null
+				                                                     ? hunk.getEndPosition()
+				                                                     : Math.max(patch.getEndPosition(),
+				                                                                hunk.getEndPosition()));
+				patch.addHunk(hunk);
 			}
+			
 			if (!patch.getHunks().isEmpty()) {
 				foundPatches.add(patch);
 			}
@@ -334,12 +355,12 @@ public class PatchParser {
 				assert text.charAt(0) == '@';
 			}
 			
-			final Regex regex = new Regex(HUNK_HEADER_PATTERN);
+			final Regex regex = new Regex(PatchParser.HUNK_HEADER_PATTERN);
 			final MultiMatch multiMatch = regex.findAll(text);
 			
 			SANITY: {
 				assert multiMatch != null : String.format("Regular expression '%s' did not match: %s",
-				                                          HUNK_HEADER_PATTERN, text);
+				                                          PatchParser.HUNK_HEADER_PATTERN, text);
 				assert multiMatch.size() == 1;
 			}
 			

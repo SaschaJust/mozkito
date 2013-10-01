@@ -13,12 +13,14 @@
 
 package org.mozkito.infozilla.model.itemization;
 
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -26,12 +28,19 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import org.joda.time.DateTime;
+
 import org.mozkito.infozilla.elements.Inlineable;
+import org.mozkito.infozilla.model.attachment.Attachment;
 import org.mozkito.infozilla.model.itemization.Listing.Type;
 import org.mozkito.persistence.Annotated;
+import org.mozkito.persons.model.Person;
 import org.mozkito.utilities.commons.JavaUtils;
 
 /**
@@ -70,6 +79,15 @@ public class ListingEntry implements Annotated, Inlineable, Iterable<Listing> {
 	
 	/** The stop. */
 	private String            stop;
+	
+	/** The posted on. */
+	private DateTime          postedOn;
+	
+	/** The posted by. */
+	private Person            postedBy;
+	
+	/** The origin. */
+	private Attachment        origin;
 	
 	/**
 	 * Instantiates a new listing entry.
@@ -181,6 +199,19 @@ public class ListingEntry implements Annotated, Inlineable, Iterable<Listing> {
 	}
 	
 	/**
+	 * Gets the java posted on.
+	 * 
+	 * @return the java posted on
+	 */
+	@Temporal (TemporalType.TIMESTAMP)
+	@Column (name = "postedOn")
+	public Date getJavaPostedOn() {
+		return getPostedOn() != null
+		                            ? getPostedOn().toDate()
+		                            : null;
+	}
+	
+	/**
 	 * Gets the ordinal.
 	 * 
 	 * @return the ordinal
@@ -192,6 +223,65 @@ public class ListingEntry implements Annotated, Inlineable, Iterable<Listing> {
 		
 		try {
 			return this.ordinal;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Gets the origin.
+	 * 
+	 * @return the origin
+	 */
+	public Attachment getOrigin() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.origin;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Gets the posted by.
+	 * 
+	 * @return the postedBy
+	 */
+	@ManyToOne
+	public Person getPostedBy() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.postedBy;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Gets the posted on.
+	 * 
+	 * @return the postedOn
+	 */
+	@Transient
+	public DateTime getPostedOn() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.postedOn;
 		} finally {
 			POSTCONDITIONS: {
 				// none
@@ -380,6 +470,20 @@ public class ListingEntry implements Annotated, Inlineable, Iterable<Listing> {
 	}
 	
 	/**
+	 * Sets the java posted on.
+	 * 
+	 * @param timestamp
+	 *            the new java posted on
+	 */
+	public void setJavaPostedOn(final Date timestamp) {
+		if (timestamp != null) {
+			setPostedOn(new DateTime(timestamp));
+		} else {
+			setPostedOn(null);
+		}
+	}
+	
+	/**
 	 * Sets the ordinal.
 	 * 
 	 * @param ordinal
@@ -392,6 +496,66 @@ public class ListingEntry implements Annotated, Inlineable, Iterable<Listing> {
 		
 		try {
 			this.ordinal = ordinal;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Sets the origin.
+	 * 
+	 * @param origin
+	 *            the origin to set
+	 */
+	public void setOrigin(final Attachment origin) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.origin = origin;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Sets the posted by.
+	 * 
+	 * @param postedBy
+	 *            the postedBy to set
+	 */
+	public void setPostedBy(final Person postedBy) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.postedBy = postedBy;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Sets the posted on.
+	 * 
+	 * @param postedOn
+	 *            the postedOn to set
+	 */
+	public void setPostedOn(final DateTime postedOn) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.postedOn = postedOn;
 		} finally {
 			POSTCONDITIONS: {
 				// none

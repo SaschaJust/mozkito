@@ -12,11 +12,13 @@
  ******************************************************************************/
 package org.mozkito.infozilla.model.stacktrace;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -25,12 +27,17 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+
+import org.joda.time.DateTime;
 
 import org.mozkito.infozilla.elements.Attachable;
 import org.mozkito.infozilla.elements.Inlineable;
 import org.mozkito.infozilla.model.attachment.Attachment;
 import org.mozkito.persistence.Annotated;
+import org.mozkito.persons.model.Person;
 import org.mozkito.utilities.commons.JavaUtils;
 
 /**
@@ -68,6 +75,12 @@ public class Stacktrace implements Annotated, Attachable, Inlineable {
 	
 	/** Denotes the number of truncated (following but not shown) trace entries. */
 	private Integer               more;
+	
+	/** The posted on. */
+	private DateTime              postedOn;
+	
+	/** The posted by. */
+	private Person                postedBy;
 	
 	/**
 	 * Instantiates a new stacktrace.
@@ -227,6 +240,19 @@ public class Stacktrace implements Annotated, Attachable, Inlineable {
 	}
 	
 	/**
+	 * Gets the java posted on.
+	 * 
+	 * @return the java posted on
+	 */
+	@Temporal (TemporalType.TIMESTAMP)
+	@Column (name = "postedOn")
+	public Date getJavaPostedOn() {
+		return getPostedOn() != null
+		                            ? getPostedOn().toDate()
+		                            : null;
+	}
+	
+	/**
 	 * Gets the more.
 	 * 
 	 * @return the more
@@ -259,6 +285,46 @@ public class Stacktrace implements Annotated, Attachable, Inlineable {
 		
 		try {
 			return this.origin;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Gets the posted by.
+	 * 
+	 * @return the postedBy
+	 */
+	@ManyToOne
+	public Person getPostedBy() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.postedBy;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Gets the posted on.
+	 * 
+	 * @return the postedOn
+	 */
+	@Transient
+	public DateTime getPostedOn() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.postedOn;
 		} finally {
 			POSTCONDITIONS: {
 				// none
@@ -407,6 +473,20 @@ public class Stacktrace implements Annotated, Attachable, Inlineable {
 	}
 	
 	/**
+	 * Sets the java posted on.
+	 * 
+	 * @param timestamp
+	 *            the new java posted on
+	 */
+	public void setJavaPostedOn(final Date timestamp) {
+		if (timestamp != null) {
+			setPostedOn(new DateTime(timestamp));
+		} else {
+			setPostedOn(null);
+		}
+	}
+	
+	/**
 	 * Sets the more.
 	 * 
 	 * @param more
@@ -439,6 +519,46 @@ public class Stacktrace implements Annotated, Attachable, Inlineable {
 		
 		try {
 			this.origin = origin;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Sets the posted by.
+	 * 
+	 * @param postedBy
+	 *            the postedBy to set
+	 */
+	public void setPostedBy(final Person postedBy) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.postedBy = postedBy;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Sets the posted on.
+	 * 
+	 * @param postedOn
+	 *            the postedOn to set
+	 */
+	public void setPostedOn(final DateTime postedOn) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.postedOn = postedOn;
 		} finally {
 			POSTCONDITIONS: {
 				// none

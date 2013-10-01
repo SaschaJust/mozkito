@@ -15,12 +15,16 @@
  */
 package org.mozkito.infozilla.elements;
 
+import org.joda.time.DateTime;
+
+import org.mozkito.persons.model.Person;
+
 /**
  * The Interface Inlineable.
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public interface Inlineable {
+public interface Inlineable extends Attachable {
 	
 	/**
 	 * Gets the end position.
@@ -30,9 +34,39 @@ public interface Inlineable {
 	Integer getEndPosition();
 	
 	/**
+	 * Gets the posted by.
+	 * 
+	 * @return the posted by
+	 */
+	Person getPostedBy();
+	
+	/**
+	 * Gets the posted on.
+	 * 
+	 * @return the posted on
+	 */
+	DateTime getPostedOn();
+	
+	/**
 	 * Gets the start position.
 	 * 
 	 * @return the start position
 	 */
 	Integer getStartPosition();
+	
+	/**
+	 * Sets the posted by.
+	 * 
+	 * @param author
+	 *            the new posted by
+	 */
+	void setPostedBy(Person author);
+	
+	/**
+	 * Sets the posted on.
+	 * 
+	 * @param timestamp
+	 *            the new posted on
+	 */
+	void setPostedOn(DateTime timestamp);
 }

@@ -11,39 +11,43 @@
  * specific language governing permissions and limitations under the License.
  **********************************************************************************************************************/
 
-package org.mozkito.infozilla.filters;
+package org.mozkito.infozilla.elements;
 
 import java.util.List;
 
-import org.mozkito.infozilla.elements.FilterResult;
-import org.mozkito.infozilla.model.EnhancedReport;
-
 /**
- * This interface describes the method interface for every infoZilla InfozillaFilter.
+ * The Interface FilterStatistics.
  * 
- * @param <T>
- *            the generic type
- * @author Nicolas Bettenburg, Sascha Just
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
-public abstract class InfozillaFilter<T> {
+public interface FilterStatistics {
 	
 	/**
-	 * Apply.
+	 * Match stats.
 	 * 
-	 * @param results
-	 *            the results
-	 * @param enhancedReport
-	 *            the enhanced report
-	 */
-	public abstract void apply(List<T> results,
-	                           EnhancedReport enhancedReport);
-	
-	/**
-	 * Run filter.
-	 * 
-	 * @param inputText
-	 *            the input text
 	 * @return the list
 	 */
-	public abstract List<FilterResult<T>> runFilter(String inputText);
+	List<Integer> matchStats();
+	
+	/**
+	 * Standard deviation.
+	 * 
+	 * @return the int
+	 */
+	int standardDeviation();
+	
+	/**
+	 * Total matches.
+	 * 
+	 * @return the int
+	 */
+	int totalMatches();
+	
+	/**
+	 * Total requests.
+	 * 
+	 * @return the int
+	 */
+	int totalRequests();
+	
 }

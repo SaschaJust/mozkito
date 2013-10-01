@@ -15,7 +15,8 @@
  */
 package org.mozkito.infozilla.filters.sourcecode;
 
-import org.mozkito.infozilla.filters.InfozillaFilter;
+import org.mozkito.infozilla.filters.Filter;
+import org.mozkito.infozilla.model.EnhancedReport;
 import org.mozkito.infozilla.model.source.SourceCode;
 
 /**
@@ -23,8 +24,13 @@ import org.mozkito.infozilla.model.source.SourceCode;
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public abstract class SourceCodeFilter extends InfozillaFilter<SourceCode> {
+public abstract class SourceCodeFilter extends Filter<SourceCode> {
 	
-	// stub
+	/**
+	 * @param enhancedReport
+	 */
+	public SourceCodeFilter(final EnhancedReport enhancedReport) {
+		super(enhancedReport);
+	}
 	
 }

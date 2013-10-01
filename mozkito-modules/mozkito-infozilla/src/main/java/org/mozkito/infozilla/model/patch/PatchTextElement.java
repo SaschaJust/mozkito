@@ -20,6 +20,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 
 import org.mozkito.infozilla.filters.patch.PatchParser;
 import org.mozkito.persistence.Annotated;
@@ -45,6 +46,11 @@ public class PatchTextElement implements Annotated {
 		/** The removed. */
 		REMOVED;
 		
+		/**
+		 * {@inheritDoc}
+		 * 
+		 * @see java.lang.Enum#toString()
+		 */
 		@Override
 		public String toString() {
 			switch (this) {
@@ -74,11 +80,25 @@ public class PatchTextElement implements Annotated {
 	private Type              type;
 	
 	/**
+	 * Instantiates a new patch text element.
+	 * 
 	 * @param type
+	 *            the type
 	 * @param text
+	 *            the text
 	 */
 	public PatchTextElement(final Type type, final String text) {
 		super();
+		
+		PRECONDITIONS: {
+			if (type == null) {
+				throw new NullPointerException();
+			}
+			if (text == null) {
+				throw new NullPointerException();
+			}
+		}
+		
 		this.type = type;
 		this.text = text;
 	}
@@ -89,6 +109,7 @@ public class PatchTextElement implements Annotated {
 	 * @see org.mozkito.persistence.Annotated#getClassName()
 	 */
 	@Override
+	@Transient
 	public String getClassName() {
 		PRECONDITIONS: {
 			// none

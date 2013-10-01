@@ -19,6 +19,7 @@ import java.util.List;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -36,6 +37,7 @@ import org.mozkito.infozilla.elements.Attachable;
 import org.mozkito.infozilla.elements.Inlineable;
 import org.mozkito.infozilla.model.attachment.Attachment;
 import org.mozkito.persistence.Annotated;
+import org.mozkito.persons.model.Person;
 import org.mozkito.utilities.commons.JavaUtils;
 
 /**
@@ -68,6 +70,12 @@ public class Log implements Annotated, Attachable, Inlineable, Iterable<LogEntry
 	/** The start position. */
 	private Integer           startPosition;
 	
+	/** The posted on. */
+	private DateTime          postedOn;
+	
+	/** The posted by. */
+	private Person            postedBy;
+	
 	/**
 	 * Adds the.
 	 * 
@@ -86,6 +94,7 @@ public class Log implements Annotated, Attachable, Inlineable, Iterable<LogEntry
 	 * @see org.mozkito.persistence.Annotated#getClassName()
 	 */
 	@Override
+	@Transient
 	public String getClassName() {
 		PRECONDITIONS: {
 			// none
@@ -174,6 +183,19 @@ public class Log implements Annotated, Attachable, Inlineable, Iterable<LogEntry
 	}
 	
 	/**
+	 * Gets the java posted on.
+	 * 
+	 * @return the java posted on
+	 */
+	@Temporal (TemporalType.TIMESTAMP)
+	@Column (name = "postedOn")
+	public Date getJavaPostedOn() {
+		return getPostedOn() != null
+		                            ? getPostedOn().toDate()
+		                            : null;
+	}
+	
+	/**
 	 * Gets the java start.
 	 * 
 	 * @return the java start
@@ -194,6 +216,46 @@ public class Log implements Annotated, Attachable, Inlineable, Iterable<LogEntry
 	@ManyToOne (cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
 	public Attachment getOrigin() {
 		return this.origin;
+	}
+	
+	/**
+	 * Gets the posted by.
+	 * 
+	 * @return the postedBy
+	 */
+	@ManyToOne
+	public Person getPostedBy() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.postedBy;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Gets the posted on.
+	 * 
+	 * @return the postedOn
+	 */
+	@Transient
+	public DateTime getPostedOn() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.postedOn;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/**
@@ -222,7 +284,7 @@ public class Log implements Annotated, Attachable, Inlineable, Iterable<LogEntry
 	 * 
 	 * @return the inlined
 	 */
-	@Basic
+	@Transient
 	public boolean isInlined() {
 		PRECONDITIONS: {
 			// none
@@ -280,7 +342,7 @@ public class Log implements Annotated, Attachable, Inlineable, Iterable<LogEntry
 	 * @param endPosition
 	 *            the endPosition to set
 	 */
-	public void setEndPosition(final int endPosition) {
+	public void setEndPosition(final Integer endPosition) {
 		PRECONDITIONS: {
 			// none
 		}
@@ -337,6 +399,20 @@ public class Log implements Annotated, Attachable, Inlineable, Iterable<LogEntry
 	}
 	
 	/**
+	 * Sets the java posted on.
+	 * 
+	 * @param timestamp
+	 *            the new java posted on
+	 */
+	public void setJavaPostedOn(final Date timestamp) {
+		if (timestamp != null) {
+			setPostedOn(new DateTime(timestamp));
+		} else {
+			setPostedOn(null);
+		}
+	}
+	
+	/**
 	 * Sets the java start.
 	 * 
 	 * @param date
@@ -369,6 +445,46 @@ public class Log implements Annotated, Attachable, Inlineable, Iterable<LogEntry
 	}
 	
 	/**
+	 * Sets the posted by.
+	 * 
+	 * @param postedBy
+	 *            the postedBy to set
+	 */
+	public void setPostedBy(final Person postedBy) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.postedBy = postedBy;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Sets the posted on.
+	 * 
+	 * @param postedOn
+	 *            the postedOn to set
+	 */
+	public void setPostedOn(final DateTime postedOn) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.postedOn = postedOn;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
 	 * Sets the start.
 	 * 
 	 * @param start
@@ -384,7 +500,7 @@ public class Log implements Annotated, Attachable, Inlineable, Iterable<LogEntry
 	 * @param startPosition
 	 *            the startPosition to set
 	 */
-	public void setStartPosition(final int startPosition) {
+	public void setStartPosition(final Integer startPosition) {
 		PRECONDITIONS: {
 			// none
 		}

@@ -25,7 +25,7 @@ import org.mozkito.infozilla.model.patch.PatchTextElement.Type;
 /**
  * The Class RelaxedPatchParser.
  */
-public class RelaxedPatchParser {
+public class RelaxedPatchParser implements IPatchParser {
 	
 	// Uncomment the following line if you need debug output
 	
@@ -243,13 +243,12 @@ public class RelaxedPatchParser {
 	}
 	
 	/**
-	 * Parses a given text for all Patches inside using a 2 line lookahead Fuzzy Parser approach.
+	 * {@inheritDoc}
 	 * 
-	 * @param text
-	 *            The text to extract Patches from.
-	 * @return a list of found patches
+	 * @see org.mozkito.infozilla.filters.patch.IPatchParser#parseForPatches(java.lang.String)
 	 */
-	public List<? extends Patch> parseForPatches(final String text) {
+	@Override
+	public List<Patch> parseForPatches(final String text) {
 		// Start with an empty list of Patches
 		final List<Patch> foundPatches = new ArrayList<Patch>();
 		
