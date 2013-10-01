@@ -23,10 +23,18 @@ import javax.persistence.Embeddable;
 public class Region implements Comparable<Region> {
 	
 	/** The from. */
-	private final int from;
+	private Integer from;
 	
 	/** The to. */
-	private final int to;
+	private Integer to;
+	
+	/**
+	 * @deprecated must only be used by JPA
+	 */
+	@Deprecated
+	public Region() {
+		// stub
+	}
 	
 	/**
 	 * Instantiates a new region.
@@ -36,7 +44,7 @@ public class Region implements Comparable<Region> {
 	 * @param to
 	 *            the to
 	 */
-	public Region(final int from, final int to) {
+	public Region(final Integer from, final Integer to) {
 		PRECONDITIONS: {
 			
 			if (from < 0) {
@@ -46,6 +54,7 @@ public class Region implements Comparable<Region> {
 				throw new IllegalArgumentException();
 			}
 		}
+		
 		this.from = from;
 		this.to = to;
 	}
@@ -65,7 +74,7 @@ public class Region implements Comparable<Region> {
 			if (equals(o)) {
 				return 0;
 			} else {
-				if (getFrom() == o.getFrom()) {
+				if (getFrom().equals(o.getFrom())) {
 					return getTo() - o.getTo();
 				} else {
 					return getFrom() - o.getFrom();
@@ -91,14 +100,14 @@ public class Region implements Comparable<Region> {
 		if (obj == null) {
 			return false;
 		}
-		if (getClass() != obj.getClass()) {
+		if (!getClass().equals(obj.getClass())) {
 			return false;
 		}
 		final Region other = (Region) obj;
-		if (getFrom() != other.getFrom()) {
+		if (!getFrom().equals(other.getFrom())) {
 			return false;
 		}
-		if (getTo() != other.getTo()) {
+		if (!getTo().equals(other.getTo())) {
 			return false;
 		}
 		return true;
@@ -110,7 +119,7 @@ public class Region implements Comparable<Region> {
 	 * @return the from
 	 */
 	@Basic
-	public int getFrom() {
+	public Integer getFrom() {
 		PRECONDITIONS: {
 			// none
 		}
@@ -130,7 +139,7 @@ public class Region implements Comparable<Region> {
 	 * @return the to
 	 */
 	@Basic
-	public int getTo() {
+	public Integer getTo() {
 		PRECONDITIONS: {
 			// none
 		}
@@ -202,6 +211,22 @@ public class Region implements Comparable<Region> {
 		} else {
 			return getFrom() <= other.getTo();
 		}
+	}
+	
+	/**
+	 * @param from
+	 *            the from to set
+	 */
+	public void setFrom(final Integer from) {
+		this.from = from;
+	}
+	
+	/**
+	 * @param to
+	 *            the to to set
+	 */
+	public void setTo(final Integer to) {
+		this.to = to;
 	}
 	
 	/**
