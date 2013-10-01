@@ -53,10 +53,11 @@
 					<connectionURL>jdbc:postgresql://quentin.cs.uni-saarland.de/mozkito</connectionURL>
 					<includes>
 						<param>**/model/*</param>
+						<param>**/model/*/*</param>
 					</includes>
 					<excludes>
 						<param>**/model/*_.*</param>
-						<param>**/model/*_.*</param>
+						<param>**/model/**/*_.*</param>
 						<param>**/model/*$*</param>
 						<param>**/model/ChangeOperations.*</param>
 						<param>**/model/JavaElementFactory.*</param>
@@ -143,6 +144,7 @@
 						<version>1.2</version>
 						<configuration>
 							<includes>**/model/*.class</includes>
+							<includes>**/model/*/*.class</includes>
 							<addDefaultConstructor>true</addDefaultConstructor>
 							<enforcePropertyRestrictions>true</enforcePropertyRestrictions>
 						</configuration>
