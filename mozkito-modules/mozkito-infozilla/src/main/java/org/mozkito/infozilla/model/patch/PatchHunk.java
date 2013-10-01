@@ -202,6 +202,8 @@ public class PatchHunk implements Annotated, Inlineable {
 	private Attachment             origin;
 	
 	/**
+	 * Instantiates a new patch hunk.
+	 * 
 	 * @deprecated must only be used by JPA
 	 */
 	@Deprecated

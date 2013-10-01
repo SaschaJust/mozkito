@@ -17,6 +17,7 @@ import java.util.Date;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -29,12 +30,18 @@ import org.joda.time.DateTime;
 
 import org.mozkito.infozilla.elements.Inlineable;
 import org.mozkito.infozilla.model.attachment.Attachment;
+import org.mozkito.persistence.Annotated;
 import org.mozkito.persons.model.Person;
+import org.mozkito.utilities.commons.JavaUtils;
 
 /**
  * The Class StepsToReproduce.
  */
-public class StepsToReproduce implements Inlineable {
+@Entity
+public class StepsToReproduce implements Annotated, Inlineable {
+	
+	/** The Constant serialVersionUID. */
+	private static final long serialVersionUID = 7249560062045657410L;
 	
 	/** The end position. */
 	private Integer           endPosition;
@@ -58,23 +65,44 @@ public class StepsToReproduce implements Inlineable {
 	private Attachment        origin;
 	
 	/**
+	 * Instantiates a new steps to reproduce.
+	 * 
+	 * @deprecated must only be used by JPA
+	 */
+	@Deprecated
+	public StepsToReproduce() {
+		// stub
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.persistence.Annotated#getClassName()
+	 */
+	@Override
+	public String getClassName() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return JavaUtils.getHandle(this);
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
 	 * Gets the end position.
 	 * 
 	 * @return the endPosition
 	 */
 	@Basic
 	public Integer getEndPosition() {
-		PRECONDITIONS: {
-			// none
-		}
+		return this.endPosition;
 		
-		try {
-			return this.endPosition;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
 	}
 	
 	/**
@@ -85,17 +113,7 @@ public class StepsToReproduce implements Inlineable {
 	@Id
 	@GeneratedValue (strategy = GenerationType.AUTO)
 	public int getId() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.id;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.id;
 	}
 	
 	/**
@@ -117,17 +135,8 @@ public class StepsToReproduce implements Inlineable {
 	 * @return the origin
 	 */
 	public Attachment getOrigin() {
-		PRECONDITIONS: {
-			// none
-		}
+		return this.origin;
 		
-		try {
-			return this.origin;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
 	}
 	
 	/**
@@ -137,17 +146,7 @@ public class StepsToReproduce implements Inlineable {
 	 */
 	@ManyToOne
 	public Person getPostedBy() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.postedBy;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.postedBy;
 	}
 	
 	/**
@@ -157,17 +156,7 @@ public class StepsToReproduce implements Inlineable {
 	 */
 	@Transient
 	public DateTime getPostedOn() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.postedOn;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.postedOn;
 	}
 	
 	/**
@@ -177,17 +166,7 @@ public class StepsToReproduce implements Inlineable {
 	 */
 	@Basic
 	public Integer getStartPosition() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.startPosition;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.startPosition;
 	}
 	
 	/**
@@ -197,17 +176,7 @@ public class StepsToReproduce implements Inlineable {
 	 */
 	@Basic
 	public ArrayList<String> getSteps() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.steps;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.steps;
 	}
 	
 	/**
@@ -217,17 +186,7 @@ public class StepsToReproduce implements Inlineable {
 	 *            the endPosition to set
 	 */
 	public void setEndPosition(final Integer endPosition) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.endPosition = endPosition;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.endPosition = endPosition;
 	}
 	
 	/**
@@ -237,17 +196,7 @@ public class StepsToReproduce implements Inlineable {
 	 *            the id to set
 	 */
 	public void setId(final int id) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.id = id;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.id = id;
 	}
 	
 	/**
@@ -271,17 +220,7 @@ public class StepsToReproduce implements Inlineable {
 	 *            the origin to set
 	 */
 	public void setOrigin(final Attachment origin) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.origin = origin;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.origin = origin;
 	}
 	
 	/**
@@ -291,17 +230,7 @@ public class StepsToReproduce implements Inlineable {
 	 *            the postedBy to set
 	 */
 	public void setPostedBy(final Person postedBy) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.postedBy = postedBy;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.postedBy = postedBy;
 	}
 	
 	/**
@@ -311,17 +240,7 @@ public class StepsToReproduce implements Inlineable {
 	 *            the postedOn to set
 	 */
 	public void setPostedOn(final DateTime postedOn) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.postedOn = postedOn;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.postedOn = postedOn;
 	}
 	
 	/**
@@ -331,17 +250,8 @@ public class StepsToReproduce implements Inlineable {
 	 *            the startPosition to set
 	 */
 	public void setStartPosition(final Integer startPosition) {
-		PRECONDITIONS: {
-			// none
-		}
+		this.startPosition = startPosition;
 		
-		try {
-			this.startPosition = startPosition;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
 	}
 	
 	/**
@@ -351,16 +261,6 @@ public class StepsToReproduce implements Inlineable {
 	 *            the steps to set
 	 */
 	public void setSteps(final ArrayList<String> steps) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.steps = steps;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.steps = steps;
 	}
 }

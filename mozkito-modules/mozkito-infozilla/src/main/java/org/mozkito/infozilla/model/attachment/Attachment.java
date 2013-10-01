@@ -295,6 +295,8 @@ public class Attachment implements Annotated {
 	private AttachmentType  type = AttachmentType.UNKNOWN;
 	
 	/**
+	 * Instantiates a new attachment.
+	 * 
 	 * @deprecated must only be used by JPA
 	 */
 	@Deprecated

@@ -80,6 +80,8 @@ public class PatchTextElement implements Annotated {
 	private Type              type;
 	
 	/**
+	 * Instantiates a new patch text element.
+	 * 
 	 * @deprecated must only be used by JPA
 	 */
 	@Deprecated
@@ -119,17 +121,7 @@ public class PatchTextElement implements Annotated {
 	@Override
 	@Transient
 	public String getClassName() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return JavaUtils.getHandle(this);
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return JavaUtils.getHandle(this);
 	}
 	
 	/**
@@ -140,17 +132,7 @@ public class PatchTextElement implements Annotated {
 	@Id
 	@GeneratedValue (strategy = GenerationType.AUTO)
 	public int getId() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.id;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.id;
 	}
 	
 	/**
@@ -160,17 +142,7 @@ public class PatchTextElement implements Annotated {
 	 */
 	@Basic
 	public String getText() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.text;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.text;
 	}
 	
 	/**
@@ -180,17 +152,8 @@ public class PatchTextElement implements Annotated {
 	 */
 	@Enumerated (EnumType.STRING)
 	public Type getType() {
-		PRECONDITIONS: {
-			// none
-		}
+		return this.type;
 		
-		try {
-			return this.type;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
 	}
 	
 	/**
@@ -200,17 +163,7 @@ public class PatchTextElement implements Annotated {
 	 *            the id to set
 	 */
 	public void setId(final int id) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.id = id;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.id = id;
 	}
 	
 	/**
@@ -220,17 +173,9 @@ public class PatchTextElement implements Annotated {
 	 *            the text to set
 	 */
 	public void setText(final String text) {
-		PRECONDITIONS: {
-			// none
-		}
 		
-		try {
-			this.text = text;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.text = text;
+		
 	}
 	
 	/**
@@ -240,17 +185,7 @@ public class PatchTextElement implements Annotated {
 	 *            the type to set
 	 */
 	public void setType(final Type type) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.type = type;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.type = type;
 	}
 	
 	/**
@@ -261,8 +196,10 @@ public class PatchTextElement implements Annotated {
 	@Override
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
-		builder.append(this.type);
-		builder.append(this.text);
+		
+		builder.append(getType());
+		builder.append(getText());
+		
 		return builder.toString();
 	}
 }

@@ -103,6 +103,8 @@ public class LogEntry implements Annotated, Inlineable {
 	private Attachment        origin;
 	
 	/**
+	 * Instantiates a new log entry.
+	 * 
 	 * @deprecated must only be used by JPA
 	 */
 	@Deprecated

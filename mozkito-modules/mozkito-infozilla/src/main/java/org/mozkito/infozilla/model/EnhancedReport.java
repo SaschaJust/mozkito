@@ -209,6 +209,8 @@ public class EnhancedReport implements Annotated {
 	private List<Comment>                filteredComments  = new LinkedList<>();
 	
 	/**
+	 * Instantiates a new enhanced report.
+	 * 
 	 * @deprecated must only be used by JPA
 	 */
 	@Deprecated

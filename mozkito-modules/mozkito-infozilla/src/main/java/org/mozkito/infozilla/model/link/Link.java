@@ -98,6 +98,8 @@ public class Link implements Annotated, Inlineable {
 	private String            scheme;
 	
 	/**
+	 * Instantiates a new link.
+	 * 
 	 * @deprecated must only be used by JPA
 	 */
 	@Deprecated

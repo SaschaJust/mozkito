@@ -83,6 +83,8 @@ public class Stacktrace implements Annotated, Attachable, Inlineable {
 	private Person                postedBy;
 	
 	/**
+	 * Instantiates a new stacktrace.
+	 * 
 	 * @deprecated must only be used by JPA
 	 */
 	@Deprecated

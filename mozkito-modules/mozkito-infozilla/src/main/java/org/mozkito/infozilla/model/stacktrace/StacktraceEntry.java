@@ -50,6 +50,8 @@ public class StacktraceEntry implements Annotated {
 	private String            methodName;
 	
 	/**
+	 * Instantiates a new stacktrace entry.
+	 * 
 	 * @deprecated must only be used by JPA
 	 */
 	@Deprecated

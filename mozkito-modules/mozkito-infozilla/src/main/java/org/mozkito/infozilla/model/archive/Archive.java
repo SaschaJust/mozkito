@@ -80,6 +80,8 @@ public class Archive implements Attachable, Annotated {
 	private Type              type;
 	
 	/**
+	 * Instantiates a new archive.
+	 * 
 	 * @deprecated must only be used by JPA
 	 */
 	@Deprecated

@@ -26,7 +26,7 @@ import org.mozkito.persons.model.Person;
  */
 @javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.infozilla.model.link.Link.class)
 @javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
-                             date = "Tue Oct 01 02:02:27 CEST 2013")
+                             date = "Tue Oct 01 04:23:11 CEST 2013")
 public class Link_ {
 	
 	/** The end position. */
@@ -58,9 +58,6 @@ public class Link_ {
 	
 	/** The string representation. */
 	public static volatile SingularAttribute<Link, String>     stringRepresentation;
-	
-	/** The url string. */
-	public static volatile SingularAttribute<Link, String>     urlString;
 	
 	/** The verified. */
 	public static volatile SingularAttribute<Link, Boolean>    verified;

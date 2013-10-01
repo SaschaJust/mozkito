@@ -91,6 +91,8 @@ public class Listing implements Annotated, Inlineable, List<ListingEntry> {
 	private Attachment         origin;
 	
 	/**
+	 * Instantiates a new listing.
+	 * 
 	 * @deprecated must only be used by JPA
 	 */
 	@Deprecated

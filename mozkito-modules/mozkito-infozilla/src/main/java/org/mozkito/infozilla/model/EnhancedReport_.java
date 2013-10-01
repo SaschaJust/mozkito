@@ -39,7 +39,7 @@ import org.mozkito.issues.model.Report;
  */
 @javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.infozilla.model.EnhancedReport.class)
 @javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
-                             date = "Tue Oct 01 02:02:27 CEST 2013")
+                             date = "Tue Oct 01 04:23:11 CEST 2013")
 public class EnhancedReport_ {
 	
 	/** The attachments. */

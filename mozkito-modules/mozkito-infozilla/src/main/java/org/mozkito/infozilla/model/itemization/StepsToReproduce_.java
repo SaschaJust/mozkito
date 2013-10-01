@@ -11,30 +11,42 @@
  * specific language governing permissions and limitations under the License.
  **********************************************************************************************************************/
 
-package org.mozkito.infozilla.model.image;
+package org.mozkito.infozilla.model.itemization;
 
+import java.util.Date;
+
+import javax.persistence.metamodel.ListAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 
 import org.mozkito.infozilla.model.attachment.Attachment;
-import org.mozkito.infozilla.model.image.Image.Type;
+import org.mozkito.persons.model.Person;
 
 /**
- * The Class Image_.
+ * The Class StepsToReproduce_.
  */
-@javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.infozilla.model.image.Image.class)
+@javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.infozilla.model.itemization.StepsToReproduce.class)
 @javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
                              date = "Tue Oct 01 04:23:11 CEST 2013")
-public class Image_ {
+public class StepsToReproduce_ {
 	
-	/** The data. */
-	public static volatile SingularAttribute<Image, byte[]>     data;
+	/** The end position. */
+	public static volatile SingularAttribute<StepsToReproduce, Integer>    endPosition;
 	
 	/** The id. */
-	public static volatile SingularAttribute<Image, Integer>    id;
+	public static volatile SingularAttribute<StepsToReproduce, Integer>    id;
+	
+	/** The java posted on. */
+	public static volatile SingularAttribute<StepsToReproduce, Date>       javaPostedOn;
 	
 	/** The origin. */
-	public static volatile SingularAttribute<Image, Attachment> origin;
+	public static volatile SingularAttribute<StepsToReproduce, Attachment> origin;
 	
-	/** The type. */
-	public static volatile SingularAttribute<Image, Type>       type;
+	/** The posted by. */
+	public static volatile SingularAttribute<StepsToReproduce, Person>     postedBy;
+	
+	/** The start position. */
+	public static volatile SingularAttribute<StepsToReproduce, Integer>    startPosition;
+	
+	/** The steps. */
+	public static volatile ListAttribute<StepsToReproduce, String>         steps;
 }
