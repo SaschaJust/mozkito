@@ -51,7 +51,9 @@
 					</includes>
 					<excludes>
 						<param>**/model/*_.*</param>
-						<param>**/model/*/*_.*</param>
+						<param>**/model/**/*_.*</param>
+						<param>**/model/*$*</param>
+						<param>**/model/**/*$*</param>
 						<param>**/*__*</param>
 						<param>**/ChangeOperations.*</param>
 						<param>**/JavaElementFactory.*</param>

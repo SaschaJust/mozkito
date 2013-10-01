@@ -59,6 +59,7 @@
 						<param>**/model/*_.*</param>
 						<param>**/model/**/*_.*</param>
 						<param>**/model/*$*</param>
+						<param>**/model/**/*$*</param>
 						<param>**/model/ChangeOperations.*</param>
 						<param>**/model/JavaElementFactory.*</param>
 						<param>**/model/JavaElementLocationSet.*</param>
