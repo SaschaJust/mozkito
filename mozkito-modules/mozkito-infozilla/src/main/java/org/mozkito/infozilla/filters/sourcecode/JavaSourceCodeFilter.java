@@ -26,12 +26,10 @@ import java.util.List;
 
 import com.Ostermiller.util.CSVParser;
 
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.regex.Match;
 import net.ownhero.dev.regex.MultiMatch;
 import net.ownhero.dev.regex.Regex;
 
-import org.mozkito.infozilla.elements.FilterResult;
 import org.mozkito.infozilla.model.EnhancedReport;
 import org.mozkito.infozilla.model.source.SourceCode;
 import org.mozkito.infozilla.model.source.SourceCode.Type;
@@ -110,12 +108,17 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 	
 	/**
 	 * Standard Constructor.
+	 * 
+	 * @param enhancedReport
+	 *            the enhanced report
 	 */
-	public JavaSourceCodeFilter() {
+	public JavaSourceCodeFilter(final EnhancedReport enhancedReport) {
+		super(enhancedReport);
+		
 		try {
 			readCodePatterns(new InputStreamReader(getClass().getResourceAsStream("/Java_CodeDB.txt")));
 		} catch (final Exception e) {
-			throw new UnrecoverableError("Error while reading Java Source Code Patterns!");
+			throw new RuntimeException("Error while reading Java Source Code Patterns!");
 		}
 		
 	}
@@ -123,40 +126,47 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 	/**
 	 * Overloaded Constructor.
 	 * 
+	 * @param enhancedReport
+	 *            the enhanced report
 	 * @param filename
 	 *            the name of the file to read Code Patterns from.
 	 */
-	public JavaSourceCodeFilter(final String filename) {
+	public JavaSourceCodeFilter(final EnhancedReport enhancedReport, final String filename) {
+		super(enhancedReport);
+		
 		try {
 			readCodePatterns(new FileReader(filename));
 		} catch (final Exception e) {
-			throw new UnrecoverableError("Error while reading Java Source Code Patterns!");
+			throw new RuntimeException("Error while reading Java Source Code Patterns!");
 		}
 	}
 	
 	/**
 	 * Overloaded Constructor.
 	 * 
+	 * @param enhancedReport
+	 *            the enhanced report
 	 * @param fileurl
 	 *            a URL to a file to read Code Patterns from.
 	 */
-	public JavaSourceCodeFilter(final URL fileurl) {
+	public JavaSourceCodeFilter(final EnhancedReport enhancedReport, final URL fileurl) {
+		super(enhancedReport);
+		
 		try {
 			readCodePatterns(new InputStreamReader(fileurl.openStream()));
 		} catch (final Exception e) {
-			throw new UnrecoverableError("Error while reading Java Source Code Patterns!");
+			throw new RuntimeException("Error while reading Java Source Code Patterns!");
 		}
 	}
 	
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.infozilla.filters.InfozillaFilter#apply(java.util.List,
-	 *      org.mozkito.infozilla.model.EnhancedReport)
+	 * @see org.mozkito.infozilla.filters.Filter#apply(java.util.List, org.mozkito.infozilla.model.EnhancedReport)
 	 */
 	@Override
-	public void apply(final List<SourceCode> results,
-	                  final EnhancedReport enhancedReport) {
+	protected void apply(final List<SourceCode> results,
+	                     final EnhancedReport enhancedReport) {
 		PRECONDITIONS: {
 			// none
 		}
@@ -296,17 +306,22 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 	 * (non-Javadoc)
 	 * @see org.mozkito.infozilla.filters.sourcecode.SourceCodeFilter#runFilter(java.lang.String)
 	 */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.infozilla.filters.Filter#runFilter(java.lang.String)
+	 */
 	@Override
-	public List<FilterResult<SourceCode>> runFilter(final String inputText) {
+	protected List<SourceCode> runFilter(final String inputText) {
 		// Find all Code Regions in the given Text inputText - by default we
 		// want the minimal set
 		// which means the outer most syntactical elements spanning all the
 		// discovered code.
 		final List<SourceCode> codeRegions = getSourceCodes(inputText, true);
 		
-		final List<FilterResult<SourceCode>> list = new ArrayList<>(codeRegions.size());
+		final List<SourceCode> list = new ArrayList<>(codeRegions.size());
 		for (final SourceCode code : codeRegions) {
-			list.add(new FilterResult<SourceCode>(code.getStartPosition(), code.getEndPosition(), code));
+			list.add(code);
 		}
 		// Return the found source code regions
 		return list;

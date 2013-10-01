@@ -21,14 +21,16 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 
-import org.mozkito.infozilla.filters.InfozillaFilterChain.Region;
+import org.mozkito.infozilla.Region;
 import org.mozkito.infozilla.model.attachment.Attachment;
 import org.mozkito.infozilla.model.image.Image;
 import org.mozkito.infozilla.model.itemization.ExpectedBehavior;
@@ -72,10 +74,94 @@ public class EnhancedReport implements Annotated {
 	}
 	
 	/** The extracted regions. */
-	private Map<Region, Type>            extractedRegions  = new HashMap<>();
+	private Map<Region, Type> extractedRegions = new HashMap<>();
 	
 	/** The Constant serialVersionUID. */
-	private static final long            serialVersionUID  = -6200370567492281526L;
+	private static final long serialVersionUID = -6200370567492281526L;
+	
+	/**
+	 * Empty.
+	 * 
+	 * @return the enhanced report
+	 */
+	public static EnhancedReport empty() {
+		return new EnhancedReport(null);
+	}
+	
+	/**
+	 * Merge.
+	 * 
+	 * @param into
+	 *            the into
+	 * @param from
+	 *            the from
+	 * @return the enhanced report
+	 */
+	public static EnhancedReport merge(final EnhancedReport into,
+	                                   final EnhancedReport from) {
+		PRECONDITIONS: {
+			if (into == null) {
+				throw new NullPointerException();
+			}
+			if (from == null) {
+				throw new NullPointerException();
+			}
+		}
+		
+		SANITY: {
+			assert into.getId() != null;
+			assert from.getId() == null;
+		}
+		
+		synchronized (into) {
+			SANITTY: {
+				assert from.getFilteredDescription() == null;
+				assert from.getFilteredComments().isEmpty();
+				
+				for (final Entry<String, Attachment> entry : from.getAttachments().entrySet()) {
+					assert !into.getAttachments().containsKey(entry.getKey());
+				}
+				
+				assert !CollectionUtils.containsAny(into.getCodeFragments(), from.getCodeFragments());
+				assert !CollectionUtils.containsAny(into.getExpectedBehaviors(), from.getExpectedBehaviors());
+				assert !CollectionUtils.containsAny(into.getImages(), from.getImages());
+				assert !CollectionUtils.containsAny(into.getLinks(), from.getLinks());
+				assert !CollectionUtils.containsAny(into.getListings(), from.getListings());
+				assert !CollectionUtils.containsAny(into.getLogs(), from.getLogs());
+				assert !CollectionUtils.containsAny(into.getObservedBehaviors(), from.getObservedBehaviors());
+				assert !CollectionUtils.containsAny(into.getPatches(), from.getPatches());
+				assert !CollectionUtils.containsAny(into.getStacktraces(), from.getStacktraces());
+				assert !CollectionUtils.containsAny(into.getStepsToReproduce(), from.getStepsToReproduce());
+			}
+			
+			// add attachments to the original report
+			into.getAttachments().putAll(from.getAttachments());
+			
+			into.getCodeFragments().addAll(from.getCodeFragments());
+			
+			into.getExpectedBehaviors().addAll(from.getExpectedBehaviors());
+			
+			into.getImages().addAll(from.getImages());
+			
+			into.getLinks().addAll(from.getLinks());
+			
+			into.getListings().addAll(from.getListings());
+			
+			into.getLogs().addAll(from.getLogs());
+			
+			into.getObservedBehaviors().addAll(from.getObservedBehaviors());
+			
+			into.getPatches().addAll(from.getPatches());
+			
+			into.getStacktraces().addAll(from.getStacktraces());
+			
+			into.getStepsToReproduce().addAll(from.getStepsToReproduce());
+			
+			// we do not merge descriptions or comments since these have to be set by the InlineFilterManager
+		}
+		
+		return into;
+	}
 	
 	/** The attachments. */
 	private Map<String, Attachment>      attachments       = new HashMap<String, Attachment>();
@@ -158,6 +244,7 @@ public class EnhancedReport implements Annotated {
 	 * @see org.mozkito.persistence.Annotated#getClassName()
 	 */
 	@Override
+	@Transient
 	public String getClassName() {
 		PRECONDITIONS: {
 			// none
@@ -642,7 +729,9 @@ public class EnhancedReport implements Annotated {
 			
 			builder.append(FileUtils.lineSeparator).append("## filtered Comments=");
 			for (final Comment comment : getFilteredComments()) {
-				builder.append(FileUtils.lineSeparator).append(comment);
+				
+				builder.append(FileUtils.lineSeparator).append('[').append(comment.getId()).append("] ")
+				       .append(comment.getMessage());
 			}
 			
 			builder.append(FileUtils.lineSeparator).append("## Stacktraces=");
@@ -663,6 +752,11 @@ public class EnhancedReport implements Annotated {
 			builder.append(FileUtils.lineSeparator).append("## Logs=");
 			for (final Log log : getLogs()) {
 				builder.append(FileUtils.lineSeparator).append(log);
+			}
+			
+			builder.append(FileUtils.lineSeparator).append("## Links=");
+			for (final Link link : getLinks()) {
+				builder.append(FileUtils.lineSeparator).append(link);
 			}
 			
 			builder.append(FileUtils.lineSeparator).append("## Listings=");

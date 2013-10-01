@@ -29,8 +29,7 @@ import net.ownhero.dev.regex.Regex;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 
-import org.mozkito.infozilla.elements.FilterResult;
-import org.mozkito.infozilla.filters.InfozillaFilter;
+import org.mozkito.infozilla.filters.Filter;
 import org.mozkito.infozilla.model.EnhancedReport;
 import org.mozkito.infozilla.model.log.Log;
 import org.mozkito.infozilla.model.log.LogEntry;
@@ -41,7 +40,7 @@ import org.mozkito.infozilla.model.log.LogEntry.Level;
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class LogFilter extends InfozillaFilter<Log> {
+public class LogFilter extends Filter<Log> {
 	
 	/**
 	 * The Class PatternHeuristic.
@@ -168,8 +167,6 @@ public class LogFilter extends InfozillaFilter<Log> {
 		}
 	}
 	
-	// @formatter:on
-	
 	/**
 	 * Prepare message.
 	 * 
@@ -193,6 +190,8 @@ public class LogFilter extends InfozillaFilter<Log> {
 		}
 	}
 	
+	// @formatter:on
+	
 	/** The timestamp regex. */
 	private final String                    TIMESTAMP_PATTERN  = "(" + "({YEAR}\\d{4})" + "-)?" + "({MONTH}\\d{2})"
 	                                                                   + "-" + "({DAY}\\d{2})" + "\\s"
@@ -214,6 +213,16 @@ public class LogFilter extends InfozillaFilter<Log> {
 	private static final String             CLASSNAME_PATTERN  = "\\[({CLASS}(<[^>]+?> )?([\\w<>\\$]+\\.)*?[\\w<>\\$]+?)(:({LINE}\\d+))?\\]";
 	
 	/**
+	 * Instantiates a new log filter.
+	 * 
+	 * @param enhancedReport
+	 *            the enhanced report
+	 */
+	public LogFilter(final EnhancedReport enhancedReport) {
+		super(enhancedReport);
+	}
+	
+	/**
 	 * Adjust levels.
 	 * 
 	 * @param log
@@ -224,7 +233,7 @@ public class LogFilter extends InfozillaFilter<Log> {
 		PatternHeuristic h = null;
 		boolean valid = false;
 		
-		PATTERNS: for (final PatternHeuristic heuristic : PATTERN_HEURISTICS) {
+		PATTERNS: for (final PatternHeuristic heuristic : LogFilter.PATTERN_HEURISTICS) {
 			h = heuristic;
 			for (final LogEntry entry : log) {
 				if (!heuristic.applies(entry.getMessage())) {
@@ -240,8 +249,8 @@ public class LogFilter extends InfozillaFilter<Log> {
 				assert h != null;
 			}
 			
-			if (Logger.logInfo()) {
-				Logger.info("Adjusting log levels.");
+			if (Logger.logDebug()) {
+				Logger.debug("Adjusting log levels.");
 			}
 			for (final LogEntry entry : log) {
 				h.adjust(entry);
@@ -257,7 +266,7 @@ public class LogFilter extends InfozillaFilter<Log> {
 	 *            the log
 	 */
 	private void adjustSources(final Log log) {
-		final Regex regex = new Regex(CLASSNAME_PATTERN);
+		final Regex regex = new Regex(LogFilter.CLASSNAME_PATTERN);
 		boolean valid = true;
 		for (final LogEntry entry : log) {
 			if (regex.find(entry.getMessage()) == null) {
@@ -290,12 +299,11 @@ public class LogFilter extends InfozillaFilter<Log> {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.infozilla.filters.InfozillaFilter#apply(java.util.List,
-	 *      org.mozkito.infozilla.model.EnhancedReport)
+	 * @see org.mozkito.infozilla.filters.Filter#apply(java.util.List, org.mozkito.infozilla.model.EnhancedReport)
 	 */
 	@Override
-	public void apply(final List<Log> results,
-	                  final EnhancedReport enhancedReport) {
+	protected void apply(final List<Log> results,
+	                     final EnhancedReport enhancedReport) {
 		PRECONDITIONS: {
 			// none
 		}
@@ -487,10 +495,10 @@ public class LogFilter extends InfozillaFilter<Log> {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.infozilla.filters.InfozillaFilter#runFilter(java.lang.String)
+	 * @see org.mozkito.infozilla.filters.Filter#runFilter(java.lang.String)
 	 */
 	@Override
-	public List<FilterResult<Log>> runFilter(final String inputText) {
+	protected List<Log> runFilter(final String inputText) {
 		PRECONDITIONS: {
 			if (inputText == null) {
 				throw new NullPointerException();
@@ -542,7 +550,7 @@ public class LogFilter extends InfozillaFilter<Log> {
 			
 			if (!logEntries.isEmpty()) {
 				final List<Log> list = blockSeparate(logEntries, inputText);
-				final List<FilterResult<Log>> results = new LinkedList<>();
+				final List<Log> results = new LinkedList<>();
 				
 				for (final Log log : list) {
 					SANITY: {
@@ -551,11 +559,27 @@ public class LogFilter extends InfozillaFilter<Log> {
 					}
 					final DateTime first = log.getEntries().iterator().next().getTimestamp();
 					final DateTime last = log.getEntries().listIterator(logEntries.size()).previous().getTimestamp();
+					
+					// TODO this should be done in blockseparate
+					for (final LogEntry entry : log.getEntries()) {
+						if (log.getStartPosition() == null) {
+							log.setStartPosition(entry.getStartPosition());
+						} else {
+							log.setStartPosition(Math.min(entry.getStartPosition(), log.getStartPosition()));
+						}
+						
+						if (log.getEndPosition() == null) {
+							log.setEndPosition(entry.getEndPosition());
+						} else {
+							log.setEndPosition(Math.max(entry.getEndPosition(), log.getEndPosition()));
+						}
+					}
+					
 					log.setEnd(first);
 					log.setStart(last);
 					adjustLevels(log);
 					adjustSources(log);
-					results.add(new FilterResult<Log>(log.getStartPosition(), log.getEndPosition(), log));
+					results.add(log);
 				}
 				return results;
 			} else {

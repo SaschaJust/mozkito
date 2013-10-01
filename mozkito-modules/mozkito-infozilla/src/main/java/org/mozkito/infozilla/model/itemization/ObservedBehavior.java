@@ -12,15 +12,25 @@
  ******************************************************************************/
 package org.mozkito.infozilla.model.itemization;
 
+import java.util.Date;
+
 import javax.persistence.Basic;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import org.joda.time.DateTime;
+
 import org.mozkito.infozilla.elements.Inlineable;
+import org.mozkito.infozilla.model.attachment.Attachment;
 import org.mozkito.persistence.Annotated;
+import org.mozkito.persons.model.Person;
 import org.mozkito.utilities.commons.JavaUtils;
 
 /**
@@ -29,9 +39,7 @@ import org.mozkito.utilities.commons.JavaUtils;
 @Entity
 public class ObservedBehavior implements Annotated, Inlineable {
 	
-	/**
-     * 
-     */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -5058135522857769928L;
 	
 	/** The end position. */
@@ -45,6 +53,15 @@ public class ObservedBehavior implements Annotated, Inlineable {
 	
 	/** The text. */
 	private String            text;
+	
+	/** The posted on. */
+	private DateTime          postedOn;
+	
+	/** The posted by. */
+	private Person            postedBy;
+	
+	/** The origin. */
+	private Attachment        origin;
 	
 	/**
 	 * {@inheritDoc}
@@ -101,6 +118,78 @@ public class ObservedBehavior implements Annotated, Inlineable {
 		
 		try {
 			return this.id;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Gets the java posted on.
+	 * 
+	 * @return the java posted on
+	 */
+	@Temporal (TemporalType.TIMESTAMP)
+	@Column (name = "postedOn")
+	public Date getJavaPostedOn() {
+		return getPostedOn() != null
+		                            ? getPostedOn().toDate()
+		                            : null;
+	}
+	
+	/**
+	 * Gets the origin.
+	 * 
+	 * @return the origin
+	 */
+	public Attachment getOrigin() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.origin;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Gets the posted by.
+	 * 
+	 * @return the postedBy
+	 */
+	@ManyToOne
+	public Person getPostedBy() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.postedBy;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Gets the posted on.
+	 * 
+	 * @return the postedOn
+	 */
+	@Transient
+	public DateTime getPostedOn() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.postedOn;
 		} finally {
 			POSTCONDITIONS: {
 				// none
@@ -181,6 +270,80 @@ public class ObservedBehavior implements Annotated, Inlineable {
 		
 		try {
 			this.id = id;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Sets the java posted on.
+	 * 
+	 * @param timestamp
+	 *            the new java posted on
+	 */
+	public void setJavaPostedOn(final Date timestamp) {
+		if (timestamp != null) {
+			setPostedOn(new DateTime(timestamp));
+		} else {
+			setPostedOn(null);
+		}
+	}
+	
+	/**
+	 * Sets the origin.
+	 * 
+	 * @param origin
+	 *            the origin to set
+	 */
+	public void setOrigin(final Attachment origin) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.origin = origin;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Sets the posted by.
+	 * 
+	 * @param postedBy
+	 *            the postedBy to set
+	 */
+	public void setPostedBy(final Person postedBy) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.postedBy = postedBy;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Sets the posted on.
+	 * 
+	 * @param postedOn
+	 *            the postedOn to set
+	 */
+	public void setPostedOn(final DateTime postedOn) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.postedOn = postedOn;
 		} finally {
 			POSTCONDITIONS: {
 				// none

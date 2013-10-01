@@ -578,6 +578,7 @@
 							<compilerArgument>-Aopenjpa.metamodel=true</compilerArgument>
 							<includes>
 								<include>**/model/*.java</include>
+								<include>**/model/**/*.java</include>
 							</includes>
 						</configuration>
 					</plugin>

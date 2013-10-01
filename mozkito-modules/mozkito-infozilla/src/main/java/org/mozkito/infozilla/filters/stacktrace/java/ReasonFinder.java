@@ -178,9 +178,9 @@ public class ReasonFinder implements Iterable<ReasonFinder.Reason> {
 		if (multiMatch != null) {
 			for (final Match match : multiMatch) {
 				final String className = JavaStackTraceFilter.LINE_BREAKS_REGEX.removeAll(match.getGroup(JavaStackTraceFilter.CLASSNAME_GROUP)
-				                                                                        .getMatch());
+				                                                                               .getMatch());
 				final String methodName = JavaStackTraceFilter.LINE_BREAKS_REGEX.removeAll(match.getGroup(JavaStackTraceFilter.METHODNAME_GROUP)
-				                                                                         .getMatch());
+				                                                                                .getMatch());
 				String fileName = match.getGroup(JavaStackTraceFilter.FILENAME_GROUP).getMatch();
 				if (fileName != null) {
 					fileName = JavaStackTraceFilter.LINE_BREAKS_REGEX.removeAll(fileName);

@@ -21,7 +21,6 @@ import java.util.List;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
 
-import org.mozkito.infozilla.elements.FilterResult;
 import org.mozkito.infozilla.filters.stacktrace.java.EntryFinder;
 import org.mozkito.infozilla.filters.stacktrace.java.EntryFinder.Entry;
 import org.mozkito.infozilla.filters.stacktrace.java.MoreFinder;
@@ -69,10 +68,10 @@ public class JavaStackTraceFilter extends StackTraceFilter {
 	public static final String JAVA_EXCEPTION   = "(?<!Caused by:)" // may not start with 'Caused by:'
 												+ "(?<!>)" // may not start with '>' to avoid matching: Caused by: <openjpa-2.2.1.1-rexported nonfatal general error> org.apache.openjpa.persistence.PersistenceException: null
 												+ "\\s+?" // this is somewhat shady since this requires at least one space before the actual exception. TODO check if this appears to not always happen in the trackers
-												+ "({" + EXCEPTION_GROUP + "}(<[^>]+?> )?([\\w<>\\$]+\\.)*?[\\w<>\\$]+?(Error|Exception))" // the actual exception 
+												+ "({" + JavaStackTraceFilter.EXCEPTION_GROUP + "}(<[^>]+?> )?([\\w<>\\$]+\\.)*?[\\w<>\\$]+?(Error|Exception))" // the actual exception 
 												+ "(\\s|$|:\\s" // we can require to either be at the end of the string here, or have the Exception/Error keyword being followed by a whitespace. Or we have a message, then the keyword is followed by a ':\s' and the message string.
 														+ "({" 
-														+ MESSAGE_GROUP + "}[^\\n\\s]+" 
+														+ JavaStackTraceFilter.MESSAGE_GROUP + "}[^\\n\\s]+" 
 														+ ")"
 												+")";
 	
@@ -85,35 +84,40 @@ public class JavaStackTraceFilter extends StackTraceFilter {
 	 * Please refer to the implementation of {@link StackTraceElement#toString()} to see how this is constructed.
 	 */
 	public static final String JAVA_REASON      = "at\\s+" 
-                                    			+ "({" + CLASSNAME_GROUP + "}([\\w<>\\$_\\s]+\\.)*?[\\w<>\\$_\\s]+?)" 
+                                    			+ "({" + JavaStackTraceFilter.CLASSNAME_GROUP + "}([\\w<>\\$_\\s]+\\.)*?[\\w<>\\$_\\s]+?)" 
                                     			+ "\\." 
-                                    			+ "({" + METHODNAME_GROUP + "}[\\w<>\\$_\\s]+?)" 
+                                    			+ "({" + JavaStackTraceFilter.METHODNAME_GROUP + "}[\\w<>\\$_\\s]+?)" 
                                     			+ "\\s*\\(" 
-                                    			+"({" + FILENAME_GROUP + "}[^.]+\\.java|Unknown Source|Native Method)"  
+                                    			+"({" + JavaStackTraceFilter.FILENAME_GROUP + "}[^.]+\\.java|Unknown Source|Native Method)"  
                                     			+ ":?" 
-                                    			+ "({" + LINENUMBER_GROUP + "}\\d+)?" 
+                                    			+ "({" + JavaStackTraceFilter.LINENUMBER_GROUP + "}\\d+)?" 
                                     			+ "\\)";
 	// @formatter:on
 	
 	// @formatter:on
 	
 	/** The Constant JAVA_MORE. */
-	public static final String JAVA_MORE         = "...\\s+({" + MORE_GROUP + "}\\d+)\\s+more";
+	public static final String JAVA_MORE         = "...\\s+({" + JavaStackTraceFilter.MORE_GROUP + "}\\d+)\\s+more";
 	
 	// @formatter:off
 	/** The Constant JAVA_CAUSE. */
 	public static final String JAVA_CAUSE       = "Caused by:\\s+"
-                                                    + "({" + EXCEPTION_GROUP + "}(<[^>]+?> )?([\\w<>\\$]+\\.)*?[\\w<>\\$]+?(Error|Exception))"
+                                                    + "({" + JavaStackTraceFilter.EXCEPTION_GROUP + "}(<[^>]+?> )?([\\w<>\\$]+\\.)*?[\\w<>\\$]+?(Error|Exception))"
                                                     +"(\\s|$|:\\s" 
                                                     	+ "({"
-                                                    	+ MESSAGE_GROUP + "}[^\\n\\s]+)"
+                                                    	+ JavaStackTraceFilter.MESSAGE_GROUP + "}[^\\n\\s]+)"
                                                     +")";
 	// @formatter:on
 	
 	/**
 	 * Instantiates a new java stack trace filter.
+	 * 
+	 * @param enhancedReport
+	 *            the enhanced report
 	 */
-	public JavaStackTraceFilter() {
+	public JavaStackTraceFilter(final EnhancedReport enhancedReport) {
+		super(enhancedReport);
+		
 		PRECONDITIONS: {
 			// none
 		}
@@ -130,12 +134,11 @@ public class JavaStackTraceFilter extends StackTraceFilter {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.infozilla.filters.InfozillaFilter#apply(java.util.List,
-	 *      org.mozkito.infozilla.model.EnhancedReport)
+	 * @see org.mozkito.infozilla.filters.Filter#apply(java.util.List, org.mozkito.infozilla.model.EnhancedReport)
 	 */
 	@Override
-	public void apply(final List<Stacktrace> results,
-	                  final EnhancedReport enhancedReport) {
+	protected void apply(final List<Stacktrace> results,
+	                     final EnhancedReport enhancedReport) {
 		PRECONDITIONS: {
 			// none
 		}
@@ -150,11 +153,17 @@ public class JavaStackTraceFilter extends StackTraceFilter {
 	}
 	
 	/**
+	 * Creates the stacktrace.
+	 * 
 	 * @param stacktraceEntry
+	 *            the stacktrace entry
 	 * @param reasons
+	 *            the reasons
 	 * @param moreEntry
+	 *            the more entry
 	 * @param offset
-	 * @return
+	 *            the offset
+	 * @return the stacktrace
 	 */
 	private Stacktrace createStacktrace(final EntryFinder.Entry stacktraceEntry,
 	                                    final List<Reason> reasons,
@@ -202,18 +211,23 @@ public class JavaStackTraceFilter extends StackTraceFilter {
 			final String message = stacktraceEntry.getMessage();
 			endPosition += offset;
 			
-			final Stacktrace stacktrace = new Stacktrace(startPosition, endPosition,
-			                                             LINE_BREAKS_REGEX.removeAll(exceptionType),
-			                                             LINE_BREAKS_REGEX.removeAll(message), moreValue);
+			final Stacktrace stacktrace = new Stacktrace(
+			                                             startPosition,
+			                                             endPosition,
+			                                             JavaStackTraceFilter.LINE_BREAKS_REGEX.removeAll(exceptionType),
+			                                             JavaStackTraceFilter.LINE_BREAKS_REGEX.removeAll(message),
+			                                             moreValue);
 			
 			for (final Reason reason : reasons) {
 				stacktrace.add(new StacktraceEntry(
-				                                   LINE_BREAKS_REGEX.removeAll(reason.getElement().getClassName()),
+				                                   JavaStackTraceFilter.LINE_BREAKS_REGEX.removeAll(reason.getElement()
+				                                                                                          .getClassName()),
 				                                   reason.getElement().getFileName() != null
-				                                                                            ? LINE_BREAKS_REGEX.removeAll(reason.getElement()
-				                                                                                                                .getFileName())
+				                                                                            ? JavaStackTraceFilter.LINE_BREAKS_REGEX.removeAll(reason.getElement()
+				                                                                                                                                     .getFileName())
 				                                                                            : null,
-				                                   LINE_BREAKS_REGEX.removeAll(reason.getElement().getMethodName()),
+				                                   JavaStackTraceFilter.LINE_BREAKS_REGEX.removeAll(reason.getElement()
+				                                                                                          .getMethodName()),
 				                                   reason.getElement().getLineNumber()));
 			}
 			
@@ -225,6 +239,15 @@ public class JavaStackTraceFilter extends StackTraceFilter {
 		}
 	}
 	
+	/**
+	 * Gets the entry windows.
+	 * 
+	 * @param stacktraceEntries
+	 *            the stacktrace entries
+	 * @param end
+	 *            the end
+	 * @return the entry windows
+	 */
 	private List<Tuple<Integer, Integer>> getEntryWindows(final List<EntryFinder.Entry> stacktraceEntries,
 	                                                      final int end) {
 		final List<Tuple<Integer, Integer>> list = new ArrayList<>(stacktraceEntries.size());
@@ -245,9 +268,20 @@ public class JavaStackTraceFilter extends StackTraceFilter {
 		return list;
 	}
 	
-	private FilterResult<Stacktrace> parseException(final String subString,
-	                                                final int offset,
-	                                                final EntryFinder.Entry stacktraceEntry) {
+	/**
+	 * Parses the exception.
+	 * 
+	 * @param subString
+	 *            the sub string
+	 * @param offset
+	 *            the offset
+	 * @param stacktraceEntry
+	 *            the stacktrace entry
+	 * @return the filter result
+	 */
+	private Stacktrace parseException(final String subString,
+	                                  final int offset,
+	                                  final EntryFinder.Entry stacktraceEntry) {
 		// determine end point of actual exception
 		// whatever comes first, MORE, next CAUSED BY, end of string
 		int exceptionEnd = subString.length();
@@ -333,15 +367,14 @@ public class JavaStackTraceFilter extends StackTraceFilter {
 					final int newOffset = offset + localOffset;
 					
 					final String newSubstring = subString.substring(localOffset);
-					final FilterResult<Stacktrace> causeResult = parseException(newSubstring, newOffset, currentCause);
+					final Stacktrace causeResult = parseException(newSubstring, newOffset, currentCause);
 					if (causeResult != null) {
-						stacktrace.setCause(causeResult.third);
-						stacktrace.setEndPosition(causeResult.second);
+						stacktrace.setCause(causeResult);
+						stacktrace.setEndPosition(causeResult.getEndPosition());
 					}
 				}
 				
-				return new FilterResult<Stacktrace>(stacktrace.getStartPosition(), stacktrace.getEndPosition(),
-				                                    stacktrace);
+				return stacktrace;
 			}
 		} else {
 			return null;
@@ -351,17 +384,17 @@ public class JavaStackTraceFilter extends StackTraceFilter {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.infozilla.filters.InfozillaFilter#runFilter(java.lang.String)
+	 * @see org.mozkito.infozilla.filters.Filter#runFilter(java.lang.String)
 	 */
 	@Override
-	public List<FilterResult<Stacktrace>> runFilter(final String inputText) {
+	protected List<Stacktrace> runFilter(final String inputText) {
 		PRECONDITIONS: {
 			// none
 		}
 		
 		try {
 			final EntryFinder eFinder = new EntryFinder(inputText);
-			final List<FilterResult<Stacktrace>> filterResults = new LinkedList<>();
+			final List<Stacktrace> filterResults = new LinkedList<>();
 			
 			if (eFinder.findException()) {
 				
@@ -392,11 +425,13 @@ public class JavaStackTraceFilter extends StackTraceFilter {
 					}
 					
 					final String substring = inputText.substring(offset, offset + length);
+					
 					if (Logger.logDebug()) {
 						Logger.debug("Substring: " + substring);
 					}
 					
-					final FilterResult<Stacktrace> filterResult = parseException(substring, offset, stacktraceEntry);
+					final Stacktrace filterResult = parseException(substring, offset, stacktraceEntry);
+					
 					if (filterResult != null) {
 						filterResults.add(filterResult);
 					} else {

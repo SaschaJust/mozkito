@@ -41,6 +41,10 @@
       <product
             application="org.mozkito.callgraph.eclipse.application"
             name="org.mozkito.callgraph.eclipse.product">
+         <property
+               name="appName"
+               value="org.mozkito.callgraph.eclipse.product">
+         </property>
       </product>
    </extension>
 

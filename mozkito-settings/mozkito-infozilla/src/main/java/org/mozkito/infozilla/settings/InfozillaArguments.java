@@ -27,8 +27,8 @@ import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 
-import org.mozkito.infozilla.filters.InfozillaFilter;
-import org.mozkito.infozilla.filters.InfozillaFilterChain;
+import org.mozkito.infozilla.InlineFilterManager;
+import org.mozkito.infozilla.filters.Filter;
 
 /**
  * The Class InfozillaArguments.
@@ -36,11 +36,11 @@ import org.mozkito.infozilla.filters.InfozillaFilterChain;
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class InfozillaArguments extends
-        ArgumentSetOptions<InfozillaFilterChain, ArgumentSet<InfozillaFilterChain, InfozillaArguments>> {
+        ArgumentSetOptions<InlineFilterManager, ArgumentSet<InlineFilterManager, InfozillaArguments>> {
 	
 	/** The filters. */
 	@SuppressWarnings ("unused")
-	private final Set<InfozillaFilter> filters = new HashSet<InfozillaFilter>();
+	private final Set<Filter> filters = new HashSet<Filter>();
 	
 	/**
 	 * Instantiates a new infozilla arguments.
@@ -75,7 +75,7 @@ public class InfozillaArguments extends
 			
 			if (filters != null) {
 				for (final String filterName : filters.split(",")) {
-					filterNames.add(InfozillaFilter.class.getPackage().getName() + "." + filterName);
+					filterNames.add(Filter.class.getPackage().getName() + "." + filterName);
 				}
 				
 			}
@@ -112,9 +112,9 @@ public class InfozillaArguments extends
 	 * @return the string
 	 */
 	@SuppressWarnings ("unused")
-	private String buildFilterList(final Collection<Class<? extends InfozillaFilter>> filters) {
+	private String buildFilterList(final Collection<Class<? extends Filter>> filters) {
 		final StringBuilder builder = new StringBuilder();
-		for (final Class<? extends InfozillaFilter> klass : filters) {
+		for (final Class<? extends Filter> klass : filters) {
 			if (builder.length() != 0) {
 				builder.append(",");
 			}
@@ -128,7 +128,7 @@ public class InfozillaArguments extends
 	 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
 	 */
 	@Override
-	public InfozillaFilterChain init() {
+	public InlineFilterManager init() {
 		// TODO Auto-generated method stub
 		return null;
 	}

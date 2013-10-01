@@ -13,12 +13,9 @@
 
 package org.mozkito.infozilla.filters.patch;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
-import net.ownhero.dev.kisa.Logger;
-
-import org.mozkito.infozilla.elements.FilterResult;
 import org.mozkito.infozilla.model.EnhancedReport;
 import org.mozkito.infozilla.model.patch.Patch;
 
@@ -36,21 +33,29 @@ public class UnifiedDiffPatchFilter extends PatchFilter {
 	
 	/**
 	 * Instantiates a new unified diff patch filter.
+	 * 
+	 * @param enhancedReport
+	 *            the enhanced report
 	 */
-	public UnifiedDiffPatchFilter() {
+	public UnifiedDiffPatchFilter(final EnhancedReport enhancedReport) {
+		super(enhancedReport);
 	}
 	
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.infozilla.filters.InfozillaFilter#apply(java.util.List,
-	 *      org.mozkito.infozilla.model.EnhancedReport)
+	 * @see org.mozkito.infozilla.filters.Filter#apply(java.util.List, org.mozkito.infozilla.model.EnhancedReport)
 	 */
 	@Override
-	public void apply(final List<Patch> results,
-	                  final EnhancedReport enhancedReport) {
+	protected void apply(final List<Patch> results,
+	                     final EnhancedReport enhancedReport) {
 		PRECONDITIONS: {
-			// none
+			if (results == null) {
+				throw new NullPointerException();
+			}
+			if (enhancedReport == null) {
+				throw new NullPointerException();
+			}
 		}
 		
 		try {
@@ -63,42 +68,6 @@ public class UnifiedDiffPatchFilter extends PatchFilter {
 	}
 	
 	/**
-	 * InfozillaFilter a list of {@link Patch}es from a text {@link s}.
-	 * 
-	 * @param text
-	 *            the text we should look for patches inside
-	 * @return a List of {@link Patch}es.
-	 */
-	@SuppressWarnings ("unchecked")
-	private List<FilterResult<Patch>> getPatches(final String text) {
-		
-		// Find Patches
-		List<Patch> foundPatches = null;
-		if (isRelaxed()) {
-			final RelaxedPatchParser pp = new RelaxedPatchParser();
-			foundPatches = (List<Patch>) pp.parseForPatches(text);
-		} else {
-			final PatchParser pp = new PatchParser();
-			foundPatches = (List<Patch>) pp.parseForPatches(text);
-		}
-		
-		// // InfozillaFilter them out
-		// for (final Patch patch : foundPatches) {
-		// this.textRemover.markForDeletion(patch.getStartPosition(), patch.getEndPosition());
-		// }
-		
-		final List<FilterResult<Patch>> list = new ArrayList<>(foundPatches.size());
-		for (final Patch patch : foundPatches) {
-			if (Logger.logAlways()) {
-				Logger.always("Found patch:");
-				Logger.always(patch.toString());
-			}
-			list.add(new FilterResult<Patch>(-1, -1, patch));
-		}
-		return list;
-	}
-	
-	/**
 	 * Checks if is relaxed.
 	 * 
 	 * @return true, if is relaxed
@@ -107,13 +76,35 @@ public class UnifiedDiffPatchFilter extends PatchFilter {
 		return this.relaxed;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.infozilla.filters.InfozillaFilter#runFilter(java.lang.String)
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.infozilla.filters.Filter#runFilter(java.lang.String)
 	 */
 	@Override
-	public List<FilterResult<Patch>> runFilter(final String inputText) {
-		return getPatches(inputText);
+	protected List<Patch> runFilter(final String text) {
+		PRECONDITIONS: {
+			if (text == null) {
+				throw new NullPointerException();
+			}
+		}
+		
+		List<Patch> foundPatches = new LinkedList<>();
+		
+		try {
+			// Find Patches
+			final IPatchParser pp = isRelaxed()
+			                                   ? new RelaxedPatchParser()
+			                                   : new PatchParser();
+			foundPatches = pp.parseForPatches(text);
+			
+			return foundPatches;
+		} finally {
+			POSTCONDITIONS: {
+				// assert foundPatches != null;
+				// assert (new Regex(PatchParser.HUNK_HEADER_PATTERN).find(text) != null) == !foundPatches.isEmpty();
+			}
+		}
 	}
 	
 	/**

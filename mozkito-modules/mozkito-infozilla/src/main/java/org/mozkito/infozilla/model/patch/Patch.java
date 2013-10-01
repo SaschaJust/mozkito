@@ -42,6 +42,7 @@ import org.mozkito.infozilla.elements.Attachable;
 import org.mozkito.infozilla.elements.Inlineable;
 import org.mozkito.infozilla.model.attachment.Attachment;
 import org.mozkito.persistence.Annotated;
+import org.mozkito.persons.model.Person;
 import org.mozkito.utilities.commons.JavaUtils;
 
 /**
@@ -84,6 +85,12 @@ public class Patch implements Annotated, Attachable, Inlineable {
 	
 	/** The start position. */
 	private Integer           startPosition;
+	
+	/** The posted on. */
+	private DateTime          postedOn;
+	
+	/** The posted by. */
+	private Person            postedBy;
 	
 	/**
 	 * Adds the hunk.
@@ -177,6 +184,19 @@ public class Patch implements Annotated, Attachable, Inlineable {
 				// none
 			}
 		}
+	}
+	
+	/**
+	 * Gets the java posted on.
+	 * 
+	 * @return the java posted on
+	 */
+	@Temporal (TemporalType.TIMESTAMP)
+	@Column (name = "postedOn")
+	public Date getJavaPostedOn() {
+		return getPostedOn() != null
+		                            ? getPostedOn().toDate()
+		                            : null;
 	}
 	
 	/**
@@ -283,6 +303,46 @@ public class Patch implements Annotated, Attachable, Inlineable {
 	@Basic
 	public String getOriginalFile() {
 		return this.originalFile;
+	}
+	
+	/**
+	 * Gets the posted by.
+	 * 
+	 * @return the postedBy
+	 */
+	@ManyToOne
+	public Person getPostedBy() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.postedBy;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Gets the posted on.
+	 * 
+	 * @return the postedOn
+	 */
+	@Transient
+	public DateTime getPostedOn() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.postedOn;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/**
@@ -406,6 +466,20 @@ public class Patch implements Annotated, Attachable, Inlineable {
 	}
 	
 	/**
+	 * Sets the java posted on.
+	 * 
+	 * @param timestamp
+	 *            the new java posted on
+	 */
+	public void setJavaPostedOn(final Date timestamp) {
+		if (timestamp != null) {
+			setPostedOn(new DateTime(timestamp));
+		} else {
+			setPostedOn(null);
+		}
+	}
+	
+	/**
 	 * Sets the modified file.
 	 * 
 	 * @param modifiedFile
@@ -507,6 +581,46 @@ public class Patch implements Annotated, Attachable, Inlineable {
 	 */
 	public void setOriginalFile(final String originalFile) {
 		this.originalFile = originalFile;
+	}
+	
+	/**
+	 * Sets the posted by.
+	 * 
+	 * @param postedBy
+	 *            the postedBy to set
+	 */
+	public void setPostedBy(final Person postedBy) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.postedBy = postedBy;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Sets the posted on.
+	 * 
+	 * @param postedOn
+	 *            the postedOn to set
+	 */
+	public void setPostedOn(final DateTime postedOn) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.postedOn = postedOn;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/**

@@ -18,6 +18,7 @@ import java.util.Date;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -33,6 +34,7 @@ import javax.persistence.Transient;
 import org.joda.time.DateTime;
 
 import org.mozkito.infozilla.elements.Inlineable;
+import org.mozkito.infozilla.model.attachment.Attachment;
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persons.model.Person;
 import org.mozkito.utilities.commons.JavaUtils;
@@ -46,7 +48,7 @@ public class Link implements Annotated, Inlineable {
 	/**
 	 * The Enum Kind.
 	 */
-	private enum Kind {
+	public static enum Kind {
 		
 		/** The REPOSITORY. */
 		REPOSITORY,
@@ -65,14 +67,17 @@ public class Link implements Annotated, Inlineable {
 	/** The id. */
 	private int               id;
 	
-	/** The kind. */
-	private final Kind        kind             = Kind.WEB;
+	/** The kind. TODO set this with some heuristics */
+	private Kind              kind             = Kind.WEB;
 	
 	/** The posted by. */
 	private Person            postedBy;
 	
 	/** The posted on. */
 	private DateTime          postedOn;
+	
+	/** The origin. */
+	private Attachment        origin;
 	
 	/** The start position. */
 	private Integer           startPosition;
@@ -83,8 +88,14 @@ public class Link implements Annotated, Inlineable {
 	/** The url. */
 	private URL               url;
 	
-	/** The valid. */
-	private final boolean     valid            = false;
+	/** The verified. */
+	private boolean           verified;
+	
+	/** The link description. */
+	private String            linkDescription;
+	
+	/** The scheme. */
+	private String            scheme;
 	
 	/**
 	 * Instantiates a new link.
@@ -97,20 +108,20 @@ public class Link implements Annotated, Inlineable {
 	 *            the url
 	 * @param stringRepresentation
 	 *            the string representation
-	 * @param postedBy
-	 *            the posted by
-	 * @param postedOn
-	 *            the posted on
+	 * @param scheme
+	 *            the scheme
+	 * @param linkDescription
+	 *            the link description
 	 */
 	public Link(final int startPosition, final int endPosition, final URL url, final String stringRepresentation,
-	        final Person postedBy, final DateTime postedOn) {
+	        final String scheme, final String linkDescription) {
 		super();
 		this.startPosition = startPosition;
 		this.endPosition = endPosition;
 		this.url = url;
 		this.stringRepresentation = stringRepresentation;
-		this.postedBy = postedBy;
-		this.postedOn = postedOn;
+		this.scheme = scheme;
+		this.linkDescription = linkDescription;
 	}
 	
 	/**
@@ -177,6 +188,45 @@ public class Link implements Annotated, Inlineable {
 	}
 	
 	/**
+	 * Gets the link description.
+	 * 
+	 * @return the linkDescription
+	 */
+	@Basic
+	public String getLinkDescription() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.linkDescription;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Gets the origin.
+	 * 
+	 * @return the origin
+	 */
+	public Attachment getOrigin() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.origin;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
 	 * Gets the posted by.
 	 * 
 	 * @return the postedBy
@@ -201,9 +251,32 @@ public class Link implements Annotated, Inlineable {
 	 * 
 	 * @return the posted on java
 	 */
+	@Column (name = "postedOn")
 	@Temporal (TemporalType.TIMESTAMP)
 	public Date getPostedOnJava() {
-		return getPostedOn().toDate();
+		return getPostedOn() != null
+		                            ? getPostedOn().toDate()
+		                            : null;
+	}
+	
+	/**
+	 * Gets the scheme.
+	 * 
+	 * @return the scheme
+	 */
+	@Basic
+	public String getScheme() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.scheme;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/**
@@ -247,13 +320,22 @@ public class Link implements Annotated, Inlineable {
 	}
 	
 	/**
-	 * Checks if is valid.
+	 * Checks if is verified.
 	 * 
-	 * @return the valid
+	 * @return the verified
 	 */
-	@Basic
-	public boolean isValid() {
-		return this.valid;
+	public boolean isVerified() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.verified;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/**
@@ -262,7 +344,7 @@ public class Link implements Annotated, Inlineable {
 	 * @param endPosition
 	 *            the endPosition to set
 	 */
-	public void setEndPosition(final int endPosition) {
+	public void setEndPosition(final Integer endPosition) {
 		PRECONDITIONS: {
 			// none
 		}
@@ -297,6 +379,66 @@ public class Link implements Annotated, Inlineable {
 	}
 	
 	/**
+	 * Sets the kind.
+	 * 
+	 * @param kind
+	 *            the kind to set
+	 */
+	public void setKind(final Kind kind) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.kind = kind;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Sets the link description.
+	 * 
+	 * @param linkDescription
+	 *            the linkDescription to set
+	 */
+	public void setLinkDescription(final String linkDescription) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.linkDescription = linkDescription;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Sets the origin.
+	 * 
+	 * @param origin
+	 *            the origin to set
+	 */
+	public void setOrigin(final Attachment origin) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.origin = origin;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
 	 * Sets the posted by.
 	 * 
 	 * @param postedBy
@@ -322,10 +464,30 @@ public class Link implements Annotated, Inlineable {
 	 * @param postedOn
 	 *            the new posted on java
 	 */
-	public void setPostedOnJava(final DateTime postedOn) {
+	public void setPostedOnJava(final Date postedOn) {
 		setPostedOn(postedOn != null
 		                            ? new DateTime(postedOn)
 		                            : null);
+	}
+	
+	/**
+	 * Sets the scheme.
+	 * 
+	 * @param scheme
+	 *            the scheme to set
+	 */
+	public void setScheme(final String scheme) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.scheme = scheme;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/**
@@ -334,7 +496,7 @@ public class Link implements Annotated, Inlineable {
 	 * @param startPosition
 	 *            the startPosition to set
 	 */
-	public void setStartPosition(final int startPosition) {
+	public void setStartPosition(final Integer startPosition) {
 		PRECONDITIONS: {
 			// none
 		}
@@ -386,5 +548,47 @@ public class Link implements Annotated, Inlineable {
 			// ignore
 			assert false : "this should only be used by JPA and thus not set invalid URLs.";
 		}
+	}
+	
+	/**
+	 * Sets the verified.
+	 * 
+	 * @param b
+	 *            the new verified
+	 */
+	public void setVerified(final boolean b) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.verified = b;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		final StringBuilder builder = new StringBuilder();
+		builder.append("Link [kind=");
+		builder.append(this.kind);
+		builder.append(", postedBy=");
+		builder.append(this.postedBy);
+		builder.append(", postedOn=");
+		builder.append(this.postedOn);
+		builder.append(", url=");
+		builder.append(this.url);
+		builder.append(", verified=");
+		builder.append(this.verified);
+		builder.append("]");
+		return builder.toString();
 	}
 }

@@ -13,6 +13,7 @@
 package org.mozkito.infozilla.filters.enumeration;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -20,9 +21,7 @@ import net.ownhero.dev.regex.Match;
 import net.ownhero.dev.regex.MultiMatch;
 import net.ownhero.dev.regex.Regex;
 
-import org.mozkito.infozilla.elements.FilterResult;
-import org.mozkito.infozilla.filters.FilterTextRemover;
-import org.mozkito.infozilla.filters.InfozillaFilter;
+import org.mozkito.infozilla.filters.Filter;
 import org.mozkito.infozilla.model.EnhancedReport;
 import org.mozkito.infozilla.model.itemization.Listing;
 import org.mozkito.infozilla.model.itemization.Listing.Type;
@@ -31,23 +30,26 @@ import org.mozkito.infozilla.model.itemization.ListingEntry;
 /**
  * The Class EnumerationFilter.
  */
-public class EnumerationFilter extends InfozillaFilter<Listing> {
+public class EnumerationFilter extends Filter<Listing> {
 	
-	/** The text remover. */
-	private FilterTextRemover textRemover;
-	
-	/** The processed text. */
-	private String            processedText = "";
+	/**
+	 * Instantiates a new enumeration filter.
+	 * 
+	 * @param enhancedReport
+	 *            the enhanced report
+	 */
+	public EnumerationFilter(final EnhancedReport enhancedReport) {
+		super(enhancedReport);
+	}
 	
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.infozilla.filters.InfozillaFilter#apply(java.util.List,
-	 *      org.mozkito.infozilla.model.EnhancedReport)
+	 * @see org.mozkito.infozilla.filters.Filter#apply(java.util.List, org.mozkito.infozilla.model.EnhancedReport)
 	 */
 	@Override
-	public void apply(final List<Listing> results,
-	                  final EnhancedReport enhancedReport) {
+	protected void apply(final List<Listing> results,
+	                     final EnhancedReport enhancedReport) {
 		PRECONDITIONS: {
 			// none
 		}
@@ -136,11 +138,9 @@ public class EnumerationFilter extends InfozillaFilter<Listing> {
 		for (int i = 0; i < lineNum; i++) {
 			start = start + lines[i].length() + 1;
 		}
-		// Calculate end position
-		final int end = start + lines[lineNum].length();
 		
 		// Mark this range for deletion
-		this.textRemover.markForDeletion(start, end + 1);
+		// this.textRemover.markForDeletion(start, end + 1);
 	}
 	
 	/**
@@ -234,39 +234,6 @@ public class EnumerationFilter extends InfozillaFilter<Listing> {
 		}
 		// Return the list of found Enumerations!
 		return foundEnumerations;
-	}
-	
-	/**
-	 * Runs this method to extract all Character- and Number Enumerations as well as Itemizations.
-	 * 
-	 * @param s
-	 *            The Text to look inside for enumerations and itemizations
-	 * @return a List of all {@Itemization}s found.
-	 */
-	private List<Listing> getEnumerationsAndItemizations(final String s) {
-		// Create an empty list to put the extracted enumerations in
-		final List<Listing> enumerations = new ArrayList<Listing>();
-		
-		// Initialize the text filter with the text "s" we are given
-		setProcessedText(s);
-		
-		// Process all types of enumerations, while extracting already found
-		// items
-		final List<Listing> charEnums = getCharEnums(s);
-		
-		final List<Listing> numEnums = getNumEnums(s);
-		
-		final List<Listing> listings = getItemizations(s);
-		
-		// All add discovered items to the final list
-		enumerations.addAll(charEnums);
-		enumerations.addAll(numEnums);
-		enumerations.addAll(listings);
-		
-		// Return the list of enumerations - now this.processedText contains the
-		// final text
-		// after all processing steps (this can be used later on)
-		return enumerations;
 	}
 	
 	/**
@@ -438,39 +405,19 @@ public class EnumerationFilter extends InfozillaFilter<Listing> {
 	}
 	
 	/**
-	 * get the text after being processed by getEnumerationsAndItemizations() method this is initially empty string.
-	 * 
-	 * @return a String that contains the text after being processed.
-	 */
-	private String getProcessedText() {
-		assert this.textRemover != null;
-		this.processedText = this.textRemover.doDelete();
-		return this.processedText;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.infozilla.filters.InfozillaFilter#runFilter(java.lang.String)
-	 */
-	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.infozilla.filters.InfozillaFilter#runFilter(java.lang.String)
+	 * @see org.mozkito.infozilla.filters.Filter#runFilter(java.lang.String)
 	 */
 	@Override
-	public List<FilterResult<Listing>> runFilter(final String inputText) {
-		return null;
-		// return getEnumerationsAndItemizations(inputText);
+	protected List<Listing> runFilter(final String inputText) {
+		final List<Listing> list = new LinkedList<>();
+		
+		list.addAll(getItemizations(inputText));
+		list.addAll(getCharEnums(inputText));
+		list.addAll(getNumEnums(inputText));
+		
+		return list;
 	}
 	
-	// This method shall only be used internally !!
-	/**
-	 * Sets the processed text.
-	 * 
-	 * @param processedText
-	 *            the new processed text
-	 */
-	private void setProcessedText(final String processedText) {
-		this.textRemover = new FilterTextRemover(processedText);
-	}
 }

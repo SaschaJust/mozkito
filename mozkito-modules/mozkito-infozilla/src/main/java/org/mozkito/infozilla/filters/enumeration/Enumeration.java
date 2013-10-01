@@ -341,6 +341,11 @@ public class Enumeration implements Collection<Enumeration.EnumerationEntry> {
 	@SuppressWarnings ("serial")
 	private static final Map<Character, Set<Character>> TYPO_MAP          = new TreeMap<Character, Set<Character>>() {
 		                                                                      
+		                                                                      /**
+         * 
+         */
+		                                                                      private static final long serialVersionUID = 2135357189741807213L;
+		                                                                      
 		                                                                      {
 			                                                                      put('a', new TreeSet<Character>() {
 				                                                                      

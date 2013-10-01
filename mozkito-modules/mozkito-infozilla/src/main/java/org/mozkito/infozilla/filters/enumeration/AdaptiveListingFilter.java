@@ -21,8 +21,7 @@ import net.ownhero.dev.regex.Match;
 import net.ownhero.dev.regex.MultiMatch;
 import net.ownhero.dev.regex.Regex;
 
-import org.mozkito.infozilla.elements.FilterResult;
-import org.mozkito.infozilla.filters.InfozillaFilter;
+import org.mozkito.infozilla.filters.Filter;
 import org.mozkito.infozilla.model.EnhancedReport;
 import org.mozkito.infozilla.model.itemization.Listing;
 import org.mozkito.infozilla.model.itemization.ListingEntry;
@@ -32,7 +31,7 @@ import org.mozkito.infozilla.model.itemization.ListingEntry;
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class AdaptiveListingFilter extends InfozillaFilter<Listing> {
+public class AdaptiveListingFilter extends Filter<Listing> {
 	
 	/**
 	 * The Class EntryFinder.
@@ -129,14 +128,20 @@ public class AdaptiveListingFilter extends InfozillaFilter<Listing> {
 	private static final String ITEMIZATION_PATTERN = "(?<!\\w)({BULLET}(-+|\\*+|\\++))\\s+";
 	
 	/**
+	 * @param enhancedReport
+	 */
+	public AdaptiveListingFilter(final EnhancedReport enhancedReport) {
+		super(enhancedReport);
+	}
+	
+	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.infozilla.filters.InfozillaFilter#apply(java.util.List,
-	 *      org.mozkito.infozilla.model.EnhancedReport)
+	 * @see org.mozkito.infozilla.filters.Filter#apply(java.util.List, org.mozkito.infozilla.model.EnhancedReport)
 	 */
 	@Override
-	public void apply(final List<Listing> results,
-	                  final EnhancedReport enhancedReport) {
+	protected void apply(final List<Listing> results,
+	                     final EnhancedReport enhancedReport) {
 		PRECONDITIONS: {
 			// none
 		}
@@ -159,10 +164,11 @@ public class AdaptiveListingFilter extends InfozillaFilter<Listing> {
 	 */
 	private List<List<ListingEntry>> getEntryPoints(final String inputText) {
 		final List<List<ListingEntry>> list = new LinkedList<>();
-		final EntryFinder[] finders = new EntryFinder[] { new EntryFinder(ALPHA_PATTERN, Listing.Type.ENUMERATION),
-		        new EntryFinder(ROMAN_PATTERN, Listing.Type.ENUMERATION),
-		        new EntryFinder(NUMERIC_PATTERN, Listing.Type.ENUMERATION),
-		        new EntryFinder(ITEMIZATION_PATTERN, Listing.Type.ITEMIZATION) };
+		final EntryFinder[] finders = new EntryFinder[] {
+		        new EntryFinder(AdaptiveListingFilter.ALPHA_PATTERN, Listing.Type.ENUMERATION),
+		        new EntryFinder(AdaptiveListingFilter.ROMAN_PATTERN, Listing.Type.ENUMERATION),
+		        new EntryFinder(AdaptiveListingFilter.NUMERIC_PATTERN, Listing.Type.ENUMERATION),
+		        new EntryFinder(AdaptiveListingFilter.ITEMIZATION_PATTERN, Listing.Type.ITEMIZATION) };
 		
 		for (final EntryFinder finder : finders) {
 			final List<List<ListingEntry>> alphaEntryPoints = finder.getEntryPoints(inputText);
@@ -184,16 +190,16 @@ public class AdaptiveListingFilter extends InfozillaFilter<Listing> {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.infozilla.filters.InfozillaFilter#runFilter(java.lang.String)
+	 * @see org.mozkito.infozilla.filters.Filter#runFilter(java.lang.String)
 	 */
 	@Override
-	public List<FilterResult<Listing>> runFilter(final String inputText) {
+	protected List<Listing> runFilter(final String inputText) {
 		PRECONDITIONS: {
 			// none
 		}
 		
 		try {
-			final List<FilterResult<Listing>> results = new LinkedList<>();
+			final List<Listing> results = new LinkedList<>();
 			final List<List<ListingEntry>> entryPoints = getEntryPoints(inputText);
 			
 			for (final List<ListingEntry> list : entryPoints) {
@@ -205,7 +211,7 @@ public class AdaptiveListingFilter extends InfozillaFilter<Listing> {
 				
 				final Listing listing = new Listing(first.getType(), first.getStartPosition(), last.getEndPosition());
 				listing.addAll(list);
-				results.add(new FilterResult<Listing>(listing.getStartPosition(), listing.getEndPosition(), listing));
+				results.add(listing);
 			}
 			
 			return results;

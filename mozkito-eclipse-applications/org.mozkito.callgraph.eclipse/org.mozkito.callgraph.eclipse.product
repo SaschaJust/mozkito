@@ -26,7 +26,6 @@
       <plugin id="ca.mcgill.cs.swevo.ppa" fragment="true"/>
       <plugin id="ca.mcgill.cs.swevo.ppa.ui"/>
       <plugin id="com.ibm.icu"/>
-      <plugin id="de.unisaarland.cs.st.moskito.callgraph.eclipse"/>
       <plugin id="javax.servlet"/>
       <plugin id="org.apache.log4j"/>
       <plugin id="org.eclipse.ant.core"/>

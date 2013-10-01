@@ -1,3 +1,15 @@
+/***********************************************************************************************************************
+ * Copyright 2011 Kim Herzig, Sascha Just
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ **********************************************************************************************************************/
 package org.mozkito.utilities.io;
 
 /*******************************************************************************
@@ -58,6 +70,7 @@ import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.joda.time.DateTime;
+
 import org.mozkito.utilities.datastructures.RawContent;
 import org.mozkito.utilities.io.FileUtils.FileShutdownAction;
 import org.mozkito.utilities.io.exceptions.FetchException;
@@ -557,31 +570,7 @@ public class IOUtils {
 	 *             the fetch exception
 	 */
 	public static RawContent fetchHttp(final URI uri) throws FetchException {
-		MessageDigest md;
-		try {
-			md = MessageDigest.getInstance("MD5");
-			
-			final StringBuilder content = new StringBuilder();
-			
-			final HttpClient httpClient = new DefaultHttpClient();
-			final HttpGet request = new HttpGet(uri);
-			final HttpResponse response = httpClient.execute(request);
-			final HttpEntity entity = response.getEntity();
-			final BufferedReader reader = new BufferedReader(new InputStreamReader(entity.getContent()));
-			String line;
-			
-			while ((line = reader.readLine()) != null) {
-				content.append(line);
-			}
-			
-			final Header contentType = entity.getContentType();
-			
-			return new RawContent(uri, md.digest(content.toString().getBytes()), new DateTime(),
-			                      contentType.getValue(), content.toString());
-		} catch (final Exception e) {
-			throw new FetchException("Providing the " + RawContent.class.getSimpleName() + " of `" + uri.toString()
-			        + "` failed.", e);
-		}
+		return fetchHttp(uri, new DefaultHttpClient());
 	}
 	
 	/**

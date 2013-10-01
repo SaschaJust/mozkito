@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="de.unisaarland.cs.st.moskito.datadependency.eclipse.product" uid="org.mozkito.datadependency.eclipse.product" id="org.mozkito.datadependency.eclipse.mozkito_datadependency_eclipse" application="org.mozkito.datadependency.eclipse.application" version="1.0.0.qualifier" useFeatures="false" includeLaunchers="true">
+<product name="org.mozkito.datadependency.eclipse.product" uid="org.mozkito.datadependency.eclipse.product" id="org.mozkito.datadependency.eclipse.mozkito_datadependency_eclipse" application="org.mozkito.datadependency.eclipse.application" version="1.0.0.qualifier" useFeatures="false" includeLaunchers="true">
 
    <configIni use="default">
    </configIni>
@@ -25,7 +25,6 @@
       <plugin id="ca.mcgill.cs.swevo.ppa" fragment="true"/>
       <plugin id="ca.mcgill.cs.swevo.ppa.ui"/>
       <plugin id="com.ibm.icu"/>
-      <plugin id="de.unisaarland.cs.st.moskito.datadependency.eclipse"/>
       <plugin id="javax.servlet"/>
       <plugin id="org.apache.log4j"/>
       <plugin id="org.eclipse.ant.core"/>
@@ -100,6 +99,7 @@
       <plugin id="org.eclipse.ui.views.properties.tabbed"/>
       <plugin id="org.eclipse.ui.workbench"/>
       <plugin id="org.eclipse.ui.workbench.texteditor"/>
+      <plugin id="org.mozkito.datadependency.eclipse"/>
    </plugins>
 
    <configurations>

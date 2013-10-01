@@ -28,7 +28,11 @@
          point="org.eclipse.core.runtime.products">
       <product
             application="org.mozkito.datadependency.eclipse.application"
-            name="de.unisaarland.cs.st.moskito.datadependency.eclipse.product">
+            name="org.mozkito.datadependency.eclipse.product">
+         <property
+               name="appName"
+               value="org.mozkito.datadependency.eclipse.product">
+         </property>
       </product>
    </extension>
 

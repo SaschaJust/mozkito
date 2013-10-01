@@ -50,10 +50,16 @@ public class StacktraceEntry implements Annotated {
 	private String            methodName;
 	
 	/**
+	 * Instantiates a new stacktrace entry.
+	 * 
 	 * @param entryClassName
+	 *            the entry class name
 	 * @param fileName
+	 *            the file name
 	 * @param methodName
+	 *            the method name
 	 * @param lineNumber
+	 *            the line number
 	 */
 	public StacktraceEntry(final String entryClassName, final String fileName, final String methodName,
 	        final Integer lineNumber) {
@@ -177,6 +183,16 @@ public class StacktraceEntry implements Annotated {
 	}
 	
 	/**
+	 * Checks if is native method.
+	 * 
+	 * @return true, if is native method
+	 */
+	@Transient
+	public boolean isNativeMethod() {
+		return this.lineNumber == -2;
+	}
+	
+	/**
 	 * Sets the entry class name.
 	 * 
 	 * @param entryClassName
@@ -284,14 +300,22 @@ public class StacktraceEntry implements Annotated {
 	@Override
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
+		
 		builder.append("  at ");
 		builder.append(this.entryClassName);
 		builder.append(".");
 		builder.append(this.methodName);
+		
 		builder.append("(");
-		builder.append(this.fileName);
-		builder.append(":");
-		builder.append(this.lineNumber);
+		builder.append(isNativeMethod()
+		                               ? "Native Method"
+		                               : ((this.fileName != null) && (this.lineNumber >= 0)
+		                                                                                   ? this.fileName + ":"
+		                                                                                           + this.lineNumber
+		                                                                                   : (this.fileName != null
+		                                                                                                           ? this.fileName
+		                                                                                                           : "Unknown Source")));
+		
 		builder.append(")");
 		return builder.toString();
 	}
