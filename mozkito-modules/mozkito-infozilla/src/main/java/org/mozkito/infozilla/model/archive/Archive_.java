@@ -24,7 +24,7 @@ import org.mozkito.infozilla.model.attachment.Attachment;
  */
 @javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.infozilla.model.archive.Archive.class)
 @javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
-                             date = "Tue Oct 01 02:02:27 CEST 2013")
+                             date = "Tue Oct 01 14:05:14 CEST 2013")
 public class Archive_ {
 	
 	/** The entries. */

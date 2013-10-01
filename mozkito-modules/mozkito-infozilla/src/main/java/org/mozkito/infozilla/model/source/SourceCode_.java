@@ -26,7 +26,7 @@ import org.mozkito.persons.model.Person;
  */
 @javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.infozilla.model.source.SourceCode.class)
 @javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
-                             date = "Tue Oct 01 02:02:27 CEST 2013")
+                             date = "Tue Oct 01 14:05:14 CEST 2013")
 public class SourceCode_ {
 	
 	/** The code. */

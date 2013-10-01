@@ -25,7 +25,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -86,6 +85,16 @@ public class SourceCode implements Annotated, Inlineable {
 	/**
 	 * Instantiates a new source code.
 	 * 
+	 * @deprecated must only be used by JPA
+	 */
+	@Deprecated
+	public SourceCode() {
+		// stub
+	}
+	
+	/**
+	 * Instantiates a new source code.
+	 * 
 	 * @param code
 	 *            the code
 	 * @param type
@@ -95,11 +104,11 @@ public class SourceCode implements Annotated, Inlineable {
 	 */
 	public SourceCode(final String code, final Type type, final Attachment origin) {
 		super();
-		this.code = code;
-		this.type = type;
-		this.origin = origin;
-		this.endPosition = null;
-		this.startPosition = null;
+		setCode(code);
+		setType(type);
+		setOrigin(origin);
+		setEndPosition(null);
+		setStartPosition(null);
 	}
 	
 	/**
@@ -116,11 +125,11 @@ public class SourceCode implements Annotated, Inlineable {
 	 */
 	public SourceCode(final String code, final Type type, final Integer startPosition, final Integer endPosition) {
 		super();
-		this.code = code;
-		this.type = type;
-		this.startPosition = startPosition;
-		this.endPosition = endPosition;
-		this.origin = null;
+		setCode(code);
+		setType(type);
+		setOrigin(null);
+		setEndPosition(endPosition);
+		setStartPosition(startPosition);
 	}
 	
 	/**
@@ -131,17 +140,7 @@ public class SourceCode implements Annotated, Inlineable {
 	@Override
 	@Transient
 	public String getClassName() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return JavaUtils.getHandle(this);
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return JavaUtils.getHandle(this);
 	}
 	
 	/**
@@ -151,17 +150,7 @@ public class SourceCode implements Annotated, Inlineable {
 	 */
 	@Basic
 	public String getCode() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.code;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.code;
 	}
 	
 	/**
@@ -171,17 +160,7 @@ public class SourceCode implements Annotated, Inlineable {
 	 */
 	@Basic
 	public Integer getEndPosition() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.endPosition;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.endPosition;
 	}
 	
 	/**
@@ -192,17 +171,8 @@ public class SourceCode implements Annotated, Inlineable {
 	@Id
 	@GeneratedValue (strategy = GenerationType.AUTO)
 	public int getId() {
-		PRECONDITIONS: {
-			// none
-		}
+		return this.id;
 		
-		try {
-			return this.id;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
 	}
 	
 	/**
@@ -223,19 +193,9 @@ public class SourceCode implements Annotated, Inlineable {
 	 * 
 	 * @return the origin
 	 */
-	@ManyToMany (cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+	@ManyToOne (cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
 	public Attachment getOrigin() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.origin;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.origin;
 	}
 	
 	/**
@@ -245,17 +205,7 @@ public class SourceCode implements Annotated, Inlineable {
 	 */
 	@ManyToOne
 	public Person getPostedBy() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.postedBy;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.postedBy;
 	}
 	
 	/**
@@ -265,17 +215,7 @@ public class SourceCode implements Annotated, Inlineable {
 	 */
 	@Transient
 	public DateTime getPostedOn() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.postedOn;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.postedOn;
 	}
 	
 	/**
@@ -285,17 +225,7 @@ public class SourceCode implements Annotated, Inlineable {
 	 */
 	@Basic
 	public Integer getStartPosition() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.startPosition;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.startPosition;
 	}
 	
 	/**
@@ -305,17 +235,7 @@ public class SourceCode implements Annotated, Inlineable {
 	 */
 	@Enumerated (EnumType.STRING)
 	public Type getType() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.type;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.type;
 	}
 	
 	/**
@@ -325,17 +245,7 @@ public class SourceCode implements Annotated, Inlineable {
 	 *            the code to set
 	 */
 	public void setCode(final String code) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.code = code;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.code = code;
 	}
 	
 	/**
@@ -345,17 +255,7 @@ public class SourceCode implements Annotated, Inlineable {
 	 *            the endPosition to set
 	 */
 	public void setEndPosition(final Integer endPosition) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.endPosition = endPosition;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.endPosition = endPosition;
 	}
 	
 	/**
@@ -365,17 +265,7 @@ public class SourceCode implements Annotated, Inlineable {
 	 *            the id to set
 	 */
 	public void setId(final int id) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.id = id;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.id = id;
 	}
 	
 	/**
@@ -399,17 +289,7 @@ public class SourceCode implements Annotated, Inlineable {
 	 *            the origin to set
 	 */
 	public void setOrigin(final Attachment origin) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.origin = origin;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.origin = origin;
 	}
 	
 	/**
@@ -419,17 +299,7 @@ public class SourceCode implements Annotated, Inlineable {
 	 *            the postedBy to set
 	 */
 	public void setPostedBy(final Person postedBy) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.postedBy = postedBy;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.postedBy = postedBy;
 	}
 	
 	/**
@@ -439,17 +309,7 @@ public class SourceCode implements Annotated, Inlineable {
 	 *            the postedOn to set
 	 */
 	public void setPostedOn(final DateTime postedOn) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.postedOn = postedOn;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.postedOn = postedOn;
 	}
 	
 	/**
@@ -459,17 +319,7 @@ public class SourceCode implements Annotated, Inlineable {
 	 *            the startPosition to set
 	 */
 	public void setStartPosition(final Integer startPosition) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.startPosition = startPosition;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.startPosition = startPosition;
 	}
 	
 	/**
@@ -479,17 +329,7 @@ public class SourceCode implements Annotated, Inlineable {
 	 *            the type to set
 	 */
 	public void setType(final Type type) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.type = type;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.type = type;
 	}
 	
 	/**

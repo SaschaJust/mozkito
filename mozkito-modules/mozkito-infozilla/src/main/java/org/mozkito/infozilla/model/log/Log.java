@@ -39,6 +39,7 @@ import org.mozkito.infozilla.model.attachment.Attachment;
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persons.model.Person;
 import org.mozkito.utilities.commons.JavaUtils;
+import org.mozkito.utilities.io.FileUtils;
 
 /**
  * The Class Log.
@@ -126,17 +127,7 @@ public class Log implements Annotated, Attachable, Inlineable, Iterable<LogEntry
 	 */
 	@Basic
 	public Integer getEndPosition() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.endPosition;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.endPosition;
 	}
 	
 	/**
@@ -157,17 +148,7 @@ public class Log implements Annotated, Attachable, Inlineable, Iterable<LogEntry
 	@Id
 	@GeneratedValue (strategy = GenerationType.AUTO)
 	public int getId() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.id;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.id;
 	}
 	
 	/**
@@ -225,17 +206,8 @@ public class Log implements Annotated, Attachable, Inlineable, Iterable<LogEntry
 	 */
 	@ManyToOne
 	public Person getPostedBy() {
-		PRECONDITIONS: {
-			// none
-		}
+		return this.postedBy;
 		
-		try {
-			return this.postedBy;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
 	}
 	
 	/**
@@ -343,17 +315,7 @@ public class Log implements Annotated, Attachable, Inlineable, Iterable<LogEntry
 	 *            the endPosition to set
 	 */
 	public void setEndPosition(final Integer endPosition) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.endPosition = endPosition;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.endPosition = endPosition;
 	}
 	
 	/**
@@ -373,17 +335,7 @@ public class Log implements Annotated, Attachable, Inlineable, Iterable<LogEntry
 	 *            the id to set
 	 */
 	public void setId(final int id) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.id = id;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.id = id;
 	}
 	
 	/**
@@ -431,17 +383,7 @@ public class Log implements Annotated, Attachable, Inlineable, Iterable<LogEntry
 	 *            the origin to set
 	 */
 	public void setOrigin(final Attachment origin) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.origin = origin;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.origin = origin;
 	}
 	
 	/**
@@ -451,17 +393,7 @@ public class Log implements Annotated, Attachable, Inlineable, Iterable<LogEntry
 	 *            the postedBy to set
 	 */
 	public void setPostedBy(final Person postedBy) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.postedBy = postedBy;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.postedBy = postedBy;
 	}
 	
 	/**
@@ -471,17 +403,7 @@ public class Log implements Annotated, Attachable, Inlineable, Iterable<LogEntry
 	 *            the postedOn to set
 	 */
 	public void setPostedOn(final DateTime postedOn) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.postedOn = postedOn;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.postedOn = postedOn;
 	}
 	
 	/**
@@ -501,17 +423,7 @@ public class Log implements Annotated, Attachable, Inlineable, Iterable<LogEntry
 	 *            the startPosition to set
 	 */
 	public void setStartPosition(final Integer startPosition) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.startPosition = startPosition;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.startPosition = startPosition;
 	}
 	
 	/**
@@ -533,13 +445,15 @@ public class Log implements Annotated, Attachable, Inlineable, Iterable<LogEntry
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
 		builder.append("Log [start=");
-		builder.append(this.start);
+		builder.append(getStart());
 		builder.append(", end=");
-		builder.append(this.end);
+		builder.append(getEnd());
 		builder.append("]");
+		
 		for (final LogEntry entry : getEntries()) {
-			builder.append(System.getProperty("line.separator")).append(entry);
+			builder.append(FileUtils.lineSeparator).append(entry);
 		}
+		
 		return builder.toString();
 	}
 }

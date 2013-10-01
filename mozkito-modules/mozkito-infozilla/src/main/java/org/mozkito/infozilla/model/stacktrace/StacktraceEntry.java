@@ -52,6 +52,16 @@ public class StacktraceEntry implements Annotated {
 	/**
 	 * Instantiates a new stacktrace entry.
 	 * 
+	 * @deprecated must only be used by JPA
+	 */
+	@Deprecated
+	public StacktraceEntry() {
+		// stub
+	}
+	
+	/**
+	 * Instantiates a new stacktrace entry.
+	 * 
 	 * @param entryClassName
 	 *            the entry class name
 	 * @param fileName
@@ -88,17 +98,7 @@ public class StacktraceEntry implements Annotated {
 	 */
 	@Basic
 	public String getEntryClassName() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.entryClassName;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.entryClassName;
 	}
 	
 	/**
@@ -108,17 +108,7 @@ public class StacktraceEntry implements Annotated {
 	 */
 	@Basic
 	public String getFileName() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.fileName;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.fileName;
 	}
 	
 	/**
@@ -129,17 +119,7 @@ public class StacktraceEntry implements Annotated {
 	@Id
 	@GeneratedValue (strategy = GenerationType.AUTO)
 	public int getId() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.id;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.id;
 	}
 	
 	/**
@@ -149,17 +129,7 @@ public class StacktraceEntry implements Annotated {
 	 */
 	@Basic
 	public Integer getLineNumber() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.lineNumber;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.lineNumber;
 	}
 	
 	/**
@@ -169,17 +139,7 @@ public class StacktraceEntry implements Annotated {
 	 */
 	@Basic
 	public String getMethodName() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.methodName;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.methodName;
 	}
 	
 	/**
@@ -189,7 +149,7 @@ public class StacktraceEntry implements Annotated {
 	 */
 	@Transient
 	public boolean isNativeMethod() {
-		return this.lineNumber == -2;
+		return getLineNumber() == -2;
 	}
 	
 	/**
@@ -199,17 +159,7 @@ public class StacktraceEntry implements Annotated {
 	 *            the entryClassName to set
 	 */
 	public void setEntryClassName(final String entryClassName) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.entryClassName = entryClassName;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.entryClassName = entryClassName;
 	}
 	
 	/**
@@ -219,17 +169,7 @@ public class StacktraceEntry implements Annotated {
 	 *            the fileName to set
 	 */
 	public void setFileName(final String fileName) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.fileName = fileName;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.fileName = fileName;
 	}
 	
 	/**
@@ -239,17 +179,7 @@ public class StacktraceEntry implements Annotated {
 	 *            the id to set
 	 */
 	public void setId(final int id) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.id = id;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.id = id;
 	}
 	
 	/**
@@ -259,17 +189,7 @@ public class StacktraceEntry implements Annotated {
 	 *            the lineNumber to set
 	 */
 	public void setLineNumber(final Integer lineNumber) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.lineNumber = lineNumber;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.lineNumber = lineNumber;
 	}
 	
 	/**
@@ -279,17 +199,7 @@ public class StacktraceEntry implements Annotated {
 	 *            the methodName to set
 	 */
 	public void setMethodName(final String methodName) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.methodName = methodName;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.methodName = methodName;
 	}
 	
 	/**
@@ -302,21 +212,22 @@ public class StacktraceEntry implements Annotated {
 		final StringBuilder builder = new StringBuilder();
 		
 		builder.append("  at ");
-		builder.append(this.entryClassName);
+		builder.append(getEntryClassName());
 		builder.append(".");
-		builder.append(this.methodName);
+		builder.append(getMethodName());
 		
 		builder.append("(");
 		builder.append(isNativeMethod()
 		                               ? "Native Method"
-		                               : ((this.fileName != null) && (this.lineNumber >= 0)
-		                                                                                   ? this.fileName + ":"
-		                                                                                           + this.lineNumber
-		                                                                                   : (this.fileName != null
-		                                                                                                           ? this.fileName
+		                               : ((getFileName() != null) && (getLineNumber() >= 0)
+		                                                                                   ? getFileName() + ":"
+		                                                                                           + getLineNumber()
+		                                                                                   : (getFileName() != null
+		                                                                                                           ? getFileName()
 		                                                                                                           : "Unknown Source")));
 		
 		builder.append(")");
+		
 		return builder.toString();
 	}
 	

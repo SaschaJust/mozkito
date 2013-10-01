@@ -15,37 +15,38 @@ package org.mozkito.infozilla.model.itemization;
 
 import java.util.Date;
 
+import javax.persistence.metamodel.ListAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 
 import org.mozkito.infozilla.model.attachment.Attachment;
 import org.mozkito.persons.model.Person;
 
 /**
- * The Class ObservedBehavior_.
+ * The Class StepsToReproduce_.
  */
-@javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.infozilla.model.itemization.ObservedBehavior.class)
+@javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.infozilla.model.itemization.StepsToReproduce.class)
 @javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
                              date = "Tue Oct 01 14:05:14 CEST 2013")
-public class ObservedBehavior_ {
+public class StepsToReproduce_ {
 	
 	/** The end position. */
-	public static volatile SingularAttribute<ObservedBehavior, Integer>    endPosition;
+	public static volatile SingularAttribute<StepsToReproduce, Integer>    endPosition;
 	
 	/** The id. */
-	public static volatile SingularAttribute<ObservedBehavior, Integer>    id;
+	public static volatile SingularAttribute<StepsToReproduce, Integer>    id;
 	
 	/** The java posted on. */
-	public static volatile SingularAttribute<ObservedBehavior, Date>       javaPostedOn;
+	public static volatile SingularAttribute<StepsToReproduce, Date>       javaPostedOn;
 	
 	/** The origin. */
-	public static volatile SingularAttribute<ObservedBehavior, Attachment> origin;
+	public static volatile SingularAttribute<StepsToReproduce, Attachment> origin;
 	
 	/** The posted by. */
-	public static volatile SingularAttribute<ObservedBehavior, Person>     postedBy;
+	public static volatile SingularAttribute<StepsToReproduce, Person>     postedBy;
 	
 	/** The start position. */
-	public static volatile SingularAttribute<ObservedBehavior, Integer>    startPosition;
+	public static volatile SingularAttribute<StepsToReproduce, Integer>    startPosition;
 	
-	/** The text. */
-	public static volatile SingularAttribute<ObservedBehavior, String>     text;
+	/** The steps. */
+	public static volatile ListAttribute<StepsToReproduce, String>         steps;
 }

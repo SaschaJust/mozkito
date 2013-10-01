@@ -82,6 +82,16 @@ public class Archive implements Attachable, Annotated {
 	/**
 	 * Instantiates a new archive.
 	 * 
+	 * @deprecated must only be used by JPA
+	 */
+	@Deprecated
+	public Archive() {
+		// stub
+	}
+	
+	/**
+	 * Instantiates a new archive.
+	 * 
 	 * @param origin
 	 *            the origin
 	 */
@@ -289,17 +299,7 @@ public class Archive implements Attachable, Annotated {
 	 * @return the entries
 	 */
 	public List<Attachment> getEntries() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.entries;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.entries;
 	}
 	
 	/**
@@ -310,17 +310,7 @@ public class Archive implements Attachable, Annotated {
 	@Id
 	@GeneratedValue (strategy = GenerationType.AUTO)
 	public int getId() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.id;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.id;
 	}
 	
 	/**
@@ -330,17 +320,7 @@ public class Archive implements Attachable, Annotated {
 	 */
 	@ManyToOne (cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
 	public Attachment getOrigin() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.origin;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.origin;
 	}
 	
 	/**
@@ -350,17 +330,7 @@ public class Archive implements Attachable, Annotated {
 	 */
 	@Enumerated (EnumType.STRING)
 	public Type getType() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.type;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.type;
 	}
 	
 	/**
@@ -370,17 +340,7 @@ public class Archive implements Attachable, Annotated {
 	 *            the entries to set
 	 */
 	public void setEntries(final List<Attachment> entries) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.entries = entries;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.entries = entries;
 	}
 	
 	/**
@@ -390,17 +350,7 @@ public class Archive implements Attachable, Annotated {
 	 *            the id to set
 	 */
 	public void setId(final int id) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.id = id;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.id = id;
 	}
 	
 	/**
@@ -410,17 +360,7 @@ public class Archive implements Attachable, Annotated {
 	 *            the origin to set
 	 */
 	public void setOrigin(final Attachment origin) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.origin = origin;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.origin = origin;
 	}
 	
 	/**
@@ -430,17 +370,7 @@ public class Archive implements Attachable, Annotated {
 	 *            the type to set
 	 */
 	public void setType(final Type type) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.type = type;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.type = type;
 	}
 	
 }

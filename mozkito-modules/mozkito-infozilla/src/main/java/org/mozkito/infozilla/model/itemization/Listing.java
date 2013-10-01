@@ -19,8 +19,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -91,6 +89,16 @@ public class Listing implements Annotated, Inlineable, List<ListingEntry> {
 	
 	/** The origin. */
 	private Attachment         origin;
+	
+	/**
+	 * Instantiates a new listing.
+	 * 
+	 * @deprecated must only be used by JPA
+	 */
+	@Deprecated
+	public Listing() {
+		// stub
+	}
 	
 	/**
 	 * Instantiates a new listing.
@@ -307,17 +315,7 @@ public class Listing implements Annotated, Inlineable, List<ListingEntry> {
 	 */
 	@Basic
 	public Integer getEndPosition() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.endPosition;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.endPosition;
 	}
 	
 	/**
@@ -327,17 +325,7 @@ public class Listing implements Annotated, Inlineable, List<ListingEntry> {
 	 */
 	@OneToMany (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	public List<ListingEntry> getEntries() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.entries;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.entries;
 	}
 	
 	/**
@@ -347,19 +335,8 @@ public class Listing implements Annotated, Inlineable, List<ListingEntry> {
 	 */
 	@Id
 	@GeneratedValue (strategy = GenerationType.AUTO)
-	@Access (AccessType.PROPERTY)
 	public int getId() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.id;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.id;
 	}
 	
 	/**
@@ -380,18 +357,9 @@ public class Listing implements Annotated, Inlineable, List<ListingEntry> {
 	 * 
 	 * @return the origin
 	 */
+	@ManyToOne
 	public Attachment getOrigin() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.origin;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.origin;
 	}
 	
 	/**
@@ -401,17 +369,7 @@ public class Listing implements Annotated, Inlineable, List<ListingEntry> {
 	 */
 	@ManyToOne
 	public Person getPostedBy() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.postedBy;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.postedBy;
 	}
 	
 	/**
@@ -441,17 +399,7 @@ public class Listing implements Annotated, Inlineable, List<ListingEntry> {
 	 */
 	@Basic
 	public Integer getStartPosition() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.startPosition;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.startPosition;
 	}
 	
 	/**
@@ -461,17 +409,7 @@ public class Listing implements Annotated, Inlineable, List<ListingEntry> {
 	 */
 	@Enumerated (EnumType.STRING)
 	public Type getType() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.type;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.type;
 	}
 	
 	/**

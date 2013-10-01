@@ -85,6 +85,16 @@ public class Stacktrace implements Annotated, Attachable, Inlineable {
 	/**
 	 * Instantiates a new stacktrace.
 	 * 
+	 * @deprecated must only be used by JPA
+	 */
+	@Deprecated
+	public Stacktrace() {
+		// stub
+	}
+	
+	/**
+	 * Instantiates a new stacktrace.
+	 * 
 	 * @param origin
 	 *            the origin
 	 * @param exceptionType
@@ -144,17 +154,7 @@ public class Stacktrace implements Annotated, Attachable, Inlineable {
 	 */
 	@OneToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	public Stacktrace getCause() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.cause;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.cause;
 	}
 	
 	/**
@@ -185,17 +185,7 @@ public class Stacktrace implements Annotated, Attachable, Inlineable {
 	 */
 	@Basic
 	public Integer getEndPosition() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.endPosition;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.endPosition;
 	}
 	
 	/**
@@ -205,17 +195,7 @@ public class Stacktrace implements Annotated, Attachable, Inlineable {
 	 */
 	@Basic
 	public String getExceptionType() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.exceptionType;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.exceptionType;
 	}
 	
 	/**
@@ -226,17 +206,7 @@ public class Stacktrace implements Annotated, Attachable, Inlineable {
 	@Id
 	@GeneratedValue (strategy = GenerationType.AUTO)
 	public int getId() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.id;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.id;
 	}
 	
 	/**
@@ -259,17 +229,7 @@ public class Stacktrace implements Annotated, Attachable, Inlineable {
 	 */
 	@Basic
 	public Integer getMore() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.more;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.more;
 	}
 	
 	/**
@@ -277,19 +237,9 @@ public class Stacktrace implements Annotated, Attachable, Inlineable {
 	 * 
 	 * @return the origin
 	 */
-	@OneToMany (cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+	@ManyToOne (cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
 	public Attachment getOrigin() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.origin;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.origin;
 	}
 	
 	/**
@@ -299,17 +249,7 @@ public class Stacktrace implements Annotated, Attachable, Inlineable {
 	 */
 	@ManyToOne
 	public Person getPostedBy() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.postedBy;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.postedBy;
 	}
 	
 	/**
@@ -339,17 +279,7 @@ public class Stacktrace implements Annotated, Attachable, Inlineable {
 	 */
 	@Basic
 	public String getReason() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.reason;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.reason;
 	}
 	
 	/**
@@ -359,17 +289,7 @@ public class Stacktrace implements Annotated, Attachable, Inlineable {
 	 */
 	@Basic
 	public Integer getStartPosition() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.startPosition;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.startPosition;
 	}
 	
 	/**
@@ -377,19 +297,9 @@ public class Stacktrace implements Annotated, Attachable, Inlineable {
 	 * 
 	 * @return the trace
 	 */
-	@ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	public List<StacktraceEntry> getTrace() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.trace;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.trace;
 	}
 	
 	/**
@@ -399,17 +309,7 @@ public class Stacktrace implements Annotated, Attachable, Inlineable {
 	 *            the cause to set
 	 */
 	public void setCause(final Stacktrace cause) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.cause = cause;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.cause = cause;
 	}
 	
 	/**
@@ -419,17 +319,7 @@ public class Stacktrace implements Annotated, Attachable, Inlineable {
 	 *            the endPosition to set
 	 */
 	public void setEndPosition(final Integer endPosition) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.endPosition = endPosition;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.endPosition = endPosition;
 	}
 	
 	/**
@@ -439,17 +329,7 @@ public class Stacktrace implements Annotated, Attachable, Inlineable {
 	 *            the exceptionType to set
 	 */
 	public void setExceptionType(final String exceptionType) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.exceptionType = exceptionType;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.exceptionType = exceptionType;
 	}
 	
 	/**
@@ -459,17 +339,7 @@ public class Stacktrace implements Annotated, Attachable, Inlineable {
 	 *            the id to set
 	 */
 	public void setId(final int id) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.id = id;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.id = id;
 	}
 	
 	/**
@@ -493,17 +363,7 @@ public class Stacktrace implements Annotated, Attachable, Inlineable {
 	 *            the more to set
 	 */
 	public void setMore(final Integer more) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.more = more;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.more = more;
 	}
 	
 	/**
@@ -513,17 +373,7 @@ public class Stacktrace implements Annotated, Attachable, Inlineable {
 	 *            the origin to set
 	 */
 	public void setOrigin(final Attachment origin) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.origin = origin;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.origin = origin;
 	}
 	
 	/**
@@ -533,17 +383,7 @@ public class Stacktrace implements Annotated, Attachable, Inlineable {
 	 *            the postedBy to set
 	 */
 	public void setPostedBy(final Person postedBy) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.postedBy = postedBy;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.postedBy = postedBy;
 	}
 	
 	/**
@@ -553,17 +393,7 @@ public class Stacktrace implements Annotated, Attachable, Inlineable {
 	 *            the postedOn to set
 	 */
 	public void setPostedOn(final DateTime postedOn) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.postedOn = postedOn;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.postedOn = postedOn;
 	}
 	
 	/**
@@ -573,17 +403,7 @@ public class Stacktrace implements Annotated, Attachable, Inlineable {
 	 *            the reason to set
 	 */
 	public void setReason(final String reason) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.reason = reason;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.reason = reason;
 	}
 	
 	/**
@@ -593,17 +413,7 @@ public class Stacktrace implements Annotated, Attachable, Inlineable {
 	 *            the startPosition to set
 	 */
 	public void setStartPosition(final Integer startPosition) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.startPosition = startPosition;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.startPosition = startPosition;
 	}
 	
 	/**
@@ -613,17 +423,7 @@ public class Stacktrace implements Annotated, Attachable, Inlineable {
 	 *            the trace to set
 	 */
 	public void setTrace(final List<StacktraceEntry> trace) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.trace = trace;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.trace = trace;
 	}
 	
 	/**
@@ -634,27 +434,28 @@ public class Stacktrace implements Annotated, Attachable, Inlineable {
 	@Override
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
+		
 		builder.append("Stacktrace [startPosition=");
-		builder.append(this.startPosition);
+		builder.append(getStartPosition());
 		builder.append(", endPosition=");
-		builder.append(this.endPosition);
+		builder.append(getEndPosition());
 		builder.append("]");
 		builder.append('\n');
-		builder.append(this.exceptionType);
+		builder.append(getExceptionType());
 		builder.append(": ");
-		builder.append(this.reason);
+		builder.append(getReason());
 		
-		for (final StacktraceEntry entry : this.trace) {
+		for (final StacktraceEntry entry : getTrace()) {
 			builder.append('\n').append(entry);
 		}
 		
-		if (this.more != null) {
-			builder.append('\n').append("... ").append(this.more).append(" more");
+		if (getMore() != null) {
+			builder.append('\n').append("... ").append(getMore()).append(" more");
 		}
 		
-		if (this.cause != null) {
+		if (getCause() != null) {
 			builder.append('\n').append("Caused by: ");
-			builder.append(this.cause);
+			builder.append(getCause());
 		}
 		
 		return builder.toString();

@@ -14,7 +14,6 @@ package org.mozkito.persistence.model;
 
 import java.util.Date;
 
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Temporal;
@@ -94,18 +93,18 @@ public class DateTimeTuple implements PersistentTuple<DateTime> {
 			return false;
 		}
 		final DateTimeTuple other = (DateTimeTuple) obj;
-		if (this.newValue == null) {
-			if (other.newValue != null) {
+		if (getNewValue() == null) {
+			if (other.getNewValue() != null) {
 				return false;
 			}
-		} else if (!this.newValue.equals(other.newValue)) {
+		} else if (!getNewValue().equals(other.getNewValue())) {
 			return false;
 		}
-		if (this.oldValue == null) {
-			if (other.oldValue != null) {
+		if (getOldValue() == null) {
+			if (other.getOldValue() != null) {
 				return false;
 			}
-		} else if (!this.oldValue.equals(other.oldValue)) {
+		} else if (!getOldValue().equals(other.getOldValue())) {
 			return false;
 		}
 		return true;
@@ -125,7 +124,6 @@ public class DateTimeTuple implements PersistentTuple<DateTime> {
 	 * 
 	 * @return the newValue
 	 */
-	@Basic
 	@Column (name = "newValue")
 	@Temporal (TemporalType.TIMESTAMP)
 	protected Date getJavaNewValue() {
@@ -139,7 +137,6 @@ public class DateTimeTuple implements PersistentTuple<DateTime> {
 	 * 
 	 * @return the oldValue
 	 */
-	@Basic
 	@Column (name = "oldValue")
 	@Temporal (TemporalType.TIMESTAMP)
 	protected Date getJavaOldValue() {
@@ -178,6 +175,7 @@ public class DateTimeTuple implements PersistentTuple<DateTime> {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		
 		result = (prime * result) + ((getNewValue() == null)
 		                                                    ? 0
 		                                                    : getNewValue().hashCode());
@@ -240,11 +238,13 @@ public class DateTimeTuple implements PersistentTuple<DateTime> {
 	@Override
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
+		
 		builder.append("DateTimeTuple [old="); //$NON-NLS-1$
 		builder.append(getOldValue());
 		builder.append(", new="); //$NON-NLS-1$
 		builder.append(getNewValue());
 		builder.append("]"); //$NON-NLS-1$
+		
 		return builder.toString();
 	}
 	

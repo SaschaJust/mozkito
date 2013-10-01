@@ -53,11 +53,13 @@
 					<connectionURL>jdbc:postgresql://quentin.cs.uni-saarland.de/mozkito</connectionURL>
 					<includes>
 						<param>**/model/*</param>
+						<param>**/model/*/*</param>
 					</includes>
 					<excludes>
 						<param>**/model/*_.*</param>
-						<param>**/model/*_.*</param>
+						<param>**/model/**/*_.*</param>
 						<param>**/model/*$*</param>
+						<param>**/model/**/*$*</param>
 						<param>**/model/ChangeOperations.*</param>
 						<param>**/model/JavaElementFactory.*</param>
 						<param>**/model/JavaElementLocationSet.*</param>
@@ -138,11 +140,11 @@
 				</resources>
 				<plugins>
 					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
+						<groupId>org.apache.openjpa</groupId>
 						<artifactId>openjpa-maven-plugin</artifactId>
-						<version>1.2</version>
+						<version>2.2.2</version>
 						<configuration>
-							<includes>**/model/*.class</includes>
+							<includes>**/model/*.class,**/model/*/*.class</includes>
 							<addDefaultConstructor>true</addDefaultConstructor>
 							<enforcePropertyRestrictions>true</enforcePropertyRestrictions>
 						</configuration>
@@ -160,7 +162,7 @@
 								<groupId>org.apache.openjpa</groupId>
 								<artifactId>openjpa</artifactId>
 								<!-- set the version to be the same as the level in your runtime -->
-								<version>2.2.1.1</version>
+								<version>2.2.2</version>
 							</dependency>
 							<dependency>
 								<groupId>log4j</groupId>

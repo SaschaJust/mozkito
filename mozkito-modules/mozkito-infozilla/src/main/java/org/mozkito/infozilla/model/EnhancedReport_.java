@@ -18,7 +18,6 @@ import javax.persistence.metamodel.ListAttribute;
 import javax.persistence.metamodel.MapAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 
-import org.mozkito.infozilla.Region;
 import org.mozkito.infozilla.model.EnhancedReport.Type;
 import org.mozkito.infozilla.model.attachment.Attachment;
 import org.mozkito.infozilla.model.image.Image;
@@ -39,7 +38,7 @@ import org.mozkito.issues.model.Report;
  */
 @javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.infozilla.model.EnhancedReport.class)
 @javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
-                             date = "Tue Oct 01 02:02:27 CEST 2013")
+                             date = "Tue Oct 01 14:05:14 CEST 2013")
 public class EnhancedReport_ {
 	
 	/** The attachments. */
@@ -83,9 +82,6 @@ public class EnhancedReport_ {
 	
 	/** The patches. */
 	public static volatile CollectionAttribute<EnhancedReport, Patch>            patches;
-	
-	/** The report. */
-	public static volatile SingularAttribute<EnhancedReport, Report>             report;
 	
 	/** The stacktraces. */
 	public static volatile CollectionAttribute<EnhancedReport, Stacktrace>       stacktraces;

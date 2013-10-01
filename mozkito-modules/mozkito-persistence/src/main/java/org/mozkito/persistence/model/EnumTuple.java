@@ -52,6 +52,14 @@ public class EnumTuple implements PersistentTuple<Enum<?>> {
 	private String            enumClassName;
 	
 	/**
+	 * @deprecated must only be used by JPA
+	 */
+	@Deprecated
+	public EnumTuple() {
+		// stub
+	}
+	
+	/**
 	 * Instantiates a new enum tuple.
 	 * 
 	 * @param oldValue
@@ -139,25 +147,25 @@ public class EnumTuple implements PersistentTuple<Enum<?>> {
 			return false;
 		}
 		final EnumTuple other = (EnumTuple) obj;
-		if (this.enumClassName == null) {
-			if (other.enumClassName != null) {
+		if (getEnumClassName() == null) {
+			if (other.getEnumClassName() != null) {
 				return false;
 			}
-		} else if (!this.enumClassName.equals(other.enumClassName)) {
+		} else if (!getEnumClassName().equals(other.getEnumClassName())) {
 			return false;
 		}
-		if (this.newStringValue == null) {
-			if (other.newStringValue != null) {
+		if (getNewStringValue() == null) {
+			if (other.getNewStringValue() != null) {
 				return false;
 			}
-		} else if (!this.newStringValue.equals(other.newStringValue)) {
+		} else if (!getNewStringValue().equals(other.getNewStringValue())) {
 			return false;
 		}
-		if (this.oldStringValue == null) {
-			if (other.oldStringValue != null) {
+		if (getOldStringValue() == null) {
+			if (other.getOldStringValue() != null) {
 				return false;
 			}
-		} else if (!this.oldStringValue.equals(other.oldStringValue)) {
+		} else if (!getOldStringValue().equals(other.getOldStringValue())) {
 			return false;
 		}
 		return true;
@@ -264,15 +272,15 @@ public class EnumTuple implements PersistentTuple<Enum<?>> {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = (prime * result) + ((this.enumClassName == null)
+		result = (prime * result) + ((getEnumClassName() == null)
 		                                                         ? 0
-		                                                         : this.enumClassName.hashCode());
-		result = (prime * result) + ((this.newStringValue == null)
+		                                                         : getEnumClassName().hashCode());
+		result = (prime * result) + ((getNewStringValue() == null)
 		                                                          ? 0
-		                                                          : this.newStringValue.hashCode());
-		result = (prime * result) + ((this.oldStringValue == null)
+		                                                          : getNewStringValue().hashCode());
+		result = (prime * result) + ((getOldStringValue() == null)
 		                                                          ? 0
-		                                                          : this.oldStringValue.hashCode());
+		                                                          : getOldStringValue().hashCode());
 		return result;
 	}
 	
@@ -349,6 +357,7 @@ public class EnumTuple implements PersistentTuple<Enum<?>> {
 	@Override
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
+		
 		builder.append("EnumTuple [class="); //$NON-NLS-1$
 		builder.append(getEnumClassName());
 		builder.append(", old="); //$NON-NLS-1$
@@ -356,6 +365,7 @@ public class EnumTuple implements PersistentTuple<Enum<?>> {
 		builder.append(", new="); //$NON-NLS-1$
 		builder.append(getNewStringValue());
 		builder.append("]"); //$NON-NLS-1$
+		
 		return builder.toString();
 	}
 	

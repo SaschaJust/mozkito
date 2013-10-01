@@ -413,9 +413,9 @@
 					</configuration>
 				</plugin>
 				<plugin>
-					<groupId>org.codehaus.mojo</groupId>
+					<groupId>org.apache.openjpa</groupId>
 					<artifactId>openjpa-maven-plugin</artifactId>
-					<version>1.2</version>
+					<version>2.2.2</version>
 				</plugin>
 				<plugin>
 					<groupId>org.mozkito</groupId>
@@ -578,7 +578,7 @@
 							<compilerArgument>-Aopenjpa.metamodel=true</compilerArgument>
 							<includes>
 								<include>**/model/*.java</include>
-								<include>**/model/**/*.java</include>
+								<include>**/model/*/*.java</include>
 							</includes>
 						</configuration>
 					</plugin>

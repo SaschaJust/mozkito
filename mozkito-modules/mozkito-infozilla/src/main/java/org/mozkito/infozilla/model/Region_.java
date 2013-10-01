@@ -11,30 +11,21 @@
  * specific language governing permissions and limitations under the License.
  **********************************************************************************************************************/
 
-package org.mozkito.infozilla.model.image;
+package org.mozkito.infozilla.model;
 
 import javax.persistence.metamodel.SingularAttribute;
 
-import org.mozkito.infozilla.model.attachment.Attachment;
-import org.mozkito.infozilla.model.image.Image.Type;
-
 /**
- * The Class Image_.
+ * The Class Region_.
  */
-@javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.infozilla.model.image.Image.class)
+@javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.infozilla.model.Region.class)
 @javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
                              date = "Tue Oct 01 14:05:14 CEST 2013")
-public class Image_ {
+public class Region_ {
 	
-	/** The data. */
-	public static volatile SingularAttribute<Image, byte[]>     data;
+	/** The from. */
+	public static volatile SingularAttribute<Region, Integer> from;
 	
-	/** The id. */
-	public static volatile SingularAttribute<Image, Integer>    id;
-	
-	/** The origin. */
-	public static volatile SingularAttribute<Image, Attachment> origin;
-	
-	/** The type. */
-	public static volatile SingularAttribute<Image, Type>       type;
+	/** The to. */
+	public static volatile SingularAttribute<Region, Integer> to;
 }

@@ -23,6 +23,7 @@ import net.ownhero.dev.regex.Regex;
 
 import org.joda.time.DateTime;
 
+import org.mozkito.infozilla.model.Region;
 import org.mozkito.persons.model.Person;
 import org.mozkito.utilities.io.FileUtils;
 

@@ -23,14 +23,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.persistence.Basic;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 
-import org.mozkito.infozilla.Region;
 import org.mozkito.infozilla.model.attachment.Attachment;
 import org.mozkito.infozilla.model.image.Image;
 import org.mozkito.infozilla.model.itemization.ExpectedBehavior;
@@ -61,20 +63,17 @@ public class EnhancedReport implements Annotated {
 	 */
 	public static enum Type {
 		
-		/** The sourcecode. */
-		SOURCECODE,
 		/** The listing. */
 		LISTING,
 		/** The log. */
 		LOG,
 		/** The patch. */
 		PATCH,
+		/** The sourcecode. */
+		SOURCECODE,
 		/** The stacktrace. */
 		STACKTRACE;
 	}
-	
-	/** The extracted regions. */
-	private Map<Region, Type> extractedRegions = new HashMap<>();
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -6200370567492281526L;
@@ -172,6 +171,18 @@ public class EnhancedReport implements Annotated {
 	/** The expected behaviors. */
 	private Collection<ExpectedBehavior> expectedBehaviors = new LinkedList<ExpectedBehavior>();
 	
+	/** The extracted regions. */
+	private Map<Region, Type>            extractedRegions  = new HashMap<>();
+	
+	/** The filtered comments. */
+	private List<Comment>                filteredComments  = new LinkedList<>();
+	
+	/** The filtered description. */
+	private String                       filteredDescription;
+	
+	/** The id. */
+	private String                       id;
+	
 	/** The images. */
 	private Collection<Image>            images            = new LinkedList<Image>();
 	
@@ -199,14 +210,15 @@ public class EnhancedReport implements Annotated {
 	/** The steps to reproduce. */
 	private Collection<StepsToReproduce> stepsToReproduce  = new LinkedList<StepsToReproduce>();
 	
-	/** The id. */
-	private String                       id;
-	
-	/** The filtered description. */
-	private String                       filteredDescription;
-	
-	/** The filtered comments. */
-	private List<Comment>                filteredComments  = new LinkedList<>();
+	/**
+	 * Instantiates a new enhanced report.
+	 * 
+	 * @deprecated must only be used by JPA
+	 */
+	@Deprecated
+	public EnhancedReport() {
+		// stub
+	}
 	
 	/**
 	 * Instantiates a new enhanced report.
@@ -234,6 +246,7 @@ public class EnhancedReport implements Annotated {
 	 * 
 	 * @return the attachments
 	 */
+	@OneToMany
 	public Map<String, Attachment> getAttachments() {
 		return this.attachments;
 	}
@@ -264,14 +277,9 @@ public class EnhancedReport implements Annotated {
 	 * 
 	 * @return the code fragments
 	 */
+	@OneToMany
 	public Collection<SourceCode> getCodeFragments() {
-		// PRECONDITIONS
-		
-		try {
-			return this.codeFragments;
-		} finally {
-			// POSTCONDITIONS
-		}
+		return this.codeFragments;
 	}
 	
 	/**
@@ -279,6 +287,7 @@ public class EnhancedReport implements Annotated {
 	 * 
 	 * @return the expectedBehaviors
 	 */
+	@OneToMany
 	public Collection<ExpectedBehavior> getExpectedBehaviors() {
 		return this.expectedBehaviors;
 	}
@@ -288,18 +297,9 @@ public class EnhancedReport implements Annotated {
 	 * 
 	 * @return the extractedRegions
 	 */
+	// @ElementCollection
 	public Map<Region, Type> getExtractedRegions() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.extractedRegions;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.extractedRegions;
 	}
 	
 	/**
@@ -307,18 +307,9 @@ public class EnhancedReport implements Annotated {
 	 * 
 	 * @return the filteredComments
 	 */
+	@OneToMany
 	public List<Comment> getFilteredComments() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.filteredComments;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.filteredComments;
 	}
 	
 	/**
@@ -326,18 +317,9 @@ public class EnhancedReport implements Annotated {
 	 * 
 	 * @return the filteredDescription
 	 */
+	@Basic
 	public String getFilteredDescription() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.filteredDescription;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.filteredDescription;
 	}
 	
 	/**
@@ -347,17 +329,7 @@ public class EnhancedReport implements Annotated {
 	 */
 	@Id
 	public String getId() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.id;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.id;
 	}
 	
 	/**
@@ -365,6 +337,7 @@ public class EnhancedReport implements Annotated {
 	 * 
 	 * @return the images
 	 */
+	@OneToMany
 	public Collection<Image> getImages() {
 		return this.images;
 	}
@@ -374,6 +347,7 @@ public class EnhancedReport implements Annotated {
 	 * 
 	 * @return the links
 	 */
+	@OneToMany
 	public Collection<Link> getLinks() {
 		return this.links;
 	}
@@ -383,18 +357,9 @@ public class EnhancedReport implements Annotated {
 	 * 
 	 * @return the listings
 	 */
+	@OneToMany
 	public Collection<Listing> getListings() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.listings;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.listings;
 	}
 	
 	/**
@@ -402,6 +367,7 @@ public class EnhancedReport implements Annotated {
 	 * 
 	 * @return the logs
 	 */
+	@OneToMany
 	public Collection<Log> getLogs() {
 		return this.logs;
 	}
@@ -411,6 +377,7 @@ public class EnhancedReport implements Annotated {
 	 * 
 	 * @return the observedBehaviors
 	 */
+	@OneToMany
 	public Collection<ObservedBehavior> getObservedBehaviors() {
 		return this.observedBehaviors;
 	}
@@ -420,6 +387,7 @@ public class EnhancedReport implements Annotated {
 	 * 
 	 * @return the originalReport
 	 */
+	@OneToOne
 	public Report getOriginalReport() {
 		return this.originalReport;
 	}
@@ -429,6 +397,7 @@ public class EnhancedReport implements Annotated {
 	 * 
 	 * @return the patches
 	 */
+	@OneToMany
 	public Collection<Patch> getPatches() {
 		return this.patches;
 	}
@@ -438,8 +407,9 @@ public class EnhancedReport implements Annotated {
 	 * 
 	 * @return the originalReport
 	 */
+	@Transient
 	public Report getReport() {
-		return this.originalReport;
+		return getOriginalReport();
 	}
 	
 	/**
@@ -447,6 +417,7 @@ public class EnhancedReport implements Annotated {
 	 * 
 	 * @return the stacktraces
 	 */
+	@OneToMany
 	public Collection<Stacktrace> getStacktraces() {
 		return this.stacktraces;
 	}
@@ -456,6 +427,7 @@ public class EnhancedReport implements Annotated {
 	 * 
 	 * @return the stepsToReproduce
 	 */
+	@OneToMany
 	public Collection<StepsToReproduce> getStepsToReproduce() {
 		return this.stepsToReproduce;
 	}
@@ -477,17 +449,7 @@ public class EnhancedReport implements Annotated {
 	 *            the codeFragments to set
 	 */
 	public void setCodeFragments(final Collection<SourceCode> codeFragments) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.codeFragments = codeFragments;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.codeFragments = codeFragments;
 	}
 	
 	/**
@@ -497,13 +459,7 @@ public class EnhancedReport implements Annotated {
 	 *            the new code fragments
 	 */
 	public void setCodeFragments(final List<SourceCode> results) {
-		// PRECONDITIONS
-		
-		try {
-			this.codeFragments = results;
-		} finally {
-			// POSTCONDITIONS
-		}
+		this.codeFragments = results;
 	}
 	
 	/**
@@ -523,17 +479,7 @@ public class EnhancedReport implements Annotated {
 	 *            the extractedRegions to set
 	 */
 	public void setExtractedRegions(final Map<Region, Type> extractedRegions) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.extractedRegions = extractedRegions;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.extractedRegions = extractedRegions;
 	}
 	
 	/**
@@ -543,17 +489,7 @@ public class EnhancedReport implements Annotated {
 	 *            the filteredComments to set
 	 */
 	public void setFilteredComments(final List<Comment> filteredComments) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.filteredComments = filteredComments;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.filteredComments = filteredComments;
 	}
 	
 	/**
@@ -563,17 +499,7 @@ public class EnhancedReport implements Annotated {
 	 *            the filteredDescription to set
 	 */
 	public void setFilteredDescription(final String filteredDescription) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.filteredDescription = filteredDescription;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.filteredDescription = filteredDescription;
 	}
 	
 	/**
@@ -583,17 +509,7 @@ public class EnhancedReport implements Annotated {
 	 *            the id to set
 	 */
 	public void setId(final String id) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.id = id;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.id = id;
 	}
 	
 	/**
@@ -623,17 +539,7 @@ public class EnhancedReport implements Annotated {
 	 *            the listings to set
 	 */
 	public void setListings(final Collection<Listing> listings) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.listings = listings;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.listings = listings;
 	}
 	
 	/**
@@ -683,7 +589,7 @@ public class EnhancedReport implements Annotated {
 	 *            the new report
 	 */
 	public void setReport(final Report report) {
-		this.originalReport = report;
+		setOriginalReport(report);;
 	}
 	
 	/**

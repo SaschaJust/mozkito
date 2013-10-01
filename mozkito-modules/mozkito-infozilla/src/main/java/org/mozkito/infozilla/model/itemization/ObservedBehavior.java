@@ -91,17 +91,7 @@ public class ObservedBehavior implements Annotated, Inlineable {
 	 */
 	@Basic
 	public Integer getEndPosition() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.endPosition;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.endPosition;
 	}
 	
 	/**
@@ -112,17 +102,7 @@ public class ObservedBehavior implements Annotated, Inlineable {
 	@Id
 	@GeneratedValue (strategy = GenerationType.AUTO)
 	public int getId() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.id;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.id;
 	}
 	
 	/**
@@ -144,17 +124,7 @@ public class ObservedBehavior implements Annotated, Inlineable {
 	 * @return the origin
 	 */
 	public Attachment getOrigin() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.origin;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.origin;
 	}
 	
 	/**
@@ -164,17 +134,7 @@ public class ObservedBehavior implements Annotated, Inlineable {
 	 */
 	@ManyToOne
 	public Person getPostedBy() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.postedBy;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.postedBy;
 	}
 	
 	/**
@@ -204,17 +164,7 @@ public class ObservedBehavior implements Annotated, Inlineable {
 	 */
 	@Basic
 	public Integer getStartPosition() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.startPosition;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.startPosition;
 	}
 	
 	/**
@@ -224,17 +174,7 @@ public class ObservedBehavior implements Annotated, Inlineable {
 	 */
 	@Basic
 	public String getText() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.text;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.text;
 	}
 	
 	/**
@@ -244,17 +184,7 @@ public class ObservedBehavior implements Annotated, Inlineable {
 	 *            the endPosition to set
 	 */
 	public void setEndPosition(final Integer endPosition) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.endPosition = endPosition;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.endPosition = endPosition;
 	}
 	
 	/**
@@ -264,17 +194,7 @@ public class ObservedBehavior implements Annotated, Inlineable {
 	 *            the id to set
 	 */
 	public void setId(final int id) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.id = id;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.id = id;
 	}
 	
 	/**
@@ -298,17 +218,7 @@ public class ObservedBehavior implements Annotated, Inlineable {
 	 *            the origin to set
 	 */
 	public void setOrigin(final Attachment origin) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.origin = origin;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.origin = origin;
 	}
 	
 	/**
@@ -318,17 +228,7 @@ public class ObservedBehavior implements Annotated, Inlineable {
 	 *            the postedBy to set
 	 */
 	public void setPostedBy(final Person postedBy) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.postedBy = postedBy;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.postedBy = postedBy;
 	}
 	
 	/**
@@ -358,17 +258,7 @@ public class ObservedBehavior implements Annotated, Inlineable {
 	 *            the startPosition to set
 	 */
 	public void setStartPosition(final Integer startPosition) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.startPosition = startPosition;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.startPosition = startPosition;
 	}
 	
 	/**
@@ -378,17 +268,7 @@ public class ObservedBehavior implements Annotated, Inlineable {
 	 *            the text to set
 	 */
 	public void setText(final String text) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.text = text;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.text = text;
 	}
 	
 }

@@ -13,7 +13,7 @@
 /**
  * 
  */
-package org.mozkito.infozilla.model.attachment;
+package org.mozkito.infozilla.elements;
 
 import org.mozkito.persistence.Annotated;
 import org.mozkito.utilities.commons.JavaUtils;
@@ -39,10 +39,6 @@ public enum AttachmentType implements Annotated {
 	/** The UNKNOWN. */
 	UNKNOWN;
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.persistence.Annotated#getHandle()
-	 */
 	/**
 	 * {@inheritDoc}
 	 * 

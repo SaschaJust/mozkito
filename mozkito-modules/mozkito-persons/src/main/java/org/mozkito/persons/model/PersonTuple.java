@@ -44,6 +44,14 @@ public class PersonTuple implements PersistentTuple<Person> {
 	private PersonContainer   container        = new PersonContainer();
 	
 	/**
+	 * @deprecated must only be used by JPA
+	 */
+	@Deprecated
+	public PersonTuple() {
+		// stub
+	}
+	
+	/**
 	 * Instantiates a new person tuple.
 	 * 
 	 * @param oldValue
@@ -76,11 +84,11 @@ public class PersonTuple implements PersistentTuple<Person> {
 			return false;
 		}
 		final PersonTuple other = (PersonTuple) obj;
-		if (this.container == null) {
-			if (other.container != null) {
+		if (getContainer() == null) {
+			if (other.getContainer() != null) {
 				return false;
 			}
-		} else if (!this.container.equals(other.container)) {
+		} else if (!getContainer().equals(other.getContainer())) {
 			return false;
 		}
 		return true;
@@ -113,17 +121,7 @@ public class PersonTuple implements PersistentTuple<Person> {
 	@Id
 	@GeneratedValue (strategy = GenerationType.SEQUENCE)
 	public long getGeneratedId() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.generatedId;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.generatedId;
 	}
 	
 	/**
@@ -134,7 +132,7 @@ public class PersonTuple implements PersistentTuple<Person> {
 	@Override
 	@Transient
 	public Person getNewValue() {
-		return this.container.get("new"); //$NON-NLS-1$
+		return getContainer().get("new"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -145,7 +143,7 @@ public class PersonTuple implements PersistentTuple<Person> {
 	@Override
 	@Transient
 	public Person getOldValue() {
-		return this.container.get("old"); //$NON-NLS-1$
+		return getContainer().get("old"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -157,9 +155,9 @@ public class PersonTuple implements PersistentTuple<Person> {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = (prime * result) + ((this.container == null)
+		result = (prime * result) + ((getContainer() == null)
 		                                                     ? 0
-		                                                     : this.container.hashCode());
+		                                                     : getContainer().hashCode());
 		return result;
 	}
 	
@@ -170,17 +168,7 @@ public class PersonTuple implements PersistentTuple<Person> {
 	 *            the container to set
 	 */
 	protected final void setContainer(final PersonContainer container) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.container = container;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.container = container;
 	}
 	
 	/**
@@ -188,17 +176,7 @@ public class PersonTuple implements PersistentTuple<Person> {
 	 *            the generatedId to set
 	 */
 	public void setGeneratedId(final long generatedId) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.generatedId = generatedId;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.generatedId = generatedId;
 	}
 	
 	/**

@@ -104,6 +104,14 @@ public class Person implements Annotated {
 	private Set<String> fullnames      = new TreeSet<String>();
 	
 	/**
+	 * @deprecated must only be used by JPA
+	 */
+	@Deprecated
+	public Person() {
+		// stub
+	}
+	
+	/**
 	 * Instantiates a new person.
 	 * 
 	 * @param username

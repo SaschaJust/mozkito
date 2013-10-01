@@ -92,6 +92,16 @@ public class ListingEntry implements Annotated, Inlineable, Iterable<Listing> {
 	/**
 	 * Instantiates a new listing entry.
 	 * 
+	 * @deprecated must only be used by JPA
+	 */
+	@Deprecated
+	public ListingEntry() {
+		// stub
+	}
+	
+	/**
+	 * Instantiates a new listing entry.
+	 * 
 	 * @param identifier
 	 *            the identifier
 	 * @param stop
@@ -144,17 +154,7 @@ public class ListingEntry implements Annotated, Inlineable, Iterable<Listing> {
 	 */
 	@Basic
 	public Integer getEndPosition() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.endPosition;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.endPosition;
 	}
 	
 	/**
@@ -165,17 +165,7 @@ public class ListingEntry implements Annotated, Inlineable, Iterable<Listing> {
 	@Id
 	@GeneratedValue (strategy = GenerationType.AUTO)
 	public int getId() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.id;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.id;
 	}
 	
 	/**
@@ -185,17 +175,7 @@ public class ListingEntry implements Annotated, Inlineable, Iterable<Listing> {
 	 */
 	@Basic
 	public String getIdentifier() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.identifier;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.identifier;
 	}
 	
 	/**
@@ -216,18 +196,9 @@ public class ListingEntry implements Annotated, Inlineable, Iterable<Listing> {
 	 * 
 	 * @return the ordinal
 	 */
+	@Basic
 	public Integer getOrdinal() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.ordinal;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.ordinal;
 	}
 	
 	/**
@@ -236,17 +207,7 @@ public class ListingEntry implements Annotated, Inlineable, Iterable<Listing> {
 	 * @return the origin
 	 */
 	public Attachment getOrigin() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.origin;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.origin;
 	}
 	
 	/**
@@ -256,17 +217,7 @@ public class ListingEntry implements Annotated, Inlineable, Iterable<Listing> {
 	 */
 	@ManyToOne
 	public Person getPostedBy() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.postedBy;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.postedBy;
 	}
 	
 	/**
@@ -296,17 +247,7 @@ public class ListingEntry implements Annotated, Inlineable, Iterable<Listing> {
 	 */
 	@Basic
 	public Integer getStartPosition() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.startPosition;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.startPosition;
 	}
 	
 	/**
@@ -316,17 +257,7 @@ public class ListingEntry implements Annotated, Inlineable, Iterable<Listing> {
 	 */
 	@Basic
 	public String getStop() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.stop;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.stop;
 	}
 	
 	/**
@@ -336,17 +267,7 @@ public class ListingEntry implements Annotated, Inlineable, Iterable<Listing> {
 	 */
 	@OneToMany (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	public List<Listing> getSubListings() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.subListings;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.subListings;
 	}
 	
 	/**
@@ -356,17 +277,7 @@ public class ListingEntry implements Annotated, Inlineable, Iterable<Listing> {
 	 */
 	@Basic
 	public String getText() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.text;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.text;
 	}
 	
 	/**
@@ -376,17 +287,7 @@ public class ListingEntry implements Annotated, Inlineable, Iterable<Listing> {
 	 */
 	@Enumerated (EnumType.STRING)
 	public Type getType() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.type;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.type;
 	}
 	
 	/**
@@ -416,17 +317,7 @@ public class ListingEntry implements Annotated, Inlineable, Iterable<Listing> {
 	 *            the endPosition to set
 	 */
 	public void setEndPosition(final Integer endPosition) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.endPosition = endPosition;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.endPosition = endPosition;
 	}
 	
 	/**
@@ -436,17 +327,7 @@ public class ListingEntry implements Annotated, Inlineable, Iterable<Listing> {
 	 *            the id to set
 	 */
 	public void setId(final int id) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.id = id;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.id = id;
 	}
 	
 	/**
@@ -456,17 +337,7 @@ public class ListingEntry implements Annotated, Inlineable, Iterable<Listing> {
 	 *            the identifier to set
 	 */
 	public void setIdentifier(final String identifier) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.identifier = identifier;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.identifier = identifier;
 	}
 	
 	/**
@@ -490,17 +361,7 @@ public class ListingEntry implements Annotated, Inlineable, Iterable<Listing> {
 	 *            the ordinal to set
 	 */
 	public void setOrdinal(final Integer ordinal) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.ordinal = ordinal;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.ordinal = ordinal;
 	}
 	
 	/**
@@ -510,17 +371,7 @@ public class ListingEntry implements Annotated, Inlineable, Iterable<Listing> {
 	 *            the origin to set
 	 */
 	public void setOrigin(final Attachment origin) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.origin = origin;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.origin = origin;
 	}
 	
 	/**
@@ -530,17 +381,7 @@ public class ListingEntry implements Annotated, Inlineable, Iterable<Listing> {
 	 *            the postedBy to set
 	 */
 	public void setPostedBy(final Person postedBy) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.postedBy = postedBy;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.postedBy = postedBy;
 	}
 	
 	/**
@@ -570,17 +411,7 @@ public class ListingEntry implements Annotated, Inlineable, Iterable<Listing> {
 	 *            the startPosition to set
 	 */
 	public void setStartPosition(final Integer startPosition) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.startPosition = startPosition;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.startPosition = startPosition;
 	}
 	
 	/**
@@ -590,17 +421,7 @@ public class ListingEntry implements Annotated, Inlineable, Iterable<Listing> {
 	 *            the stop to set
 	 */
 	public void setStop(final String stop) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.stop = stop;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.stop = stop;
 	}
 	
 	/**
@@ -610,17 +431,7 @@ public class ListingEntry implements Annotated, Inlineable, Iterable<Listing> {
 	 *            the subListings to set
 	 */
 	public void setSubListings(final List<Listing> subListings) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.subListings = subListings;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.subListings = subListings;
 	}
 	
 	/**
@@ -630,17 +441,7 @@ public class ListingEntry implements Annotated, Inlineable, Iterable<Listing> {
 	 *            the text to set
 	 */
 	public void setText(final String text) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.text = text;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.text = text;
 	}
 	
 	/**
@@ -650,17 +451,7 @@ public class ListingEntry implements Annotated, Inlineable, Iterable<Listing> {
 	 *            the type to set
 	 */
 	public void setType(final Type type) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.type = type;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.type = type;
 	}
 	
 	/**
@@ -671,16 +462,17 @@ public class ListingEntry implements Annotated, Inlineable, Iterable<Listing> {
 	@Override
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
+		
 		builder.append("ListingEntry [type=");
-		builder.append(this.type);
+		builder.append(getText());
 		builder.append(", identifier=");
-		builder.append(this.identifier);
+		builder.append(getIdentifier());
 		builder.append(", stop=");
-		builder.append(this.stop);
+		builder.append(getStop());
 		builder.append(", ordinal=");
-		builder.append(this.ordinal);
+		builder.append(getOrdinal());
 		builder.append(", text=");
-		builder.append(this.text);
+		builder.append(getText());
 		builder.append("]");
 		
 		for (final Listing listing : getSubListings()) {

@@ -204,6 +204,16 @@ public class PatchHunk implements Annotated, Inlineable {
 	/**
 	 * Instantiates a new patch hunk.
 	 * 
+	 * @deprecated must only be used by JPA
+	 */
+	@Deprecated
+	public PatchHunk() {
+		// stub
+	}
+	
+	/**
+	 * Instantiates a new patch hunk.
+	 * 
 	 * @param elements
 	 *            the elements
 	 * @param oldStart
@@ -233,7 +243,7 @@ public class PatchHunk implements Annotated, Inlineable {
 	@Transient
 	public Collection<PatchTextElement> getAdded() {
 		final Collection<PatchTextElement> collection = new LinkedList<>();
-		for (final PatchTextElement element : this.elements) {
+		for (final PatchTextElement element : getElements()) {
 			if (PatchTextElement.Type.ADDED.equals(element.getType())) {
 				collection.add(element);
 			}
@@ -270,7 +280,7 @@ public class PatchHunk implements Annotated, Inlineable {
 	@Transient
 	public Collection<PatchTextElement> getDeleted() {
 		final Collection<PatchTextElement> collection = new LinkedList<>();
-		for (final PatchTextElement element : this.elements) {
+		for (final PatchTextElement element : getElements()) {
 			if (PatchTextElement.Type.REMOVED.equals(element.getType())) {
 				collection.add(element);
 			}
@@ -285,17 +295,7 @@ public class PatchHunk implements Annotated, Inlineable {
 	 */
 	@OneToMany (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	public List<PatchTextElement> getElements() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.elements;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.elements;
 	}
 	
 	/**
@@ -305,17 +305,7 @@ public class PatchHunk implements Annotated, Inlineable {
 	 */
 	@Basic
 	public Integer getEndPosition() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.endPosition;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.endPosition;
 	}
 	
 	/**
@@ -326,17 +316,7 @@ public class PatchHunk implements Annotated, Inlineable {
 	@Id
 	@GeneratedValue (strategy = GenerationType.AUTO)
 	public int getId() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.id;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.id;
 	}
 	
 	/**
@@ -359,17 +339,7 @@ public class PatchHunk implements Annotated, Inlineable {
 	 */
 	@Basic
 	public Integer getNewLenght() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.newLenght;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.newLenght;
 	}
 	
 	/**
@@ -379,17 +349,7 @@ public class PatchHunk implements Annotated, Inlineable {
 	 */
 	@Basic
 	public Integer getNewStart() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.newStart;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.newStart;
 	}
 	
 	/**
@@ -399,17 +359,7 @@ public class PatchHunk implements Annotated, Inlineable {
 	 */
 	@Basic
 	public Integer getOldLength() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.oldLength;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.oldLength;
 	}
 	
 	/**
@@ -419,17 +369,7 @@ public class PatchHunk implements Annotated, Inlineable {
 	 */
 	@Basic
 	public Integer getOldStart() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.oldStart;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.oldStart;
 	}
 	
 	/**
@@ -438,17 +378,7 @@ public class PatchHunk implements Annotated, Inlineable {
 	 * @return the origin
 	 */
 	public Attachment getOrigin() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.origin;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.origin;
 	}
 	
 	/**
@@ -458,17 +388,7 @@ public class PatchHunk implements Annotated, Inlineable {
 	 */
 	@ManyToOne
 	public Person getPostedBy() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.postedBy;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.postedBy;
 	}
 	
 	/**
@@ -498,17 +418,7 @@ public class PatchHunk implements Annotated, Inlineable {
 	 */
 	@Basic
 	public Integer getStartPosition() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.startPosition;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.startPosition;
 	}
 	
 	/**
@@ -518,17 +428,7 @@ public class PatchHunk implements Annotated, Inlineable {
 	 *            the elements to set
 	 */
 	public void setElements(final List<PatchTextElement> elements) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.elements = elements;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.elements = elements;
 	}
 	
 	/**
@@ -538,17 +438,7 @@ public class PatchHunk implements Annotated, Inlineable {
 	 *            the endPosition to set
 	 */
 	public void setEndPosition(final Integer endPosition) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.endPosition = endPosition;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.endPosition = endPosition;
 	}
 	
 	/**
@@ -558,17 +448,7 @@ public class PatchHunk implements Annotated, Inlineable {
 	 *            the id to set
 	 */
 	public void setId(final int id) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.id = id;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.id = id;
 	}
 	
 	/**
@@ -592,17 +472,7 @@ public class PatchHunk implements Annotated, Inlineable {
 	 *            the newLenght to set
 	 */
 	public void setNewLenght(final Integer newLenght) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.newLenght = newLenght;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.newLenght = newLenght;
 	}
 	
 	/**
@@ -612,17 +482,7 @@ public class PatchHunk implements Annotated, Inlineable {
 	 *            the newStart to set
 	 */
 	public void setNewStart(final Integer newStart) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.newStart = newStart;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.newStart = newStart;
 	}
 	
 	/**
@@ -632,17 +492,7 @@ public class PatchHunk implements Annotated, Inlineable {
 	 *            the oldLength to set
 	 */
 	public void setOldLength(final Integer oldLength) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.oldLength = oldLength;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.oldLength = oldLength;
 	}
 	
 	/**
@@ -652,17 +502,7 @@ public class PatchHunk implements Annotated, Inlineable {
 	 *            the oldStart to set
 	 */
 	public void setOldStart(final Integer oldStart) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.oldStart = oldStart;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.oldStart = oldStart;
 	}
 	
 	/**
@@ -672,17 +512,7 @@ public class PatchHunk implements Annotated, Inlineable {
 	 *            the origin to set
 	 */
 	public void setOrigin(final Attachment origin) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.origin = origin;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.origin = origin;
 	}
 	
 	/**
@@ -692,17 +522,7 @@ public class PatchHunk implements Annotated, Inlineable {
 	 *            the postedBy to set
 	 */
 	public void setPostedBy(final Person postedBy) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.postedBy = postedBy;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.postedBy = postedBy;
 	}
 	
 	/**
@@ -712,17 +532,7 @@ public class PatchHunk implements Annotated, Inlineable {
 	 *            the postedOn to set
 	 */
 	public void setPostedOn(final DateTime postedOn) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.postedOn = postedOn;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.postedOn = postedOn;
 	}
 	
 	/**
@@ -732,17 +542,7 @@ public class PatchHunk implements Annotated, Inlineable {
 	 *            the startPosition to set
 	 */
 	public void setStartPosition(final Integer startPosition) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.startPosition = startPosition;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.startPosition = startPosition;
 	}
 	
 	/**
@@ -753,6 +553,7 @@ public class PatchHunk implements Annotated, Inlineable {
 	@Override
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
+		
 		builder.append("@@ -");
 		builder.append(getOldStart());
 		builder.append(",");

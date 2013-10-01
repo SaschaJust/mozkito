@@ -157,7 +157,7 @@ public class LinkFilter extends Filter<Link> {
 					scheme = parsedLine[0][0];
 					description = parsedLine[0][2];
 					
-					schemeDefinitions.put(scheme, description);
+					LinkFilter.schemeDefinitions.put(scheme, description);
 				}
 			} catch (final IOException e) {
 				throw new RuntimeException("Reading IANA URI definitions failed.", e);

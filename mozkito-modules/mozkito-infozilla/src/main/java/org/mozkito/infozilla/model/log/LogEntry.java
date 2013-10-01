@@ -105,6 +105,16 @@ public class LogEntry implements Annotated, Inlineable {
 	/**
 	 * Instantiates a new log entry.
 	 * 
+	 * @deprecated must only be used by JPA
+	 */
+	@Deprecated
+	public LogEntry() {
+		// stub
+	}
+	
+	/**
+	 * Instantiates a new log entry.
+	 * 
 	 * @param startPosition
 	 *            the start position
 	 * @param endPosition
@@ -151,18 +161,9 @@ public class LogEntry implements Annotated, Inlineable {
 	 * 
 	 * @return the endPosition
 	 */
+	@Basic
 	public Integer getEndPosition() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.endPosition;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.endPosition;
 	}
 	
 	/**
@@ -173,17 +174,7 @@ public class LogEntry implements Annotated, Inlineable {
 	@Id
 	@GeneratedValue (strategy = GenerationType.AUTO)
 	public int getId() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.id;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.id;
 	}
 	
 	/**
@@ -220,17 +211,7 @@ public class LogEntry implements Annotated, Inlineable {
 	 */
 	@Enumerated (EnumType.STRING)
 	public Level getLevel() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.level;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.level;
 	}
 	
 	/**
@@ -240,17 +221,7 @@ public class LogEntry implements Annotated, Inlineable {
 	 */
 	@Basic
 	public String getMessage() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.message;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.message;
 	}
 	
 	/**
@@ -259,17 +230,7 @@ public class LogEntry implements Annotated, Inlineable {
 	 * @return the origin
 	 */
 	public Attachment getOrigin() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.origin;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.origin;
 	}
 	
 	/**
@@ -279,17 +240,7 @@ public class LogEntry implements Annotated, Inlineable {
 	 */
 	@ManyToOne
 	public Person getPostedBy() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.postedBy;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.postedBy;
 	}
 	
 	/**
@@ -319,17 +270,7 @@ public class LogEntry implements Annotated, Inlineable {
 	 */
 	@Basic
 	public String getSourceClass() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.sourceClass;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.sourceClass;
 	}
 	
 	/**
@@ -338,17 +279,7 @@ public class LogEntry implements Annotated, Inlineable {
 	 * @return the startPosition
 	 */
 	public Integer getStartPosition() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.startPosition;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.startPosition;
 	}
 	
 	/**
@@ -368,17 +299,7 @@ public class LogEntry implements Annotated, Inlineable {
 	 *            the endPosition to set
 	 */
 	public void setEndPosition(final Integer endPosition) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.endPosition = endPosition;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.endPosition = endPosition;
 	}
 	
 	/**
@@ -388,17 +309,7 @@ public class LogEntry implements Annotated, Inlineable {
 	 *            the id to set
 	 */
 	public void setId(final int id) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.id = id;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.id = id;
 	}
 	
 	/**
@@ -436,17 +347,7 @@ public class LogEntry implements Annotated, Inlineable {
 	 *            the level to set
 	 */
 	public void setLevel(final Level level) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.level = level;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.level = level;
 	}
 	
 	/**
@@ -456,17 +357,7 @@ public class LogEntry implements Annotated, Inlineable {
 	 *            the message to set
 	 */
 	public void setMessage(final String message) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.message = message;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.message = message;
 	}
 	
 	/**
@@ -476,17 +367,7 @@ public class LogEntry implements Annotated, Inlineable {
 	 *            the origin to set
 	 */
 	public void setOrigin(final Attachment origin) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.origin = origin;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.origin = origin;
 	}
 	
 	/**
@@ -496,17 +377,7 @@ public class LogEntry implements Annotated, Inlineable {
 	 *            the postedBy to set
 	 */
 	public void setPostedBy(final Person postedBy) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.postedBy = postedBy;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.postedBy = postedBy;
 	}
 	
 	/**
@@ -516,17 +387,7 @@ public class LogEntry implements Annotated, Inlineable {
 	 *            the postedOn to set
 	 */
 	public void setPostedOn(final DateTime postedOn) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.postedOn = postedOn;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.postedOn = postedOn;
 	}
 	
 	/**
@@ -536,17 +397,7 @@ public class LogEntry implements Annotated, Inlineable {
 	 *            the sourceClass to set
 	 */
 	public void setSourceClass(final String sourceClass) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.sourceClass = sourceClass;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.sourceClass = sourceClass;
 	}
 	
 	/**
@@ -556,17 +407,7 @@ public class LogEntry implements Annotated, Inlineable {
 	 *            the startPosition to set
 	 */
 	public void setStartPosition(final Integer startPosition) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.startPosition = startPosition;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.startPosition = startPosition;
 	}
 	
 	/**
@@ -587,37 +428,18 @@ public class LogEntry implements Annotated, Inlineable {
 	@Override
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
+		
 		builder.append("LogEntry [level=");
-		builder.append(this.level);
+		builder.append(getLevel());
 		builder.append(", timestamp=");
-		builder.append(this.timestamp);
+		builder.append(getTimestamp());
 		builder.append(", sourceClass=");
-		builder.append(this.sourceClass);
+		builder.append(getSourceClass());
 		builder.append(", message=");
-		builder.append(this.message);
+		builder.append(getMessage());
 		builder.append("]");
+		
 		return builder.toString();
 	}
-	
-	// /**
-	// * {@inheritDoc}
-	// *
-	// * @see java.lang.Object#toString()
-	// */
-	// public String toString2() {
-	// final StringBuilder builder = new StringBuilder();
-	//
-	// builder.append("LogEntry [");
-	// builder.append(this.timestamp);
-	// builder.append("] [");
-	// builder.append(this.level);
-	// builder.append("]");
-	// if (getSourceClass() != null) {
-	// builder.append(" [").append(getSourceClass()).append("]");
-	// }
-	// builder.append(" ").append(this.message);
-	//
-	// return builder.toString();
-	// }
 	
 }
