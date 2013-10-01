@@ -13,9 +13,6 @@
 package org.mozkito.infozilla;
 
 import java.awt.Color;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -23,8 +20,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
-
-import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.joda.time.DateTime;
@@ -42,6 +37,7 @@ import org.mozkito.infozilla.filters.patch.UnifiedDiffPatchFilter;
 import org.mozkito.infozilla.filters.sourcecode.JavaSourceCodeFilter;
 import org.mozkito.infozilla.filters.stacktrace.JavaStackTraceFilter;
 import org.mozkito.infozilla.model.EnhancedReport;
+import org.mozkito.infozilla.model.Region;
 import org.mozkito.issues.model.Comment;
 import org.mozkito.issues.model.Report;
 import org.mozkito.persons.model.Person;
@@ -124,35 +120,6 @@ public class InlineFilterManager implements IFilterManager {
 			}
 			
 			this.editor = editor;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
-	}
-	
-	/**
-	 * Filize.
-	 * 
-	 * @param enhancedReport
-	 *            the enhanced report
-	 */
-	@SuppressWarnings ("unused")
-	private void filize(final EnhancedReport enhancedReport) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			try (FileWriter writer = new FileWriter(new File("report_" + enhancedReport.getId()))) {
-				writer.write(enhancedReport.toString());
-				writer.flush();
-				writer.close();
-			} catch (final IOException e) {
-				if (Logger.logError()) {
-					Logger.error(e);
-				}
-			}
 		} finally {
 			POSTCONDITIONS: {
 				// none

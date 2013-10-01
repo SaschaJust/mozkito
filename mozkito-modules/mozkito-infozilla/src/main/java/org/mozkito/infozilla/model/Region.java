@@ -11,11 +11,15 @@
  * specific language governing permissions and limitations under the License.
  **********************************************************************************************************************/
 
-package org.mozkito.infozilla;
+package org.mozkito.infozilla.model;
+
+import javax.persistence.Basic;
+import javax.persistence.Embeddable;
 
 /**
  * The Class Region.
  */
+@Embeddable
 public class Region implements Comparable<Region> {
 	
 	/** The from. */
@@ -61,10 +65,10 @@ public class Region implements Comparable<Region> {
 			if (equals(o)) {
 				return 0;
 			} else {
-				if (this.from == o.from) {
-					return this.to - o.to;
+				if (getFrom() == o.getFrom()) {
+					return getTo() - o.getTo();
 				} else {
-					return this.from - o.from;
+					return getFrom() - o.getFrom();
 				}
 			}
 		} finally {
@@ -91,18 +95,21 @@ public class Region implements Comparable<Region> {
 			return false;
 		}
 		final Region other = (Region) obj;
-		if (this.from != other.from) {
+		if (getFrom() != other.getFrom()) {
 			return false;
 		}
-		if (this.to != other.to) {
+		if (getTo() != other.getTo()) {
 			return false;
 		}
 		return true;
 	}
 	
 	/**
+	 * Gets the from.
+	 * 
 	 * @return the from
 	 */
+	@Basic
 	public int getFrom() {
 		PRECONDITIONS: {
 			// none
@@ -118,8 +125,11 @@ public class Region implements Comparable<Region> {
 	}
 	
 	/**
+	 * Gets the to.
+	 * 
 	 * @return the to
 	 */
+	@Basic
 	public int getTo() {
 		PRECONDITIONS: {
 			// none
@@ -143,8 +153,8 @@ public class Region implements Comparable<Region> {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = (prime * result) + this.from;
-		result = (prime * result) + this.to;
+		result = (prime * result) + getFrom();
+		result = (prime * result) + getTo();
 		return result;
 	}
 	
@@ -167,9 +177,9 @@ public class Region implements Comparable<Region> {
 				return this;
 			} else {
 				if (compareTo(other) < 0) {
-					return new Region(this.from, Math.max(this.to, other.to));
+					return new Region(getFrom(), Math.max(getTo(), other.getTo()));
 				} else {
-					return new Region(other.from, Math.max(this.to, other.to));
+					return new Region(other.getFrom(), Math.max(getTo(), other.getTo()));
 				}
 			}
 		} finally {
@@ -188,9 +198,9 @@ public class Region implements Comparable<Region> {
 	 */
 	public boolean overlaps(final Region other) {
 		if (compareTo(other) < 0) {
-			return this.to >= other.from;
+			return getTo() >= other.getFrom();
 		} else {
-			return this.from <= other.to;
+			return getFrom() <= other.getTo();
 		}
 	}
 	
@@ -202,11 +212,13 @@ public class Region implements Comparable<Region> {
 	@Override
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
+		
 		builder.append("Region [from=");
-		builder.append(this.from);
+		builder.append(getFrom());
 		builder.append(", to=");
-		builder.append(this.to);
+		builder.append(getTo());
 		builder.append("]");
+		
 		return builder.toString();
 	}
 	

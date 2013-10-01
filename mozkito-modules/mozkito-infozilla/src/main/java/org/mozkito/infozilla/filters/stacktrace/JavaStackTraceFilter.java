@@ -39,6 +39,7 @@ import org.mozkito.utilities.datastructures.Tuple;
 public class JavaStackTraceFilter extends StackTraceFilter {
 
 
+
 	/** The Constant lineBreaks. */
 	public static final Regex  LINE_BREAKS_REGEX       = new Regex("(\\r\\n|\\r|\\n)");
 

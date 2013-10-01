@@ -20,7 +20,7 @@ import javax.persistence.metamodel.SingularAttribute;
  */
 @javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.infozilla.model.stacktrace.StacktraceEntry.class)
 @javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
-                             date = "Tue Oct 01 05:19:30 CEST 2013")
+                             date = "Tue Oct 01 14:05:14 CEST 2013")
 public class StacktraceEntry_ {
 	
 	/** The entry class name. */

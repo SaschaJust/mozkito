@@ -33,6 +33,8 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 
+import org.mozkito.infozilla.model.Region;
+
 /**
  * The Class SimpleEditor.
  */
@@ -101,7 +103,7 @@ public class SimpleEditor extends JFrame implements Runnable, ActionListener {
 		}
 		
 		try {
-			if (COMMAND_NEXT.equals(e.getActionCommand())) {
+			if (SimpleEditor.COMMAND_NEXT.equals(e.getActionCommand())) {
 				this.nextButton.setEnabled(false);
 				if (this.latch != null) {
 					this.latch.countDown();
@@ -128,7 +130,7 @@ public class SimpleEditor extends JFrame implements Runnable, ActionListener {
 		}
 		
 		try {
-			final JButton button = makeNavigationButton("next", COMMAND_NEXT, "Get next entry", "Next");
+			final JButton button = makeNavigationButton("next", SimpleEditor.COMMAND_NEXT, "Get next entry", "Next");
 			toolBar.add(button);
 			return button;
 		} finally {

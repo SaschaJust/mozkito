@@ -132,7 +132,7 @@ public class PersonTuple implements PersistentTuple<Person> {
 	@Override
 	@Transient
 	public Person getNewValue() {
-		return this.container.get("new"); //$NON-NLS-1$
+		return getContainer().get("new"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -143,7 +143,7 @@ public class PersonTuple implements PersistentTuple<Person> {
 	@Override
 	@Transient
 	public Person getOldValue() {
-		return this.container.get("old"); //$NON-NLS-1$
+		return getContainer().get("old"); //$NON-NLS-1$
 	}
 	
 	/**

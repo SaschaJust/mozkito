@@ -33,7 +33,6 @@ import javax.persistence.Transient;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 
-import org.mozkito.infozilla.Region;
 import org.mozkito.infozilla.model.attachment.Attachment;
 import org.mozkito.infozilla.model.image.Image;
 import org.mozkito.infozilla.model.itemization.ExpectedBehavior;
@@ -64,20 +63,17 @@ public class EnhancedReport implements Annotated {
 	 */
 	public static enum Type {
 		
-		/** The sourcecode. */
-		SOURCECODE,
 		/** The listing. */
 		LISTING,
 		/** The log. */
 		LOG,
 		/** The patch. */
 		PATCH,
+		/** The sourcecode. */
+		SOURCECODE,
 		/** The stacktrace. */
 		STACKTRACE;
 	}
-	
-	/** The extracted regions. */
-	private Map<Region, Type> extractedRegions = new HashMap<>();
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -6200370567492281526L;
@@ -175,6 +171,18 @@ public class EnhancedReport implements Annotated {
 	/** The expected behaviors. */
 	private Collection<ExpectedBehavior> expectedBehaviors = new LinkedList<ExpectedBehavior>();
 	
+	/** The extracted regions. */
+	private Map<Region, Type>            extractedRegions  = new HashMap<>();
+	
+	/** The filtered comments. */
+	private List<Comment>                filteredComments  = new LinkedList<>();
+	
+	/** The filtered description. */
+	private String                       filteredDescription;
+	
+	/** The id. */
+	private String                       id;
+	
 	/** The images. */
 	private Collection<Image>            images            = new LinkedList<Image>();
 	
@@ -201,15 +209,6 @@ public class EnhancedReport implements Annotated {
 	
 	/** The steps to reproduce. */
 	private Collection<StepsToReproduce> stepsToReproduce  = new LinkedList<StepsToReproduce>();
-	
-	/** The id. */
-	private String                       id;
-	
-	/** The filtered description. */
-	private String                       filteredDescription;
-	
-	/** The filtered comments. */
-	private List<Comment>                filteredComments  = new LinkedList<>();
 	
 	/**
 	 * Instantiates a new enhanced report.
@@ -298,6 +297,7 @@ public class EnhancedReport implements Annotated {
 	 * 
 	 * @return the extractedRegions
 	 */
+	// @ElementCollection
 	public Map<Region, Type> getExtractedRegions() {
 		return this.extractedRegions;
 	}
@@ -409,7 +409,7 @@ public class EnhancedReport implements Annotated {
 	 */
 	@Transient
 	public Report getReport() {
-		return this.originalReport;
+		return getOriginalReport();
 	}
 	
 	/**
@@ -589,7 +589,7 @@ public class EnhancedReport implements Annotated {
 	 *            the new report
 	 */
 	public void setReport(final Report report) {
-		this.originalReport = report;
+		setOriginalReport(report);;
 	}
 	
 	/**
