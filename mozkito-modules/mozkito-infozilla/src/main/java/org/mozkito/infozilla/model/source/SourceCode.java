@@ -25,7 +25,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -223,7 +222,7 @@ public class SourceCode implements Annotated, Inlineable {
 	 * 
 	 * @return the origin
 	 */
-	@ManyToMany (cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+	@ManyToOne (cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
 	public Attachment getOrigin() {
 		PRECONDITIONS: {
 			// none

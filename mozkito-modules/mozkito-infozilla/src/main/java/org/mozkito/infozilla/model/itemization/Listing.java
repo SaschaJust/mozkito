@@ -19,8 +19,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -347,7 +345,6 @@ public class Listing implements Annotated, Inlineable, List<ListingEntry> {
 	 */
 	@Id
 	@GeneratedValue (strategy = GenerationType.AUTO)
-	@Access (AccessType.PROPERTY)
 	public int getId() {
 		PRECONDITIONS: {
 			// none

@@ -277,7 +277,7 @@ public class Stacktrace implements Annotated, Attachable, Inlineable {
 	 * 
 	 * @return the origin
 	 */
-	@OneToMany (cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+	@ManyToOne (cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
 	public Attachment getOrigin() {
 		PRECONDITIONS: {
 			// none
@@ -377,7 +377,7 @@ public class Stacktrace implements Annotated, Attachable, Inlineable {
 	 * 
 	 * @return the trace
 	 */
-	@ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	public List<StacktraceEntry> getTrace() {
 		PRECONDITIONS: {
 			// none
