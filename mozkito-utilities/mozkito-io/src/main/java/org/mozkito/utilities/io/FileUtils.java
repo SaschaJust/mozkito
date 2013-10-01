@@ -1120,8 +1120,9 @@ public class FileUtils {
 			ArchiveEntry entry;
 			while ((entry = zis.getNextEntry()) != null) {
 				if (entry.isDirectory()) {
-					final boolean success = (new File(directory.getAbsolutePath() + FileUtils.fileSeparator
-					        + entry.getName())).mkdir();
+					final File newDir = new File(directory.getAbsolutePath() + FileUtils.fileSeparator
+					        + entry.getName());
+					final boolean success = newDir.exists() || newDir.mkdirs();
 					if (!success) {
 						throw new IOException("Creating directory failed: " + directory.getAbsolutePath()
 						        + FileUtils.fileSeparator + entry.getName());
@@ -1178,8 +1179,9 @@ public class FileUtils {
 			ZipEntry entry;
 			while ((entry = zis.getNextEntry()) != null) {
 				if (entry.isDirectory()) {
-					final boolean success = (new File(directory.getAbsolutePath() + FileUtils.fileSeparator
-					        + entry.getName())).mkdir();
+					final File newDir = new File(directory.getAbsolutePath() + FileUtils.fileSeparator
+					        + entry.getName());
+					final boolean success = newDir.exists() || newDir.mkdirs();
 					if (!success) {
 						throw new IOException("Creating directory failed: " + directory.getAbsolutePath()
 						        + FileUtils.fileSeparator + entry.getName());
