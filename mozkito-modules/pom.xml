@@ -144,8 +144,7 @@
 						<artifactId>openjpa-maven-plugin</artifactId>
 						<version>2.2.2</version>
 						<configuration>
-							<includes>**/model/*.class</includes>
-							<includes>**/model/*/*.class</includes>
+							<includes>**/model/*.class,**/model/*/*.class</includes>
 							<addDefaultConstructor>true</addDefaultConstructor>
 							<enforcePropertyRestrictions>true</enforcePropertyRestrictions>
 						</configuration>
