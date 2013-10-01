@@ -98,6 +98,13 @@ public class Link implements Annotated, Inlineable {
 	private String            scheme;
 	
 	/**
+	 * @deprecated must only be used by JPA
+	 */
+	@Deprecated
+	public Link() {
+	}
+	
+	/**
 	 * Instantiates a new link.
 	 * 
 	 * @param startPosition
@@ -116,12 +123,12 @@ public class Link implements Annotated, Inlineable {
 	public Link(final int startPosition, final int endPosition, final URL url, final String stringRepresentation,
 	        final String scheme, final String linkDescription) {
 		super();
-		this.startPosition = startPosition;
-		this.endPosition = endPosition;
-		this.url = url;
-		this.stringRepresentation = stringRepresentation;
-		this.scheme = scheme;
-		this.linkDescription = linkDescription;
+		setStartPosition(startPosition);
+		setEndPosition(endPosition);
+		setUrl(url);
+		setStringRepresentation(stringRepresentation);
+		setScheme(scheme);
+		setLinkDescription(linkDescription);
 	}
 	
 	/**
@@ -164,17 +171,7 @@ public class Link implements Annotated, Inlineable {
 	@Id
 	@GeneratedValue (strategy = GenerationType.AUTO)
 	public int getId() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.id;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.id;
 	}
 	
 	/**
@@ -194,17 +191,7 @@ public class Link implements Annotated, Inlineable {
 	 */
 	@Basic
 	public String getLinkDescription() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.linkDescription;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.linkDescription;
 	}
 	
 	/**
@@ -212,18 +199,11 @@ public class Link implements Annotated, Inlineable {
 	 * 
 	 * @return the origin
 	 */
+	@ManyToOne
 	public Attachment getOrigin() {
-		PRECONDITIONS: {
-			// none
-		}
 		
-		try {
-			return this.origin;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.origin;
+		
 	}
 	
 	/**
@@ -266,17 +246,7 @@ public class Link implements Annotated, Inlineable {
 	 */
 	@Basic
 	public String getScheme() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.scheme;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.scheme;
 	}
 	
 	/**
@@ -315,6 +285,7 @@ public class Link implements Annotated, Inlineable {
 	 * 
 	 * @return the url string
 	 */
+	@Transient
 	public String getUrlString() {
 		return getUrl().toExternalForm();
 	}
@@ -324,18 +295,9 @@ public class Link implements Annotated, Inlineable {
 	 * 
 	 * @return the verified
 	 */
+	@Basic
 	public boolean isVerified() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.verified;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.verified;
 	}
 	
 	/**
@@ -345,17 +307,7 @@ public class Link implements Annotated, Inlineable {
 	 *            the endPosition to set
 	 */
 	public void setEndPosition(final Integer endPosition) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.endPosition = endPosition;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.endPosition = endPosition;
 	}
 	
 	/**
@@ -365,17 +317,7 @@ public class Link implements Annotated, Inlineable {
 	 *            the id to set
 	 */
 	public void setId(final int id) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.id = id;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.id = id;
 	}
 	
 	/**
@@ -385,17 +327,7 @@ public class Link implements Annotated, Inlineable {
 	 *            the kind to set
 	 */
 	public void setKind(final Kind kind) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.kind = kind;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.kind = kind;
 	}
 	
 	/**
@@ -405,17 +337,7 @@ public class Link implements Annotated, Inlineable {
 	 *            the linkDescription to set
 	 */
 	public void setLinkDescription(final String linkDescription) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.linkDescription = linkDescription;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.linkDescription = linkDescription;
 	}
 	
 	/**
@@ -425,17 +347,7 @@ public class Link implements Annotated, Inlineable {
 	 *            the origin to set
 	 */
 	public void setOrigin(final Attachment origin) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.origin = origin;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.origin = origin;
 	}
 	
 	/**
@@ -477,17 +389,7 @@ public class Link implements Annotated, Inlineable {
 	 *            the scheme to set
 	 */
 	public void setScheme(final String scheme) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.scheme = scheme;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.scheme = scheme;
 	}
 	
 	/**
@@ -497,17 +399,7 @@ public class Link implements Annotated, Inlineable {
 	 *            the startPosition to set
 	 */
 	public void setStartPosition(final Integer startPosition) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.startPosition = startPosition;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.startPosition = startPosition;
 	}
 	
 	/**
@@ -578,17 +470,19 @@ public class Link implements Annotated, Inlineable {
 	@Override
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
+		
 		builder.append("Link [kind=");
-		builder.append(this.kind);
+		builder.append(getKind());
 		builder.append(", postedBy=");
-		builder.append(this.postedBy);
+		builder.append(getPostedBy());
 		builder.append(", postedOn=");
-		builder.append(this.postedOn);
+		builder.append(getPostedOn());
 		builder.append(", url=");
-		builder.append(this.url);
+		builder.append(getUrl());
 		builder.append(", verified=");
-		builder.append(this.verified);
+		builder.append(isVerified());
 		builder.append("]");
+		
 		return builder.toString();
 	}
 }

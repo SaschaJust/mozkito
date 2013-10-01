@@ -83,6 +83,14 @@ public class SourceCode implements Annotated, Inlineable {
 	private Person            postedBy;
 	
 	/**
+	 * @deprecated must only be used by JPA
+	 */
+	@Deprecated
+	public SourceCode() {
+		// stub
+	}
+	
+	/**
 	 * Instantiates a new source code.
 	 * 
 	 * @param code

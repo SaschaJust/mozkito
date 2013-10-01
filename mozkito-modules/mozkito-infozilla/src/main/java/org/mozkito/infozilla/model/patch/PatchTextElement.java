@@ -80,6 +80,14 @@ public class PatchTextElement implements Annotated {
 	private Type              type;
 	
 	/**
+	 * @deprecated must only be used by JPA
+	 */
+	@Deprecated
+	public PatchTextElement() {
+		// stub
+	}
+	
+	/**
 	 * Instantiates a new patch text element.
 	 * 
 	 * @param type

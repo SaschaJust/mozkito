@@ -62,6 +62,14 @@ public abstract class Image implements Attachable, Annotated {
 	private Type              type;
 	
 	/**
+	 * @deprecated must only be used by JPA
+	 */
+	@Deprecated
+	public Image() {
+		// stub
+	}
+	
+	/**
 	 * Instantiates a new image.
 	 * 
 	 * @param id

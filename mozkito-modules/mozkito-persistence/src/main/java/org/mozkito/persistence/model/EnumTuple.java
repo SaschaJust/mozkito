@@ -52,6 +52,14 @@ public class EnumTuple implements PersistentTuple<Enum<?>> {
 	private String            enumClassName;
 	
 	/**
+	 * @deprecated must only be used by JPA
+	 */
+	@Deprecated
+	public EnumTuple() {
+		// stub
+	}
+	
+	/**
 	 * Instantiates a new enum tuple.
 	 * 
 	 * @param oldValue

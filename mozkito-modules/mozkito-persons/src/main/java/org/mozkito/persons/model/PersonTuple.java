@@ -44,6 +44,14 @@ public class PersonTuple implements PersistentTuple<Person> {
 	private PersonContainer   container        = new PersonContainer();
 	
 	/**
+	 * @deprecated must only be used by JPA
+	 */
+	@Deprecated
+	public PersonTuple() {
+		// stub
+	}
+	
+	/**
 	 * Instantiates a new person tuple.
 	 * 
 	 * @param oldValue
