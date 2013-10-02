@@ -29,6 +29,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
 import org.mozkito.infozilla.elements.Attachable;
@@ -298,6 +299,7 @@ public class Archive implements Attachable, Annotated {
 	 * 
 	 * @return the entries
 	 */
+	@OneToMany
 	public List<Attachment> getEntries() {
 		return this.entries;
 	}
