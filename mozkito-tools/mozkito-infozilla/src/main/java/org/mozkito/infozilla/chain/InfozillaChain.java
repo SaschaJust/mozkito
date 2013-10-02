@@ -90,8 +90,10 @@ public class InfozillaChain extends Chain<Settings> {
 	 */
 	@Override
 	public void setup() {
-		// PRECONDITIONS
-		Condition.notNull(this.databaseArguments, "Field '%s' in '%s'.", "databaseArguments", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
+		PRECONDITIONS: {
+			Condition.notNull(this.databaseArguments, "Field '%s' in '%s'.", "databaseArguments", getClassName()); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		
 		Logger.updateClassLevels();
 		try {
 			
@@ -114,8 +116,9 @@ public class InfozillaChain extends Chain<Settings> {
 			
 			// load sources
 			new ReportReader(group, getSettings(), persistenceUtil);
+			new ReportTransformer(group, getSettings());
 			new InlineFilter(group, getSettings(), null);
-			// new AttachmentFilter(group, getSettings(), null);
+			new AttachmentFilter(group, getSettings(), null);
 			new VoidSink(group, getSettings());
 			
 			// final IRCThread t = new IRCThread("mapping");

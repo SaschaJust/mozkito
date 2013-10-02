@@ -13,48 +13,38 @@
 
 package org.mozkito.infozilla.chain;
 
-import net.ownhero.dev.andama.threads.Filter;
 import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.ProcessHook;
+import net.ownhero.dev.andama.threads.Transformer;
 import net.ownhero.dev.hiari.settings.ISettings;
 
-import org.mozkito.infozilla.AttachmentFilterManager;
-import org.mozkito.infozilla.IFilterManager;
 import org.mozkito.infozilla.model.EnhancedReport;
+import org.mozkito.issues.model.Report;
 
 /**
- * The Class StacktraceFilter.
- * 
  * @author Sascha Just <sascha.just@mozkito.org>
+ * 
  */
-public class AttachmentFilter extends Filter<EnhancedReport> {
+public class ReportTransformer extends Transformer<Report, EnhancedReport> {
 	
 	/**
-	 * Instantiates a new stacktrace filter.
+	 * Instantiates a new report transformer.
 	 * 
 	 * @param threadGroup
 	 *            the thread group
 	 * @param settings
 	 *            the settings
-	 * @param filterChain
-	 *            the filter chain
 	 */
-	public AttachmentFilter(final Group threadGroup, final ISettings settings, final IFilterManager filterChain) {
-		super(threadGroup, settings, false);
+	public ReportTransformer(final Group threadGroup, final ISettings settings) {
+		super(threadGroup, settings, true);
 		PRECONDITIONS: {
 			// none
 		}
 		
 		try {
 			// body
-			
-			new ProcessHook<EnhancedReport, EnhancedReport>(this) {
+			new ProcessHook<Report, EnhancedReport>(this) {
 				
-				/**
-				 * {@inheritDoc}
-				 * 
-				 * @see net.ownhero.dev.andama.threads.ProcessHook#process()
-				 */
 				@Override
 				public void process() {
 					PRECONDITIONS: {
@@ -62,14 +52,7 @@ public class AttachmentFilter extends Filter<EnhancedReport> {
 					}
 					
 					try {
-						final EnhancedReport data = getInputData();
-						
-						if (data != null) {
-							final IFilterManager chain = new AttachmentFilterManager(data);
-							chain.parse();
-						}
-						
-						provideOutputData(data);
+						provideOutputData(new EnhancedReport(getInputData()));
 					} finally {
 						POSTCONDITIONS: {
 							// none
@@ -83,5 +66,4 @@ public class AttachmentFilter extends Filter<EnhancedReport> {
 			}
 		}
 	}
-	
 }
