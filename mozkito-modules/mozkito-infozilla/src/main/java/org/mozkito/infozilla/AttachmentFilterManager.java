@@ -71,21 +71,21 @@ public class AttachmentFilterManager implements IFilterManager {
 	/**
 	 * Instantiates a new attachment filter manager.
 	 * 
-	 * @param report
-	 *            the report
+	 * @param enhancedReport
+	 *            the enhanced report
 	 */
-	public AttachmentFilterManager(final Report report) {
+	public AttachmentFilterManager(final EnhancedReport enhancedReport) {
 		PRECONDITIONS: {
-			if (report == null) {
+			if (enhancedReport.getReport() == null) {
 				throw new NullPointerException();
 			}
 		}
 		
 		try {
 			// body
-			this.report = report;
-			this.enhancedReport = new EnhancedReport(report.getId());
-			this.attachmentEntries = report.getAttachmentEntries();
+			this.report = enhancedReport.getReport();
+			this.enhancedReport = enhancedReport;
+			this.attachmentEntries = enhancedReport.getReport().getAttachmentEntries();
 		} finally {
 			POSTCONDITIONS: {
 				// none
@@ -129,7 +129,13 @@ public class AttachmentFilterManager implements IFilterManager {
 	}
 	
 	private boolean checkMimeType(final Attachment attachment) {
-		return attachment.getMime().startsWith("text");
+		PRECONDITIONS: {
+			if (attachment == null) {
+				throw new NullPointerException();
+			}
+		}
+		
+		return (attachment.getMime() != null) && attachment.getMime().startsWith("text");
 	}
 	
 	private Attachment createFromArchive(final File file,

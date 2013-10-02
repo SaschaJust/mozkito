@@ -96,25 +96,24 @@ public class InlineFilterManager implements IFilterManager {
 	/**
 	 * Instantiates a new infozilla filter chain.
 	 * 
-	 * @param report
+	 * @param enhancedReport
 	 *            the report
 	 * @param editor
 	 *            the editor
 	 */
-	public InlineFilterManager(final Report report, final SimpleEditor editor) {
+	public InlineFilterManager(final EnhancedReport enhancedReport, final SimpleEditor editor) {
 		PRECONDITIONS: {
 			// none
 		}
 		
 		try {
 			// body
-			this.report = report;
-			this.enhancedReport = new EnhancedReport(report.getId());
+			this.enhancedReport = enhancedReport;
+			this.report = enhancedReport.getReport();
 			
-			this.textMap.put(-1,
-			                 new TextRemover(stripHTML(report.getDescription()), report.getSubmitter(),
-			                                 report.getCreationTimestamp()));
-			for (final Comment comment : report.getComments()) {
+			this.textMap.put(-1, new TextRemover(stripHTML(this.report.getDescription()), this.report.getSubmitter(),
+			                                     this.report.getCreationTimestamp()));
+			for (final Comment comment : this.report.getComments()) {
 				this.textMap.put(comment.getId(), new TextRemover(stripHTML(comment.getMessage()), comment.getAuthor(),
 				                                                  comment.getTimestamp()));
 			}
