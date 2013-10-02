@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.persistence.Basic;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
@@ -84,7 +85,7 @@ public class EnhancedReport implements Annotated {
 	 * @return the enhanced report
 	 */
 	public static EnhancedReport empty() {
-		return new EnhancedReport(null);
+		return new EnhancedReport();
 	}
 	
 	/**
@@ -109,13 +110,13 @@ public class EnhancedReport implements Annotated {
 		
 		SANITY: {
 			assert into.getId() != null;
-			assert from.getId() == null;
+			assert (from.getId() == null) || from.getId().equals(into.getId());
 		}
 		
 		synchronized (into) {
 			SANITTY: {
-				assert from.getFilteredDescription() == null;
-				assert from.getFilteredComments().isEmpty();
+				assert (from.getFilteredDescription() == null) || (into.getFilteredDescription() == null);
+				assert from.getFilteredComments().isEmpty() || into.getFilteredComments().isEmpty();
 				
 				for (final Entry<String, Attachment> entry : from.getAttachments().entrySet()) {
 					assert !into.getAttachments().containsKey(entry.getKey());
@@ -223,17 +224,20 @@ public class EnhancedReport implements Annotated {
 	/**
 	 * Instantiates a new enhanced report.
 	 * 
-	 * @param id
-	 *            the id
+	 * @param report
+	 *            the report
 	 */
-	public EnhancedReport(final String id) {
+	public EnhancedReport(final Report report) {
 		PRECONDITIONS: {
-			// none
+			if (report == null) {
+				throw new NullPointerException();
+			}
 		}
 		
 		try {
 			// body
-			this.id = id;
+			setReport(report);
+			setId(report.getId());
 		} finally {
 			POSTCONDITIONS: {
 				// none
@@ -297,7 +301,10 @@ public class EnhancedReport implements Annotated {
 	 * 
 	 * @return the extractedRegions
 	 */
-	// @ElementCollection
+	@ElementCollection
+	// @JoinTable (name = "extracted_regions", joinColumns = {
+	// @JoinColumn (name = "from", nullable = false, referencedColumnName = "from"),
+	// @JoinColumn (name = "to", nullable = false, referencedColumnName = "to") })
 	public Map<Region, Type> getExtractedRegions() {
 		return this.extractedRegions;
 	}
