@@ -43,6 +43,7 @@ import org.mozkito.testing.annotation.type.SourceType;
 import org.mozkito.utilities.commons.JavaUtils;
 import org.mozkito.utilities.datastructures.Tuple;
 import org.mozkito.utilities.execution.CommandExecutor;
+import org.mozkito.utilities.io.CompressionUtils;
 import org.mozkito.utilities.io.FileUtils;
 import org.mozkito.utilities.io.FileUtils.FileShutdownAction;
 import org.mozkito.utilities.io.IOUtils;
@@ -189,8 +190,8 @@ public class RepositoryProcessor implements MozkitoSettingsProcessor {
 							FileUtils.SupportedPackers.valueOf(fileSuffix.replaceFirst(".*\\.", "").toUpperCase());
 							
 							try {
-								FileUtils.unpack(file, new File(repoPath));
-							} catch (final FilePermissionException | IOException e) {
+								CompressionUtils.decompress(file, new File(repoPath));
+							} catch (final IOException e) {
 								throw new TestSettingsError("Could not create repository.", e);
 							}
 						} catch (final IllegalArgumentException e) {

@@ -20,6 +20,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.FileAlreadyExistsException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,8 +34,10 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import lzma.sdk.lzma.Decoder;
-import lzma.streams.LzmaInputStream;
+import com.github.junrar.Archive;
+import com.github.junrar.exception.RarException;
+import com.github.junrar.rarfile.FileHeader;
+
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
@@ -41,6 +45,8 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.lang.StringUtils;
@@ -300,6 +306,76 @@ public class FileUtils {
 	// }
 	
 	/**
+	 * Bunzip2 provides bzip2 decompression. Please not that this won't transitively call
+	 * {@link FileUtils#untar(File, File)} in case you got a &quot;.tar.bz2&quot; archive.
+	 * 
+	 * @param archive
+	 *            the file
+	 * @param targetFile
+	 *            the target file
+	 * @throws NullPointerException
+	 *             if one of the parameters is null.
+	 * @throws FileNotFoundException
+	 *             if the archive file cannot be found.
+	 * @throws IllegalArgumentException
+	 *             if the archive isn't a readable file with extension .bz, .bz2 or .bzip2.
+	 * @throws FileAlreadyExistsException
+	 *             if the targetFile already exists.
+	 * @throws FilePermissionException
+	 *             if the we do not have sufficient rights to read from the archive.
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred (e.g. creating the targetFile, reading from the archive or
+	 *             writing to the file).
+	 */
+	public static void bunzip2(final File archive,
+	                           final File targetFile) throws IOException {
+		PRECONDITIONS: {
+			if (archive == null) {
+				throw new NullPointerException();
+			}
+			
+			if (!archive.exists()) {
+				throw new FileNotFoundException("Archive cannot be found");
+			}
+			
+			if (!archive.isFile()) {
+				throw new IllegalArgumentException("Archive is not a file.");
+			}
+			
+			final String extension = FilenameUtils.getExtension(archive.getName());
+			if ((extension == null)
+			        || !("bz".equalsIgnoreCase(extension) || "bz2".equalsIgnoreCase(extension) || "bzip2".equalsIgnoreCase(extension))) {
+				throw new IllegalArgumentException("File does not have a valid file extension: " + extension);
+			}
+			
+			if (targetFile == null) {
+				throw new NullPointerException();
+			}
+			
+			if (targetFile.exists()) {
+				throw new FileAlreadyExistsException("Target file '" + targetFile + "' already exists.");
+			}
+			
+			ensureFilePermissions(archive, READABLE_FILE);
+		}
+		
+		try (BZip2CompressorInputStream bzIn = new BZip2CompressorInputStream(
+		                                                                      new BufferedInputStream(
+		                                                                                              new FileInputStream(
+		                                                                                                                  archive)))) {
+			try (final FileOutputStream out = new FileOutputStream(targetFile)) {
+				
+				final byte[] buffer = new byte[4096];
+				int n = 0;
+				
+				while (-1 != (n = bzIn.read(buffer))) {
+					out.write(buffer, 0, n);
+				}
+			}
+		}
+	}
+	
+	/**
 	 * Checks if the command maps to a valid accessible, executable file. If the command is not absolute, a PATH
 	 * traversal search for the command is done.
 	 * 
@@ -443,6 +519,56 @@ public class FileUtils {
 		}
 		addToFileManager(newDir, shutdownAction);
 		return newDir;
+	}
+	
+	/**
+	 * Creates the directory.
+	 * 
+	 * @param fh
+	 *            the fh
+	 * @param destination
+	 *            the destination
+	 */
+	private static void createDirectory(final FileHeader fh,
+	                                    final File destination) {
+		File f = null;
+		if (fh.isDirectory() && fh.isUnicode()) {
+			f = new File(destination, fh.getFileNameW());
+			if (!f.exists()) {
+				makeDirectory(destination, fh.getFileNameW());
+			}
+		} else if (fh.isDirectory() && !fh.isUnicode()) {
+			f = new File(destination, fh.getFileNameString());
+			if (!f.exists()) {
+				makeDirectory(destination, fh.getFileNameString());
+			}
+		}
+	}
+	
+	/**
+	 * Creates the file.
+	 * 
+	 * @param fh
+	 *            the fh
+	 * @param destination
+	 *            the destination
+	 * @return the file
+	 * @throws IOException
+	 */
+	private static File createFile(final FileHeader fh,
+	                               final File destination) throws IOException {
+		File f = null;
+		String name = null;
+		if (fh.isFileHeader() && fh.isUnicode()) {
+			name = fh.getFileNameW();
+		} else {
+			name = fh.getFileNameString();
+		}
+		f = new File(destination, name);
+		if (!f.exists()) {
+			f = makeFile(destination, name);
+		}
+		return f;
 	}
 	
 	/**
@@ -936,6 +1062,63 @@ public class FileUtils {
 	}
 	
 	/**
+	 * Make directory.
+	 * 
+	 * @param destination
+	 *            the destination
+	 * @param fileName
+	 *            the file name
+	 */
+	private static void makeDirectory(final File destination,
+	                                  final String fileName) {
+		final String[] dirs = fileName.split("\\\\");
+		if (dirs == null) {
+			return;
+		}
+		String path = "";
+		for (final String dir : dirs) {
+			path = path + File.separator + dir;
+			new File(destination, path).mkdir();
+		}
+		
+	}
+	
+	/**
+	 * Make file.
+	 * 
+	 * @param destination
+	 *            the destination
+	 * @param name
+	 *            the name
+	 * @return the file
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	private static File makeFile(final File destination,
+	                             final String name) throws IOException {
+		final String[] dirs = name.split("\\\\");
+		if (dirs == null) {
+			return null;
+		}
+		String path = "";
+		final int size = dirs.length;
+		if (size == 1) {
+			return new File(destination, name);
+		} else if (size > 1) {
+			for (int i = 0; i < (dirs.length - 1); i++) {
+				path = path + File.separator + dirs[i];
+				new File(destination, path).mkdir();
+			}
+			path = path + File.separator + dirs[dirs.length - 1];
+			final File f = new File(destination, path);
+			f.createNewFile();
+			return f;
+		} else {
+			return null;
+		}
+	}
+	
+	/**
 	 * Permissions to string.
 	 * 
 	 * @param file
@@ -994,104 +1177,155 @@ public class FileUtils {
 		}
 	}
 	
-	/**
-	 * Unlzma.
-	 * 
-	 * @param lzmaFile
-	 *            the lzma file
-	 * @param directory
-	 *            the directory
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
-	 * @throws FilePermissionException
-	 *             the file permission exception
-	 */
-	public static void unlzma(final File lzmaFile,
-	                          final File directory) throws IOException, FilePermissionException {
-		ensureFilePermissions(lzmaFile, READABLE_FILE);
-		ensureFilePermissions(directory, WRITABLE_DIR);
-		
-		final int BUFFER = 2048;
-		final FileInputStream fis = new FileInputStream(lzmaFile);
-		final LzmaInputStream zis = new LzmaInputStream(new BufferedInputStream(fis), new Decoder());
-		final byte[] buffer = new byte[BUFFER];
-		String path = lzmaFile.getName();
-		final int i = path.lastIndexOf(".");
-		if (i > 0) {
-			path = directory.getAbsolutePath() + FileUtils.fileSeparator + path.substring(0, i - 1);
-		} else {
-			zis.close();
-			throw new IOException("Compressed file does not contain a file extension like `.zip`.");
-		}
-		
-		final File outputFile = new File(path);
-		ensureFilePermissions(outputFile, WRITABLE_FILE);
-		final BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(outputFile));
-		
-		while ((zis.read(buffer)) != -1) {
-			stream.write(buffer);
-		}
-		
-		stream.flush();
-		stream.close();
-		zis.close();
-		
-	}
+	// /**
+	// * Unlzma.
+	// *
+	// * @param lzmaFile
+	// * the lzma file
+	// * @param directory
+	// * the directory
+	// * @throws IOException
+	// * Signals that an I/O exception has occurred.
+	// * @throws FilePermissionException
+	// * the file permission exception
+	// */
+	// public static void unlzma(final File lzmaFile,
+	// final File directory) throws IOException, FilePermissionException {
+	// ensureFilePermissions(lzmaFile, READABLE_FILE);
+	// ensureFilePermissions(directory, WRITABLE_DIR);
+	//
+	// final int BUFFER = 2048;
+	// final FileInputStream fis = new FileInputStream(lzmaFile);
+	//
+	// final LzmaInputStream zis = new LzmaInputStream(new BufferedInputStream(fis), new Decoder());
+	// final byte[] buffer = new byte[BUFFER];
+	// String path = lzmaFile.getName();
+	// final int i = path.lastIndexOf(".");
+	// if (i > 0) {
+	// path = directory.getAbsolutePath() + FileUtils.fileSeparator + path.substring(0, i - 1);
+	// } else {
+	// zis.close();
+	// throw new IOException("Compressed file does not contain a file extension like `.zip`.");
+	// }
+	//
+	// final File outputFile = new File(path);
+	// ensureFilePermissions(outputFile, WRITABLE_FILE);
+	// final BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(outputFile));
+	//
+	// while ((zis.read(buffer)) != -1) {
+	// stream.write(buffer);
+	// }
+	//
+	// stream.flush();
+	// stream.close();
+	// zis.close();
+	//
+	// }
+	
+	// /**
+	// * Unpack.
+	// *
+	// * @param packedFile
+	// * the packed file
+	// * @param directory
+	// * the directory
+	// * @throws IOException
+	// * Signals that an I/O exception has occurred.
+	// * @throws FilePermissionException
+	// * the file permission exception
+	// */
+	// public static void unpack(final File packedFile,
+	// final File directory) throws IOException, FilePermissionException {
+	// String[] split;
+	//
+	// final String path = packedFile.getCanonicalPath();
+	// split = path.split("\\.");
+	// String format = null;
+	// if (split.length > 0) {
+	// format = split[split.length - 1];
+	// } else {
+	// throw new IOException("File does not have an extension.");
+	// }
+	//
+	// if (format.equalsIgnoreCase("ZIP") || format.equalsIgnoreCase("JAR")) {
+	// unzip(packedFile, directory);
+	// } else if (format.equalsIgnoreCase("XZ") || format.equalsIgnoreCase("LZMA") || format.equalsIgnoreCase("XZIP")) {
+	// unlzma(packedFile, directory);
+	// if (split.length > 1) {
+	// format = split[split.length - 2];
+	// if (format.equalsIgnoreCase("TAR")) {
+	// untar(new File(path.substring(0, path.length() - split[split.length - 1].length() - 1)), directory);
+	// }
+	// }
+	// } else if (format.equalsIgnoreCase("GZ") || format.equalsIgnoreCase("GZIP")) {
+	// gunzip(packedFile, directory);
+	// if (split.length > 1) {
+	// format = split[split.length - 2];
+	// if (format.equalsIgnoreCase("TAR")) {
+	// untar(new File(path.substring(0, path.length() - split[split.length - 1].length() - 1)), directory);
+	// }
+	// }
+	// } else if (format.equalsIgnoreCase("BZ") || format.equalsIgnoreCase("BZIP") || format.equalsIgnoreCase("BZIP2")
+	// || format.equalsIgnoreCase("BZ2")) {
+	// bunzip2(packedFile, directory);
+	// if (split.length > 1) {
+	// format = split[split.length - 2];
+	// if (format.equalsIgnoreCase("TAR")) {
+	// untar(new File(path.substring(0, path.length() - split[split.length - 1].length() - 1)), directory);
+	// }
+	// }
+	// }
+	//
+	// }
 	
 	/**
-	 * Unpack.
+	 * Unrar.
 	 * 
-	 * @param packedFile
-	 *            the packed file
+	 * @param archive
+	 *            the archive
 	 * @param directory
 	 *            the directory
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
 	 * @throws FilePermissionException
 	 *             the file permission exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
-	public static void unpack(final File packedFile,
-	                          final File directory) throws IOException, FilePermissionException {
-		String[] split;
+	public static void unrar(final File archive,
+	                         final File directory) throws FilePermissionException, IOException {
+		ensureFilePermissions(archive, READABLE_FILE);
+		ensureFilePermissions(directory, WRITABLE_DIR);
 		
-		final String path = packedFile.getCanonicalPath();
-		split = path.split("\\.");
-		String format = null;
-		if (split.length > 0) {
-			format = split[split.length - 1];
-		} else {
-			throw new IOException("File does not have an extension.");
+		try (final Archive arch = new Archive(archive)) {
+			if (arch.isEncrypted()) {
+				throw new IOException("archive is encrypted cannot extreact");
+			}
+			FileHeader fh = null;
+			while (true) {
+				fh = arch.nextFileHeader();
+				if (fh == null) {
+					break;
+				}
+				if (fh.isEncrypted()) {
+					Logger.warn("file is encrypted cannot extract: " + fh.getFileNameString());
+					continue;
+				}
+				if (Logger.logDebug()) {
+					Logger.debug("extracting: " + fh.getFileNameString());
+				}
+				
+				if (fh.isDirectory()) {
+					createDirectory(fh, directory);
+				} else {
+					final File f = createFile(fh, directory);
+					final OutputStream stream = new FileOutputStream(f);
+					arch.extractFile(fh, stream);
+					stream.close();
+				}
+				
+			}
+		} catch (final RarException e) {
+			throw new IOException(e);
 		}
-		
-		if (format.equalsIgnoreCase("ZIP") || format.equalsIgnoreCase("JAR")) {
-			unzip(packedFile, directory);
-		} else if (format.equalsIgnoreCase("XZ") || format.equalsIgnoreCase("LZMA") || format.equalsIgnoreCase("XZIP")) {
-			unlzma(packedFile, directory);
-			if (split.length > 1) {
-				format = split[split.length - 2];
-				if (format.equalsIgnoreCase("TAR")) {
-					untar(new File(path.substring(0, path.length() - split[split.length - 1].length() - 1)), directory);
-				}
-			}
-		} else if (format.equalsIgnoreCase("GZ") || format.equalsIgnoreCase("GZIP")) {
-			gunzip(packedFile, directory);
-			if (split.length > 1) {
-				format = split[split.length - 2];
-				if (format.equalsIgnoreCase("TAR")) {
-					untar(new File(path.substring(0, path.length() - split[split.length - 1].length() - 1)), directory);
-				}
-			}
-		} else if (format.equalsIgnoreCase("BZ") || format.equalsIgnoreCase("BZIP") || format.equalsIgnoreCase("BZIP2")
-		        || format.equalsIgnoreCase("BZ2")) {
-			// bunzip2(packedFile, directory);
-			if (split.length > 1) {
-				format = split[split.length - 2];
-				if (format.equalsIgnoreCase("TAR")) {
-					untar(new File(path.substring(0, path.length() - split[split.length - 1].length() - 1)), directory);
-				}
-			}
-		}
-		
 	}
 	
 	/**
