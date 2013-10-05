@@ -45,29 +45,39 @@ public class ZipDecompressor extends ArchiveDecompressor {
 			assert outputDirectory != null;
 		}
 		
-		final ZipFile zipFile = new ZipFile(archive);
-		final Enumeration<ZipArchiveEntry> enumeration = zipFile.getEntries();
+		ZipFile zipFile = null;
 		
-		while (enumeration.hasMoreElements()) {
-			final ZipArchiveEntry entry = enumeration.nextElement();
-			final InputStream content = zipFile.getInputStream(entry);
-			final File targetFile = new File(outputDirectory, entry.getName());
+		try {
+			zipFile = new ZipFile(archive);
 			
-			if (entry.isDirectory()) {
-				if ((!targetFile.exists() && !targetFile.mkdirs()) || !targetFile.isDirectory()) {
-					throw new IOException("Failed creating directory: " + targetFile.getParentFile().getAbsolutePath());
-				}
-			} else {
-				if ((targetFile.getParentFile() != null) && !targetFile.getParentFile().exists()) {
-					if (!targetFile.getParentFile().mkdirs()) {
+			final Enumeration<ZipArchiveEntry> enumeration = zipFile.getEntries();
+			
+			while (enumeration.hasMoreElements()) {
+				final ZipArchiveEntry entry = enumeration.nextElement();
+				final InputStream content = zipFile.getInputStream(entry);
+				final File targetFile = new File(outputDirectory, entry.getName());
+				
+				if (entry.isDirectory()) {
+					if ((!targetFile.exists() && !targetFile.mkdirs()) || !targetFile.isDirectory()) {
 						throw new IOException("Failed creating directory: "
 						        + targetFile.getParentFile().getAbsolutePath());
 					}
+				} else {
+					if ((targetFile.getParentFile() != null) && !targetFile.getParentFile().exists()) {
+						if (!targetFile.getParentFile().mkdirs()) {
+							throw new IOException("Failed creating directory: "
+							        + targetFile.getParentFile().getAbsolutePath());
+						}
+					}
+					
+					try (FileOutputStream fileOutputStream = new FileOutputStream(targetFile)) {
+						IOUtils.copy(content, fileOutputStream);
+					}
 				}
-				
-				try (FileOutputStream fileOutputStream = new FileOutputStream(targetFile)) {
-					IOUtils.copy(content, fileOutputStream);
-				}
+			}
+		} finally {
+			if (zipFile != null) {
+				zipFile.close();
 			}
 		}
 		
