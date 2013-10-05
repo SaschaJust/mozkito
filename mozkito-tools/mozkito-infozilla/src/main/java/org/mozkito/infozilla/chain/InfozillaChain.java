@@ -117,7 +117,7 @@ public class InfozillaChain extends Chain<Settings> {
 			// load sources
 			new ReportReader(group, getSettings(), persistenceUtil);
 			new ReportTransformer(group, getSettings());
-			new InlineFilter(group, getSettings(), null);
+			// new InlineFilter(group, getSettings(), null);
 			new AttachmentFilter(group, getSettings(), null);
 			new VoidSink(group, getSettings());
 			
