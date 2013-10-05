@@ -78,10 +78,11 @@ public class AttachmentEntry implements Annotated {
 	private String            link;
 	
 	/**
-	 * should be used by persistence util only.
+	 * @deprecated should be used by persistence util only.
 	 */
+	@Deprecated
 	public AttachmentEntry() {
-		
+		// ignore
 	}
 	
 	/**
