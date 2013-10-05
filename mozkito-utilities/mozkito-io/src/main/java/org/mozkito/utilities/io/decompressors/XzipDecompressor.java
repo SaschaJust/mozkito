@@ -46,7 +46,7 @@ public class XzipDecompressor extends CompressionDecompressor {
 		                                                                         new BufferedInputStream(
 		                                                                                                 new FileInputStream(
 		                                                                                                                     archive)))) {
-			try (final FileOutputStream fileOutputStream = new FileOutputStream(outputFile.getParentFile())) {
+			try (final FileOutputStream fileOutputStream = new FileOutputStream(outputFile)) {
 				IOUtils.copy(xzInputStream, fileOutputStream);
 			}
 		}
