@@ -120,17 +120,7 @@ public class Region implements Comparable<Region> {
 	 */
 	@Basic
 	public Integer getFrom() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.from;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.from;
 	}
 	
 	/**
@@ -140,17 +130,7 @@ public class Region implements Comparable<Region> {
 	 */
 	@Basic
 	public Integer getTo() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.to;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.to;
 	}
 	
 	/**
