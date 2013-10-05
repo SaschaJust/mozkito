@@ -326,7 +326,9 @@ public class FileUtils {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred (e.g. creating the targetFile, reading from the archive or
 	 *             writing to the file).
+	 * @deprecated use {@link CompressionUtils#decompress(File, File)}
 	 */
+	@Deprecated
 	public static void bunzip2(final File archive,
 	                           final File targetFile) throws IOException {
 		PRECONDITIONS: {
@@ -1012,7 +1014,9 @@ public class FileUtils {
 	 *             the file permission exception
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
+	 * @deprecated use {@link CompressionUtils#decompress(File, File)}
 	 */
+	@Deprecated
 	public static void gunzip(final File gzipFile,
 	                          final File directory) throws FilePermissionException, IOException {
 		ensureFilePermissions(gzipFile, READABLE_FILE);
@@ -1289,7 +1293,9 @@ public class FileUtils {
 	 *             the file permission exception
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
+	 * @deprecated use {@link CompressionUtils#decompress(File, File)}
 	 */
+	@Deprecated
 	public static void unrar(final File archive,
 	                         final File directory) throws FilePermissionException, IOException {
 		ensureFilePermissions(archive, READABLE_FILE);
@@ -1339,7 +1345,9 @@ public class FileUtils {
 	 *             the file permission exception
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
+	 * @deprecated use {@link CompressionUtils#decompress(File, File)}
 	 */
+	@Deprecated
 	public static void untar(final File tarFile,
 	                         final File directory) throws FilePermissionException, IOException {
 		ensureFilePermissions(tarFile, READABLE_FILE);
@@ -1397,8 +1405,9 @@ public class FileUtils {
 	 *             the file not found exception
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
+	 * @deprecated use {@link CompressionUtils#decompress(File, File)}
 	 */
-	@NoneNull
+	@Deprecated
 	public static void unzip(final File zipFile,
 	                         final File directory) throws FilePermissionException, FileNotFoundException, IOException {
 		ensureFilePermissions(zipFile, READABLE_FILE);
