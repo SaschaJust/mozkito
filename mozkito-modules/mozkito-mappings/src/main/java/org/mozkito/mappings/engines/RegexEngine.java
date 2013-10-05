@@ -252,6 +252,14 @@ public class RegexEngine extends Engine {
 					// ignore
 				}
 				throw new UnrecoverableError(e);
+			} finally {
+				if (reader != null) {
+					try {
+						reader.close();
+					} catch (final IOException ignore) {
+						// ignore
+					}
+				}
 			}
 		} finally {
 			// POSTCONDITIONS

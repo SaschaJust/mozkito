@@ -29,12 +29,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
 import org.mozkito.infozilla.elements.Attachable;
 import org.mozkito.infozilla.model.attachment.Attachment;
 import org.mozkito.persistence.Annotated;
 import org.mozkito.utilities.commons.JavaUtils;
+import org.mozkito.utilities.io.CompressionUtils;
 import org.mozkito.utilities.io.FileUtils;
 import org.mozkito.utilities.io.FileUtils.FileShutdownAction;
 import org.mozkito.utilities.io.exceptions.FilePermissionException;
@@ -61,7 +63,9 @@ public class Archive implements Attachable, Annotated {
 		/** The tar. */
 		TAR,
 		/** The zip. */
-		ZIP;
+		ZIP,
+		/** The rar. */
+		RAR;
 	}
 	
 	/** The Constant serialVersionUID. */
@@ -79,6 +83,9 @@ public class Archive implements Attachable, Annotated {
 	/** The type. */
 	private Type              type;
 	
+	/** The target directory. */
+	private File              targetDirectory;
+	
 	/**
 	 * Instantiates a new archive.
 	 * 
@@ -94,10 +101,13 @@ public class Archive implements Attachable, Annotated {
 	 * 
 	 * @param origin
 	 *            the origin
+	 * @param type
+	 *            the type
 	 */
-	public Archive(final Attachment origin) {
+	public Archive(final Attachment origin, final Type type) {
 		super();
 		this.origin = origin;
+		this.type = type;
 	}
 	
 	/**
@@ -109,157 +119,16 @@ public class Archive implements Attachable, Annotated {
 	 * @throws FilePermissionException
 	 *             the file permission exception
 	 */
-	public File extract() throws IOException, FilePermissionException {
-		switch (getType()) {
-			case BZIP2:
-				return extractBzip2();
-			case GZIP:
-				return extractGzip();
-			case LZMA:
-				return extractLzma();
-			case TAR:
-				return extractTar();
-			case ZIP:
-				return extractZip();
-			default:
-				throw new IOException("Unsupported archive type: " + getType().name());
-		}
-	}
-	
-	/**
-	 * Extract bzip2.
-	 * 
-	 * @return the file
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
-	 * @throws FilePermissionException
-	 *             the file permission exception
-	 */
-	private File extractBzip2() throws IOException, FilePermissionException {
-		PRECONDITIONS: {
-			// none
+	@Transient
+	public synchronized File extractedDataDirectory() throws IOException {
+		if (getTargetDirectory() == null) {
+			setTargetDirectory(FileUtils.createRandomDir("infozilla_archive_", "_" + getOrigin().getFilename(),
+			                                             FileShutdownAction.DELETE));
+			CompressionUtils.decompress(getOrigin().getFile(), getTargetDirectory());
 		}
 		
-		try {
-			throw new UnsupportedOperationException("not yet implemented");
-			// final File file = FileUtils.createRandomFile(FileShutdownAction.DELETE);
-			// FileUtils.dump(getOrigin().getData(), file);
-			// final File dir = FileUtils.createRandomDir("test", "bleh", FileShutdownAction.DELETE);
-			// FileUtils.bunzip2(file, dir);
-			// return dir;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
-	}
-	
-	/**
-	 * Extract gzip.
-	 * 
-	 * @return the file
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
-	 * @throws FilePermissionException
-	 *             the file permission exception
-	 */
-	private File extractGzip() throws IOException, FilePermissionException {
-		PRECONDITIONS: {
-			// none
-		}
+		return this.targetDirectory;
 		
-		try {
-			final File file = FileUtils.createRandomFile(FileShutdownAction.DELETE);
-			FileUtils.dump(getOrigin().getData(), file);
-			final File dir = FileUtils.createRandomDir("test", "bleh", FileShutdownAction.DELETE);
-			FileUtils.gunzip(file, dir);
-			return dir;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
-	}
-	
-	/**
-	 * Extract lzma.
-	 * 
-	 * @return the file
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
-	 * @throws FilePermissionException
-	 *             the file permission exception
-	 */
-	private File extractLzma() throws IOException, FilePermissionException {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			final File file = FileUtils.createRandomFile(FileShutdownAction.DELETE);
-			FileUtils.dump(getOrigin().getData(), file);
-			final File dir = FileUtils.createRandomDir("test", "bleh", FileShutdownAction.DELETE);
-			FileUtils.unlzma(file, dir);
-			return dir;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
-	}
-	
-	/**
-	 * Extract tar.
-	 * 
-	 * @return the file
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
-	 * @throws FilePermissionException
-	 *             the file permission exception
-	 */
-	private File extractTar() throws IOException, FilePermissionException {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			final File file = FileUtils.createRandomFile(FileShutdownAction.DELETE);
-			FileUtils.dump(getOrigin().getData(), file);
-			final File dir = FileUtils.createRandomDir("test", "bleh", FileShutdownAction.DELETE);
-			FileUtils.untar(file, dir);
-			return dir;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
-	}
-	
-	/**
-	 * Extract zip.
-	 * 
-	 * @return the file
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
-	 * @throws FilePermissionException
-	 *             the file permission exception
-	 */
-	private File extractZip() throws IOException, FilePermissionException {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			final File file = FileUtils.createRandomFile(FileShutdownAction.DELETE);
-			FileUtils.dump(getOrigin().getData(), file);
-			final File dir = FileUtils.createRandomDir("test", "bleh", FileShutdownAction.DELETE);
-			FileUtils.unzip(file, dir);
-			return dir;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
 	}
 	
 	/**
@@ -284,20 +153,11 @@ public class Archive implements Attachable, Annotated {
 	}
 	
 	/**
-	 * Gets the date.
-	 * 
-	 * @return the date
-	 */
-	@Transient
-	public byte[] getData() {
-		return getOrigin().getData();
-	}
-	
-	/**
 	 * Gets the entries.
 	 * 
 	 * @return the entries
 	 */
+	@OneToMany
 	public List<Attachment> getEntries() {
 		return this.entries;
 	}
@@ -321,6 +181,24 @@ public class Archive implements Attachable, Annotated {
 	@ManyToOne (cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
 	public Attachment getOrigin() {
 		return this.origin;
+	}
+	
+	/**
+	 * @return the targetDirectory
+	 */
+	@Transient
+	private final File getTargetDirectory() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.targetDirectory;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/**
@@ -364,6 +242,24 @@ public class Archive implements Attachable, Annotated {
 	}
 	
 	/**
+	 * @param targetDirectory
+	 *            the targetDirectory to set
+	 */
+	private final void setTargetDirectory(final File targetDirectory) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.targetDirectory = targetDirectory;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
 	 * Sets the type.
 	 * 
 	 * @param type
@@ -371,6 +267,23 @@ public class Archive implements Attachable, Annotated {
 	 */
 	public void setType(final Type type) {
 		this.type = type;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		final StringBuilder builder = new StringBuilder();
+		builder.append("Archive [type=");
+		builder.append(getType());
+		builder.append("] Entries: ").append(getEntries().size());
+		for (final Attachment attachment : getEntries()) {
+			builder.append(attachment);
+		}
+		return builder.toString();
 	}
 	
 }

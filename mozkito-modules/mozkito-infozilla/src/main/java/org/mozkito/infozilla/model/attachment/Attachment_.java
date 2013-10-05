@@ -16,6 +16,7 @@ package org.mozkito.infozilla.model.attachment;
 import javax.persistence.metamodel.SingularAttribute;
 
 import org.mozkito.infozilla.elements.AttachmentType;
+import org.mozkito.infozilla.model.archive.Archive;
 import org.mozkito.issues.model.AttachmentEntry;
 
 /**
@@ -26,8 +27,8 @@ import org.mozkito.issues.model.AttachmentEntry;
                              date = "Tue Oct 01 14:05:14 CEST 2013")
 public class Attachment_ {
 	
-	/** The data. */
-	public static volatile SingularAttribute<Attachment, byte[]>          data;
+	/** The archive. */
+	public static volatile SingularAttribute<Attachment, Archive>         archive;
 	
 	/** The encoding. */
 	public static volatile SingularAttribute<Attachment, String>          encoding;

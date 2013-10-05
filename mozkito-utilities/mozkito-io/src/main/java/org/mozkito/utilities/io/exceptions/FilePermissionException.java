@@ -12,12 +12,14 @@
  ******************************************************************************/
 package org.mozkito.utilities.io.exceptions;
 
+import java.io.IOException;
+
 /**
  * The Class FilePermissionException.
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
-public class FilePermissionException extends Exception {
+public class FilePermissionException extends IOException {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 5734718527829761034L;

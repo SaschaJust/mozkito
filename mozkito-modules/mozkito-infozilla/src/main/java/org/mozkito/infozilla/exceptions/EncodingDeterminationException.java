@@ -15,12 +15,14 @@
  */
 package org.mozkito.infozilla.exceptions;
 
+import java.io.IOException;
+
 /**
  * The Class EncodingDeterminationException.
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class EncodingDeterminationException extends Exception {
+public class EncodingDeterminationException extends IOException {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -8649305536003056411L;

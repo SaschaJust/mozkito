@@ -78,10 +78,11 @@ public class AttachmentEntry implements Annotated {
 	private String            link;
 	
 	/**
-	 * should be used by persistence util only.
+	 * @deprecated should be used by persistence util only.
 	 */
+	@Deprecated
 	public AttachmentEntry() {
-		
+		// ignore
 	}
 	
 	/**
@@ -370,25 +371,24 @@ public class AttachmentEntry implements Annotated {
 	 * To uri.
 	 * 
 	 * @return the uRI
+	 * @throws URISyntaxException
 	 */
-	public URI toURI() {
-		try {
-			return new URI(getLink());
-		} catch (final URISyntaxException e) {
-			return null;
-		}
+	public URI toURI() throws URISyntaxException {
+		// try {
+		// final String string = URLEncoder.encode(getLink(), URL_DEFAULT_ENCODING);
+		return new URI(getLink().replace(" ", "+"));
+		// } catch (final UnsupportedEncodingException e) {
+		// throw new URISyntaxException(getLink(), e.getMessage(), 0);
+		// }
 	}
 	
 	/**
 	 * To url.
 	 * 
 	 * @return the uRL
+	 * @throws MalformedURLException
 	 */
-	public URL toURL() {
-		try {
-			return new URL(getLink());
-		} catch (final MalformedURLException e) {
-			return null;
-		}
+	public URL toURL() throws MalformedURLException {
+		return new URL(getLink().replace(" ", "+"));
 	}
 }

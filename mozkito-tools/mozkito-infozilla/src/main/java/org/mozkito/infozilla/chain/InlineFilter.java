@@ -13,26 +13,22 @@
 
 package org.mozkito.infozilla.chain;
 
+import net.ownhero.dev.andama.threads.Filter;
 import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.ProcessHook;
-import net.ownhero.dev.andama.threads.Transformer;
 import net.ownhero.dev.hiari.settings.ISettings;
-import net.ownhero.dev.kisa.Logger;
-import net.ownhero.dev.regex.Match;
-import net.ownhero.dev.regex.Regex;
 
 import org.mozkito.infozilla.IFilterManager;
 import org.mozkito.infozilla.InlineFilterManager;
 import org.mozkito.infozilla.SimpleEditor;
 import org.mozkito.infozilla.model.EnhancedReport;
-import org.mozkito.issues.model.Report;
 
 /**
  * The Class StacktraceFilter.
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class InlineFilter extends Transformer<Report, EnhancedReport> {
+public class InlineFilter extends Filter<EnhancedReport> {
 	
 	/**
 	 * Instantiates a new stacktrace filter.
@@ -56,9 +52,8 @@ public class InlineFilter extends Transformer<Report, EnhancedReport> {
 			// final Thread t = new Thread(editor);
 			// t.start();
 			final SimpleEditor editor = null;
-			final Regex regex = new Regex("201\\d.*");
 			
-			new ProcessHook<Report, EnhancedReport>(this) {
+			new ProcessHook<EnhancedReport, EnhancedReport>(this) {
 				
 				/**
 				 * {@inheritDoc}
@@ -72,21 +67,14 @@ public class InlineFilter extends Transformer<Report, EnhancedReport> {
 					}
 					
 					try {
-						final Report data = getInputData();
-						final Match match = regex.find(data.getDescription());
-						if (match != null) {
-							if (Logger.logAlways()) {
-								Logger.always(match.getFullMatch().getMatch());
-							}
-						}
-						EnhancedReport enhancedReport = null;
+						final EnhancedReport data = getInputData();
 						
 						if (data != null) {
 							final IFilterManager chain = new InlineFilterManager(data, editor);
-							enhancedReport = chain.parse();
+							chain.parse();
 						}
 						
-						provideOutputData(enhancedReport);
+						provideOutputData(data);
 					} finally {
 						POSTCONDITIONS: {
 							// none
