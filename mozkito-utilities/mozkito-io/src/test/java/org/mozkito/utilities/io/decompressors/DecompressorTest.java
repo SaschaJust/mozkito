@@ -240,6 +240,19 @@ public class DecompressorTest {
 	}
 	
 	/**
+	 * Test xzip.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 * @throws URISyntaxException
+	 *             the uRI syntax exception
+	 */
+	@Test
+	public final void testXzip() throws IOException, URISyntaxException {
+		testExtraction("tar", "xz");
+	}
+	
+	/**
 	 * Test zip.
 	 * 
 	 * @throws IOException
