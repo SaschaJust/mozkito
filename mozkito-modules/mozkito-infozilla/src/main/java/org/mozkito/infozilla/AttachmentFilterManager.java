@@ -16,6 +16,7 @@ package org.mozkito.infozilla;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -325,7 +326,14 @@ public class AttachmentFilterManager implements IFilterManager {
 		final List<T> results = new LinkedList<>();
 		
 		try {
-			final URI uri = attachment.getEntry().toURI();
+			URI uri;
+			try {
+				uri = attachment.getEntry().toURI();
+			} catch (final URISyntaxException e) {
+				assert false : e.getMessage();
+				throw new IllegalArgumentException(e);
+			}
+			
 			final String text = this.textMap.get(uri).prepare();
 			
 			for (final T result : filter.filter(text, attachment.getEntry().getAuthor(), attachment.getEntry()
