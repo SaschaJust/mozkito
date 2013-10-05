@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.Arrays;
 
@@ -43,7 +44,6 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.tika.exception.TikaException;
@@ -401,10 +401,9 @@ public class Attachment implements Annotated {
 					Logger.debug("Downloading attachment: " + getEntry().getLink());
 				}
 				final HttpClient httpClient = new DefaultHttpClient();
-				URI uri = getEntry().toURI();
-				final URIBuilder builder = new URIBuilder(uri);
+				URI uri;
 				try {
-					uri = builder.build();
+					uri = getEntry().toURI();
 				} catch (final URISyntaxException e) {
 					throw new IOException(e);
 				}
@@ -412,7 +411,9 @@ public class Attachment implements Annotated {
 				final HttpResponse response = httpClient.execute(request);
 				final HttpEntity entity = response.getEntity();
 				final ContentType contentType = ContentType.getOrDefault(entity);
-				
+				SANITY: {
+					assert contentType != null;
+				}
 				this.file = FileUtils.createRandomFile("infozilla_attachment.", "_" + getFilename(),
 				                                       FileUtils.FileShutdownAction.KEEP);
 				try (InputStream contentInputStream = entity.getContent()) {
@@ -420,7 +421,10 @@ public class Attachment implements Annotated {
 						org.apache.commons.io.IOUtils.copy(contentInputStream, outputStream);
 					}
 				}
-				setEncoding(contentType.getCharset().name());
+				final Charset charset = contentType.getCharset();
+				setEncoding(charset != null
+				                           ? charset.name()
+				                           : Charset.defaultCharset().name());
 				setFilename(getEntry().getFilename());
 			} else if (getArchive() != null) {
 				SANITY: {
