@@ -15,19 +15,23 @@
  */
 package org.mozkito.infozilla.settings;
 
-import java.util.Collection;
+import java.io.File;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
+import net.ownhero.dev.hiari.settings.DirectoryArgument;
+import net.ownhero.dev.hiari.settings.DirectoryArgument.Options;
 import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 
-import org.mozkito.infozilla.InlineFilterManager;
+import org.mozkito.infozilla.IFilterManager;
+import org.mozkito.infozilla.InfozillaEnvironment;
 import org.mozkito.infozilla.filters.Filter;
 
 /**
@@ -36,11 +40,25 @@ import org.mozkito.infozilla.filters.Filter;
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class InfozillaArguments extends
-        ArgumentSetOptions<InlineFilterManager, ArgumentSet<InlineFilterManager, InfozillaArguments>> {
+        ArgumentSetOptions<InfozillaEnvironment, ArgumentSet<InfozillaEnvironment, InfozillaArguments>> {
 	
 	/** The filters. */
-	@SuppressWarnings ("unused")
-	private final Set<Filter> filters = new HashSet<Filter>();
+	private Set<Filter<?>>       filters = new HashSet<Filter<?>>();
+	
+	/** The attachment directory options. */
+	private Options              attachmentDirectoryOptions;
+	
+	/** The filter options. */
+	private FilterOptions        filterOptions;
+	
+	/** The directory. */
+	private File                 directory;
+	
+	/** The manager options. */
+	private FilterManagerOptions managerOptions;
+	
+	/** The managers. */
+	private Set<IFilterManager>  managers;
 	
 	/**
 	 * Instantiates a new infozilla arguments.
@@ -52,102 +70,56 @@ public class InfozillaArguments extends
 	 */
 	public InfozillaArguments(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
 		super(argumentSet, "infozilla", "description", requirements);
-		// PRECONDITIONS
 		
-		try {
-			// final Package package1 = InfozillaFilter.class.getPackage();
-			// final Collection<Class<? extends InfozillaFilter>> classesExtendingClass =
-			// ClassFinder.getClassesExtendingClass(package1,
-			// InfozillaFilter.class,
-			// Modifier.ABSTRACT
-			// | Modifier.INTERFACE
-			// | Modifier.PRIVATE);
-			// final Collection<InfozillaFilter> collection = ArgumentSet.provideDynamicArguments(this,
-			// InfozillaFilter.class,
-			// "XYZ", Requirement.required,
-			// null, "infozilla",
-			// "filter", true);
-			// new SetArgument(this, "mapping.filters", "A list of mapping filters that shall be used.",
-			// buildFilterList(classesExtendingClass), Requirement.optional);
-			
-			final String filters = System.getProperty("mapping.filters");
-			final Set<String> filterNames = new HashSet<String>();
-			
-			if (filters != null) {
-				for (final String filterName : filters.split(",")) {
-					filterNames.add(Filter.class.getPackage().getName() + "." + filterName);
-				}
-				
-			}
-			
-			// for (final InfozillaFilter filter : collection) {
-			// if (filterNames.isEmpty() || filterNames.contains(filter.getClass().getSimpleName())) {
-			// if (Logger.logInfo()) {
-			// Logger.info("Adding new InfozillaFilter " + filter.getClass().getSimpleName());
-			// }
-			//
-			// this.filters.add(filter);
-			// } else {
-			// if (Logger.logInfo()) {
-			// Logger.info("Not loading available filter: " + filter.getClass().getSimpleName());
-			// }
-			// }
-			// }
-			// } catch (final Exception e) {
-			// if (Logger.logError()) {
-			// Logger.error(e);
-			// }
-			// throw new RuntimeException();
-			
-		} finally {
-			// POSTCONDITIONS
-		}
 	}
 	
 	/**
-	 * Builds the filter list.
+	 * {@inheritDoc}
 	 * 
-	 * @param filters
-	 *            the filters
-	 * @return the string
-	 */
-	@SuppressWarnings ("unused")
-	private String buildFilterList(final Collection<Class<? extends Filter>> filters) {
-		final StringBuilder builder = new StringBuilder();
-		for (final Class<? extends Filter> klass : filters) {
-			if (builder.length() != 0) {
-				builder.append(",");
-			}
-			builder.append(klass.getSimpleName());
-		}
-		return builder.toString();
-	}
-	
-	/*
-	 * (non-Javadoc)
 	 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
 	 */
 	@Override
-	public InlineFilterManager init() {
-		// TODO Auto-generated method stub
-		return null;
+	public InfozillaEnvironment init() {
+		final DirectoryArgument directoryArgument = getSettings().getArgument(this.attachmentDirectoryOptions);
+		this.directory = directoryArgument.getValue();
+		
+		final ArgumentSet<Set<Filter<?>>, FilterOptions> filterArgumentSet = getSettings().getArgumentSet(this.filterOptions);
+		this.filters = filterArgumentSet.getValue();
+		
+		final ArgumentSet<Set<IFilterManager>, FilterManagerOptions> managerArgumentSet = getSettings().getArgumentSet(this.managerOptions);
+		this.managers = managerArgumentSet.getValue();
+		
+		return new InfozillaEnvironment(this.directory, this.managers, this.filters);
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
 	 */
 	@Override
 	public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> set) throws ArgumentRegistrationException,
 	                                                                            SettingsParseError {
-		// PRECONDITIONS
-		
-		try {
-			// TODO Auto-generated method stub
-			return null;
-		} finally {
-			// POSTCONDITIONS
+		PRECONDITIONS: {
+			if (set == null) {
+				throw new NullPointerException();
+			}
 		}
+		
+		final HashMap<String, IOptions<?, ?>> map = new HashMap<String, IOptions<?, ?>>();
+		
+		this.attachmentDirectoryOptions = new DirectoryArgument.Options(set, "attachmentDirectory",
+		                                                                "local file cache for attachments", null,
+		                                                                Requirement.required, true);
+		map.put(this.attachmentDirectoryOptions.getName(), this.attachmentDirectoryOptions);
+		
+		this.filterOptions = new FilterOptions(set, Requirement.required);
+		map.put(this.filterOptions.getName(), this.filterOptions);
+		
+		this.managerOptions = new FilterManagerOptions(set, Requirement.required);
+		map.put(this.managerOptions.getName(), this.managerOptions);
+		
+		return map;
 	}
 	
 }
