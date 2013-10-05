@@ -40,12 +40,12 @@ public class GzipDecompressor extends CompressionDecompressor {
 		final File outputFile = prepareOutputFile(archive, targetDirectory, ArchiveType.GZIP);
 		
 		// open compressor input stream and a file output stream and copy data between the two
-		try (GzipCompressorInputStream bz2InputStream = new GzipCompressorInputStream(
-		                                                                              new BufferedInputStream(
-		                                                                                                      new FileInputStream(
-		                                                                                                                          archive)))) {
-			try (final FileOutputStream fileOutputStream = new FileOutputStream(outputFile.getParentFile())) {
-				IOUtils.copy(bz2InputStream, fileOutputStream);
+		try (GzipCompressorInputStream gzInputStream = new GzipCompressorInputStream(
+		                                                                             new BufferedInputStream(
+		                                                                                                     new FileInputStream(
+		                                                                                                                         archive)))) {
+			try (final FileOutputStream fileOutputStream = new FileOutputStream(outputFile)) {
+				IOUtils.copy(gzInputStream, fileOutputStream);
 			}
 		}
 		

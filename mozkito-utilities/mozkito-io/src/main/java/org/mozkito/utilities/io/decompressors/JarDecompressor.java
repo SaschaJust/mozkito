@@ -51,16 +51,24 @@ public class JarDecompressor extends ArchiveDecompressor {
 			while (enumeration.hasMoreElements()) {
 				final JarEntry entry = enumeration.nextElement();
 				final InputStream content = jarFile.getInputStream(entry);
-				final File entryFile = new File(outputDirectory, entry.getName());
+				final File targetFile = new File(outputDirectory, entry.getName());
 				
-				if (!entryFile.getParentFile().exists()) {
-					if (!entryFile.getParentFile().mkdirs()) {
-						throw new IOException();
+				if (entry.isDirectory()) {
+					if ((!targetFile.exists() && !targetFile.mkdirs()) || !targetFile.isDirectory()) {
+						throw new IOException("Failed creating directory: "
+						        + targetFile.getParentFile().getAbsolutePath());
 					}
-				}
-				
-				try (FileOutputStream fileOutputStream = new FileOutputStream(entryFile)) {
-					IOUtils.copy(content, fileOutputStream);
+				} else {
+					if ((targetFile.getParentFile() != null) && !targetFile.getParentFile().exists()) {
+						if (!targetFile.getParentFile().mkdirs()) {
+							throw new IOException("Failed creating directory: "
+							        + targetFile.getParentFile().getAbsolutePath());
+						}
+					}
+					
+					try (FileOutputStream fileOutputStream = new FileOutputStream(targetFile)) {
+						IOUtils.copy(content, fileOutputStream);
+					}
 				}
 			}
 		}

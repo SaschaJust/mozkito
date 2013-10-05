@@ -57,6 +57,13 @@ public class SevenZipDecompressor extends ArchiveDecompressor {
 						        + targetFile.getParentFile().getAbsolutePath());
 					}
 				} else {
+					if ((targetFile.getParentFile() != null) && !targetFile.getParentFile().exists()) {
+						if (!targetFile.getParentFile().mkdirs()) {
+							throw new IOException("Failed creating directory: "
+							        + targetFile.getParentFile().getAbsolutePath());
+						}
+					}
+					
 					final long size = entry.getSize();
 					byte[] content = null;
 					try (BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(targetFile))) {

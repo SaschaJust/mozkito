@@ -51,14 +51,22 @@ public class RarDecompressor extends ArchiveDecompressor {
 				FileHeader entry = null;
 				
 				while ((entry = a.nextFileHeader()) != null) {
-					final File targetFile = new File(outputDirectory, entry.getFileNameString());
+					final File targetFile = new File(outputDirectory,
+					                                 entry.getFileNameString()
+					                                      .replace("\\",
+					                                               org.mozkito.utilities.io.FileUtils.fileSeparator));
 					
 					if (entry.isDirectory()) {
 						if ((!targetFile.exists() && !targetFile.mkdirs()) || !targetFile.isDirectory()) {
-							throw new IOException("Failed creating directory: "
-							        + targetFile.getParentFile().getAbsolutePath());
+							throw new IOException("Failed creating directory: " + targetFile.getAbsolutePath());
 						}
 					} else {
+						// junrar does not explicitly extract parent directories...
+						if ((!targetFile.getParentFile().exists() && !targetFile.getParentFile().mkdirs())
+						        || !targetFile.getParentFile().isDirectory()) {
+							throw new IOException("Failed creating directory: " + targetFile.getAbsolutePath());
+						}
+						
 						final FileOutputStream os = new FileOutputStream(targetFile);
 						a.extractFile(entry, os);
 						os.close();

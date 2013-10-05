@@ -41,37 +41,45 @@ public class TarDecompressor extends ArchiveDecompressor {
 		}
 		
 		try (TarArchiveInputStream tarIn = new TarArchiveInputStream(new FileInputStream(archive))) {
-			final TarArchiveEntry entry = tarIn.getNextTarEntry();
-			final File targetFile = new File(outputDirectory, entry.getName());
-			
-			if (entry.isDirectory()) {
-				if ((!targetFile.exists() && !targetFile.mkdirs()) || !targetFile.isDirectory()) {
-					throw new IOException("Failed creating directory: " + targetFile.getParentFile().getAbsolutePath());
-				}
-			} else {
+			TarArchiveEntry entry = null;
+			while ((entry = tarIn.getNextTarEntry()) != null) {
+				final File targetFile = new File(outputDirectory, entry.getName());
 				
-				final long size = entry.getSize();
-				byte[] content = null;
-				try (BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(targetFile))) {
-					
-					while (size > Integer.MAX_VALUE) {
-						content = new byte[Integer.MAX_VALUE];
-						tarIn.read(content);
-						outputStream.write(content);
+				if (entry.isDirectory()) {
+					if ((!targetFile.exists() && !targetFile.mkdirs()) || !targetFile.isDirectory()) {
+						throw new IOException("Failed creating directory: "
+						        + targetFile.getParentFile().getAbsolutePath());
+					}
+				} else {
+					if ((targetFile.getParentFile() != null) && !targetFile.getParentFile().exists()) {
+						if (!targetFile.getParentFile().mkdirs()) {
+							throw new IOException("Failed creating directory: "
+							        + targetFile.getParentFile().getAbsolutePath());
+						}
 					}
 					
-					SANITY: {
-						assert size < Integer.MAX_VALUE;
-					}
-					
-					if (size > 0) {
-						content = new byte[(int) size];
-						tarIn.read(content);
-						outputStream.write(content);
+					final long size = entry.getSize();
+					byte[] content = null;
+					try (BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(targetFile))) {
+						
+						while (size > Integer.MAX_VALUE) {
+							content = new byte[Integer.MAX_VALUE];
+							tarIn.read(content);
+							outputStream.write(content);
+						}
+						
+						SANITY: {
+							assert size < Integer.MAX_VALUE;
+						}
+						
+						if (size > 0) {
+							content = new byte[(int) size];
+							tarIn.read(content);
+							outputStream.write(content);
+						}
 					}
 				}
 			}
-			
 		}
 		
 		// return the output file after successful write

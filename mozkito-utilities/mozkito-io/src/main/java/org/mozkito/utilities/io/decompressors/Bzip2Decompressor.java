@@ -66,7 +66,7 @@ public class Bzip2Decompressor extends CompressionDecompressor {
 		                                                                                new BufferedInputStream(
 		                                                                                                        new FileInputStream(
 		                                                                                                                            archive)))) {
-			try (final FileOutputStream fileOutputStream = new FileOutputStream(outputFile.getParentFile())) {
+			try (final FileOutputStream fileOutputStream = new FileOutputStream(outputFile)) {
 				IOUtils.copy(bz2InputStream, fileOutputStream);
 			}
 		}

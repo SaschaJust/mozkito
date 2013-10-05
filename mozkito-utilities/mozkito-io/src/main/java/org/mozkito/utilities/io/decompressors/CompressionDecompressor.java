@@ -99,7 +99,7 @@ public abstract class CompressionDecompressor implements IDecompressor {
 			
 			final String extension = FilenameUtils.getExtension(archive.getName());
 			
-			if (extension == null) {
+			if (extension.isEmpty()) {
 				throw new UnsupportedExtensionException("Archive does not have an extension.");
 			}
 			

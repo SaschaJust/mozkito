@@ -154,7 +154,8 @@ public class CompressionUtils {
 	 */
 	public static File decompress(final File archive,
 	                              final File targetDirectory) throws IOException {
-		final ArchiveType type = ArchiveType.forExtension(FilenameUtils.getExtension(archive.getName()));
+		final String extension = FilenameUtils.getExtension(archive.getName());
+		final ArchiveType type = ArchiveType.forExtension(extension);
 		final IDecompressor decompressor = type.getDecompressor();
 		return decompressor.decompress(archive, targetDirectory);
 	}
