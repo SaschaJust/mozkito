@@ -13,6 +13,7 @@
 
 package org.mozkito.infozilla.filters;
 
+import java.awt.Color;
 import java.util.List;
 
 import org.joda.time.DateTime;
@@ -30,10 +31,13 @@ import org.mozkito.persons.model.Person;
  *            the generic type
  * @author Sascha Just
  */
-public abstract class Filter<T extends Inlineable> {
+public abstract class Filter<T extends Inlineable> implements IFilter<T> {
 	
 	/** The enhanced report. */
 	private EnhancedReport              enhancedReport;
+	
+	/** The highlight color. */
+	private Color                       highlightColor;
 	
 	/** The statistics. */
 	private static FilterStatisticsImpl statistics = new FilterStatisticsImpl();
@@ -41,17 +45,17 @@ public abstract class Filter<T extends Inlineable> {
 	/**
 	 * Instantiates a new infozilla filter.
 	 * 
-	 * @param enhancedReport
-	 *            the enhanced report
+	 * @param hightlightColor
+	 *            the hightlight color
 	 */
-	public Filter(final EnhancedReport enhancedReport) {
+	public Filter(final Color hightlightColor) {
 		PRECONDITIONS: {
 			// none
 		}
 		
 		try {
 			// body
-			this.enhancedReport = enhancedReport;
+			this.highlightColor = hightlightColor;
 		} finally {
 			POSTCONDITIONS: {
 				// none
@@ -71,16 +75,12 @@ public abstract class Filter<T extends Inlineable> {
 	                              EnhancedReport enhancedReport);
 	
 	/**
-	 * Filter.
+	 * {@inheritDoc}
 	 * 
-	 * @param text
-	 *            the text
-	 * @param author
-	 *            the author
-	 * @param timestamp
-	 *            the timestamp
-	 * @return the list
+	 * @see org.mozkito.infozilla.filters.IFilter#filter(java.lang.String, org.mozkito.persons.model.Person,
+	 *      org.joda.time.DateTime)
 	 */
+	@Override
 	public List<T> filter(final String text,
 	                      final Person author,
 	                      final DateTime timestamp) {
@@ -103,10 +103,35 @@ public abstract class Filter<T extends Inlineable> {
 	}
 	
 	/**
-	 * Gets the stats.
-	 * 
-	 * @return the stats
+	 * @return the enhancedReport
 	 */
+	public EnhancedReport getEnhancedReport() {
+		return this.enhancedReport;
+	}
+	
+	/**
+	 * @return the highlightColor
+	 */
+	public Color getHighlightColor() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.highlightColor;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.infozilla.filters.IFilter#getStats()
+	 */
+	@Override
 	public FilterStatistics getStats() {
 		return Filter.statistics;
 	}
@@ -119,4 +144,22 @@ public abstract class Filter<T extends Inlineable> {
 	 * @return the list
 	 */
 	protected abstract List<T> runFilter(String inputText);
+	
+	/**
+	 * @param enhancedReport
+	 *            the enhancedReport to set
+	 */
+	public void setEnhancedReport(final EnhancedReport enhancedReport) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.enhancedReport = enhancedReport;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
 }

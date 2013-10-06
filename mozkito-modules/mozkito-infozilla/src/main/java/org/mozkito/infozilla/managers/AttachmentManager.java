@@ -11,7 +11,7 @@
  * specific language governing permissions and limitations under the License.
  **********************************************************************************************************************/
 
-package org.mozkito.infozilla;
+package org.mozkito.infozilla.managers;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,9 +31,10 @@ import org.apache.commons.collections.Predicate;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
 
+import org.mozkito.infozilla.TextRemover;
 import org.mozkito.infozilla.elements.Attachable;
 import org.mozkito.infozilla.elements.Inlineable;
-import org.mozkito.infozilla.filters.Filter;
+import org.mozkito.infozilla.filters.IFilter;
 import org.mozkito.infozilla.filters.enumeration.AdaptiveListingFilter;
 import org.mozkito.infozilla.filters.link.LinkFilter;
 import org.mozkito.infozilla.filters.log.LogFilter;
@@ -52,7 +53,7 @@ import org.mozkito.utilities.io.exceptions.FilePermissionException;
  * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
-public class AttachmentFilterManager implements IFilterManager {
+public class AttachmentManager implements IManager {
 	
 	private Report                      report;
 	private EnhancedReport              enhancedReport;
@@ -65,7 +66,7 @@ public class AttachmentFilterManager implements IFilterManager {
 	 * @param enhancedReport
 	 *            the enhanced report
 	 */
-	public AttachmentFilterManager(final EnhancedReport enhancedReport) {
+	public AttachmentManager(final EnhancedReport enhancedReport) {
 		PRECONDITIONS: {
 			if (enhancedReport.getReport() == null) {
 				throw new NullPointerException();
@@ -194,7 +195,7 @@ public class AttachmentFilterManager implements IFilterManager {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.infozilla.IFilterManager#getEnhancedReport()
+	 * @see org.mozkito.infozilla.managers.IManager#getEnhancedReport()
 	 */
 	@Override
 	public EnhancedReport getEnhancedReport() {
@@ -214,7 +215,7 @@ public class AttachmentFilterManager implements IFilterManager {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.infozilla.IFilterManager#getReport()
+	 * @see org.mozkito.infozilla.managers.IManager#getReport()
 	 */
 	@Override
 	public Report getReport() {
@@ -234,7 +235,7 @@ public class AttachmentFilterManager implements IFilterManager {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.infozilla.IFilterManager#parse()
+	 * @see org.mozkito.infozilla.managers.IManager#parse()
 	 */
 	@Override
 	public EnhancedReport parse() {
@@ -316,7 +317,7 @@ public class AttachmentFilterManager implements IFilterManager {
 	 * @param javaStackTraceFilter
 	 */
 	private <T extends Inlineable> void performFiltering(final Attachment attachment,
-	                                                     final Filter<T> filter) {
+	                                                     final IFilter<T> filter) {
 		PRECONDITIONS: {
 			if (filter == null) {
 				throw new NullPointerException();

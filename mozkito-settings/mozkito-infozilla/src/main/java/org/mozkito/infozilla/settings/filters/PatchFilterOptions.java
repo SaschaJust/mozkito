@@ -11,10 +11,9 @@
  * specific language governing permissions and limitations under the License.
  **********************************************************************************************************************/
 
-package org.mozkito.infozilla.settings;
+package org.mozkito.infozilla.settings.filters;
 
 import java.util.Map;
-import java.util.Set;
 
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
@@ -23,23 +22,25 @@ import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 
-import org.mozkito.infozilla.managers.IManager;
+import org.mozkito.infozilla.filters.patch.PatchFilter;
 
 /**
- * @author Sascha Just <sascha.just@mozkito.org>
+ * The Class PatchFilterOptions.
  * 
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class FilterManagerOptions extends
-        ArgumentSetOptions<Set<IManager>, ArgumentSet<Set<IManager>, FilterManagerOptions>> {
+public class PatchFilterOptions extends ArgumentSetOptions<PatchFilter, ArgumentSet<PatchFilter, PatchFilterOptions>> {
 	
 	/**
+	 * Instantiates a new patch filter options.
+	 * 
 	 * @param argumentSet
-	 * @param name
-	 * @param description
+	 *            the argument set
 	 * @param requirements
+	 *            the requirements
 	 */
-	public FilterManagerOptions(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-		super(argumentSet, "managers", "manager settings", requirements);
+	public PatchFilterOptions(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
+		super(argumentSet, "patchFilter", "TODO", requirements);
 	}
 	
 	/**
@@ -48,7 +49,7 @@ public class FilterManagerOptions extends
 	 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
 	 */
 	@Override
-	public Set<IManager> init() {
+	public PatchFilter init() {
 		PRECONDITIONS: {
 			// none
 		}

@@ -30,9 +30,9 @@ import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 
-import org.mozkito.infozilla.IFilterManager;
 import org.mozkito.infozilla.InfozillaEnvironment;
 import org.mozkito.infozilla.filters.Filter;
+import org.mozkito.infozilla.managers.IManager;
 
 /**
  * The Class InfozillaArguments.
@@ -58,7 +58,7 @@ public class InfozillaArguments extends
 	private FilterManagerOptions managerOptions;
 	
 	/** The managers. */
-	private Set<IFilterManager>  managers;
+	private Set<IManager>  managers;
 	
 	/**
 	 * Instantiates a new infozilla arguments.
@@ -86,7 +86,7 @@ public class InfozillaArguments extends
 		final ArgumentSet<Set<Filter<?>>, FilterOptions> filterArgumentSet = getSettings().getArgumentSet(this.filterOptions);
 		this.filters = filterArgumentSet.getValue();
 		
-		final ArgumentSet<Set<IFilterManager>, FilterManagerOptions> managerArgumentSet = getSettings().getArgumentSet(this.managerOptions);
+		final ArgumentSet<Set<IManager>, FilterManagerOptions> managerArgumentSet = getSettings().getArgumentSet(this.managerOptions);
 		this.managers = managerArgumentSet.getValue();
 		
 		return new InfozillaEnvironment(this.directory, this.managers, this.filters);

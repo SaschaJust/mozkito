@@ -17,6 +17,7 @@ import java.io.File;
 import java.util.Set;
 
 import org.mozkito.infozilla.filters.Filter;
+import org.mozkito.infozilla.managers.IManager;
 
 /**
  * The Class InfozillaEnvironment.
@@ -29,7 +30,7 @@ public class InfozillaEnvironment {
 	private final File                directory;
 	
 	/** The filter managers. */
-	private final Set<IFilterManager> filterManagers;
+	private final Set<IManager> managers;
 	
 	/** The filters. */
 	private final Set<Filter<?>>      filters;
@@ -39,16 +40,16 @@ public class InfozillaEnvironment {
 	 * 
 	 * @param directory
 	 *            the directory
-	 * @param filterManagers
+	 * @param managers
 	 *            the filter managers
 	 * @param filters
 	 *            the filters
 	 */
-	public InfozillaEnvironment(final File directory, final Set<IFilterManager> filterManagers,
+	public InfozillaEnvironment(final File directory, final Set<IManager> managers,
 	        final Set<Filter<?>> filters) {
 		super();
 		this.directory = directory;
-		this.filterManagers = filterManagers;
+		this.managers = managers;
 		this.filters = filters;
 	}
 	
@@ -76,13 +77,13 @@ public class InfozillaEnvironment {
 	 * 
 	 * @return the filterManagers
 	 */
-	public Set<IFilterManager> getFilterManagers() {
+	public Set<IManager> getFilterManagers() {
 		PRECONDITIONS: {
 			// none
 		}
 		
 		try {
-			return this.filterManagers;
+			return this.managers;
 		} finally {
 			POSTCONDITIONS: {
 				// none
