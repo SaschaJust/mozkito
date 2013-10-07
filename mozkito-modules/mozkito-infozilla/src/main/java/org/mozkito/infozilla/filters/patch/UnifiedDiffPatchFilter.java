@@ -34,11 +34,9 @@ public class UnifiedDiffPatchFilter extends PatchFilter {
 	/**
 	 * Instantiates a new unified diff patch filter.
 	 * 
-	 * @param enhancedReport
-	 *            the enhanced report
 	 */
-	public UnifiedDiffPatchFilter(final EnhancedReport enhancedReport) {
-		super(enhancedReport);
+	public UnifiedDiffPatchFilter() {
+		super();
 	}
 	
 	/**

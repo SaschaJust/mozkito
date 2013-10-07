@@ -15,8 +15,9 @@
  */
 package org.mozkito.infozilla.filters.sourcecode;
 
+import java.awt.Color;
+
 import org.mozkito.infozilla.filters.Filter;
-import org.mozkito.infozilla.model.EnhancedReport;
 import org.mozkito.infozilla.model.source.SourceCode;
 
 /**
@@ -27,10 +28,11 @@ import org.mozkito.infozilla.model.source.SourceCode;
 public abstract class SourceCodeFilter extends Filter<SourceCode> {
 	
 	/**
-	 * @param enhancedReport
+	 * Instantiates a new source code filter.
+	 * 
 	 */
-	public SourceCodeFilter(final EnhancedReport enhancedReport) {
-		super(enhancedReport);
+	public SourceCodeFilter() {
+		super(Color.pink);
 	}
 	
 }

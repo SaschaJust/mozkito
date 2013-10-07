@@ -40,6 +40,8 @@ public class JavaStackTraceFilter extends StackTraceFilter {
 
 
 
+
+
 	/** The Constant lineBreaks. */
 	public static final Regex  LINE_BREAKS_REGEX       = new Regex("(\\r\\n|\\r|\\n)");
 
@@ -113,11 +115,9 @@ public class JavaStackTraceFilter extends StackTraceFilter {
 	/**
 	 * Instantiates a new java stack trace filter.
 	 * 
-	 * @param enhancedReport
-	 *            the enhanced report
 	 */
-	public JavaStackTraceFilter(final EnhancedReport enhancedReport) {
-		super(enhancedReport);
+	public JavaStackTraceFilter() {
+		super();
 		
 		PRECONDITIONS: {
 			// none

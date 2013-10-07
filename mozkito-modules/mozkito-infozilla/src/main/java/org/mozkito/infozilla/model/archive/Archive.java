@@ -32,6 +32,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
+import org.mozkito.infozilla.IAttachmentProvider;
 import org.mozkito.infozilla.elements.Attachable;
 import org.mozkito.infozilla.model.attachment.Attachment;
 import org.mozkito.persistence.Annotated;
@@ -39,7 +40,6 @@ import org.mozkito.utilities.commons.JavaUtils;
 import org.mozkito.utilities.io.CompressionUtils;
 import org.mozkito.utilities.io.FileUtils;
 import org.mozkito.utilities.io.FileUtils.FileShutdownAction;
-import org.mozkito.utilities.io.exceptions.FilePermissionException;
 
 /**
  * The Class Archive.
@@ -113,18 +113,18 @@ public class Archive implements Attachable, Annotated {
 	/**
 	 * Extract.
 	 * 
+	 * @param provider
+	 *            the provider
 	 * @return the file
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
-	 * @throws FilePermissionException
-	 *             the file permission exception
 	 */
 	@Transient
-	public synchronized File extractedDataDirectory() throws IOException {
+	public synchronized File extractedDataDirectory(final IAttachmentProvider provider) throws IOException {
 		if (getTargetDirectory() == null) {
 			setTargetDirectory(FileUtils.createRandomDir("infozilla_archive_", "_" + getOrigin().getFilename(),
 			                                             FileShutdownAction.DELETE));
-			CompressionUtils.decompress(getOrigin().getFile(), getTargetDirectory());
+			CompressionUtils.decompress(provider.provide(getOrigin()), getTargetDirectory());
 		}
 		
 		return this.targetDirectory;

@@ -431,7 +431,7 @@ public class Attachment implements Annotated {
 					assert getPath() != null;
 					assert getFilename() != null;
 				}
-				final File targetDirectory = getArchive().extractedDataDirectory();
+				final File targetDirectory = getArchive().extractedDataDirectory(null);
 				final File targetFile = new File(new File(targetDirectory, getPath()), getFilename());
 				
 				if (!targetFile.exists()) {

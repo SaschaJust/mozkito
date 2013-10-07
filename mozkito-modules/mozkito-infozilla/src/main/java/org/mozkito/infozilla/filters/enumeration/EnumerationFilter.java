@@ -12,6 +12,7 @@
  ******************************************************************************/
 package org.mozkito.infozilla.filters.enumeration;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,11 +36,9 @@ public class EnumerationFilter extends Filter<Listing> {
 	/**
 	 * Instantiates a new enumeration filter.
 	 * 
-	 * @param enhancedReport
-	 *            the enhanced report
 	 */
-	public EnumerationFilter(final EnhancedReport enhancedReport) {
-		super(enhancedReport);
+	public EnumerationFilter() {
+		super(new Color(220, 152, 255));
 	}
 	
 	/**
@@ -50,17 +49,8 @@ public class EnumerationFilter extends Filter<Listing> {
 	@Override
 	protected void apply(final List<Listing> results,
 	                     final EnhancedReport enhancedReport) {
-		PRECONDITIONS: {
-			// none
-		}
 		
-		try {
-			enhancedReport.setListings(results);
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		enhancedReport.setListings(results);
 	}
 	
 	/**
