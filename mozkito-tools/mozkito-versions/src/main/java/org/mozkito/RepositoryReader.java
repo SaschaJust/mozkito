@@ -63,8 +63,11 @@ public class RepositoryReader extends Source<LogEntry> {
 				}
 				try {
 					repository.getChangeSetCount();
-					RepositoryReader.this.logIterator = repository.log(repository.getFirstRevisionId(),
-					                                                   repository.getEndRevision()).iterator();
+					RepositoryReader.this.logIterator = repository.log(System.getProperty("repository.startAt",
+					                                                                      repository.getFirstRevisionId()),
+					                                                   System.getProperty("repository.stopAt",
+					                                                                      repository.getEndRevision()))
+					                                              .iterator();
 				} catch (final RepositoryOperationException e) {
 					throw new UnrecoverableError(e);
 				}

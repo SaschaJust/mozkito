@@ -35,10 +35,10 @@ import org.mozkito.versions.model.ChangeSet;
 public class RepositoryPersister extends Sink<ChangeSet> {
 	
 	// /** The Constant COMMIT_CACHE. */
-	// private static final int COMMIT_CACHE = 100;
+	private static final int COMMIT_CACHE = 100;
 	
 	/** The counter. */
-	Integer counter = 0;
+	Integer                  counter      = 0;
 	
 	/**
 	 * Instantiates a new repository persister.
@@ -71,11 +71,10 @@ public class RepositoryPersister extends Sink<ChangeSet> {
 					Logger.debug("Storing " + data);
 				}
 				
-				// if (((RepositoryPersister.this.counter = RepositoryPersister.this.counter + 1) %
-				// RepositoryPersister.COMMIT_CACHE) == 0) {
-				// persistenceUtil.commitTransaction();
-				// persistenceUtil.beginTransaction();
-				// }
+				if (((RepositoryPersister.this.counter = RepositoryPersister.this.counter + 1) % RepositoryPersister.COMMIT_CACHE) == 0) {
+					persistenceUtil.commitTransaction();
+					persistenceUtil.beginTransaction();
+				}
 				
 				persistenceUtil.saveOrUpdate(data);
 				// persistenceUtil.commitTransaction();
