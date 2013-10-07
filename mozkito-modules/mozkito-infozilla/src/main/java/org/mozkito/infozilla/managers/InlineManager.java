@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CountDownLatch;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.joda.time.DateTime;
@@ -32,7 +31,6 @@ import org.mozkito.infozilla.TextRemover;
 import org.mozkito.infozilla.elements.Inlineable;
 import org.mozkito.infozilla.filters.Filter;
 import org.mozkito.infozilla.filters.IFilter;
-import org.mozkito.infozilla.filters.enumeration.AdaptiveListingFilter;
 import org.mozkito.infozilla.filters.enumeration.EnumerationFilter;
 import org.mozkito.infozilla.filters.link.LinkFilter;
 import org.mozkito.infozilla.filters.log.LogFilter;
@@ -50,7 +48,7 @@ import org.mozkito.persons.model.Person;
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class InlineManager implements IManager {
+public class InlineManager extends Manager {
 	
 	/**
 	 * Strip html.
@@ -66,35 +64,8 @@ public class InlineManager implements IManager {
 		return StringEscapeUtils.unescapeHtml(input);
 	}
 	
-	/** The enhanced report. */
-	private EnhancedReport                               enhancedReport;
-	
-	/** The report. */
-	private Report                                       report;
-	
 	/** The text map. */
-	private final Map<Integer, TextRemover>              textMap  = new HashMap<>();
-	
-	/** The editor. */
-	private SimpleEditor                                 editor;
-	
-	/** The color map. */
-	private final Map<Class<? extends Filter<?>>, Color> colorMap = new HashMap<Class<? extends Filter<?>>, Color>() {
-		                                                              
-		                                                              private static final long serialVersionUID = 1L;
-		                                                              
-		                                                              {
-			                                                              put(JavaStackTraceFilter.class, Color.YELLOW);
-			                                                              put(JavaSourceCodeFilter.class, Color.pink);
-			                                                              put(LinkFilter.class, Color.orange);
-			                                                              put(LogFilter.class, Color.cyan);
-			                                                              put(UnifiedDiffPatchFilter.class, Color.GREEN);
-			                                                              put(AdaptiveListingFilter.class, Color.red);
-			                                                              put(EnumerationFilter.class, Color.red);
-		                                                              }
-	                                                              };
-	
-	private CountDownLatch                               latch    = null;
+	private final Map<Integer, TextRemover> textMap = new HashMap<>();
 	
 	/**
 	 * Instantiates a new infozilla filter chain.
@@ -134,6 +105,7 @@ public class InlineManager implements IManager {
 	 * 
 	 * @return the enhancedReport
 	 */
+	@Override
 	public EnhancedReport getEnhancedReport() {
 		PRECONDITIONS: {
 			// none
@@ -153,6 +125,7 @@ public class InlineManager implements IManager {
 	 * 
 	 * @return the report
 	 */
+	@Override
 	public Report getReport() {
 		PRECONDITIONS: {
 			// none
@@ -188,12 +161,12 @@ public class InlineManager implements IManager {
 			private static final long serialVersionUID = 1L;
 			
 			{
-				add(new JavaStackTraceFilter(InlineManager.this.enhancedReport));
-				add(new UnifiedDiffPatchFilter(InlineManager.this.enhancedReport));
-				add(new JavaSourceCodeFilter(InlineManager.this.enhancedReport));
-				add(new LogFilter(InlineManager.this.enhancedReport));
-				add(new LinkFilter(InlineManager.this.enhancedReport));
-				add(new EnumerationFilter(InlineManager.this.enhancedReport));
+				add(new JavaStackTraceFilter());
+				add(new UnifiedDiffPatchFilter());
+				add(new JavaSourceCodeFilter());
+				add(new LogFilter());
+				add(new LinkFilter());
+				add(new EnumerationFilter());
 			}
 		};
 		
@@ -361,6 +334,9 @@ public class InlineManager implements IManager {
 		}
 		
 		try {
+			for (final Filter<?> filter : filters) {
+				filter.setEnhancedReport(getEnhancedReport());
+			}
 			performDescriptionFiltering(filters);
 			performCommentsFiltering(filters);
 		} finally {

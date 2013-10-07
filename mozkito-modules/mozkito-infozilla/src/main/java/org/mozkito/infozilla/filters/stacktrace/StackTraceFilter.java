@@ -15,8 +15,9 @@
  */
 package org.mozkito.infozilla.filters.stacktrace;
 
+import java.awt.Color;
+
 import org.mozkito.infozilla.filters.Filter;
-import org.mozkito.infozilla.model.EnhancedReport;
 import org.mozkito.infozilla.model.stacktrace.Stacktrace;
 
 /**
@@ -27,10 +28,11 @@ import org.mozkito.infozilla.model.stacktrace.Stacktrace;
 public abstract class StackTraceFilter extends Filter<Stacktrace> {
 	
 	/**
-	 * @param enhancedReport
+	 * Instantiates a new stack trace filter.
+	 * 
 	 */
-	public StackTraceFilter(final EnhancedReport enhancedReport) {
-		super(enhancedReport);
+	public StackTraceFilter() {
+		super(Color.yellow);
 	}
 	
 }

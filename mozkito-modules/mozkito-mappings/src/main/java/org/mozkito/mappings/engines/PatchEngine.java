@@ -206,7 +206,10 @@ public class PatchEngine extends Engine {
 		}
 		
 		try {
-			// TODO Auto-generated method stub
+			// get assignments in patch
+			// get assignments in diff
+			// extract variable names from lhs of both
+			// return #intersection/#union or #intersection/#variables in patch
 			// return 0;
 			throw new RuntimeException("Method 'similarity' has not yet been implemented."); //$NON-NLS-1$
 		} finally {

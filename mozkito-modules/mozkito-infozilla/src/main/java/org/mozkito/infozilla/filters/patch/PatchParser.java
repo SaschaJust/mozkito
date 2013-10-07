@@ -33,9 +33,6 @@ public class PatchParser implements IPatchParser {
 	/** The Constant HUNK_HEADER_PATTERN. */
 	public static final String HUNK_HEADER_PATTERN = "@@\\s+-(\\d+),(\\d+)\\s+\\+(\\d+),(\\d+)\\s+@@";
 	
-	/** The Constant non-breakable space. */
-	public static final char   NBSP                = 160;
-	
 	/**
 	 * Find and extract all Hunks in a Patch.
 	 * 
@@ -231,7 +228,7 @@ public class PatchParser implements IPatchParser {
 	 */
 	private boolean isHunkLine(final String line) {
 		final boolean isHunkLine = (!line.isEmpty() && (('+' == line.charAt(0)) || ('-' == line.charAt(0))
-		        || (' ' == line.charAt(0)) || (PatchParser.NBSP == line.charAt(0)))); // char 160 = &nbsp;
+		        || (' ' == line.charAt(0)) || (PatchTextElement.NBSP == line.charAt(0)))); // char 160 = &nbsp;
 		return isHunkLine;
 	}
 	
@@ -398,7 +395,7 @@ public class PatchParser implements IPatchParser {
 				
 				switch (line.charAt(0)) {
 					case ' ':
-					case NBSP:
+					case PatchTextElement.NBSP:
 						builder.addElement(previousElement = new PatchTextElement(Type.CONTEXT, line.substring(1)));
 						break;
 					case '+':

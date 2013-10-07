@@ -113,17 +113,7 @@ public abstract class Filter<T extends Inlineable> implements IFilter<T> {
 	 * @return the highlightColor
 	 */
 	public Color getHighlightColor() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return this.highlightColor;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		return this.highlightColor;
 	}
 	
 	/**
@@ -150,16 +140,6 @@ public abstract class Filter<T extends Inlineable> implements IFilter<T> {
 	 *            the enhancedReport to set
 	 */
 	public void setEnhancedReport(final EnhancedReport enhancedReport) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			this.enhancedReport = enhancedReport;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+		this.enhancedReport = enhancedReport;
 	}
 }

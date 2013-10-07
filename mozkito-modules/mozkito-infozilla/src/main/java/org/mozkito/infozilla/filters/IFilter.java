@@ -20,12 +20,15 @@ import org.joda.time.DateTime;
 
 import org.mozkito.infozilla.elements.FilterStatistics;
 import org.mozkito.infozilla.elements.Inlineable;
+import org.mozkito.infozilla.model.EnhancedReport;
 import org.mozkito.persons.model.Person;
 
 /**
- * @author Sascha Just <sascha.just@mozkito.org>
+ * The Interface IFilter.
  * 
  * @param <T>
+ *            the generic type
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public interface IFilter<T extends Inlineable> {
 	
@@ -45,6 +48,20 @@ public interface IFilter<T extends Inlineable> {
 	               DateTime timestamp);
 	
 	/**
+	 * Gets the enhanced report.
+	 * 
+	 * @return the enhanced report
+	 */
+	EnhancedReport getEnhancedReport();
+	
+	/**
+	 * Highlight color.
+	 * 
+	 * @return the color
+	 */
+	Color getHighlightColor();
+	
+	/**
 	 * Gets the stats.
 	 * 
 	 * @return the stats
@@ -52,10 +69,10 @@ public interface IFilter<T extends Inlineable> {
 	FilterStatistics getStats();
 	
 	/**
-	 * Highlight color.
+	 * Sets the enhanced report.
 	 * 
-	 * @return the color
+	 * @param enhancedReport
+	 *            the new enhanced report
 	 */
-	Color highlightColor();
-	
+	void setEnhancedReport(EnhancedReport enhancedReport);
 }

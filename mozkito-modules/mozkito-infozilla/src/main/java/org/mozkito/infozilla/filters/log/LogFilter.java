@@ -13,6 +13,7 @@
 
 package org.mozkito.infozilla.filters.log;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -215,11 +216,9 @@ public class LogFilter extends Filter<Log> {
 	/**
 	 * Instantiates a new log filter.
 	 * 
-	 * @param enhancedReport
-	 *            the enhanced report
 	 */
-	public LogFilter(final EnhancedReport enhancedReport) {
-		super(enhancedReport);
+	public LogFilter() {
+		super(new Color(102, 204, 255));
 	}
 	
 	/**
