@@ -42,11 +42,11 @@ public class Main {
 			toolChain = new CallGraphToolChain(settings);
 			toolChain.run();
 			if (Logger.logInfo()) {
-				Logger.info("PPA.Main: All done. cerio!");
+				Logger.info("Callgraph.Main: All done. cerio!");
 			}
 		} catch (final Shutdown e) {
-			if (Logger.logError()) {
-				Logger.error(e);
+			if (Logger.logAlways()) {
+				Logger.always(e.getMessage());
 			}
 		} catch (final SettingsParseError e) {
 			if (Logger.logError()) {
