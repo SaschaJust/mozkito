@@ -11,10 +11,9 @@
  * specific language governing permissions and limitations under the License.
  **********************************************************************************************************************/
 
-package org.mozkito.infozilla.settings;
+package org.mozkito.infozilla.settings.managers;
 
 import java.util.Map;
-import java.util.Set;
 
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
@@ -23,23 +22,37 @@ import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 
-import org.mozkito.infozilla.managers.IManager;
+import org.mozkito.infozilla.managers.InlineManager;
 
 /**
- * @author Sascha Just <sascha.just@mozkito.org>
+ * The Class AttachmentManagerOptions.
  * 
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class FilterManagerOptions extends
-        ArgumentSetOptions<Set<IManager>, ArgumentSet<Set<IManager>, FilterManagerOptions>> {
+public class DescriptionManagerOptions extends
+        ArgumentSetOptions<InlineManager, ArgumentSet<InlineManager, DescriptionManagerOptions>> {
 	
 	/**
+	 * Instantiates a new attachment manager options.
+	 * 
 	 * @param argumentSet
-	 * @param name
-	 * @param description
+	 *            the argument set
 	 * @param requirements
+	 *            the requirements
 	 */
-	public FilterManagerOptions(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-		super(argumentSet, "managers", "manager settings", requirements);
+	public DescriptionManagerOptions(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
+		super(argumentSet, "attachments", "TODO", requirements);
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			// body
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/**
@@ -48,7 +61,7 @@ public class FilterManagerOptions extends
 	 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
 	 */
 	@Override
-	public Set<IManager> init() {
+	public InlineManager init() {
 		PRECONDITIONS: {
 			// none
 		}

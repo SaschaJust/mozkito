@@ -13,6 +13,7 @@
 
 package org.mozkito.infozilla.filters.link;
 
+import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -172,11 +173,9 @@ public class LinkFilter extends Filter<Link> {
 	/**
 	 * Instantiates a new link filter.
 	 * 
-	 * @param enhancedReport
-	 *            the enhanced report
 	 */
-	public LinkFilter(final EnhancedReport enhancedReport) {
-		super(enhancedReport);
+	public LinkFilter() {
+		super(Color.orange);
 	}
 	
 	/**

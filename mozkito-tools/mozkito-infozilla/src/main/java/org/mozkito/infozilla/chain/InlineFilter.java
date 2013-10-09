@@ -18,9 +18,9 @@ import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.hiari.settings.ISettings;
 
-import org.mozkito.infozilla.IFilterManager;
-import org.mozkito.infozilla.InlineFilterManager;
 import org.mozkito.infozilla.SimpleEditor;
+import org.mozkito.infozilla.managers.IManager;
+import org.mozkito.infozilla.managers.InlineManager;
 import org.mozkito.infozilla.model.EnhancedReport;
 
 /**
@@ -40,7 +40,7 @@ public class InlineFilter extends Filter<EnhancedReport> {
 	 * @param filterChain
 	 *            the filter chain
 	 */
-	public InlineFilter(final Group threadGroup, final ISettings settings, final IFilterManager filterChain) {
+	public InlineFilter(final Group threadGroup, final ISettings settings, final IManager filterChain) {
 		super(threadGroup, settings, false);
 		PRECONDITIONS: {
 			// none
@@ -70,7 +70,7 @@ public class InlineFilter extends Filter<EnhancedReport> {
 						final EnhancedReport data = getInputData();
 						
 						if (data != null) {
-							final IFilterManager chain = new InlineFilterManager(data, editor);
+							final IManager chain = new InlineManager(data, editor);
 							chain.parse();
 						}
 						

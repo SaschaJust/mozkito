@@ -18,8 +18,8 @@ import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.hiari.settings.ISettings;
 
-import org.mozkito.infozilla.AttachmentFilterManager;
-import org.mozkito.infozilla.IFilterManager;
+import org.mozkito.infozilla.managers.AttachmentManager;
+import org.mozkito.infozilla.managers.IManager;
 import org.mozkito.infozilla.model.EnhancedReport;
 
 /**
@@ -39,7 +39,7 @@ public class AttachmentFilter extends Filter<EnhancedReport> {
 	 * @param filterChain
 	 *            the filter chain
 	 */
-	public AttachmentFilter(final Group threadGroup, final ISettings settings, final IFilterManager filterChain) {
+	public AttachmentFilter(final Group threadGroup, final ISettings settings, final IManager filterChain) {
 		super(threadGroup, settings, false);
 		PRECONDITIONS: {
 			// none
@@ -65,7 +65,7 @@ public class AttachmentFilter extends Filter<EnhancedReport> {
 						final EnhancedReport data = getInputData();
 						
 						if (data != null) {
-							final IFilterManager chain = new AttachmentFilterManager(data);
+							final IManager chain = new AttachmentManager(data);
 							chain.parse();
 						}
 						

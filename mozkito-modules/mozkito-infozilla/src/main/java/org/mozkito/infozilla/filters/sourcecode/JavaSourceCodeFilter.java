@@ -109,11 +109,9 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 	/**
 	 * Standard Constructor.
 	 * 
-	 * @param enhancedReport
-	 *            the enhanced report
 	 */
-	public JavaSourceCodeFilter(final EnhancedReport enhancedReport) {
-		super(enhancedReport);
+	public JavaSourceCodeFilter() {
+		super();
 		
 		try {
 			readCodePatterns(new InputStreamReader(getClass().getResourceAsStream("/Java_CodeDB.txt")));
@@ -126,13 +124,11 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 	/**
 	 * Overloaded Constructor.
 	 * 
-	 * @param enhancedReport
-	 *            the enhanced report
 	 * @param filename
 	 *            the name of the file to read Code Patterns from.
 	 */
-	public JavaSourceCodeFilter(final EnhancedReport enhancedReport, final String filename) {
-		super(enhancedReport);
+	public JavaSourceCodeFilter(final String filename) {
+		super();
 		
 		try {
 			readCodePatterns(new FileReader(filename));
@@ -144,13 +140,11 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 	/**
 	 * Overloaded Constructor.
 	 * 
-	 * @param enhancedReport
-	 *            the enhanced report
 	 * @param fileurl
 	 *            a URL to a file to read Code Patterns from.
 	 */
-	public JavaSourceCodeFilter(final EnhancedReport enhancedReport, final URL fileurl) {
-		super(enhancedReport);
+	public JavaSourceCodeFilter(final URL fileurl) {
+		super();
 		
 		try {
 			readCodePatterns(new InputStreamReader(fileurl.openStream()));

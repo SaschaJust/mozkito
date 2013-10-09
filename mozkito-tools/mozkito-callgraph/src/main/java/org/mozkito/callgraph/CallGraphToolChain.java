@@ -117,7 +117,7 @@ public class CallGraphToolChain {
 			                                                                              settings.getRoot(),
 			                                                                              "sourceDirectory",
 			                                                                              "Use files from from.directory to build the call graph on. (Only used when "
-			                                                                                      + this.transactionArgument.getTag()
+			                                                                                      + changeSetIdOptions.getTag()
 			                                                                                      + " not set)",
 			                                                                              null,
 			                                                                              Requirement.unset(changeSetIdOptions),

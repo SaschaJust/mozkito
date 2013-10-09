@@ -22,7 +22,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Transient;
 
-import org.mozkito.infozilla.filters.patch.PatchParser;
 import org.mozkito.persistence.Annotated;
 import org.mozkito.utilities.commons.JavaUtils;
 
@@ -57,7 +56,7 @@ public class PatchTextElement implements Annotated {
 				case ADDED:
 					return "+";
 				case CONTEXT:
-					return PatchParser.NBSP + "";
+					return NBSP + "";
 				case REMOVED:
 					return "-";
 				default:
@@ -66,6 +65,9 @@ public class PatchTextElement implements Annotated {
 			return null;
 		}
 	}
+	
+	/** The Constant non-breakable space. */
+	public static final char  NBSP             = 160;
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -2187090612470054309L;

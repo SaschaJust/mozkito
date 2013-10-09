@@ -11,7 +11,7 @@
  * specific language governing permissions and limitations under the License.
  **********************************************************************************************************************/
 
-package org.mozkito.infozilla;
+package org.mozkito.infozilla.managers;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,9 +31,12 @@ import org.apache.commons.collections.Predicate;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
 
+import org.mozkito.infozilla.AttachmentProvider;
+import org.mozkito.infozilla.IAttachmentProvider;
+import org.mozkito.infozilla.TextRemover;
 import org.mozkito.infozilla.elements.Attachable;
 import org.mozkito.infozilla.elements.Inlineable;
-import org.mozkito.infozilla.filters.Filter;
+import org.mozkito.infozilla.filters.IFilter;
 import org.mozkito.infozilla.filters.enumeration.AdaptiveListingFilter;
 import org.mozkito.infozilla.filters.link.LinkFilter;
 import org.mozkito.infozilla.filters.log.LogFilter;
@@ -44,6 +47,12 @@ import org.mozkito.infozilla.model.EnhancedReport;
 import org.mozkito.infozilla.model.archive.Archive;
 import org.mozkito.infozilla.model.archive.Archive.Type;
 import org.mozkito.infozilla.model.attachment.Attachment;
+import org.mozkito.infozilla.model.itemization.Listing;
+import org.mozkito.infozilla.model.link.Link;
+import org.mozkito.infozilla.model.log.Log;
+import org.mozkito.infozilla.model.patch.Patch;
+import org.mozkito.infozilla.model.source.SourceCode;
+import org.mozkito.infozilla.model.stacktrace.Stacktrace;
 import org.mozkito.issues.model.AttachmentEntry;
 import org.mozkito.issues.model.Report;
 import org.mozkito.utilities.io.exceptions.FilePermissionException;
@@ -52,12 +61,13 @@ import org.mozkito.utilities.io.exceptions.FilePermissionException;
  * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
-public class AttachmentFilterManager implements IFilterManager {
+public class AttachmentManager implements IManager {
 	
 	private Report                      report;
 	private EnhancedReport              enhancedReport;
 	private List<AttachmentEntry>       attachmentEntries;
 	private final Map<URI, TextRemover> textMap = new HashMap<>();
+	private IAttachmentProvider          attachmentProvider;
 	
 	/**
 	 * Instantiates a new attachment filter manager.
@@ -65,7 +75,7 @@ public class AttachmentFilterManager implements IFilterManager {
 	 * @param enhancedReport
 	 *            the enhanced report
 	 */
-	public AttachmentFilterManager(final EnhancedReport enhancedReport) {
+	public AttachmentManager(final EnhancedReport enhancedReport) {
 		PRECONDITIONS: {
 			if (enhancedReport.getReport() == null) {
 				throw new NullPointerException();
@@ -77,6 +87,7 @@ public class AttachmentFilterManager implements IFilterManager {
 			this.report = enhancedReport.getReport();
 			this.enhancedReport = enhancedReport;
 			this.attachmentEntries = enhancedReport.getReport().getAttachmentEntries();
+			this.attachmentProvider = new AttachmentProvider();
 		} finally {
 			POSTCONDITIONS: {
 				// none
@@ -92,27 +103,39 @@ public class AttachmentFilterManager implements IFilterManager {
 		}
 		
 		STACKTRACES: {
-			performFiltering(attachment, new JavaStackTraceFilter(this.enhancedReport));
+			final IFilter<Stacktrace> filter = new JavaStackTraceFilter();
+			filter.setEnhancedReport(this.enhancedReport);
+			performFiltering(attachment, filter);
 		}
 		
 		PATCHES: {
-			performFiltering(attachment, new UnifiedDiffPatchFilter(this.enhancedReport));
+			final IFilter<Patch> filter = new UnifiedDiffPatchFilter();
+			filter.setEnhancedReport(this.enhancedReport);
+			performFiltering(attachment, filter);
 		}
 		
 		SOURCECODE: {
-			performFiltering(attachment, new JavaSourceCodeFilter(this.enhancedReport));
+			final IFilter<SourceCode> filter = new JavaSourceCodeFilter();
+			filter.setEnhancedReport(this.enhancedReport);
+			performFiltering(attachment, filter);
 		}
 		
 		LOGS: {
-			performFiltering(attachment, new LogFilter(this.enhancedReport));
+			final IFilter<Log> filter = new LogFilter();
+			filter.setEnhancedReport(this.enhancedReport);
+			performFiltering(attachment, filter);
 		}
 		
 		LINKS: {
-			performFiltering(attachment, new LinkFilter(this.enhancedReport));
+			final IFilter<Link> filter = new LinkFilter();
+			filter.setEnhancedReport(this.enhancedReport);
+			performFiltering(attachment, filter);
 		}
 		
 		LISTINGS: {
-			performFiltering(attachment, new AdaptiveListingFilter(this.enhancedReport));
+			final IFilter<Listing> filter = new AdaptiveListingFilter();
+			filter.setEnhancedReport(this.enhancedReport);
+			performFiltering(attachment, filter);
 		}
 		
 		return attachment;
@@ -194,7 +217,7 @@ public class AttachmentFilterManager implements IFilterManager {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.infozilla.IFilterManager#getEnhancedReport()
+	 * @see org.mozkito.infozilla.managers.IManager#getEnhancedReport()
 	 */
 	@Override
 	public EnhancedReport getEnhancedReport() {
@@ -214,7 +237,7 @@ public class AttachmentFilterManager implements IFilterManager {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.infozilla.IFilterManager#getReport()
+	 * @see org.mozkito.infozilla.managers.IManager#getReport()
 	 */
 	@Override
 	public Report getReport() {
@@ -234,7 +257,7 @@ public class AttachmentFilterManager implements IFilterManager {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.infozilla.IFilterManager#parse()
+	 * @see org.mozkito.infozilla.managers.IManager#parse()
 	 */
 	@Override
 	public EnhancedReport parse() {
@@ -249,6 +272,7 @@ public class AttachmentFilterManager implements IFilterManager {
 		}
 		
 		try {
+			
 			Archive.Type type = null;
 			for (final AttachmentEntry entry : this.attachmentEntries) {
 				try {
@@ -279,7 +303,7 @@ public class AttachmentFilterManager implements IFilterManager {
 							
 							File directory;
 							try {
-								directory = archive.extractedDataDirectory();
+								directory = archive.extractedDataDirectory(this.attachmentProvider);
 								
 								SANITY: {
 									assert directory != null;
@@ -316,7 +340,7 @@ public class AttachmentFilterManager implements IFilterManager {
 	 * @param javaStackTraceFilter
 	 */
 	private <T extends Inlineable> void performFiltering(final Attachment attachment,
-	                                                     final Filter<T> filter) {
+	                                                     final IFilter<T> filter) {
 		PRECONDITIONS: {
 			if (filter == null) {
 				throw new NullPointerException();

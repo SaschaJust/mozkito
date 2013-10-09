@@ -11,7 +11,7 @@
  * specific language governing permissions and limitations under the License.
  **********************************************************************************************************************/
 
-package org.mozkito.infozilla;
+package org.mozkito.infozilla.managers;
 
 import org.mozkito.infozilla.model.EnhancedReport;
 import org.mozkito.issues.model.Report;
@@ -21,7 +21,7 @@ import org.mozkito.issues.model.Report;
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public interface IFilterManager {
+public interface IManager {
 	
 	/**
 	 * Gets the enhanced report.

@@ -10,7 +10,7 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  ******************************************************************************/
-package org.mozkito.infozilla;
+package org.mozkito.infozilla.managers;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CountDownLatch;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.joda.time.DateTime;
@@ -27,9 +26,11 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document.OutputSettings;
 import org.jsoup.safety.Whitelist;
 
+import org.mozkito.infozilla.SimpleEditor;
+import org.mozkito.infozilla.TextRemover;
 import org.mozkito.infozilla.elements.Inlineable;
 import org.mozkito.infozilla.filters.Filter;
-import org.mozkito.infozilla.filters.enumeration.AdaptiveListingFilter;
+import org.mozkito.infozilla.filters.IFilter;
 import org.mozkito.infozilla.filters.enumeration.EnumerationFilter;
 import org.mozkito.infozilla.filters.link.LinkFilter;
 import org.mozkito.infozilla.filters.log.LogFilter;
@@ -47,7 +48,7 @@ import org.mozkito.persons.model.Person;
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class InlineFilterManager implements IFilterManager {
+public class InlineManager extends Manager {
 	
 	/**
 	 * Strip html.
@@ -63,35 +64,8 @@ public class InlineFilterManager implements IFilterManager {
 		return StringEscapeUtils.unescapeHtml(input);
 	}
 	
-	/** The enhanced report. */
-	private EnhancedReport                               enhancedReport;
-	
-	/** The report. */
-	private Report                                       report;
-	
 	/** The text map. */
-	private final Map<Integer, TextRemover>              textMap  = new HashMap<>();
-	
-	/** The editor. */
-	private SimpleEditor                                 editor;
-	
-	/** The color map. */
-	private final Map<Class<? extends Filter<?>>, Color> colorMap = new HashMap<Class<? extends Filter<?>>, Color>() {
-		                                                              
-		                                                              private static final long serialVersionUID = 1L;
-		                                                              
-		                                                              {
-			                                                              put(JavaStackTraceFilter.class, Color.YELLOW);
-			                                                              put(JavaSourceCodeFilter.class, Color.pink);
-			                                                              put(LinkFilter.class, Color.orange);
-			                                                              put(LogFilter.class, Color.cyan);
-			                                                              put(UnifiedDiffPatchFilter.class, Color.GREEN);
-			                                                              put(AdaptiveListingFilter.class, Color.red);
-			                                                              put(EnumerationFilter.class, Color.red);
-		                                                              }
-	                                                              };
-	
-	private CountDownLatch                               latch    = null;
+	private final Map<Integer, TextRemover> textMap = new HashMap<>();
 	
 	/**
 	 * Instantiates a new infozilla filter chain.
@@ -101,7 +75,7 @@ public class InlineFilterManager implements IFilterManager {
 	 * @param editor
 	 *            the editor
 	 */
-	public InlineFilterManager(final EnhancedReport enhancedReport, final SimpleEditor editor) {
+	public InlineManager(final EnhancedReport enhancedReport, final SimpleEditor editor) {
 		PRECONDITIONS: {
 			// none
 		}
@@ -131,6 +105,7 @@ public class InlineFilterManager implements IFilterManager {
 	 * 
 	 * @return the enhancedReport
 	 */
+	@Override
 	public EnhancedReport getEnhancedReport() {
 		PRECONDITIONS: {
 			// none
@@ -150,6 +125,7 @@ public class InlineFilterManager implements IFilterManager {
 	 * 
 	 * @return the report
 	 */
+	@Override
 	public Report getReport() {
 		PRECONDITIONS: {
 			// none
@@ -167,7 +143,7 @@ public class InlineFilterManager implements IFilterManager {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.infozilla.IFilterManager#parse()
+	 * @see org.mozkito.infozilla.managers.IManager#parse()
 	 */
 	@Override
 	public EnhancedReport parse() {
@@ -185,12 +161,12 @@ public class InlineFilterManager implements IFilterManager {
 			private static final long serialVersionUID = 1L;
 			
 			{
-				add(new JavaStackTraceFilter(InlineFilterManager.this.enhancedReport));
-				add(new UnifiedDiffPatchFilter(InlineFilterManager.this.enhancedReport));
-				add(new JavaSourceCodeFilter(InlineFilterManager.this.enhancedReport));
-				add(new LogFilter(InlineFilterManager.this.enhancedReport));
-				add(new LinkFilter(InlineFilterManager.this.enhancedReport));
-				add(new EnumerationFilter(InlineFilterManager.this.enhancedReport));
+				add(new JavaStackTraceFilter());
+				add(new UnifiedDiffPatchFilter());
+				add(new JavaSourceCodeFilter());
+				add(new LogFilter());
+				add(new LinkFilter());
+				add(new EnumerationFilter());
 			}
 		};
 		
@@ -246,7 +222,7 @@ public class InlineFilterManager implements IFilterManager {
 				final Person author = comment.getAuthor();
 				final DateTime timestamp = comment.getTimestamp();
 				
-				for (final Filter<? extends Inlineable> filter : filters) {
+				for (final IFilter<? extends Inlineable> filter : filters) {
 					for (final Inlineable result : filter.filter(message, author, timestamp)) {
 						SANITY: {
 							assert result.getStartPosition() != null;
@@ -315,7 +291,7 @@ public class InlineFilterManager implements IFilterManager {
 			final Person author = this.textMap.get(-1).getAuthor();
 			final DateTime timestamp = this.textMap.get(-1).getTimestamp();
 			
-			for (final Filter<? extends Inlineable> filter : filters) {
+			for (final IFilter<? extends Inlineable> filter : filters) {
 				for (final Inlineable result : filter.filter(description, author, timestamp)) {
 					SANITY: {
 						assert result.getStartPosition() != null;
@@ -358,6 +334,9 @@ public class InlineFilterManager implements IFilterManager {
 		}
 		
 		try {
+			for (final Filter<?> filter : filters) {
+				filter.setEnhancedReport(getEnhancedReport());
+			}
 			performDescriptionFiltering(filters);
 			performCommentsFiltering(filters);
 		} finally {

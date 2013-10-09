@@ -13,6 +13,7 @@
 
 package org.mozkito.infozilla.filters.enumeration;
 
+import java.awt.Color;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -128,10 +129,11 @@ public class AdaptiveListingFilter extends Filter<Listing> {
 	private static final String ITEMIZATION_PATTERN = "(?<!\\w)({BULLET}(-+|\\*+|\\++))\\s+";
 	
 	/**
-	 * @param enhancedReport
+	 * Instantiates a new adaptive listing filter.
+	 * 
 	 */
-	public AdaptiveListingFilter(final EnhancedReport enhancedReport) {
-		super(enhancedReport);
+	public AdaptiveListingFilter() {
+		super(new Color(204, 255, 102));
 	}
 	
 	/**

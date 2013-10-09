@@ -14,6 +14,9 @@
 package org.mozkito.infozilla.settings;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.HashMap;
@@ -21,16 +24,20 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
+import net.ownhero.dev.hiari.settings.IArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.SetArgument;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
+import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.infozilla.filters.Filter;
+import org.mozkito.infozilla.settings.filters.FilterOptionsPinPoint;
 import org.mozkito.utilities.loading.classpath.ClassFinder;
 import org.mozkito.utilities.loading.classpath.exceptions.WrongClassSearchMethodException;
 
@@ -41,7 +48,9 @@ import org.mozkito.utilities.loading.classpath.exceptions.WrongClassSearchMethod
  */
 public class FilterOptions extends ArgumentSetOptions<Set<Filter<?>>, ArgumentSet<Set<Filter<?>>, FilterOptions>> {
 	
-	private SetArgument.Options enabledFiltersOption;
+	private SetArgument.Options                                                               enabledFiltersOption;
+	
+	private final Map<Class<? extends Filter<?>>, ArgumentSetOptions<? extends Filter<?>, ?>> filterOptions = new HashMap<>();
 	
 	/**
 	 * Instantiates a new filter options.
@@ -60,16 +69,39 @@ public class FilterOptions extends ArgumentSetOptions<Set<Filter<?>>, ArgumentSe
 	 * 
 	 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
 	 */
+	@SuppressWarnings ({ "unchecked", "rawtypes" })
 	@Override
 	public Set<Filter<?>> init() {
-		PRECONDITIONS: {
-			// none
-		}
+		final Set<Filter<?>> set = new HashSet<>();
 		
 		try {
-			// TODO Auto-generated method stub
-			// return null;
-			throw new RuntimeException("Method 'init' has not yet been implemented."); //$NON-NLS-1$
+			final SetArgument argument = getSettings().getArgument(this.enabledFiltersOption);
+			final HashSet<String> value = argument.getValue();
+			
+			for (final String name : value) {
+				// TOD for (final String name : value) {
+				Class<? extends Filter<?>> clazz;
+				try {
+					clazz = (Class<? extends Filter<?>>) Class.forName(Filter.class.getPackage().getName() + '.' + name);
+				} catch (final ClassNotFoundException e) {
+					throw new Shutdown(String.format("", //$NON-NLS-1$
+					                                 name));
+					
+				}
+				
+				final ArgumentSetOptions<? extends Filter<?>, ?> options = this.filterOptions.get(clazz);
+				if (options == null) {
+					if (Logger.logWarn()) {
+						Logger.warn("TODO");
+					}
+					
+				} else {
+					final ArgumentSet<? extends Filter<?>, ?> argumentSet = getSettings().getArgumentSet((IArgumentSetOptions) options);
+					set.add(argumentSet.getValue());
+				}
+			}
+			
+			return set;
 		} finally {
 			POSTCONDITIONS: {
 				// none
@@ -82,6 +114,7 @@ public class FilterOptions extends ArgumentSetOptions<Set<Filter<?>>, ArgumentSe
 	 * 
 	 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
 	 */
+	@SuppressWarnings ({ "unchecked", "rawtypes" })
 	@Override
 	public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> set) throws ArgumentRegistrationException,
 	                                                                            SettingsParseError {
@@ -96,7 +129,6 @@ public class FilterOptions extends ArgumentSetOptions<Set<Filter<?>>, ArgumentSe
 		
 		try {
 			// first off, find all implemented engines
-			@SuppressWarnings ("rawtypes")
 			final Collection<Class<? extends Filter>> collection = ClassFinder.getClassesExtendingClass(getClass().getPackage(),
 			                                                                                            Filter.class,
 			                                                                                            Modifier.ABSTRACT
@@ -104,17 +136,67 @@ public class FilterOptions extends ArgumentSetOptions<Set<Filter<?>>, ArgumentSe
 			                                                                                                    | Modifier.PRIVATE
 			                                                                                                    | Modifier.PROTECTED);
 			
+			final Collection<Class<? extends ArgumentSetOptions>> collection2 = ClassFinder.getClassesExtendingClass(FilterOptionsPinPoint.class.getPackage(),
+			                                                                                                         ArgumentSetOptions.class,
+			                                                                                                         Modifier.ABSTRACT
+			                                                                                                                 | Modifier.INTERFACE
+			                                                                                                                 | Modifier.PRIVATE
+			                                                                                                                 | Modifier.PROTECTED);
+			
 			// first compute the default value for the engine enabler option, i.e., all implemented engines
-			for (@SuppressWarnings ("rawtypes")
-			final Class<? extends Filter> filterClass : collection) {
+			for (final Class<? extends Filter> filterClass : collection) {
 				defaultSet.add(filterClass.getSimpleName());
 			}
 			
 			// now create the enabler for the engines
 			this.enabledFiltersOption = new SetArgument.Options(set, "enabled", "description", defaultSet,
 			                                                    Requirement.required);
+			
+			// iterate over the engine classes to process dependencies
+			FILTER_CLASS: for (final Class<? extends Filter> filterClass : collection) {
+				// loading of engines is in the responsibility of the direct parent class, thus we only process
+				if (filterClass.getSuperclass() == Filter.class) {
+					boolean foundOptionClass = false;
+					FILTER_OPTIONS: for (final Class<? extends ArgumentSetOptions> argumentSetOptionsClass : collection2) {
+						for (final Method method : argumentSetOptionsClass.getMethods()) {
+							if (filterClass.equals(method.getReturnType())) {
+								SANITY: {
+									assert ArgumentSetOptions.class.isAssignableFrom(argumentSetOptionsClass);
+								}
+								foundOptionClass = true;
+								final Constructor<ArgumentSetOptions<? extends Filter<?>, ?>> constructor = (Constructor<ArgumentSetOptions<? extends Filter<?>, ?>>) argumentSetOptionsClass.getDeclaredConstructor(ArgumentSet.class,
+								                                                                                                                                                                                     Requirement.class);
+								SANITY: {
+									assert constructor != null;
+								}
+								
+								// instantiate the options and set to required if enabledEnginesOptions contains the
+								// simple classname of the engine under suspect, i.e., c.getSimpleName()
+								final ArgumentSetOptions<? extends Filter<?>, ?> filterOption = constructor.newInstance(set,
+								                                                                                        Requirement.contains(this.enabledFiltersOption,
+								                                                                                                             filterClass.getSimpleName()));
+								this.filterOptions.put((Class<? extends Filter<?>>) filterClass, filterOption);
+								
+								if (filterOption.required()) {
+									map.put(filterOption.getName(), filterOption);
+								}
+								continue FILTER_CLASS;
+							}
+						}
+					}
+					
+					if (!foundOptionClass) {
+						throw new Shutdown("TODO");
+					}
+				} else {
+					if (Logger.logInfo()) {
+						Logger.info("TODO");
+					}
+				}
+			}
 		} catch (final ClassNotFoundException | WrongClassSearchMethodException | IOException
-		        | IllegalArgumentException | SecurityException e) {
+		        | IllegalArgumentException | SecurityException | NoSuchMethodException | InstantiationException
+		        | IllegalAccessException | InvocationTargetException e) {
 			throw new UnrecoverableError(e);
 		}
 		
