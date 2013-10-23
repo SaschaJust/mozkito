@@ -1088,48 +1088,37 @@ public class PPAUtils {
 		CompilationUnit cu = null;
 		
 		try {
-			final PPACUThread ppacuThread = new PPACUThread(file, options);
-			final Thread t = new Thread(ppacuThread);
-			t.run();
-			t.join(30000);
-			cu = ppacuThread.getCU();
-		} catch (final InterruptedException e1) {
+			final ICompilationUnit icu = JavaCore.createCompilationUnitFrom(file);
+			final PPATypeRegistry registry = new PPATypeRegistry(
+			                                                     (JavaProject) JavaCore.create(icu.getUnderlyingResource()
+			                                                                                      .getProject()));
+			ASTNode node = null;
+			final PPAASTParser parser2 = new PPAASTParser(AST.JLS3);
+			parser2.setStatementsRecovery(true);
+			parser2.setResolveBindings(true);
+			parser2.setSource(icu);
+			node = parser2.createAST(false, new NullProgressMonitor());
+			final PPAEngine ppaEngine = new PPAEngine(registry, options);
+			//
+			cu = (CompilationUnit) node;
+			
+			ppaEngine.addUnitToProcess(cu);
+			ppaEngine.doPPA();
+			ppaEngine.reset();
+		} catch (final JavaModelException jme) {
+			// Retry with the file version.
+			if (Logger.logWarn()) {
+				Logger.warn("Warning while getting CU from PPA");
+			}
+			if (Logger.logDebug()) {
+				Logger.debug(jme, "Exception");
+			}
+			
+		} catch (final Exception e) {
 			if (Logger.logError()) {
-				Logger.error(e1, "Error while getting CU using PPA.");
+				Logger.error(e, "Error while getting CU from PPA");
 			}
 		}
-		// try {
-		// ICompilationUnit icu = JavaCore.createCompilationUnitFrom(file);
-		// PPATypeRegistry registry = new PPATypeRegistry((JavaProject)
-		// JavaCore.create(icu.getUnderlyingResource()
-		// .getProject()));
-		// ASTNode node = null;
-		// PPAASTParser parser2 = new PPAASTParser(AST.JLS3);
-		// parser2.setStatementsRecovery(true);
-		// parser2.setResolveBindings(true);
-		// parser2.setSource(icu);
-		// node = parser2.createAST(null);
-		// PPAEngine ppaEngine = new PPAEngine(registry, options);
-		//
-		// cu = (CompilationUnit) node;
-		//
-		// ppaEngine.addUnitToProcess(cu);
-		// ppaEngine.doPPA();
-		// ppaEngine.reset();
-		// } catch (JavaModelException jme) {
-		// // Retry with the file version.
-		// if (Logger.logWarn()) {
-		// Logger.warn("Warning while getting CU from PPA");
-		// }
-		// if (Logger.logDebug()) {
-		// Logger.debug("Exception", jme);
-		// }
-		//
-		// } catch (Exception e) {
-		// if (Logger.logError()) {
-		// Logger.error("Error while getting CU from PPA", e);
-		// }
-		// }
 		
 		return cu;
 	}
@@ -1406,9 +1395,13 @@ public class PPAUtils {
 			final PPATypeRegistry registry = new PPATypeRegistry(jproject);
 			final PPAEngine ppaEngine = new PPAEngine(registry, new PPAOptions());
 			
-			final ASTParser parser2 = ASTParser.newParser(AST.JLS3);
+			final PPAASTParser parser2 = new PPAASTParser(AST.JLS3);
 			parser2.setStatementsRecovery(true);
 			parser2.setResolveBindings(true);
+			
+			// final ASTParser parser2 = ASTParser.newParser(AST.JLS3);
+			// parser2.setStatementsRecovery(true);
+			// parser2.setResolveBindings(true);
 			parser2.setProject(jproject);
 			
 			final ASTRequestor requestor = new ASTRequestor() {
