@@ -15,17 +15,18 @@ package org.mozkito.callgraph;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import ca.mcgill.cs.swevo.ppa.PPAOptions;
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.ArgumentFactory;
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetFactory;
+import net.ownhero.dev.hiari.settings.BooleanArgument;
 import net.ownhero.dev.hiari.settings.DirectoryArgument;
 import net.ownhero.dev.hiari.settings.ListArgument;
 import net.ownhero.dev.hiari.settings.OutputFileArgument;
@@ -39,7 +40,6 @@ import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kisa.Logger;
 
 import org.eclipse.jdt.core.dom.CompilationUnit;
-
 import org.mozkito.callgraph.model.CallGraph;
 import org.mozkito.callgraph.visitor.CallGraphPPAVisitor;
 import org.mozkito.codeanalysis.model.JavaElementFactory;
@@ -51,6 +51,8 @@ import org.mozkito.utilities.io.FileUtils;
 import org.mozkito.versions.Repository;
 import org.mozkito.versions.exceptions.RepositoryOperationException;
 import org.mozkito.versions.settings.RepositoryOptions;
+
+import ca.mcgill.cs.swevo.ppa.PPAOptions;
 
 /**
  * The Class CallGraphToolChain.
@@ -89,6 +91,8 @@ public class CallGraphToolChain {
 	/** The negative filename list argument. */
 	private ListArgument                               negativeFilenameListArgument;
 	
+	private BooleanArgument                            ppaArgument;
+	
 	/**
 	 * Instantiates a new call graph tool chain.
 	 * 
@@ -122,6 +126,12 @@ public class CallGraphToolChain {
 			                                                                              null,
 			                                                                              Requirement.unset(changeSetIdOptions),
 			                                                                              false));
+			
+			this.ppaArgument = ArgumentFactory.create(new BooleanArgument.Options(
+			                                                                      settings.getRoot(),
+			                                                                      "usePPA",
+			                                                                      "if set to TRUE (default) using PPA eclipse plugin for type resolution.",
+			                                                                      true, Requirement.required));
 			
 			this.packageFilterArgument = ArgumentFactory.create(new SetArgument.Options(
 			                                                                            settings.getRoot(),
@@ -206,7 +216,12 @@ public class CallGraphToolChain {
 			files.removeAll(filesToIgnore);
 		}
 		
-		final Map<File, CompilationUnit> compilationUnits = PPAUtils.getCUs(files, new PPAOptions());
+		Map<File, CompilationUnit> compilationUnits = new HashMap<>();
+		if (this.ppaArgument.getValue()) {
+			compilationUnits = PPAUtils.getCUs(files, new PPAOptions());
+		} else {
+			compilationUnits = PPAUtils.getCUsNoPPA(files);
+		}
 		
 		final File cacheDir = this.cacheDirArgument.getValue();
 		
