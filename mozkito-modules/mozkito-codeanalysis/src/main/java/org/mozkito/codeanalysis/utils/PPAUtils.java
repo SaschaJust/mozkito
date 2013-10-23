@@ -29,7 +29,6 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-import ca.mcgill.cs.swevo.ppa.PPAOptions;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
@@ -48,17 +47,17 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jdt.core.dom.ASTRequestor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.PPAASTParser;
+import org.eclipse.jdt.core.dom.PPAEngine;
+import org.eclipse.jdt.core.dom.PPATypeRegistry;
 import org.eclipse.jdt.core.dom.PackageDeclaration;
-
-import difflib.DeleteDelta;
-import difflib.Delta;
-import difflib.InsertDelta;
-
+import org.eclipse.jdt.internal.core.JavaProject;
 import org.mozkito.codeanalysis.internal.visitors.ChangeOperationVisitor;
 import org.mozkito.codeanalysis.model.ChangeOperations;
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
@@ -84,6 +83,11 @@ import org.mozkito.versions.exceptions.NoSuchHandleException;
 import org.mozkito.versions.exceptions.RepositoryOperationException;
 import org.mozkito.versions.model.ChangeSet;
 import org.mozkito.versions.model.Revision;
+
+import ca.mcgill.cs.swevo.ppa.PPAOptions;
+import difflib.DeleteDelta;
+import difflib.Delta;
+import difflib.InsertDelta;
 
 /**
  * The Class PPAUtils.
@@ -1213,7 +1217,7 @@ public class PPAUtils {
 	                                                final PPAOptions options,
 	                                                final String requestName) {
 		final Map<File, CompilationUnit> cus = new HashMap<File, CompilationUnit>();
-		final Map<IFile, File> iFiles = new HashMap<IFile, File>();
+		final Map<ICompilationUnit, File> iCus = new HashMap<ICompilationUnit, File>();
 		try {
 			cleanupWorkspace();
 		} catch (final CoreException e1) {
@@ -1221,14 +1225,20 @@ public class PPAUtils {
 				Logger.warn(e1);
 			}
 		}
+		final List<ICompilationUnit> iUnits = new LinkedList<>();
 		for (final File file : files) {
 			final String fileName = file.getName();
 			try {
 				final String packageName = getPackageFromFile(file);
 				final IJavaProject javaProject = getProject(requestName);
-				final IFile newFile = PPAResourceUtil.copyJavaSourceFile(javaProject.getProject(), file, packageName,
-				                                                         fileName);
-				iFiles.put(newFile, file);
+				final IFile iFile = PPAResourceUtil.copyJavaSourceFile(javaProject.getProject(), file, packageName,
+				                                                       fileName);
+				if (Logger.logDebug()) {
+					Logger.debug("Getting CU for file: " + iFile.getLocation().toOSString());
+				}
+				final ICompilationUnit iCu = JavaCore.createCompilationUnitFrom(iFile);
+				iCus.put(iCu, file);
+				iUnits.add(iCu);
 			} catch (final Exception e) {
 				if (Logger.logError()) {
 					Logger.error(e, "Error while getting IFile from PPA");
@@ -1236,26 +1246,11 @@ public class PPAUtils {
 			}
 		}
 		
-		for (final IFile iFile : iFiles.keySet()) {
-			if (Logger.logDebug()) {
-				Logger.debug("Getting CU for file: " + iFile.getLocation().toOSString());
-			}
-			// PPACUThread ppacuThread = new PPACUThread(iFile, options);
-			// Thread t = new Thread(ppacuThread);
-			// t.run();
-			// try {
-			// t.join(30000);
-			// } catch (InterruptedException e) {
-			// if (Logger.logWarn()) {
-			// Logger.warn(e.getMessage(), e);
-			// }
-			// }
-			// CompilationUnit cu = ppacuThread.getCU();
-			CompilationUnit cu = getCU(iFile, options);
-			if (cu == null) {
-				cu = getCUNoPPA(iFile);
-			}
-			cus.put(iFiles.get(iFile), cu);
+		final Map<ICompilationUnit, CompilationUnit> cUsWithOnePPAPass = getCUsWithOnePPAPass(iUnits);
+		
+		for (final ICompilationUnit iUnit : cUsWithOnePPAPass.keySet()) {
+			final File f = iCus.get(iUnit);
+			cus.put(f, cus.get(f));
 		}
 		
 		return cus;
@@ -1362,6 +1357,79 @@ public class PPAUtils {
 			throw new UnrecoverableError(e);
 		}
 		
+	}
+	
+	/**
+	 * Gets the c us.
+	 * 
+	 * @param files
+	 *            the files
+	 * @return the c us
+	 */
+	public static Map<File, CompilationUnit> getCUsNoPPA(final Collection<File> files) {
+		
+		final Map<File, CompilationUnit> cus = new HashMap<File, CompilationUnit>();
+		
+		for (final File file : files) {
+			if (Logger.logDebug()) {
+				Logger.debug("Getting CU for file: " + file.getAbsolutePath());
+			}
+			final CompilationUnit cu = getCUNoPPA(file);
+			cus.put(file, cu);
+		}
+		
+		return cus;
+	}
+	
+	/**
+	 * <p>
+	 * </p>
+	 * 
+	 * @param units
+	 * @return
+	 */
+	public static Map<ICompilationUnit, CompilationUnit> getCUsWithOnePPAPass(final List<ICompilationUnit> units) {
+		
+		if (units.size() == 0) {
+			return new HashMap<ICompilationUnit, CompilationUnit>();
+		}
+		
+		final Map<ICompilationUnit, CompilationUnit> astList = new HashMap<ICompilationUnit, CompilationUnit>();
+		try {
+			
+			// FIXME a hack to get the current project.
+			final JavaProject jproject = (JavaProject) JavaCore.create(units.get(0).getUnderlyingResource()
+			                                                                .getProject());
+			final PPATypeRegistry registry = new PPATypeRegistry(jproject);
+			final PPAEngine ppaEngine = new PPAEngine(registry, new PPAOptions());
+			
+			final ASTParser parser2 = ASTParser.newParser(AST.JLS3);
+			parser2.setStatementsRecovery(true);
+			parser2.setResolveBindings(true);
+			parser2.setProject(jproject);
+			
+			final ASTRequestor requestor = new ASTRequestor() {
+				
+				@Override
+				public void acceptAST(final ICompilationUnit source,
+				                      final CompilationUnit ast) {
+					astList.put(source, ast);
+					ppaEngine.addUnitToProcess(ast);
+				}
+			};
+			
+			parser2.createASTs(units.toArray(new ICompilationUnit[units.size()]), new String[0], requestor, null);
+			
+			ppaEngine.doPPA();
+			ppaEngine.reset();
+			
+		} catch (final JavaModelException jme) {
+			jme.printStackTrace();
+		} catch (final Exception e) {
+			e.printStackTrace();
+		}
+		
+		return astList;
 	}
 	
 	/**
