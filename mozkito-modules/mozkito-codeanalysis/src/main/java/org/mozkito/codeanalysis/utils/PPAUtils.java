@@ -1216,7 +1216,6 @@ public class PPAUtils {
 	public static Map<File, CompilationUnit> getCUs(final Collection<File> files,
 	                                                final PPAOptions options,
 	                                                final String requestName) {
-		final Map<File, CompilationUnit> cus = new HashMap<File, CompilationUnit>();
 		final Map<ICompilationUnit, File> iCus = new HashMap<ICompilationUnit, File>();
 		try {
 			cleanupWorkspace();
@@ -1248,9 +1247,10 @@ public class PPAUtils {
 		
 		final Map<ICompilationUnit, CompilationUnit> cUsWithOnePPAPass = getCUsWithOnePPAPass(iUnits);
 		
+		final Map<File, CompilationUnit> cus = new HashMap<>();
 		for (final ICompilationUnit iUnit : cUsWithOnePPAPass.keySet()) {
 			final File f = iCus.get(iUnit);
-			final CompilationUnit cu = cus.get(f);
+			final CompilationUnit cu = cUsWithOnePPAPass.get(iUnit);
 			if (cu != null) {
 				cus.put(f, cu);
 			}
