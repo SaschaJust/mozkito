@@ -1250,7 +1250,10 @@ public class PPAUtils {
 		
 		for (final ICompilationUnit iUnit : cUsWithOnePPAPass.keySet()) {
 			final File f = iCus.get(iUnit);
-			cus.put(f, cus.get(f));
+			final CompilationUnit cu = cus.get(f);
+			if (cu != null) {
+				cus.put(f, cu);
+			}
 		}
 		
 		return cus;
