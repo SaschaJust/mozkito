@@ -25,6 +25,7 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
+import org.mozkito.issues.exceptions.AuthenticationException;
 import org.mozkito.issues.exceptions.InvalidParameterException;
 import org.mozkito.issues.messages.Messages;
 import org.mozkito.issues.model.Comment;
@@ -72,6 +73,9 @@ public abstract class Tracker {
 	/** The person factory. */
 	private final PersonFactory       personFactory;
 	
+	/** The authenticated. */
+	private boolean                   authenticated;
+	
 	/**
 	 * Instantiates a new tracker.
 	 * 
@@ -85,6 +89,15 @@ public abstract class Tracker {
 		this.issueTracker = issueTracker;
 		this.personFactory = personFactory;
 	}
+	
+	/**
+	 * Auth.
+	 * 
+	 * @return true, if successful
+	 * @throws AuthenticationException
+	 *             the authentication exception
+	 */
+	public abstract boolean auth() throws AuthenticationException;
 	
 	/**
 	 * Gets the handle.
@@ -190,6 +203,15 @@ public abstract class Tracker {
 	}
 	
 	/**
+	 * Checks if is authenticated.
+	 * 
+	 * @return true, if is authenticated
+	 */
+	public final boolean isAuthenticated() {
+		return this.authenticated;
+	}
+	
+	/**
 	 * This method is used to fetch persistent reports from the database.
 	 * 
 	 * @param id
@@ -277,6 +299,16 @@ public abstract class Tracker {
 	}
 	
 	/**
+	 * Sets the authenticated.
+	 * 
+	 * @param value
+	 *            the new authenticated
+	 */
+	protected final void setAuthenticated(final boolean value) {
+		this.authenticated = value;
+	}
+	
+	/**
 	 * Sets the password.
 	 * 
 	 * @param password
@@ -308,9 +340,23 @@ public abstract class Tracker {
 		if (Logger.logTrace()) {
 			Logger.trace("Setup"); //$NON-NLS-1$
 		}
+		
 		this.trackerURI = fetchURI;
 		setUsername(username);
 		setPassword(password);
+		
+		// authenticate after setting auth info and before adding report links
+		try {
+			if (getPassword() != null) {
+				auth();
+			}
+			
+			if ((getPassword() != null) && !isAuthenticated()) {
+				throw new InvalidParameterException("Password set but authentication failed.");
+			}
+		} catch (final AuthenticationException e) {
+			throw new InvalidParameterException(e.getMessage(), e);
+		}
 		
 		this.reportLinks = new LinkedBlockingDeque<ReportLink>();
 		this.reportLinks.addAll(getReportLinks());

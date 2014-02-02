@@ -22,6 +22,7 @@ import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
 
+import org.mozkito.issues.exceptions.AuthenticationException;
 import org.mozkito.issues.exceptions.InvalidParameterException;
 import org.mozkito.issues.model.IssueTracker;
 import org.mozkito.issues.tracker.Parser;
@@ -72,6 +73,26 @@ public class BugzillaTracker extends Tracker {
 	 */
 	public BugzillaTracker(final IssueTracker issueTracker, final PersonFactory personFactory) {
 		super(issueTracker, personFactory);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.issues.tracker.Tracker#auth()
+	 */
+	@Override
+	public boolean auth() throws AuthenticationException {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			throw new RuntimeException("Method 'auth' has not yet been implemented."); //$NON-NLS-1$
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/*
