@@ -12,12 +12,15 @@
  **********************************************************************************************************************/
 package org.mozkito.issues.tracker.jira;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -25,11 +28,22 @@ import java.util.Set;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.params.ClientPNames;
+import org.apache.http.client.params.CookiePolicy;
+import org.apache.http.cookie.Cookie;
+import org.apache.http.impl.client.BasicCookieStore;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
+import org.mozkito.issues.exceptions.AuthenticationException;
 import org.mozkito.issues.exceptions.InvalidParameterException;
 import org.mozkito.issues.model.IssueTracker;
 import org.mozkito.issues.tracker.OverviewParser;
@@ -57,6 +71,8 @@ public class JiraTracker extends Tracker implements OverviewParser {
 	
 	/** The project key. */
 	private String                projectKey;
+	private DefaultHttpClient     httpClient   = null;
+	private static final String   URL_SUFFIX   = "/login";
 	
 	/**
 	 * Instantiates a new jira tracker.
@@ -68,6 +84,78 @@ public class JiraTracker extends Tracker implements OverviewParser {
 	 */
 	public JiraTracker(final IssueTracker issueTracker, final PersonFactory personFactory) {
 		super(issueTracker, personFactory);
+		if (Logger.logInfo()) {
+			Logger.info("Setting up new HTTP connector.");
+		}
+		this.httpClient = new DefaultHttpClient();
+		this.httpClient.getParams().setParameter(ClientPNames.COOKIE_POLICY, CookiePolicy.BROWSER_COMPATIBILITY);
+		this.httpClient.setCookieStore(new BasicCookieStore());
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.issues.tracker.Tracker#auth()
+	 */
+	@Override
+	public boolean auth() throws AuthenticationException {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			if (getPassword() != null) {
+				if (getUsername() == null) {
+					throw new AuthenticationException("Password set, but no username given.");
+				}
+				final String authURL = getUri() + URL_SUFFIX;
+				
+				if (Logger.logInfo()) {
+					Logger.info("Authenticating at: " + authURL);
+				}
+				
+				final HttpPost post = new HttpPost(authURL);
+				
+				try {
+					final List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
+					nameValuePairs.add(new BasicNameValuePair("os_username", getUsername()));
+					nameValuePairs.add(new BasicNameValuePair("os_password", getPassword()));
+					nameValuePairs.add(new BasicNameValuePair("username", getUsername()));
+					nameValuePairs.add(new BasicNameValuePair("password", getPassword()));
+					nameValuePairs.add(new BasicNameValuePair("os_cookie", "true"));
+					post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+					
+					final HttpResponse response = this.httpClient.execute(post);
+					final BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity()
+					                                                                           .getContent()));
+					String line = null;
+					while ((line = rd.readLine()) != null) {
+						System.out.println(line);
+					}
+					
+					final List<Cookie> cookies = this.httpClient.getCookieStore().getCookies();
+					if (Logger.logInfo()) {
+						Logger.info("Received %s cookies.", cookies.size());
+					}
+					
+					if (Logger.logDebug()) {
+						for (final Cookie cookie : cookies) {
+							Logger.debug(cookie.toString());
+						}
+					}
+				} catch (final IOException e) {
+					e.printStackTrace();
+				}
+				
+				setAuthenticated(true);
+			}
+			
+			return isAuthenticated();
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/**
@@ -82,7 +170,11 @@ public class JiraTracker extends Tracker implements OverviewParser {
 	 *             the fetch exception
 	 */
 	private RawContent fetch(final URI uri) throws UnsupportedProtocolException, FetchException {
-		return IOUtils.fetch(uri);
+		PRECONDITIONS: {
+			assert this.httpClient != null;
+		}
+		
+		return IOUtils.fetchHttp(uri, this.httpClient);
 	}
 	
 	/*
