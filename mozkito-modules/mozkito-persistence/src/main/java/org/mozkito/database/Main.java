@@ -13,53 +13,36 @@
 
 package org.mozkito.database;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 /**
- * The Class DBEntityCache.
- * 
  * @author Sascha Just <sascha.just@mozkito.org>
+ * 
  */
-public class DBEntityCache {
-	
-	/** The cache. */
-	private final Map<DBEntity, Integer> cache = new HashMap<DBEntity, Integer>();
+public class Main {
 	
 	/**
-	 * Register.
+	 * The main method.
 	 * 
-	 * @param entity
-	 *            the entity
+	 * @param args
+	 *            the arguments
 	 */
-	public void register(final DBEntity entity) {
-		if (!this.cache.containsKey(entity)) {
-			this.cache.put(entity, 0);
+	public static void main(final String[] args) {
+		final DBConnector connector = new DBConnector();
+		connector.connect("postgresql", "localhost", "5432", "nojpa_test", "miner", "miner");
+		
+		final DBQueryPool pool = new DBQueryPool(connector);
+		
+		final DBQuery<TestChangeSet> changeSetQuery = pool.getLoader(TestChangeSet.class);
+		final List<TestChangeSet> load = changeSetQuery.load();
+		
+		for (final TestChangeSet changeSet : load) {
+			System.out.println(changeSet);
 		}
 		
-		final Integer arf = this.cache.get(entity);
-		this.cache.put(entity, arf);
-	}
-	
-	/**
-	 * Unregister.
-	 * 
-	 * @param entity
-	 *            the entity
-	 */
-	public void unregister(final DBEntity entity) {
-		PRECONDITIONS: {
-			if (!this.cache.containsKey(entity)) {
-				throw new IllegalArgumentException();
-			}
-		}
+		final TestChangeSet changeSet = new TestChangeSet();
+		changeSetQuery.saveOrUpdate(changeSet);
 		
-		final Integer arf = this.cache.get(entity);
-		if (arf == 1) {
-			this.cache.remove(entity);
-		} else {
-			this.cache.put(entity, -1);
-		}
+		System.out.println(changeSet);
 	}
-	
 }
