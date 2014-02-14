@@ -13,7 +13,7 @@
 
 package org.mozkito.database;
 
-import java.util.HashSet;
+import java.util.ArrayDeque;
 
 import org.mozkito.persistence.Annotated;
 
@@ -21,6 +21,11 @@ import org.mozkito.persistence.Annotated;
  * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
-public class DBSaveStack extends HashSet<Annotated> {
+public class DBSaveStack extends ArrayDeque<Annotated> {
+	
+	/**
+     * 
+     */
+	private static final long serialVersionUID = 4498193920632309604L;
 	
 }
