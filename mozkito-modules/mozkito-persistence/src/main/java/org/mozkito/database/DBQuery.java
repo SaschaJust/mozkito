@@ -18,12 +18,16 @@ import java.lang.reflect.Method;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.mozkito.persistence.Criteria;
+import org.mozkito.testing.annotation.ComponentType;
+
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * The Class Loader.
@@ -183,7 +187,56 @@ public abstract class DBQuery<T extends DBEntity> {
 		// push object onto saveStack
 		dBSaveStack.push(entity);
 		
+		queryBuilder = new StringBuilder("UPDATE ").append(entity.getDBTableName()).append(" SET ");
+		
+		
 		// for all getters:
+		for (final Method getterMethod : getterMethods) {
+			// FIXME assert existing field
+			try {
+				final Object proxyObject = getterMethod.invoke(entity, new Object[0]);
+				if (proxyObject != null) {
+					if (DBEntity.class.isAssignableFrom(proxyObject.getClass())) {
+						// this is an entity, call saveOrUpdate recursively
+						final DBQuery<DBEntity> loader = this.dBQueryPool.getLoader((Class<DBEntity>) proxyObject.getClass());
+						loader.saveOrUpdate((DBEntity) proxyObject, dBSaveStack);
+						// FIXME check return value
+					} else if (proxyObject instanceof String) {
+						final String fieldName = getterMethod.getName().toLowerCase().replaceFirst("get", "");
+						final String value = ((String) proxyObject);
+						// append to UPDATE query 
+						queryBuilder.append(fieldName).append(" = ? ");
+						
+					} else if (java.util.Collection.class.isAssignableFrom(proxyObject.getClass())) {
+							// check for componentType annotation
+							if (!getterMethod.isAnnotationPresent(ComponentType.class)) {
+								// FIXME error transient whatever
+							} else {
+								final Collection collection = (Collection) proxyObject;
+								final Class<? extends DBEntity> componentType = getterMethod.getAnnotation(ComponentType.class)
+								                                                            .componentType();
+								final DBQuery<DBEntity> componentLoader = this.dBQueryPool.getLoader((Class<DBEntity>) componentType);
+								
+								for (final Object o : collection) {
+									componentLoader.saveOrUpdate((DBEntity) o);
+								}
+							}
+						}
+						// FIXME get join column type from ID field
+						// check maps
+					} else {
+						// FIXME check basic literals (Integer, int, Long, long, etc...)
+						// FIXME check byte arrays
+						// FIXME check String
+						
+						throw new NotImplementedException();
+					}
+				}
+			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+				// TODO Auto-generated catch block
+				
+			}
+		}
 		// if name minus prefix "get" and toLowercase equals a fieldname (toLowercase) and has no @transient annotation
 		// assume saveOrUpdate
 		// if assume saveOrUpdate, call getter and save to temporary proxyobject
