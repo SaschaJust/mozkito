@@ -15,6 +15,9 @@ package org.mozkito.database;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.List;
 
@@ -166,12 +169,12 @@ public abstract class DBQuery<T extends DBEntity> {
 			} catch (final InvocationTargetException e) {
 				// TODO Auto-generated catch block
 				
-		}
-		// else if ID getter annotated with @GeneratedId, do not set Id
-		
-		// TODO create DB entry with no values
-		
-		if (generatedId) {
+			}
+			// else if ID getter annotated with @GeneratedId, do not set Id
+			
+			// TODO create DB entry with no values
+			
+			// if (generatedId) {
 			// TODO select to get ID back from DB
 			
 			// TODO set Id in object
