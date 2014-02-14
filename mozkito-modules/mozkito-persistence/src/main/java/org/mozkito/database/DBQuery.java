@@ -15,6 +15,7 @@ package org.mozkito.database;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashSet;
 import java.util.List;
 
 import net.ownhero.dev.kanuni.conditions.Condition;
@@ -106,12 +107,16 @@ public abstract class DBQuery<T extends DBEntity> {
 		
 		dBSaveStack.add(entity);
 		
+		final HashSet<Method> getterMethods = new HashSet<>();
+		
 		Method idGetter = null;
 		final Method[] declaredMethods = entity.getClass().getDeclaredMethods();
 		for (final Method method : declaredMethods) {
 			if (method.isAnnotationPresent(javax.persistence.Id.class)) {
 				idGetter = method;
-				break;
+			} else if (method.getName().toLowerCase().startsWith("get")
+			        && !method.isAnnotationPresent(javax.persistence.Transient.class)) {
+				getterMethods.add(method);
 			}
 		}
 		if (idGetter == null) {
@@ -119,26 +124,35 @@ public abstract class DBQuery<T extends DBEntity> {
 			throw new NullPointerException();
 		}
 		
-		String insertQuery = String.format("INSERT INTO %s", entity.getDBTableName());
-		String idColumnName = idGetter.getName().toLowerCase().replaceFirst("get", "");
-		if (!idGetter.isAnnotationPresent(javax.persistence.GeneratedValue.class)) {
+		String.format("INSERT INTO %s", entity.getDBTableName());
+		final String idColumnName = idGetter.getName().toLowerCase().replaceFirst("get", "");
+		final boolean generatedId = idGetter.isAnnotationPresent(javax.persistence.GeneratedValue.class);
+		if (!generatedId) {
 			try {
-	            insertQuery += String.format(" (%s) VALUES (%s)",idColumnName, idGetter.invoke(entity));
-            } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-	            // TODO Auto-generated catch block
-            }
+				
+				// if getter returns null throw exception
+				final Object idValue = idGetter.invoke(entity);
+				if (idValue == null) {
+					throw new NullPointerException();
+				}
+				
+				String.format(" (%s) VALUES (%s)", idColumnName, idValue);
+			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+				// TODO Auto-generated catch block
+			}
 		}
+		// else if ID getter annotated with @GeneratedId, do not set Id
 		
-		// create DB entry with no values
-		// if ID getter annotated with @GeneratedId, do not set Id
-		// else if getter returns null throw exception
-		// else set Id while creating entry
+		// TODO create DB entry with no values
 		
-		// select to get ID back from DB
-		
-		// set Id back to object
-		
+		if (generatedId) {
+			// TODO select to get ID back from DB
+			
+			// TODO set Id in object
+			
+		}
 		// push object onto saveStack
+		dBSaveStack.push(entity);
 		
 		// for all getters:
 		// if name minus prefix "get" and toLowercase equals a fieldname (toLowercase) and has no @transient annotation
