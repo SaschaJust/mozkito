@@ -13,6 +13,8 @@
 
 package org.mozkito.database;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 
 import net.ownhero.dev.kanuni.conditions.Condition;
@@ -87,17 +89,45 @@ public abstract class DBQuery<T extends DBEntity> {
 	 *            the entity
 	 * @return true, if successful
 	 */
-	public DBUpdateStatus save(final T entity) {
-		return save(entity, new DBSaveStack());
+	public DBUpdateStatus saveOrUpdate(final T entity) {
+		return saveOrUpdate(entity, new DBSaveStack());
 	}
 	
-	private DBUpdateStatus save(final T entity,
-	                            final DBSaveStack dBSaveStack) {
-		// entity != null
-		// savestack != null;
+	private DBUpdateStatus saveOrUpdate(final T entity,
+	                                    final DBSaveStack dBSaveStack) {
+		PRECONDITIONS: {
+			if (entity == null) {
+				throw new NullPointerException();
+			}
+			if (dBSaveStack == null) {
+				throw new NullPointerException();
+			}
+		}
 		
-		// assert ! saveStack.contains entity
 		dBSaveStack.add(entity);
+		
+		Method idGetter = null;
+		final Method[] declaredMethods = entity.getClass().getDeclaredMethods();
+		for (final Method method : declaredMethods) {
+			if (method.isAnnotationPresent(javax.persistence.Id.class)) {
+				idGetter = method;
+				break;
+			}
+		}
+		if (idGetter == null) {
+			// FIXME could not find id getter
+			throw new NullPointerException();
+		}
+		
+		String insertQuery = String.format("INSERT INTO %s", entity.getDBTableName());
+		String idColumnName = idGetter.getName().toLowerCase().replaceFirst("get", "");
+		if (!idGetter.isAnnotationPresent(javax.persistence.GeneratedValue.class)) {
+			try {
+	            insertQuery += String.format(" (%s) VALUES (%s)",idColumnName, idGetter.invoke(entity));
+            } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+	            // TODO Auto-generated catch block
+            }
+		}
 		
 		// create DB entry with no values
 		// if ID getter annotated with @GeneratedId, do not set Id
@@ -132,22 +162,4 @@ public abstract class DBQuery<T extends DBEntity> {
 		
 		return DBUpdateStatus.SUCCESS;
 	}
-	
-	/**
-	 * Save or update.
-	 * 
-	 * @param entity
-	 *            the entity
-	 * @return the dB update status
-	 */
-	public abstract DBUpdateStatus saveOrUpdate(T entity);
-	
-	/**
-	 * Update.
-	 * 
-	 * @param entity
-	 *            the entity
-	 * @return true, if successful
-	 */
-	public abstract DBUpdateStatus update(T entity);
 }

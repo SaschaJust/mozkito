@@ -13,6 +13,7 @@
 
 package org.mozkito.database;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.mozkito.persistence.Annotated;
 
 /**
@@ -71,5 +72,10 @@ public class DBEntity implements Annotated {
 				// none
 			}
 		}
+	}
+	
+	public String getDBTableName() {
+		// TODO implement this
+		throw new NotImplementedException();
 	}
 }
