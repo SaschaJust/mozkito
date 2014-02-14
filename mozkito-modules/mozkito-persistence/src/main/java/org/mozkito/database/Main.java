@@ -35,6 +35,7 @@ public class Main {
 		
 		final DBQuery<TestChangeSet> changeSetQuery = pool.getLoader(TestChangeSet.class);
 		final List<TestChangeSet> load = changeSetQuery.load();
+		
 		for (final TestChangeSet changeSet : load) {
 			System.out.println(changeSet);
 		}

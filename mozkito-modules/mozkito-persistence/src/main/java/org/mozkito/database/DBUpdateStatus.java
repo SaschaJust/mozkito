@@ -35,6 +35,7 @@ public enum DBUpdateStatus {
 	 * @return the dB update status
 	 */
 	public static DBUpdateStatus fromException(final SQLException e) {
+		// TODO we want to analyze the SQLException here and return the corresponding status
 		return FAILURE.setException(e);
 	}
 	
