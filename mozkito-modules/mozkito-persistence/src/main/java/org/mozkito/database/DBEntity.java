@@ -17,30 +17,14 @@ import org.apache.commons.lang.NotImplementedException;
 import org.mozkito.persistence.Annotated;
 
 /**
- * @author Sascha Just <sascha.just@mozkito.org>
+ * The Class DBEntity.
  * 
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class DBEntity implements Annotated {
 	
+	/** The db query pool. */
 	private DBQueryPool dbQueryPool;
-	
-	/**
-     * 
-     */
-	public DBEntity(final DBQueryPool dbQueryPool) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			// body
-			this.dbQueryPool = dbQueryPool;
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
-	}
 	
 	/**
 	 * {@inheritDoc}
@@ -67,6 +51,45 @@ public class DBEntity implements Annotated {
 			// TODO Auto-generated method stub
 			// return null;
 			throw new RuntimeException("Method 'getClassName' has not yet been implemented."); //$NON-NLS-1$
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Gets the db query pool.
+	 * 
+	 * @return the dbQueryPool
+	 */
+	public DBQueryPool getDbQueryPool() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			return this.dbQueryPool;
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * Sets the db query pool.
+	 * 
+	 * @param dbQueryPool
+	 *            the dbQueryPool to set
+	 */
+	public void setDbQueryPool(final DBQueryPool dbQueryPool) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			this.dbQueryPool = dbQueryPool;
 		} finally {
 			POSTCONDITIONS: {
 				// none

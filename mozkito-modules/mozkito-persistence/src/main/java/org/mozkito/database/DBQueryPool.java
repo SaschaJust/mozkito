@@ -18,8 +18,6 @@ import java.util.Map;
 
 import net.ownhero.dev.kanuni.conditions.Condition;
 
-import org.mozkito.persistence.PersistenceUtil;
-
 /**
  * The Class LoaderPool.
  * 
@@ -31,17 +29,17 @@ public class DBQueryPool {
 	private final Map<Class<?>, DBQuery<?>> dBQueries = new HashMap<Class<?>, DBQuery<?>>();
 	
 	/** The persistence util. */
-	private PersistenceUtil                 persistenceUtil;
+	private DBConnector                     connector;
 	
 	/**
 	 * Instantiates a new loader pool.
 	 * 
-	 * @param persistenceUtil
+	 * @param connector
 	 *            the persistence util
 	 */
-	public DBQueryPool(final PersistenceUtil persistenceUtil) {
+	public DBQueryPool(final DBConnector connector) {
 		PRECONDITIONS: {
-			if (persistenceUtil == null) {
+			if (connector == null) {
 				throw new NullPointerException();
 			}
 		}
@@ -49,11 +47,10 @@ public class DBQueryPool {
 		try {
 			// body
 			// TODO FIXME THIS SHOULD ACTUALLY BE A DATABASE CONNECTOR
-			this.persistenceUtil = persistenceUtil;
+			this.connector = connector;
 		} finally {
 			POSTCONDITIONS: {
-				Condition.notNull(this.persistenceUtil,
-				                  "Field '%s' in '%s'.", "this.persistenceUtil", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+				Condition.notNull(this.connector, "Field '%s' in '%s'.", "this.connector", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 	}
@@ -97,13 +94,13 @@ public class DBQueryPool {
 	 * 
 	 * @return the persistenceUtil
 	 */
-	public PersistenceUtil getPersistenceUtil() {
+	public DBConnector getPersistenceUtil() {
 		PRECONDITIONS: {
 			// none
 		}
 		
 		try {
-			return this.persistenceUtil;
+			return this.connector;
 		} finally {
 			POSTCONDITIONS: {
 				// none
@@ -117,13 +114,13 @@ public class DBQueryPool {
 	 * @param persistenceUtil
 	 *            the persistenceUtil to set
 	 */
-	public void setPersistenceUtil(final PersistenceUtil persistenceUtil) {
+	public void setPersistenceUtil(final DBConnector persistenceUtil) {
 		PRECONDITIONS: {
 			// none
 		}
 		
 		try {
-			this.persistenceUtil = persistenceUtil;
+			this.connector = persistenceUtil;
 		} finally {
 			POSTCONDITIONS: {
 				// none
