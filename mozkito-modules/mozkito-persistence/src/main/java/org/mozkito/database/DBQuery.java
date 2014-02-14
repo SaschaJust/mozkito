@@ -15,9 +15,7 @@ package org.mozkito.database;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.List;
 
 import net.ownhero.dev.kanuni.conditions.Condition;
@@ -109,12 +107,16 @@ public abstract class DBQuery<T extends DBEntity> {
 		
 		dBSaveStack.add(entity);
 		
+		final HashSet<Method> getterMethods = new HashSet<>();
+		
 		Method idGetter = null;
 		final Method[] declaredMethods = entity.getClass().getDeclaredMethods();
 		for (final Method method : declaredMethods) {
 			if (method.isAnnotationPresent(javax.persistence.Id.class)) {
 				idGetter = method;
-				break;
+			} else if (method.getName().toLowerCase().startsWith("get")
+			        && !method.isAnnotationPresent(javax.persistence.Transient.class)) {
+				getterMethods.add(method);
 			}
 		}
 		if (idGetter == null) {
@@ -164,20 +166,19 @@ public abstract class DBQuery<T extends DBEntity> {
 			} catch (final InvocationTargetException e) {
 				// TODO Auto-generated catch block
 				
-			}
+		}
+		// else if ID getter annotated with @GeneratedId, do not set Id
+		
+		// TODO create DB entry with no values
+		
+		if (generatedId) {
+			// TODO select to get ID back from DB
+			
+			// TODO set Id in object
 			
 		}
-		
-		// create DB entry with no values
-		// if ID getter annotated with @GeneratedId, do not set Id
-		// else if getter returns null throw exception
-		// else set Id while creating entry
-		
-		// select to get ID back from DB
-		
-		// set Id back to object
-		
 		// push object onto saveStack
+		dBSaveStack.push(entity);
 		
 		// for all getters:
 		// if name minus prefix "get" and toLowercase equals a fieldname (toLowercase) and has no @transient annotation
