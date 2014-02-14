@@ -13,7 +13,10 @@
 
 package org.mozkito.database;
 
+import java.lang.reflect.Method;
+
 import org.apache.commons.lang.NotImplementedException;
+
 import org.mozkito.persistence.Annotated;
 
 /**
@@ -77,6 +80,28 @@ public class DBEntity implements Annotated {
 		}
 	}
 	
+	public String getDBTableName() {
+		// TODO implement this
+		throw new NotImplementedException();
+	}
+	
+	protected Method getIdGetter() {
+		return null;
+	}
+	
+	/**
+	 * Gets the iD sequence name.
+	 * 
+	 * @return the iD sequence name
+	 */
+	public String getIDSequenceName() {
+		return null;
+	}
+	
+	protected Method getSetterFromGetter(final Method getter) {
+		return null;
+	}
+	
 	/**
 	 * Sets the db query pool.
 	 * 
@@ -95,10 +120,5 @@ public class DBEntity implements Annotated {
 				// none
 			}
 		}
-	}
-	
-	public String getDBTableName() {
-		// TODO implement this
-		throw new NotImplementedException();
 	}
 }

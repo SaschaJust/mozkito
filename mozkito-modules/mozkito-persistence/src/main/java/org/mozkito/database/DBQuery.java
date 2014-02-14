@@ -15,6 +15,9 @@ package org.mozkito.database;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 import net.ownhero.dev.kanuni.conditions.Condition;
@@ -119,14 +122,50 @@ public abstract class DBQuery<T extends DBEntity> {
 			throw new NullPointerException();
 		}
 		
-		String insertQuery = String.format("INSERT INTO %s", entity.getDBTableName());
-		String idColumnName = idGetter.getName().toLowerCase().replaceFirst("get", "");
+		final StringBuilder queryBuilder = new StringBuilder("INSERT INTO ");
+		queryBuilder.append(entity.getDBTableName());
+		
+		final String idColumnName = idGetter.getName().toLowerCase().replaceFirst("get", "");
+		
 		if (!idGetter.isAnnotationPresent(javax.persistence.GeneratedValue.class)) {
 			try {
-	            insertQuery += String.format(" (%s) VALUES (%s)",idColumnName, idGetter.invoke(entity));
-            } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-	            // TODO Auto-generated catch block
-            }
+				queryBuilder.append("SET ");
+				queryBuilder.append(idColumnName).append(" = ? ");
+				final PreparedStatement preparedStatement = this.dBQueryPool.getPersistenceUtil()
+				                                                            .prepare(queryBuilder.toString(),
+				                                                                     idGetter.invoke(entity));
+				this.dBQueryPool.getPersistenceUtil().commit(preparedStatement);
+			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+				// TODO Auto-generated catch block
+			} catch (final SQLException e) {
+				// TODO Auto-generated catch block
+				
+			}
+		} else {
+			// fetch ID from sequence table
+			assert entity.getIDSequenceName() != null;
+			ResultSet rsgfid;
+			try {
+				rsgfid = this.dBQueryPool.getPersistenceUtil().executeQuery("SELECT last_value FROM "
+				                                                                    + entity.getIDSequenceName());
+				rsgfid.next();
+				final String entityId = rsgfid.getString(1);
+				final Method idSetter = entity.getSetterFromGetter(idGetter);
+				idSetter.invoke(entity, entityId);
+			} catch (final SQLException e) {
+				// TODO Auto-generated catch block
+				
+			} catch (final IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				
+			} catch (final IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				
+			} catch (final InvocationTargetException e) {
+				// TODO Auto-generated catch block
+				
+			}
+			
 		}
 		
 		// create DB entry with no values

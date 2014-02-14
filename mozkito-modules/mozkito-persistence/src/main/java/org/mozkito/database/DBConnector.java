@@ -16,7 +16,9 @@ package org.mozkito.database;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * The Class DBConnector.
@@ -90,6 +92,26 @@ public class DBConnector {
 			System.out.println("Connection Failed! Check output console");
 			e.printStackTrace();
 			return;
+		}
+	}
+	
+	/**
+	 * @param string
+	 * @return
+	 * @throws SQLException
+	 */
+	public ResultSet executeQuery(final String string) throws SQLException {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			final Statement statement = this.connection.createStatement();
+			return statement.executeQuery(string);
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
 		}
 	}
 	
