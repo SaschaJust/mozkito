@@ -13,14 +13,53 @@
 
 package org.mozkito.database;
 
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * @author Sascha Just <sascha.just@mozkito.org>
+ * The Class DBEntityCache.
  * 
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class DBEntityCache {
 	
-	public void unregister(final DBEntity entity) {
+	/** The cache. */
+	private final Map<DBEntity, Integer> cache = new HashMap<DBEntity, Integer>();
+	
+	/**
+	 * Register.
+	 * 
+	 * @param entity
+	 *            the entity
+	 */
+	public void register(final DBEntity entity) {
+		if (!this.cache.containsKey(entity)) {
+			this.cache.put(entity, 0);
+		}
 		
+		final Integer arf = this.cache.get(entity);
+		this.cache.put(entity, arf);
 	}
+	
+	/**
+	 * Unregister.
+	 * 
+	 * @param entity
+	 *            the entity
+	 */
+	public void unregister(final DBEntity entity) {
+		PRECONDITIONS: {
+			if (!this.cache.containsKey(entity)) {
+				throw new IllegalArgumentException();
+			}
+		}
+		
+		final Integer arf = this.cache.get(entity);
+		if (arf == 1) {
+			this.cache.remove(entity);
+		} else {
+			this.cache.put(entity, -1);
+		}
+	}
+	
 }
