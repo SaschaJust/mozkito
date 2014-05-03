@@ -83,21 +83,24 @@ public class LoggerOptions extends ArgumentSetOptions<Boolean, ArgumentSet<Boole
 			                                           + "-Dlog.class<class_name>=<log_level>[,<log_file_path>]", null,
 			                                   Requirement.optional));
 			
-			System.setProperty("log.class.org.tmatesoft.svn", "WARN");
-			System.setProperty("log.class.org.hibernate", "WARN");
-			System.setProperty("log.class.org.hibernate.type", "WARN");
-			System.setProperty("log.class.org.apache.http", "WARN");
-			System.setProperty("log.class.org.apache.http.wire", "ERROR");
-			System.setProperty("log.class.openjpa.Tool", "INFO");
-			System.setProperty("log.class.openjpa.Runtime", "INFO");
-			System.setProperty("log.class.openjpa.Remote", "WARN");
-			System.setProperty("log.class.openjpa.DataCache", "WARN");
-			System.setProperty("log.class.openjpa.MetaData", "WARN");
-			System.setProperty("log.class.openjpa.Enhance", "WARN");
-			System.setProperty("log.class.openjpa.Query", "WARN");
-			System.setProperty("log.class.openjpa.jdbc.SQL", "WARN");
-			System.setProperty("log.class.openjpa.jdbc.JDBC", "WARN");
-			System.setProperty("log.class.openjpa.jdbc.Schema", "WARN");
+			System.setProperty("log.class.org.tmatesoft.svn", System.getProperty("log.class.org.tmatesoft.svn", "WARN"));
+			System.setProperty("log.class.org.hibernate", System.getProperty("log.class.org.hibernate", "WARN"));
+			System.setProperty("log.class.org.hibernate.type",
+			                   System.getProperty("log.class.org.hibernate.type", "WARN"));
+			System.setProperty("log.class.org.apache.http", System.getProperty("log.class.org.apache.http", "WARN"));
+			System.setProperty("log.class.org.apache.http.wire",
+			                   System.getProperty("log.class.org.apache.http.wire", "ERROR"));
+			System.setProperty("log.class.openjpa.Tool", System.getProperty("log.class.openjpa.Tool", "INFO"));
+			System.setProperty("log.class.openjpa.Runtime", System.getProperty("log.class.openjpa.Runtime", "INFO"));
+			System.setProperty("log.class.openjpa.Remote", System.getProperty("log.class.openjpa.Remote", "WARN"));
+			System.setProperty("log.class.openjpa.DataCache", System.getProperty("log.class.openjpa.DataCache", "WARN"));
+			System.setProperty("log.class.openjpa.MetaData", System.getProperty("log.class.openjpa.MetaData", "WARN"));
+			System.setProperty("log.class.openjpa.Enhance", System.getProperty("log.class.openjpa.Enhance", "WARN"));
+			System.setProperty("log.class.openjpa.Query", System.getProperty("log.class.openjpa.Query", "WARN"));
+			System.setProperty("log.class.openjpa.jdbc.SQL", System.getProperty("log.class.openjpa.jdbc.SQL", "WARN"));
+			System.setProperty("log.class.openjpa.jdbc.JDBC", System.getProperty("log.class.openjpa.jdbc.JDBC", "WARN"));
+			System.setProperty("log.class.openjpa.jdbc.Schema",
+			                   System.getProperty("log.class.openjpa.jdbc.Schema", "WARN"));
 			
 			return map;
 		} finally {
