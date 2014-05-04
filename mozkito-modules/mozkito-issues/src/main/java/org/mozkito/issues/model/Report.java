@@ -65,7 +65,6 @@ import org.mozkito.persistence.FieldKey;
 import org.mozkito.persistence.IterableFieldKey;
 import org.mozkito.persistence.model.EnumTuple;
 import org.mozkito.persons.model.Person;
-import org.mozkito.persons.model.PersonContainer;
 import org.mozkito.persons.model.PersonTuple;
 import org.mozkito.utilities.commons.JavaUtils;
 import org.mozkito.utilities.io.FileUtils;
@@ -75,10 +74,11 @@ import org.mozkito.utilities.io.FileUtils;
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-@Entity
+@Artifact
 @Table (name = "report")
-public class Report implements org.mozkito.persistence.Entity, Comparable<Report> {
+public class Report implements org.mozkito.database.Artifact, Comparable<Report> {
 	
+	/** The Constant DEFAULT_REPORT. */
 	private static final Report DEFAULT_REPORT   = new Report();
 	
 	/** The Constant HASH_SIZE. */
@@ -100,11 +100,17 @@ public class Report implements org.mozkito.persistence.Entity, Comparable<Report
 		return DEFAULT_REPORT.getField(lowerFieldName);
 	}
 	
+	/** The assigned person. */
+	private Person                assignedPerson;
+	
 	/** The attachment entries. */
 	private List<AttachmentEntry> attachmentEntries = new LinkedList<AttachmentEntry>();
 	
 	/** The category. */
 	private String                category;
+	
+	/** The closing person. */
+	private Person                closingPerson;
 	
 	/** The comments. */
 	private SortedSet<Comment>    comments          = new TreeSet<Comment>(new CommentComparator());
@@ -127,15 +133,12 @@ public class Report implements org.mozkito.persistence.Entity, Comparable<Report
 	/** The id. */
 	private String                id;
 	
+	/** The keywords. */
+	private Set<String>           keywords          = new HashSet<String>();
 	/** The last fetch. */
 	private DateTime              lastFetch;
-	
 	/** The last update timestamp. */
 	private DateTime              lastUpdateTimestamp;
-	
-	/** The person container. */
-	private PersonContainer       personContainer   = new PersonContainer();
-	
 	/** The priority. */
 	private Priority              priority          = Priority.UNKNOWN;
 	
@@ -147,6 +150,12 @@ public class Report implements org.mozkito.persistence.Entity, Comparable<Report
 	
 	/** The resolution timestamp. */
 	private DateTime              resolutionTimestamp;
+	
+	/** The resolving person. */
+	private Person                resolvingPerson;
+	
+	/** The scm fix version. */
+	private String                scmFixVersion;
 	
 	/** The severity. */
 	private Severity              severity          = Severity.UNKNOWN;
@@ -160,23 +169,20 @@ public class Report implements org.mozkito.persistence.Entity, Comparable<Report
 	/** The subject. */
 	private String                subject;
 	
+	/** The submitting person. */
+	private Person                submittingPerson;
+	
 	/** The summary. */
 	private String                summary;
+	
+	/** The tracker. */
+	private IssueTracker          tracker;
 	
 	/** The type. */
 	private Type                  type              = Type.UNKNOWN;
 	
 	/** The version. */
 	private String                version;
-	
-	/** The scm fix version. */
-	private String                scmFixVersion;
-	
-	/** The keywords. */
-	private Set<String>           keywords          = new HashSet<String>();
-	
-	/** The tracker. */
-	private IssueTracker          tracker;
 	
 	/**
 	 * Instantiates a new report.
@@ -267,6 +273,11 @@ public class Report implements org.mozkito.persistence.Entity, Comparable<Report
 	 * (non-Javadoc)
 	 * @see java.lang.Object#clone()
 	 */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see java.lang.Object#clone()
+	 */
 	@Override
 	protected Report clone() throws CloneNotSupportedException {
 		final Report report = new Report();
@@ -305,6 +316,11 @@ public class Report implements org.mozkito.persistence.Entity, Comparable<Report
 	 * (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
 	@Override
 	public int compareTo(final Report o) {
 		final int comp = Integer.valueOf(getId().length()).compareTo(Integer.valueOf(o.getId().length()));
@@ -316,6 +332,11 @@ public class Report implements org.mozkito.persistence.Entity, Comparable<Report
 	
 	/*
 	 * (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -343,7 +364,7 @@ public class Report implements org.mozkito.persistence.Entity, Comparable<Report
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.persistence.Entity#get(org.mozkito.persistence.FieldKey)
+	 * @see org.mozkito.database.Artifact#get(org.mozkito.persistence.FieldKey)
 	 */
 	@Override
 	public <T> T get(final FieldKey key) {
@@ -412,7 +433,7 @@ public class Report implements org.mozkito.persistence.Entity, Comparable<Report
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.persistence.Entity#get(org.mozkito.persistence.IterableFieldKey)
+	 * @see org.mozkito.database.Artifact#get(org.mozkito.persistence.IterableFieldKey)
 	 */
 	@SuppressWarnings ("unchecked")
 	@Override
@@ -496,7 +517,7 @@ public class Report implements org.mozkito.persistence.Entity, Comparable<Report
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.persistence.Entity#get(org.mozkito.persistence.IterableFieldKey, int)
+	 * @see org.mozkito.database.Artifact#get(org.mozkito.persistence.IterableFieldKey, int)
 	 */
 	@Override
 	public <T> T get(final IterableFieldKey key,
@@ -517,7 +538,7 @@ public class Report implements org.mozkito.persistence.Entity, Comparable<Report
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.persistence.Entity#getAll(org.mozkito.persistence.FieldKey[])
+	 * @see org.mozkito.database.Artifact#getAll(org.mozkito.persistence.FieldKey[])
 	 */
 	@Override
 	public Map<FieldKey, Object> getAll(final FieldKey... keys) {
@@ -537,7 +558,7 @@ public class Report implements org.mozkito.persistence.Entity, Comparable<Report
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.persistence.Entity#getAll(org.mozkito.persistence.IterableFieldKey[])
+	 * @see org.mozkito.database.Artifact#getAll(org.mozkito.persistence.IterableFieldKey[])
 	 */
 	@Override
 	public Map<IterableFieldKey, Object> getAll(final IterableFieldKey... keys) {
@@ -557,7 +578,7 @@ public class Report implements org.mozkito.persistence.Entity, Comparable<Report
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.persistence.Entity#getAny(org.mozkito.persistence.FieldKey[])
+	 * @see org.mozkito.database.Artifact#getAny(org.mozkito.persistence.FieldKey[])
 	 */
 	@Override
 	public Object getAny(final FieldKey... keys) {
@@ -577,7 +598,7 @@ public class Report implements org.mozkito.persistence.Entity, Comparable<Report
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.persistence.Entity#getAny(org.mozkito.persistence.IterableFieldKey[])
+	 * @see org.mozkito.database.Artifact#getAny(org.mozkito.persistence.IterableFieldKey[])
 	 */
 	@Override
 	public Object getAny(final IterableFieldKey... keys) {
@@ -597,7 +618,7 @@ public class Report implements org.mozkito.persistence.Entity, Comparable<Report
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.persistence.Entity#getAsOneString(org.mozkito.persistence.FieldKey[])
+	 * @see org.mozkito.database.Artifact#getAsOneString(org.mozkito.persistence.FieldKey[])
 	 */
 	@Override
 	public String getAsOneString(final FieldKey... fKeys) {
@@ -617,7 +638,7 @@ public class Report implements org.mozkito.persistence.Entity, Comparable<Report
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.persistence.Entity#getAsOneString(org.mozkito.persistence.IterableFieldKey)
+	 * @see org.mozkito.database.Artifact#getAsOneString(org.mozkito.persistence.IterableFieldKey)
 	 */
 	@Override
 	public String getAsOneString(final IterableFieldKey iKeys) {
@@ -639,11 +660,9 @@ public class Report implements org.mozkito.persistence.Entity, Comparable<Report
 	 * 
 	 * @return the assignedTo
 	 */
-	@Transient
+	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
 	public Person getAssignedTo() {
-		return getPersonContainer() != null
-		                                   ? getPersonContainer().get("assignedTo")
-		                                   : null;
+		return this.assignedPerson;
 	}
 	
 	/**
@@ -669,6 +688,11 @@ public class Report implements org.mozkito.persistence.Entity, Comparable<Report
 	/*
 	 * (non-Javadoc)
 	 * @see org.mozkito.persistence.Annotated#getHandle()
+	 */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.persistence.Annotated#getClassName()
 	 */
 	@Override
 	public final String getClassName() {
@@ -711,27 +735,28 @@ public class Report implements org.mozkito.persistence.Entity, Comparable<Report
 	 * 
 	 * @return the closing person
 	 */
-	@Transient
+	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
 	public Person getClosingPerson() {
-		Person person = null;
-		if (Status.CLOSED.equals(getStatus())) {
-			for (final HistoryElement element : getHistory()) {
-				final Map<String, EnumTuple> values = element.getChangedEnumValues();
-				if (!values.isEmpty() && values.containsKey(Status.class.getSimpleName())) {
-					final EnumTuple tuple = values.get(Status.class.getSimpleName());
-					
-					SANITY: {
-						assert tuple != null;
-					}
-					
-					if (Status.CLOSED.equals(tuple.getNewValue())) {
-						person = element.getAuthor();
-					}
-				}
-			}
-		}
-		
-		return person;
+		return this.closingPerson;
+		// Person person = null;
+		// if (Status.CLOSED.equals(getStatus())) {
+		// for (final HistoryElement element : getHistory()) {
+		// final Map<String, EnumTuple> values = element.getChangedEnumValues();
+		// if (!values.isEmpty() && values.containsKey(Status.class.getSimpleName())) {
+		// final EnumTuple tuple = values.get(Status.class.getSimpleName());
+		//
+		// SANITY: {
+		// assert tuple != null;
+		// }
+		//
+		// if (Status.CLOSED.equals(tuple.getNewValue())) {
+		// person = element.getAuthor();
+		// }
+		// }
+		// }
+		// }
+		//
+		// return person;
 	}
 	
 	/**
@@ -797,6 +822,7 @@ public class Report implements org.mozkito.persistence.Entity, Comparable<Report
 	 *            the lower field name
 	 * @return the field
 	 * @throws IllegalArgumentException
+	 *             the illegal argument exception
 	 */
 	public Object getField(@NotNull final String lowerFieldName) throws IllegalArgumentException {
 		final Method[] methods = this.getClass().getDeclaredMethods();
@@ -848,7 +874,7 @@ public class Report implements org.mozkito.persistence.Entity, Comparable<Report
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.persistence.Entity#getIDString()
+	 * @see org.mozkito.database.Artifact#getIDString()
 	 */
 	@Override
 	public String getIDString() {
@@ -966,16 +992,6 @@ public class Report implements org.mozkito.persistence.Entity, Comparable<Report
 	}
 	
 	/**
-	 * Gets the person container.
-	 * 
-	 * @return the personContainer
-	 */
-	@OneToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	public PersonContainer getPersonContainer() {
-		return this.personContainer;
-	}
-	
-	/**
 	 * Gets the priority.
 	 * 
 	 * @return the priority
@@ -1036,9 +1052,7 @@ public class Report implements org.mozkito.persistence.Entity, Comparable<Report
 	// @ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	@Transient
 	public Person getResolver() {
-		return getPersonContainer() != null
-		                                   ? getPersonContainer().get("resolver")
-		                                   : null;
+		return this.resolvingPerson;
 	}
 	
 	/**
@@ -1080,7 +1094,7 @@ public class Report implements org.mozkito.persistence.Entity, Comparable<Report
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.persistence.Entity#getSize(org.mozkito.persistence.IterableFieldKey)
+	 * @see org.mozkito.database.Artifact#getSize(org.mozkito.persistence.IterableFieldKey)
 	 */
 	@Override
 	public int getSize(final IterableFieldKey key) {
@@ -1124,12 +1138,9 @@ public class Report implements org.mozkito.persistence.Entity, Comparable<Report
 	 * 
 	 * @return the submitter
 	 */
-	// @ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
-	@Transient
+	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
 	public Person getSubmitter() {
-		return getPersonContainer() != null
-		                                   ? getPersonContainer().get("submitter")
-		                                   : null;
+		return this.submittingPerson;
 	}
 	
 	/**
@@ -1147,7 +1158,7 @@ public class Report implements org.mozkito.persistence.Entity, Comparable<Report
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.persistence.Entity#getText()
+	 * @see org.mozkito.database.Artifact#getText()
 	 */
 	@Override
 	public String getText() {
@@ -1208,6 +1219,11 @@ public class Report implements org.mozkito.persistence.Entity, Comparable<Report
 	 * (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -1225,7 +1241,7 @@ public class Report implements org.mozkito.persistence.Entity, Comparable<Report
 	 *            the assignedTo to set
 	 */
 	public void setAssignedTo(final Person assignedTo) {
-		getPersonContainer().add("assignedTo", assignedTo); //$NON-NLS-1$
+		this.assignedPerson = assignedTo;
 	}
 	
 	/**
@@ -1439,16 +1455,6 @@ public class Report implements org.mozkito.persistence.Entity, Comparable<Report
 	}
 	
 	/**
-	 * Sets the person container.
-	 * 
-	 * @param personContainer
-	 *            the personContainer to set
-	 */
-	public void setPersonContainer(final PersonContainer personContainer) {
-		this.personContainer = personContainer;
-	}
-	
-	/**
 	 * Sets the priority.
 	 * 
 	 * @param priority
@@ -1508,7 +1514,7 @@ public class Report implements org.mozkito.persistence.Entity, Comparable<Report
 	 *            the resolver to set
 	 */
 	public void setResolver(final Person resolver) {
-		getPersonContainer().add("resolver", resolver); //$NON-NLS-1$
+		this.resolvingPerson = resolver;
 	}
 	
 	/**
@@ -1573,7 +1579,7 @@ public class Report implements org.mozkito.persistence.Entity, Comparable<Report
 	 *            the submitter to set
 	 */
 	public void setSubmitter(final Person submitter) {
-		getPersonContainer().add("submitter", submitter); //$NON-NLS-1$
+		this.submittingPerson = submitter;
 	}
 	
 	/**
@@ -1619,7 +1625,7 @@ public class Report implements org.mozkito.persistence.Entity, Comparable<Report
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.persistence.Entity#supportedFields()
+	 * @see org.mozkito.database.Artifact#supportedFields()
 	 */
 	@Override
 	public Set<FieldKey> supportedFields() {
@@ -1660,7 +1666,7 @@ public class Report implements org.mozkito.persistence.Entity, Comparable<Report
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.persistence.Entity#supportedIteratableFields()
+	 * @see org.mozkito.database.Artifact#supportedIteratableFields()
 	 */
 	@Override
 	public Set<IterableFieldKey> supportedIteratableFields() {
@@ -1737,6 +1743,11 @@ public class Report implements org.mozkito.persistence.Entity, Comparable<Report
 	
 	/*
 	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

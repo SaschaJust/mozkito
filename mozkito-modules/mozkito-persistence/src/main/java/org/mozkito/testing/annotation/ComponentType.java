@@ -13,7 +13,7 @@
 
 package org.mozkito.testing.annotation;
 
-import org.mozkito.database.DBEntity;
+import org.mozkito.database.Artifact;
 
 /**
  * @author Sascha Just <sascha.just@mozkito.org>
@@ -26,5 +26,5 @@ public @interface ComponentType {
 	 * 
 	 * @return the class<? extends db entity>
 	 */
-	Class<? extends DBEntity> componentType();
+	Class<? extends Artifact> componentType();
 }

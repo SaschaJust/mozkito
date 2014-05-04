@@ -21,7 +21,7 @@ import javax.persistence.metamodel.SingularAttribute;
 import org.mozkito.persistence.model.DateTimeTuple;
 import org.mozkito.persistence.model.EnumTuple;
 import org.mozkito.persistence.model.StringTuple;
-import org.mozkito.persons.model.PersonContainer;
+import org.mozkito.persons.model.Person;
 import org.mozkito.persons.model.PersonTuple;
 
 /**
@@ -31,6 +31,9 @@ import org.mozkito.persons.model.PersonTuple;
 @javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
                              date = "Fri Apr 26 13:58:11 CEST 2013")
 public class HistoryElement_ {
+	
+	/** The author. */
+	public static volatile SingularAttribute<HistoryElement, Person>           author;
 	
 	/** The changed date values. */
 	public static volatile MapAttribute<HistoryElement, String, DateTimeTuple> changedDateValues;
@@ -53,6 +56,4 @@ public class HistoryElement_ {
 	/** The java timestamp. */
 	public static volatile SingularAttribute<HistoryElement, Date>             javaTimestamp;
 	
-	/** The person container. */
-	public static volatile SingularAttribute<HistoryElement, PersonContainer>  personContainer;
 }

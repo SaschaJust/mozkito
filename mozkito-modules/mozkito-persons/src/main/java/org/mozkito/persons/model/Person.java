@@ -19,39 +19,109 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
-import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.annotations.string.Trimmed;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.openjpa.persistence.jdbc.Index;
 
-import org.mozkito.persistence.Annotated;
+import org.mozkito.database.Entity;
+import org.mozkito.database.Layout;
+import org.mozkito.database.Layout.TableType;
+import org.mozkito.database.constraints.column.ForeignKey;
+import org.mozkito.database.constraints.column.NotNull;
+import org.mozkito.database.constraints.column.PrimaryKey;
+import org.mozkito.database.constraints.column.Unique;
+import org.mozkito.database.constraints.table.Check;
+import org.mozkito.database.exceptions.DatabaseException;
+import org.mozkito.database.index.Index;
+import org.mozkito.database.model.Column;
+import org.mozkito.database.model.Table;
+import org.mozkito.database.types.Type;
 import org.mozkito.persons.elements.PersonFactory;
 import org.mozkito.utilities.commons.JavaUtils;
+// import javax.persistence.Column;
+// import javax.persistence.Table;
 
 /**
  * The Class Person.
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-@Entity
-@Table (name = "person")
-public class Person implements Annotated {
+public class Person implements Entity {
+	
+	/** The username table. */
+	public final static Table          USERNAME_TABLE;
+	
+	/** The email table. */
+	public final static Table          EMAIL_TABLE;
+	
+	/** The fullname table. */
+	public final static Table          FULLNAME_TABLE;
+	
+	/** The main table. */
+	public final static Table          MAIN_TABLE;
+	
+	/** The Constant LAYOUT. */
+	public static final Layout<Person> LAYOUT           = new Layout<>(Person.class);
+	
+	static {
+		try {
+			// @formatter:off
+			MAIN_TABLE = new Table("persons", 
+			                       new Column("id", Type.getSerial(), 
+			                                  new PrimaryKey())
+			);
+			
+			USERNAME_TABLE = new Table("person_usernames", 
+			                           new Column("id", Type.getLong(), 
+			                                      new ForeignKey(MAIN_TABLE),
+			                                      new NotNull()), 
+			                           new Column("username", Type.getVarChar(255),
+			                                      new NotNull(),
+			                                      new Unique())
+			);
+			USERNAME_TABLE.setIndexes(new Index(USERNAME_TABLE.column("username")),
+			                          new Index(USERNAME_TABLE.column("id")));
+			
+			EMAIL_TABLE = new Table("person_emails", 
+			                        new Column("id", Type.getLong(), 
+			                                   new ForeignKey(MAIN_TABLE),
+			                                   new NotNull()), 
+                                    new Column("email", Type.getVarChar(255),
+                                               new NotNull(), 
+                                               new Unique())
+			);
+			EMAIL_TABLE.setIndexes(new Index(EMAIL_TABLE.column("email")), 
+			                       new Index(EMAIL_TABLE.column("id")));
+			EMAIL_TABLE.setConstraints(new Check(EMAIL_TABLE.column("email") + " LIKE '%@%'", EMAIL_TABLE.column("email")));
+			
+			FULLNAME_TABLE = new Table("person_fullnames", 
+			                           new Column("id", Type.getLong(), 
+			                                      new ForeignKey(MAIN_TABLE),
+			                                      new NotNull()), 
+			                           new Column("fullname", Type.getVarChar(255),
+			                                      new NotNull())
+			);
+			FULLNAME_TABLE.setIndexes(new Index(FULLNAME_TABLE.column("fullname")),
+			                          new Index(FULLNAME_TABLE.column("id")));
+			// @formatter:on
+			
+			LAYOUT.addTable(MAIN_TABLE, TableType.MAIN);
+			LAYOUT.addTable(USERNAME_TABLE, TableType.JOIN);
+			LAYOUT.addTable(EMAIL_TABLE, TableType.JOIN);
+			LAYOUT.addTable(FULLNAME_TABLE, TableType.JOIN);
+			
+			LAYOUT.makeImmutable();
+		} catch (final DatabaseException e) {
+			throw new UnrecoverableError(e);
+		}
+	}
 	
 	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = -8598414850294255203L;
+	private static final long          serialVersionUID = -8598414850294255203L;
 	
 	/**
 	 * Merge.
@@ -92,7 +162,7 @@ public class Person implements Annotated {
 	}
 	
 	/** The generated id. */
-	private long        generatedId;
+	private long        id;
 	
 	/** The usernames. */
 	private Set<String> usernames      = new TreeSet<String>();
@@ -138,8 +208,17 @@ public class Person implements Annotated {
 	 *            the emails
 	 * @return true, if successful
 	 */
-	@Transient
-	public boolean addAllEmails(@NotNull @net.ownhero.dev.kanuni.annotations.simple.NoneNull final Set<String> emails) {
+	
+	public boolean addAllEmails(final Set<String> emails) {
+		PRECONDITIONS: {
+			if (emails == null) {
+				throw new NullPointerException();
+			}
+			if (emails.isEmpty()) {
+				throw new ArrayIndexOutOfBoundsException();
+			}
+		}
+		
 		boolean ret = true;
 		final Set<String> backup = getEmailAddresses();
 		for (final String email : emails) {
@@ -158,8 +237,17 @@ public class Person implements Annotated {
 	 *            the fullnames
 	 * @return true, if successful
 	 */
-	@Transient
-	public boolean addAllFullnames(@NotNull @net.ownhero.dev.kanuni.annotations.simple.NoneNull final Set<String> fullnames) {
+	
+	public boolean addAllFullnames(final Set<String> fullnames) {
+		PRECONDITIONS: {
+			if (fullnames == null) {
+				throw new NullPointerException();
+			}
+			if (fullnames.isEmpty()) {
+				throw new ArrayIndexOutOfBoundsException();
+			}
+		}
+		
 		boolean ret = false;
 		final Set<String> names = getFullnames();
 		ret = names.addAll(fullnames);
@@ -174,8 +262,17 @@ public class Person implements Annotated {
 	 *            the usernames
 	 * @return true, if successful
 	 */
-	@Transient
-	public boolean addAllUsernames(@NotNull final Set<String> usernames) {
+	
+	public boolean addAllUsernames(final Set<String> usernames) {
+		PRECONDITIONS: {
+			if (usernames == null) {
+				throw new NullPointerException();
+			}
+			if (usernames.isEmpty()) {
+				throw new ArrayIndexOutOfBoundsException();
+			}
+		}
+		
 		boolean ret = false;
 		final Set<String> names = getUsernames();
 		ret = names.addAll(usernames);
@@ -190,7 +287,7 @@ public class Person implements Annotated {
 	 *            the email
 	 * @return true, if successful
 	 */
-	@Transient
+	
 	public boolean addEmail(@Trimmed final String email) {
 		boolean ret = false;
 		if (email != null) {
@@ -208,7 +305,7 @@ public class Person implements Annotated {
 	 *            the fullname
 	 * @return true, if successful
 	 */
-	@Transient
+	
 	public boolean addFullname(final String fullname) {
 		boolean ret = false;
 		if (fullname != null) {
@@ -226,7 +323,7 @@ public class Person implements Annotated {
 	 *            the username
 	 * @return true, if successful
 	 */
-	@Transient
+	
 	public boolean addUsername(final String username) {
 		boolean ret = false;
 		if (username != null) {
@@ -282,7 +379,6 @@ public class Person implements Annotated {
 	 * @see org.mozkito.persistence.Annotated#getHandle()
 	 */
 	@Override
-	@Transient
 	public final String getClassName() {
 		return JavaUtils.getHandle(Person.class);
 	}
@@ -292,7 +388,6 @@ public class Person implements Annotated {
 	 * 
 	 * @return the email addresses
 	 */
-	@ElementCollection
 	public Set<String> getEmailAddresses() {
 		return this.emailAddresses;
 	}
@@ -302,7 +397,6 @@ public class Person implements Annotated {
 	 * 
 	 * @return the name
 	 */
-	@ElementCollection
 	public Set<String> getFullnames() {
 		return this.fullnames;
 	}
@@ -312,12 +406,9 @@ public class Person implements Annotated {
 	 * 
 	 * @return the generatedId
 	 */
-	@Id
-	@Index (name = "idx_personid")
-	@Column (name = "id")
-	@GeneratedValue (strategy = GenerationType.AUTO)
-	public long getGeneratedId() {
-		return this.generatedId;
+	@Override
+	public Long getId() {
+		return this.id;
 	}
 	
 	/**
@@ -325,7 +416,6 @@ public class Person implements Annotated {
 	 * 
 	 * @return the usernames
 	 */
-	@ElementCollection
 	public Set<String> getUsernames() {
 		return this.usernames;
 	}
@@ -357,8 +447,14 @@ public class Person implements Annotated {
 	 *            the person
 	 * @return true, if successful
 	 */
-	@Transient
-	public boolean matches(@NotNull final Person person) {
+	
+	public boolean matches(final Person person) {
+		PRECONDITIONS: {
+			if (person == null) {
+				throw new NullPointerException();
+			}
+		}
+		
 		if (!CollectionUtils.intersection(getEmailAddresses(), person.getEmailAddresses()).isEmpty()) {
 			return true;
 		} else if (!CollectionUtils.intersection(getUsernames(), person.getUsernames()).isEmpty()) {
@@ -398,8 +494,8 @@ public class Person implements Annotated {
 	 * @param generatedId
 	 *            the generatedId to set
 	 */
-	protected void setGeneratedId(final long generatedId) {
-		this.generatedId = generatedId;
+	protected void setId(final long id) {
+		this.id = id;
 	}
 	
 	/**
@@ -421,7 +517,7 @@ public class Person implements Annotated {
 		final StringBuilder builder = new StringBuilder();
 		builder.append(getClassName());
 		builder.append(" [generatedId="); //$NON-NLS-1$
-		builder.append(getGeneratedId());
+		builder.append(getId());
 		builder.append(", usernames="); //$NON-NLS-1$
 		builder.append(getUsernames());
 		builder.append(", emailAddresses="); //$NON-NLS-1$

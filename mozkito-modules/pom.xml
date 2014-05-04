@@ -15,6 +15,7 @@
 		<module>mozkito-causeeffect</module>
 		<module>mozkito-changecouplings</module>
 		<module>mozkito-codeanalysis</module>
+		<module>mozkito-codechanges</module>
 		<module>mozkito-graphs</module>
 		<module>mozkito-graphs-titandb</module>
 		<module>mozkito-genealogies</module>
@@ -106,83 +107,4 @@
 			</plugin> -->
 		</plugins>
 	</build>
-	<profiles>
-		<profile>
-			<id>enhance</id>
-			<activation>
-				<file>
-					<exists>${basedir}/src/main/resources/enhance</exists>
-				</file>
-			</activation>
-			<build>
-				<resources>
-					<!--
-					 This is important! We do only copy the persistence.xml and $moduleName-persistence.xml
-				     files to the META-INF directory (OpenJPA requires those files to be here).
-					 We must NOT copy the messages.properties files used for NLS in the META-INF directory,
-					 since this will break the bundle loader.
-					-->
-					<resource>
-						<directory>src/main/resources</directory>
-						<targetPath>META-INF</targetPath>
-						<includes>
-							<include>persistence.xml</include>
-							<include>*-persistence.xml</include>
-						</includes>
-					</resource>
-					<resource>
-						<directory>src/main/resources</directory>
-						<excludes>
-							<exclude>persistence.xml</exclude>
-							<exclude>*-persistence.xml</exclude>
-						</excludes>
-					</resource>
-				</resources>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.openjpa</groupId>
-						<artifactId>openjpa-maven-plugin</artifactId>
-						<version>2.2.2</version>
-						<configuration>
-							<includes>**/model/*.class,**/model/*/*.class</includes>
-							<addDefaultConstructor>true</addDefaultConstructor>
-							<enforcePropertyRestrictions>true</enforcePropertyRestrictions>
-						</configuration>
-						<executions>
-							<execution>
-								<id>enhancer</id>
-								<phase>process-classes</phase>
-								<goals>
-									<goal>enhance</goal>
-								</goals>
-							</execution>
-						</executions>
-						<dependencies>
-							<dependency>
-								<groupId>org.apache.openjpa</groupId>
-								<artifactId>openjpa</artifactId>
-								<!-- set the version to be the same as the level in your runtime -->
-								<version>2.2.2</version>
-							</dependency>
-							<dependency>
-								<groupId>log4j</groupId>
-								<artifactId>log4j</artifactId>
-								<version>1.2.17</version>
-							</dependency>
-							<dependency>
-								<groupId>org.slf4j</groupId>
-								<artifactId>slf4j-log4j12</artifactId>
-								<version>1.6.4</version>
-							</dependency>
-							<dependency>
-								<groupId>org.slf4j</groupId>
-								<artifactId>slf4j-api</artifactId>
-								<version>1.6.4</version>
-							</dependency>
-						</dependencies>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 </project>

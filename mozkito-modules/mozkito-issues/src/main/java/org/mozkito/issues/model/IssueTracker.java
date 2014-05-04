@@ -38,13 +38,13 @@ import net.ownhero.dev.kanuni.annotations.string.Length;
 
 import org.joda.time.DateTime;
 
+import org.mozkito.database.PersistenceUtil;
 import org.mozkito.persistence.Annotated;
-import org.mozkito.persistence.PersistenceUtil;
 
 /**
  * The Class VersionArchive.
  */
-@Entity
+@Artifact
 @Table (name = "issue_tracker")
 public class IssueTracker implements Annotated {
 	

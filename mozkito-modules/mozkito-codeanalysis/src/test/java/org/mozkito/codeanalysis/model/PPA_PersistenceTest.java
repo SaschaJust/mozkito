@@ -21,7 +21,7 @@ import java.util.List;
 import org.joda.time.DateTime;
 import org.junit.Test;
 
-import org.mozkito.persistence.Criteria;
+import org.mozkito.persistence.JPACriteria;
 import org.mozkito.persons.elements.PersonFactory;
 import org.mozkito.persons.model.Person;
 import org.mozkito.testing.DatabaseTest;
@@ -72,7 +72,7 @@ public class PPA_PersistenceTest extends DatabaseTest {
 		getPersistenceUtil().commitTransaction();
 		getPersistenceUtil().beginTransaction();
 		
-		final Criteria<JavaChangeOperation> criteria = getPersistenceUtil().createCriteria(JavaChangeOperation.class);
+		final JPACriteria<JavaChangeOperation> criteria = getPersistenceUtil().createCriteria(JavaChangeOperation.class);
 		final List<JavaChangeOperation> list = getPersistenceUtil().load(criteria);
 		assertEquals(1, list.size());
 		getPersistenceUtil().commitTransaction();

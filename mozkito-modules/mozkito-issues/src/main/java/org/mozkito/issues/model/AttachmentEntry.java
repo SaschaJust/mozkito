@@ -19,7 +19,6 @@ import java.net.URL;
 import java.util.Date;
 
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -36,7 +35,6 @@ import org.joda.time.DateTime;
 
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persons.model.Person;
-import org.mozkito.persons.model.PersonContainer;
 import org.mozkito.utilities.commons.JavaUtils;
 
 /**
@@ -44,14 +42,14 @@ import org.mozkito.utilities.commons.JavaUtils;
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-@Entity
+@Artifact
 public class AttachmentEntry implements Annotated {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 5533493175917492442L;
 	
 	/** The person container. */
-	private PersonContainer   personContainer  = new PersonContainer();
+	private Person            author;
 	
 	/** The size. */
 	long                      size;
@@ -100,9 +98,9 @@ public class AttachmentEntry implements Annotated {
 	 * 
 	 * @return the author
 	 */
-	@Transient
+	@ManyToOne (fetch = FetchType.LAZY)
 	public Person getAuthor() {
-		return getPersonContainer().get("author");
+		return this.author;
 	}
 	
 	/*
@@ -206,16 +204,6 @@ public class AttachmentEntry implements Annotated {
 	}
 	
 	/**
-	 * Gets the person container.
-	 * 
-	 * @return the personContainer
-	 */
-	@ManyToOne (cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.LAZY)
-	public PersonContainer getPersonContainer() {
-		return this.personContainer;
-	}
-	
-	/**
 	 * Gets the size.
 	 * 
 	 * @return the size
@@ -242,8 +230,7 @@ public class AttachmentEntry implements Annotated {
 	 *            the author to set
 	 */
 	public void setAuthor(@NotNull final Person author) {
-		getPersonContainer().add("author", author);
-		setPersonContainer(getPersonContainer());
+		this.author = author;
 	}
 	
 	/**
@@ -335,16 +322,6 @@ public class AttachmentEntry implements Annotated {
 	 */
 	public void setMime(final String mime) {
 		this.mime = mime;
-	}
-	
-	/**
-	 * Sets the person container.
-	 * 
-	 * @param personContainer
-	 *            the personContainer to set
-	 */
-	public void setPersonContainer(final PersonContainer personContainer) {
-		this.personContainer = personContainer;
 	}
 	
 	/**

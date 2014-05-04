@@ -24,7 +24,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -39,7 +38,6 @@ import org.joda.time.DateTime;
 import org.mozkito.issues.elements.TextElement;
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persons.model.Person;
-import org.mozkito.persons.model.PersonContainer;
 import org.mozkito.utilities.commons.JavaUtils;
 
 /**
@@ -47,7 +45,7 @@ import org.mozkito.utilities.commons.JavaUtils;
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-@Entity
+@Artifact
 @Table (name = "comment", uniqueConstraints = { @UniqueConstraint (columnNames = { "id", "bugreport_id" }) })
 public class Comment implements Annotated, TextElement, Comparable<Comment> {
 	
@@ -70,15 +68,7 @@ public class Comment implements Annotated, TextElement, Comparable<Comment> {
 	private int               id;
 	
 	/** The person container. */
-	private PersonContainer   personContainer  = new PersonContainer();
-	
-	/**
-	 * Instantiates a new comment.
-	 */
-	@SuppressWarnings ("unused")
-	private Comment() {
-		
-	}
+	private Person            author;
 	
 	/**
 	 * Instantiates a new comment.
@@ -123,10 +113,9 @@ public class Comment implements Annotated, TextElement, Comparable<Comment> {
 	 * @return the author
 	 */
 	@Override
-	// @ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
-	@Transient
+	@ManyToOne (fetch = FetchType.LAZY)
 	public Person getAuthor() {
-		return getPersonContainer().get("author");
+		return this.author;
 	}
 	
 	/**
@@ -192,16 +181,6 @@ public class Comment implements Annotated, TextElement, Comparable<Comment> {
 		return this.message;
 	}
 	
-	/**
-	 * Gets the person container.
-	 * 
-	 * @return the personContainer
-	 */
-	@OneToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	protected PersonContainer getPersonContainer() {
-		return this.personContainer;
-	}
-	
 	/*
 	 * (non-Javadoc)
 	 * @see org.mozkito.bugs.tracker.model.TextElement#getText()
@@ -229,8 +208,9 @@ public class Comment implements Annotated, TextElement, Comparable<Comment> {
 	 * @param author
 	 *            the author to set
 	 */
+	@ManyToOne (fetch = FetchType.LAZY)
 	public void setAuthor(final Person author) {
-		getPersonContainer().add("author", author);
+		this.author = author;
 	}
 	
 	/**
@@ -284,16 +264,6 @@ public class Comment implements Annotated, TextElement, Comparable<Comment> {
 	 */
 	public void setMessage(final String message) {
 		this.message = message;
-	}
-	
-	/**
-	 * Sets the person container.
-	 * 
-	 * @param personContainer
-	 *            the personContainer to set
-	 */
-	protected void setPersonContainer(final PersonContainer personContainer) {
-		this.personContainer = personContainer;
 	}
 	
 	/**

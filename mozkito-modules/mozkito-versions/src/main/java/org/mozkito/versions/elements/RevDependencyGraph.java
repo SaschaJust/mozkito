@@ -32,7 +32,8 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.mozkito.persistence.PersistenceUtil;
+
+import org.mozkito.database.PersistenceUtil;
 import org.mozkito.utilities.commons.JavaUtils;
 import org.mozkito.utilities.datastructures.BidirectionalMultiMap;
 import org.mozkito.versions.elements.ChangeSetIterator.ChangeSetOrder;

@@ -37,7 +37,6 @@ import org.mozkito.issues.elements.Status;
 import org.mozkito.issues.elements.Type;
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persons.model.Person;
-import org.mozkito.persons.model.PersonContainer;
 import org.mozkito.utilities.commons.JavaUtils;
 
 /**
@@ -45,7 +44,7 @@ import org.mozkito.utilities.commons.JavaUtils;
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-@Entity
+@Artifact
 @Table (name = "enhancedreport")
 public class EnhancedReport implements Annotated, Comparable<EnhancedReport> {
 	
@@ -339,16 +338,6 @@ public class EnhancedReport implements Annotated, Comparable<EnhancedReport> {
 	@Transient
 	public DateTime getLastUpdateTimestamp() {
 		return getReport().getLastUpdateTimestamp();
-	}
-	
-	/**
-	 * Gets the person container.
-	 * 
-	 * @return the person container
-	 */
-	@Transient
-	public PersonContainer getPersonContainer() {
-		return getReport().getPersonContainer();
 	}
 	
 	/**
@@ -692,17 +681,6 @@ public class EnhancedReport implements Annotated, Comparable<EnhancedReport> {
 	@Transient
 	public void setLastUpdateTimestamp(final DateTime lastUpdateTimestamp) {
 		getReport().setLastUpdateTimestamp(lastUpdateTimestamp);
-	}
-	
-	/**
-	 * Sets the person container.
-	 * 
-	 * @param personContainer
-	 *            the new person container
-	 */
-	@Transient
-	public void setPersonContainer(final PersonContainer personContainer) {
-		getReport().setPersonContainer(personContainer);
 	}
 	
 	/**

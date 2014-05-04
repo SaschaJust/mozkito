@@ -22,36 +22,28 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
-
-import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
-import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.openjpa.persistence.jdbc.Index;
 import org.joda.time.DateTime;
 
+import org.mozkito.database.Artifact;
+import org.mozkito.database.Layout;
+import org.mozkito.database.Layout.TableType;
+import org.mozkito.database.PersistenceUtil;
+import org.mozkito.database.constraints.column.ForeignKey;
+import org.mozkito.database.constraints.column.NotNull;
+import org.mozkito.database.constraints.column.PrimaryKey;
+import org.mozkito.database.exceptions.DatabaseException;
+import org.mozkito.database.index.Index;
+import org.mozkito.database.model.Column;
+import org.mozkito.database.model.Table;
+import org.mozkito.database.types.Type;
 import org.mozkito.persistence.FieldKey;
 import org.mozkito.persistence.IterableFieldKey;
 import org.mozkito.persons.model.Person;
-import org.mozkito.persons.model.PersonContainer;
 import org.mozkito.utilities.commons.JavaUtils;
 import org.mozkito.versions.exceptions.NoSuchHandleException;
 
@@ -60,50 +52,177 @@ import org.mozkito.versions.exceptions.NoSuchHandleException;
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-@Entity
-@Table (name = "changeset")
-public class ChangeSet implements org.mozkito.persistence.Entity {
+public class ChangeSet extends Artifact {
+	
+	/** The Constant LAYOUT. */
+	public static final Layout<ChangeSet> LAYOUT           = new Layout<>();
+	
+	/** The Constant TABLE. */
+	public static final Table             MAIN_TABLE;
+	
+	/** The Constant TAGS_TABLE. */
+	public static final Table             TAGS_TABLE;
+	
+	/** The Constant CHILDREN_TABLE. */
+	public static final Table             CHILDREN_TABLE;
+	
+	/** The Constant PARENTS_TABLE. */
+	public static final Table             PARENTS_TABLE;
+	
+	/** The Constant REVISIONS_TABLE. */
+	public static final Table             REVISIONS_TABLE;
+	
+	/** The Constant BRANCH_INDEXES_TABLE. */
+	public static final Table             BRANCH_INDEXES_TABLE;
+	
+	static {
+		try {
+			// @formatter:off
+			
+			MAIN_TABLE = new Table("changesets", 
+			                  new Column("id", Type.getVarChar(40),
+			                             new PrimaryKey()),
+			                  new Column("author", Type.getLong(), 
+			                             new ForeignKey(Person.MAIN_TABLE, Person.MAIN_TABLE.column("id")), 
+			                             new NotNull()),
+			                  new Column("message", Type.getText(), 
+			                             new NotNull()),
+			                  new Column ("timestamp", Type.getDateTime(), 
+			                              new NotNull()),
+			                  new Column("original_id", Type.getVarChar(40)),
+			                  new Column("atomic", Type.getBoolean(), 
+			                             new NotNull()),
+			                  new Column("version_archive_id", Type.getLong(), 
+			                             new NotNull(), 
+			                             new ForeignKey(VersionArchive.MAIN_TABLE, VersionArchive.MAIN_TABLE.column("id"))),
+							  new Column("branch_parent_id", Type.getVarChar(40)) // nullable
+			);
+			
+//			MAIN_TABLE.setConstraints(new org.mozkito.database.constraints.table.
+//			                              ForeignKey(MAIN_TABLE.column("branch_parent_id"), MAIN_TABLE, MAIN_TABLE.column("id")));
+			MAIN_TABLE.setIndexes(new Index(MAIN_TABLE.column("id")),
+			                      new Index(MAIN_TABLE.column("branch_parent_id"))
+			);
+			
+			TAGS_TABLE = new Table("changeset_tags",
+			                       new Column("changeset_id", Type.getVarChar(40),
+			                                  new ForeignKey(MAIN_TABLE, MAIN_TABLE.column("id")),
+			                                  new NotNull()),
+			                       new Column("tag", Type.getVarChar(255), 
+			                                  new NotNull())			
+			);
+			TAGS_TABLE.setPrimaryKey(new org.mozkito.database.constraints.table.
+			                             PrimaryKey(TAGS_TABLE.column("changeset_id"), TAGS_TABLE.column("tag")));
+			TAGS_TABLE.setIndexes(new Index(TAGS_TABLE.column("changeset_id")));
+			
+			CHILDREN_TABLE = new Table("changeset_children", 
+									   new Column("changeset_id", Type.getVarChar(40), 
+									              new ForeignKey(MAIN_TABLE, MAIN_TABLE.column("id")),
+									              new NotNull()),
+									   new Column("child_id", Type.getVarChar(40), 
+									              new ForeignKey(MAIN_TABLE, MAIN_TABLE.column("id")),
+									              new NotNull())
+			);
+			CHILDREN_TABLE.setPrimaryKey(new org.mozkito.database.constraints.table.
+			                                 PrimaryKey(CHILDREN_TABLE.column("changeset_id"), CHILDREN_TABLE.column("child_id")));
+			CHILDREN_TABLE.setIndexes(new Index(CHILDREN_TABLE.column("changeset_id")),
+			                          new Index(CHILDREN_TABLE.column("child_id"))                          
+			);
+			
+			PARENTS_TABLE = new Table("changeset_parents", 
+			                          new Column("changeset_id", Type.getVarChar(40), 
+									              new ForeignKey(MAIN_TABLE, MAIN_TABLE.column("id")),
+									              new NotNull()),
+									  new Column("parent_id", Type.getVarChar(40), 
+									              new ForeignKey(MAIN_TABLE, MAIN_TABLE.column("id")),
+									              new NotNull())
+			);
+			PARENTS_TABLE.setPrimaryKey(new org.mozkito.database.constraints.table.
+		                                    PrimaryKey(PARENTS_TABLE.column("changeset_id"), PARENTS_TABLE.column("parent_id")));
+			PARENTS_TABLE.setIndexes(new Index(PARENTS_TABLE.column("changeset_id")),
+		                             new Index(PARENTS_TABLE.column("parent_id"))                          
+			);
+			
+			REVISIONS_TABLE = new Table("changeset_revisions",
+			                            new Column("changeset_id", Type.getVarChar(40), 
+										           new ForeignKey(MAIN_TABLE, MAIN_TABLE.column("id")),
+										           new NotNull()),
+										new Column("revision_id", Type.getLong(),
+										           new ForeignKey(Revision.MAIN_TABLE, Revision.MAIN_TABLE.column("id")),
+										           new NotNull())
+			);
+			REVISIONS_TABLE.setPrimaryKey(new org.mozkito.database.constraints.table.
+			                                  PrimaryKey(REVISIONS_TABLE.column("changeset_id"), REVISIONS_TABLE.column("revision_id")));
+			REVISIONS_TABLE.setIndexes(new Index(REVISIONS_TABLE.column("changeset_id")), 
+			                           new Index(REVISIONS_TABLE.column("revision_id")));
+			
+			BRANCH_INDEXES_TABLE = new Table("changeset_branch_indexes", 
+			                                 new Column("changeset_id", Type.getVarChar(40), 
+												           new ForeignKey(MAIN_TABLE, MAIN_TABLE.column("id")),
+												           new NotNull()),
+								             new Column("branch_index", Type.getLong(), 
+								                        new NotNull())
+			);
+			BRANCH_INDEXES_TABLE.setPrimaryKey(new org.mozkito.database.constraints.table.
+		                                           PrimaryKey(BRANCH_INDEXES_TABLE.column("changeset_id"), BRANCH_INDEXES_TABLE.column("branch_index")));
+			BRANCH_INDEXES_TABLE.setIndexes(new Index(BRANCH_INDEXES_TABLE.column("changeset_id")), 
+		                                    new Index(BRANCH_INDEXES_TABLE.column("branch_index")));
+			
+			LAYOUT.addTable(MAIN_TABLE, TableType.MAIN);
+			LAYOUT.addTable(TAGS_TABLE, TableType.JOIN);
+			LAYOUT.addTable(CHILDREN_TABLE, TableType.JOIN);
+			LAYOUT.addTable(PARENTS_TABLE, TableType.JOIN);
+			LAYOUT.addTable(REVISIONS_TABLE, TableType.JOIN);
+			LAYOUT.addTable(BRANCH_INDEXES_TABLE, TableType.JOIN);
+			LAYOUT.makeImmutable();
+			
+			// @formatter:on
+		} catch (final DatabaseException e) {
+			throw new UnrecoverableError(e);
+		}
+	}
 	
 	/** The Constant serialVersionUID. */
-	private static final long    serialVersionUID = -7619009648634901112L;
+	private static final long             serialVersionUID = -7619009648634901112L;
 	
 	/** The persons. */
-	private PersonContainer      persons          = new PersonContainer();
+	private Person                        author;
 	
 	/** The id. */
-	private String               id;
+	private String                        id;
 	
 	/** The message. */
-	private String               message;
+	private String                        message;
 	
 	/** The children. */
-	private Set<ChangeSet>       children         = new HashSet<ChangeSet>();
+	private Set<ChangeSet>                children         = new HashSet<ChangeSet>();
 	
 	/** The branch parent. */
-	private ChangeSet            branchParent     = null;
+	private ChangeSet                     branchParent     = null;
 	
 	/** The merge parent. */
-	private List<ChangeSet>      mergeParents     = new LinkedList<ChangeSet>();
+	private List<ChangeSet>               mergeParents     = new LinkedList<ChangeSet>();
 	
 	/** The revisions. */
-	private Collection<Revision> revisions        = new LinkedList<Revision>();
+	private Collection<Revision>          revisions        = new LinkedList<Revision>();
 	
 	/** The java timestamp. */
-	private DateTime             javaTimestamp;
+	private DateTime                      javaTimestamp;
 	
 	/** The tags. */
-	private Set<String>          tags             = new HashSet<String>();
+	private Set<String>                   tags             = new HashSet<String>();
 	
 	/** The original id. */
-	private String               originalId;
+	private String                        originalId;
 	
 	/** The atomic. */
-	private boolean              atomic           = false;
+	private boolean                       atomic           = false;
 	
-	private VersionArchive       versionArchive;
+	/** The version archive. */
+	private VersionArchive                versionArchive;
 	
 	/** The branch indices. */
-	private Map<String, Long>    branchIndices    = new HashMap<String, Long>();
+	private Map<String, Long>             branchIndices    = new HashMap<String, Long>();
 	
 	/**
 	 * used by PersistenceUtil to create Transaction instance.
@@ -128,9 +247,26 @@ public class ChangeSet implements org.mozkito.persistence.Entity {
 	 * @param originalId
 	 *            the original id
 	 */
-	public ChangeSet(@NotNull final VersionArchive versionArchive, @NotNull final String id,
-	        @NotNull final String message, @NotNull final DateTime timestamp, @NotNull final Person author,
-	        final String originalId) {
+	public ChangeSet(final VersionArchive versionArchive, final String id, final String message,
+	        final DateTime timestamp, final Person author, final String originalId) {
+		PRECONDITIONS: {
+			if (versionArchive == null) {
+				throw new NullPointerException();
+			}
+			if (id == null) {
+				throw new NullPointerException();
+			}
+			if (message == null) {
+				throw new NullPointerException();
+			}
+			if (timestamp == null) {
+				throw new NullPointerException();
+			}
+			if (author == null) {
+				throw new NullPointerException();
+			}
+		}
+		
 		setId(id);
 		setMessage(message);
 		setTimestamp(timestamp);
@@ -151,7 +287,7 @@ public class ChangeSet implements org.mozkito.persistence.Entity {
 	 *            the tag names
 	 * @return true, if successful
 	 */
-	@Transient
+	
 	public boolean addAllTags(final Collection<String> tagNames) {
 		boolean ret = false;
 		final Set<String> tags = getTags();
@@ -169,7 +305,7 @@ public class ChangeSet implements org.mozkito.persistence.Entity {
 	 *            the index
 	 * @return true, if successful
 	 */
-	@Transient
+	
 	public boolean addBranch(final Branch rCSBranch,
 	                         final Long index) {
 		if (getBranchIndices().containsKey(rCSBranch.getName())) {
@@ -186,7 +322,7 @@ public class ChangeSet implements org.mozkito.persistence.Entity {
 	 *            the rcs transaction
 	 * @return true, if successful
 	 */
-	@Transient
+	
 	public boolean addChild(final ChangeSet changeSet) {
 		CompareCondition.notEquals(changeSet, this, "a transaction may never be a child of its own: %s", this); //$NON-NLS-1$
 		boolean ret = false;
@@ -206,15 +342,16 @@ public class ChangeSet implements org.mozkito.persistence.Entity {
 	 * @param mergeParent
 	 *            the merge parent
 	 */
-	@Transient
-	@NoneNull
+	
 	public void addMergeParent(final ChangeSet mergeParent) {
-		// PRECONDITIONS
-		try {
-			this.mergeParents.add(mergeParent);
-		} finally {
-			// POSTCONDITIONS
+		PRECONDITIONS: {
+			if (mergeParent == null) {
+				throw new NullPointerException();
+			}
 		}
+		
+		this.mergeParents.add(mergeParent);
+		
 	}
 	
 	/**
@@ -224,11 +361,18 @@ public class ChangeSet implements org.mozkito.persistence.Entity {
 	 *            the revision
 	 * @return true, if successful
 	 */
-	@Transient
-	protected boolean addRevision(@NotNull final Revision rCSRevision) {
+	
+	protected boolean addRevision(final Revision rCSRevision) {
+		PRECONDITIONS: {
+			if (rCSRevision == null) {
+				throw new NullPointerException();
+			}
+		}
+		
 		final Collection<Revision> rCSRevisions = getRevisions();
 		final boolean ret = rCSRevisions.add(rCSRevision);
 		setRevisions(rCSRevisions);
+		
 		return ret;
 	}
 	
@@ -239,8 +383,14 @@ public class ChangeSet implements org.mozkito.persistence.Entity {
 	 *            the tag name
 	 * @return true, if successful
 	 */
-	@Transient
-	public boolean addTag(@NotNull final String tagName) {
+	
+	public boolean addTag(final String tagName) {
+		PRECONDITIONS: {
+			if (tagName == null) {
+				throw new NullPointerException();
+			}
+		}
+		
 		final boolean ret = false;
 		final Set<String> tags = getTags();
 		tags.add(tagName);
@@ -251,10 +401,11 @@ public class ChangeSet implements org.mozkito.persistence.Entity {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.persistence.Entity#get(org.mozkito.persistence.FieldKey)
+	 * @see org.mozkito.database.Artifact#get(org.mozkito.database.PersistenceUtil, org.mozkito.persistence.FieldKey)
 	 */
 	@Override
-	public <T> T get(final FieldKey key) {
+	public <T> T get(final PersistenceUtil util,
+	                 final FieldKey key) {
 		PRECONDITIONS: {
 			if (key == null) {
 				throw new NullPointerException();
@@ -321,11 +472,13 @@ public class ChangeSet implements org.mozkito.persistence.Entity {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.persistence.Entity#get(org.mozkito.persistence.IterableFieldKey)
+	 * @see org.mozkito.database.Artifact#get(org.mozkito.database.PersistenceUtil,
+	 *      org.mozkito.persistence.IterableFieldKey)
 	 */
 	@SuppressWarnings ("unchecked")
 	@Override
-	public <T> Collection<T> get(final IterableFieldKey key) {
+	public <T> Collection<T> get(final PersistenceUtil util,
+	                             final IterableFieldKey key) {
 		PRECONDITIONS: {
 			if (key == null) {
 				throw new NullPointerException();
@@ -350,14 +503,14 @@ public class ChangeSet implements org.mozkito.persistence.Entity {
 					};
 					break;
 				case FILES:
-					final Collection<Handle> changedFiles = getChangedFiles();
+					final Collection<Handle> changedFiles = getChangedFiles(util);
 					SANITY: {
 						assert changedFiles != null;
 					}
 					collection = (Collection<T>) new ArrayList<String>(changedFiles.size());
 					for (final Handle handle : changedFiles) {
 						try {
-							((Collection<String>) collection).add(handle.getPath(this));
+							((Collection<String>) collection).add(handle.getPath(this, util));
 						} catch (final NoSuchHandleException ignore) {
 							if (Logger.logWarn()) {
 								Logger.warn("Handle not found in owning change set: %s should be owned by %s.", handle,
@@ -388,17 +541,19 @@ public class ChangeSet implements org.mozkito.persistence.Entity {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.persistence.Entity#get(org.mozkito.persistence.IterableFieldKey, int)
+	 * @see org.mozkito.database.Artifact#get(org.mozkito.database.PersistenceUtil,
+	 *      org.mozkito.persistence.IterableFieldKey, int)
 	 */
 	@Override
-	public <T> T get(final IterableFieldKey key,
+	public <T> T get(final PersistenceUtil util,
+	                 final IterableFieldKey key,
 	                 final int index) {
 		PRECONDITIONS: {
 			// none
 		}
 		
 		try {
-			return org.mozkito.persistence.Entity.Static.get(this, key, index);
+			return org.mozkito.database.Artifact.Static.get(util, this, key, index);
 		} finally {
 			POSTCONDITIONS: {
 				// none
@@ -409,16 +564,18 @@ public class ChangeSet implements org.mozkito.persistence.Entity {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.persistence.Entity#getAll(org.mozkito.persistence.FieldKey[])
+	 * @see org.mozkito.database.Artifact#getAll(org.mozkito.database.PersistenceUtil,
+	 *      org.mozkito.persistence.FieldKey[])
 	 */
 	@Override
-	public Map<FieldKey, Object> getAll(final FieldKey... keys) {
+	public Map<FieldKey, Object> getAll(final PersistenceUtil util,
+	                                    final FieldKey... keys) {
 		PRECONDITIONS: {
 			// none
 		}
 		
 		try {
-			return org.mozkito.persistence.Entity.Static.getAll(this, keys);
+			return org.mozkito.database.Artifact.Static.getAll(util, this, keys);
 		} finally {
 			POSTCONDITIONS: {
 				// none
@@ -429,16 +586,18 @@ public class ChangeSet implements org.mozkito.persistence.Entity {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.persistence.Entity#getAll(org.mozkito.persistence.IterableFieldKey[])
+	 * @see org.mozkito.database.Artifact#getAll(org.mozkito.database.PersistenceUtil,
+	 *      org.mozkito.persistence.IterableFieldKey[])
 	 */
 	@Override
-	public Map<IterableFieldKey, Object> getAll(final IterableFieldKey... keys) {
+	public Map<IterableFieldKey, Object> getAll(final PersistenceUtil util,
+	                                            final IterableFieldKey... keys) {
 		PRECONDITIONS: {
 			// none
 		}
 		
 		try {
-			return org.mozkito.persistence.Entity.Static.getAll(this, keys);
+			return org.mozkito.database.Artifact.Static.getAll(util, this, keys);
 		} finally {
 			POSTCONDITIONS: {
 				// none
@@ -449,16 +608,18 @@ public class ChangeSet implements org.mozkito.persistence.Entity {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.persistence.Entity#getAny(org.mozkito.persistence.FieldKey[])
+	 * @see org.mozkito.database.Artifact#getAny(org.mozkito.database.PersistenceUtil,
+	 *      org.mozkito.persistence.FieldKey[])
 	 */
 	@Override
-	public Object getAny(final FieldKey... keys) {
+	public Object getAny(final PersistenceUtil util,
+	                     final FieldKey... keys) {
 		PRECONDITIONS: {
 			// none
 		}
 		
 		try {
-			return org.mozkito.persistence.Entity.Static.getAny(this, keys);
+			return org.mozkito.database.Artifact.Static.getAny(util, this, keys);
 		} finally {
 			POSTCONDITIONS: {
 				// none
@@ -469,16 +630,18 @@ public class ChangeSet implements org.mozkito.persistence.Entity {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.persistence.Entity#getAny(org.mozkito.persistence.IterableFieldKey[])
+	 * @see org.mozkito.database.Artifact#getAny(org.mozkito.database.PersistenceUtil,
+	 *      org.mozkito.persistence.IterableFieldKey[])
 	 */
 	@Override
-	public Object getAny(final IterableFieldKey... keys) {
+	public Object getAny(final PersistenceUtil util,
+	                     final IterableFieldKey... keys) {
 		PRECONDITIONS: {
 			// none
 		}
 		
 		try {
-			return org.mozkito.persistence.Entity.Static.getAny(this, keys);
+			return org.mozkito.database.Artifact.Static.getAny(util, this, keys);
 		} finally {
 			POSTCONDITIONS: {
 				// none
@@ -489,16 +652,18 @@ public class ChangeSet implements org.mozkito.persistence.Entity {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.persistence.Entity#getAsOneString(org.mozkito.persistence.FieldKey[])
+	 * @see org.mozkito.database.Artifact#getAsOneString(org.mozkito.database.PersistenceUtil,
+	 *      org.mozkito.persistence.FieldKey[])
 	 */
 	@Override
-	public String getAsOneString(final FieldKey... fKeys) {
+	public String getAsOneString(final PersistenceUtil util,
+	                             final FieldKey... fKeys) {
 		PRECONDITIONS: {
 			// none
 		}
 		
 		try {
-			return org.mozkito.persistence.Entity.Static.getAsOneString(this, fKeys);
+			return org.mozkito.database.Artifact.Static.getAsOneString(util, this, fKeys);
 		} finally {
 			POSTCONDITIONS: {
 				// none
@@ -509,16 +674,18 @@ public class ChangeSet implements org.mozkito.persistence.Entity {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.persistence.Entity#getAsOneString(org.mozkito.persistence.IterableFieldKey)
+	 * @see org.mozkito.database.Artifact#getAsOneString(org.mozkito.database.PersistenceUtil,
+	 *      org.mozkito.persistence.IterableFieldKey)
 	 */
 	@Override
-	public String getAsOneString(final IterableFieldKey iKeys) {
+	public String getAsOneString(final PersistenceUtil util,
+	                             final IterableFieldKey iKeys) {
 		PRECONDITIONS: {
 			// none
 		}
 		
 		try {
-			return org.mozkito.persistence.Entity.Static.getAsOneString(this, iKeys);
+			return org.mozkito.database.Artifact.Static.getAsOneString(util, this, iKeys);
 		} finally {
 			POSTCONDITIONS: {
 				// none
@@ -531,10 +698,9 @@ public class ChangeSet implements org.mozkito.persistence.Entity {
 	 * 
 	 * @return the author
 	 */
-	@Transient
+	
 	public Person getAuthor() {
-		assert getPersons() != null;
-		return getPersons().get("author"); //$NON-NLS-1$
+		return this.author;
 	}
 	
 	/**
@@ -542,7 +708,6 @@ public class ChangeSet implements org.mozkito.persistence.Entity {
 	 * 
 	 * @return the branch indices
 	 */
-	@ElementCollection
 	public Map<String, Long> getBranchIndices() {
 		// PRECONDITIONS
 		
@@ -558,7 +723,7 @@ public class ChangeSet implements org.mozkito.persistence.Entity {
 	 * 
 	 * @return the branches
 	 */
-	@Transient
+	
 	public Set<String> getBranchNames() {
 		// PRECONDITIONS
 		
@@ -574,7 +739,12 @@ public class ChangeSet implements org.mozkito.persistence.Entity {
 	 * 
 	 * @return the branch parent
 	 */
-	@ManyToOne (cascade = { CascadeType.REFRESH, CascadeType.MERGE }, fetch = FetchType.LAZY)
+	
+	/**
+	 * Gets the branch parent.
+	 * 
+	 * @return the branch parent
+	 */
 	public ChangeSet getBranchParent() {
 		return this.branchParent;
 	}
@@ -582,13 +752,15 @@ public class ChangeSet implements org.mozkito.persistence.Entity {
 	/**
 	 * Gets the changed files.
 	 * 
+	 * @param util
+	 *            the util
 	 * @return the changed files
 	 */
-	@Transient
-	public Collection<Handle> getChangedFiles() {
+	
+	public Collection<Handle> getChangedFiles(final PersistenceUtil util) {
 		final List<Handle> changedFiles = new LinkedList<Handle>();
 		for (final Revision rCSRevision : getRevisions()) {
-			changedFiles.add(rCSRevision.getChangedFile());
+			changedFiles.add(rCSRevision.getChangedFile(util));
 		}
 		return changedFiles;
 	}
@@ -598,9 +770,13 @@ public class ChangeSet implements org.mozkito.persistence.Entity {
 	 * 
 	 * @return the children
 	 */
-	// @Transient
-	@ManyToMany (fetch = FetchType.LAZY, cascade = {})
-	@JoinTable (name = "changeset_children", joinColumns = { @JoinColumn (nullable = true, name = "childrenid") })
+	//
+	
+	/**
+	 * Gets the children.
+	 * 
+	 * @return the children
+	 */
 	public Set<ChangeSet> getChildren() {
 		return this.children != null
 		                            ? this.children
@@ -610,6 +786,12 @@ public class ChangeSet implements org.mozkito.persistence.Entity {
 	/*
 	 * (non-Javadoc)
 	 * @see org.mozkito.persistence.Annotated#getHandle()
+	 */
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.database.Entity#getClassName()
 	 */
 	@Override
 	public final String getClassName() {
@@ -621,8 +803,7 @@ public class ChangeSet implements org.mozkito.persistence.Entity {
 	 * 
 	 * @return the id
 	 */
-	@Id
-	@Index (name = "idx_changesetid")
+	@Override
 	public String getId() {
 		return this.id;
 	}
@@ -630,7 +811,7 @@ public class ChangeSet implements org.mozkito.persistence.Entity {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.persistence.Entity#getIDString()
+	 * @see org.mozkito.database.Artifact#getIDString()
 	 */
 	@Override
 	public String getIDString() {
@@ -652,9 +833,6 @@ public class ChangeSet implements org.mozkito.persistence.Entity {
 	 * 
 	 * @return the java timestamp
 	 */
-	@Temporal (TemporalType.TIMESTAMP)
-	@Column (name = "timestamp")
-	@Index (name = "idx_timestamp")
 	protected Date getJavaTimestamp() {
 		return getTimestamp() != null
 		                             ? getTimestamp().toDate()
@@ -666,7 +844,12 @@ public class ChangeSet implements org.mozkito.persistence.Entity {
 	 * 
 	 * @return the merge parent
 	 */
-	@ManyToMany (cascade = { CascadeType.REFRESH, CascadeType.MERGE }, fetch = FetchType.LAZY)
+	
+	/**
+	 * Gets the merge parents.
+	 * 
+	 * @return the merge parents
+	 */
 	public List<ChangeSet> getMergeParents() {
 		// PRECONDITIONS
 		
@@ -682,7 +865,6 @@ public class ChangeSet implements org.mozkito.persistence.Entity {
 	 * 
 	 * @return the message
 	 */
-	@Lob
 	public String getMessage() {
 		return this.message;
 	}
@@ -697,31 +879,24 @@ public class ChangeSet implements org.mozkito.persistence.Entity {
 	}
 	
 	/**
-	 * Gets the persons.
-	 * 
-	 * @return the persons
-	 */
-	@ManyToOne (cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
-	public PersonContainer getPersons() {
-		return this.persons;
-	}
-	
-	/**
 	 * Gets the revision that changed the specified path.
 	 * 
 	 * @param path
 	 *            the path
+	 * @param util
+	 *            the util
 	 * @return the revision for path if found. Returns <code>null</code> otherwise.
 	 */
-	@Transient
-	public Revision getRevisionForPath(final String path) {
+	
+	public Revision getRevisionForPath(final String path,
+	                                   final PersistenceUtil util) {
 		String comparePath = path;
 		if (path.startsWith("/")) {
 			comparePath = path.substring(1);
 		}
 		for (final Revision revision : getRevisions()) {
 			try {
-				final String fileName = revision.getChangedFile().getPath(this);
+				final String fileName = revision.getChangedFile(util).getPath(this, util);
 				if (fileName.equals(comparePath)) {
 					return revision;
 				}
@@ -737,7 +912,12 @@ public class ChangeSet implements org.mozkito.persistence.Entity {
 	 * 
 	 * @return the revisions
 	 */
-	@OneToMany (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, targetEntity = Revision.class)
+	
+	/**
+	 * Gets the revisions.
+	 * 
+	 * @return the revisions
+	 */
 	public Collection<Revision> getRevisions() {
 		return this.revisions != null
 		                             ? this.revisions
@@ -747,21 +927,13 @@ public class ChangeSet implements org.mozkito.persistence.Entity {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.persistence.Entity#getSize(org.mozkito.persistence.IterableFieldKey)
+	 * @see org.mozkito.database.Artifact#getSize(org.mozkito.database.PersistenceUtil,
+	 *      org.mozkito.persistence.IterableFieldKey)
 	 */
 	@Override
-	public int getSize(final IterableFieldKey key) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return org.mozkito.persistence.Entity.Static.getSize(this, key);
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+	public int getSize(final PersistenceUtil util,
+	                   final IterableFieldKey key) {
+		return org.mozkito.database.Artifact.Static.getSize(util, this, key);
 	}
 	
 	/**
@@ -769,7 +941,6 @@ public class ChangeSet implements org.mozkito.persistence.Entity {
 	 * 
 	 * @return the tag
 	 */
-	@ElementCollection
 	public Set<String> getTags() {
 		return this.tags;
 	}
@@ -777,21 +948,11 @@ public class ChangeSet implements org.mozkito.persistence.Entity {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.persistence.Entity#getText()
+	 * @see org.mozkito.database.Artifact#getText(org.mozkito.database.PersistenceUtil)
 	 */
 	@Override
-	public String getText() {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return get(FieldKey.BODY);
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
+	public String getText(final PersistenceUtil util) {
+		return get(util, FieldKey.BODY);
 	}
 	
 	/**
@@ -799,7 +960,7 @@ public class ChangeSet implements org.mozkito.persistence.Entity {
 	 * 
 	 * @return the timestamp
 	 */
-	@Transient
+	
 	public DateTime getTimestamp() {
 		return this.javaTimestamp;
 	}
@@ -809,8 +970,12 @@ public class ChangeSet implements org.mozkito.persistence.Entity {
 	 * 
 	 * @return the version archive
 	 */
-	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
-	@Column (nullable = false)
+	
+	/**
+	 * Gets the version archive.
+	 * 
+	 * @return the version archive
+	 */
 	public VersionArchive getVersionArchive() {
 		return this.versionArchive;
 	}
@@ -841,9 +1006,9 @@ public class ChangeSet implements org.mozkito.persistence.Entity {
 	 * @param author
 	 *            the new author
 	 */
-	@Transient
+	
 	public void setAuthor(final Person author) {
-		getPersons().add("author", author); //$NON-NLS-1$
+		this.author = author;
 	}
 	
 	/**
@@ -914,8 +1079,7 @@ public class ChangeSet implements org.mozkito.persistence.Entity {
 	 * @param mergeParents
 	 *            merge parents
 	 */
-	@Transient
-	@NoneNull
+	
 	protected void setMergeParent(final ChangeSet... mergeParents) {
 		// PRECONDITIONS
 		try {
@@ -965,16 +1129,6 @@ public class ChangeSet implements org.mozkito.persistence.Entity {
 	}
 	
 	/**
-	 * Sets the persons.
-	 * 
-	 * @param persons
-	 *            the persons to set
-	 */
-	public void setPersons(final PersonContainer persons) {
-		this.persons = persons;
-	}
-	
-	/**
 	 * Sets the revisions.
 	 * 
 	 * @param rCSRevisions
@@ -1017,7 +1171,7 @@ public class ChangeSet implements org.mozkito.persistence.Entity {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.persistence.Entity#supportedFields()
+	 * @see org.mozkito.database.Artifact#supportedFields()
 	 */
 	@Override
 	public Set<FieldKey> supportedFields() {
@@ -1055,7 +1209,7 @@ public class ChangeSet implements org.mozkito.persistence.Entity {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.persistence.Entity#supportedIteratableFields()
+	 * @see org.mozkito.database.Artifact#supportedIteratableFields()
 	 */
 	@Override
 	public Set<IterableFieldKey> supportedIteratableFields() {
@@ -1086,8 +1240,9 @@ public class ChangeSet implements org.mozkito.persistence.Entity {
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

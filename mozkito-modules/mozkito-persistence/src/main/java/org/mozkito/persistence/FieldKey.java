@@ -14,21 +14,23 @@ package org.mozkito.persistence;
 
 import org.joda.time.DateTime;
 
+import org.mozkito.database.Artifact;
+
 /**
  * The Enum FieldKey.
  */
 public enum FieldKey {
 	
 	/**
-	 * the author of the {@link Entity}, i.e. the one that initially created the original instance encapsulated by this
-	 * entity. (Person)
+	 * the author of the {@link Artifact}, i.e. the one that initially created the original instance encapsulated by
+	 * this entity. (Person)
 	 */
 	AUTHOR,
 	
-	/** the body text of the {@link Entity} (String). */
+	/** the body text of the {@link Artifact} (String). */
 	BODY,
 	/**
-	 * the timestamp of the {@link Entity} that determines when the original entity has been closed/committed/became
+	 * the timestamp of the {@link Artifact} that determines when the original entity has been closed/committed/became
 	 * immutable/sent. (DateTime)
 	 */
 	CLOSED_TIMESTAMP,
@@ -36,7 +38,7 @@ public enum FieldKey {
 	CLOSER,
 	
 	/**
-	 * the timestamp of the {@link Entity} that represents the point in time the original instance has been created.
+	 * the timestamp of the {@link Artifact} that represents the point in time the original instance has been created.
 	 * (DateTime)
 	 */
 	CREATION_TIMESTAMP,
@@ -44,7 +46,7 @@ public enum FieldKey {
 	/** the id of the Entity (String). */
 	ID,
 	/**
-	 * the timestamp(s) of the {@link Entity} that determines the time the original entity has been changed (null if
+	 * the timestamp(s) of the {@link Artifact} that determines the time the original entity has been changed (null if
 	 * never modified). If requested without index, represents a collection of timestamps for all modifications, a
 	 * specific timestamp otherwise. ( <code>Collection<DateTime>/DateTime</code>)
 	 */

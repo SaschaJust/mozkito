@@ -15,6 +15,7 @@ package org.mozkito.persistence;
 import org.joda.time.DateTime;
 import org.junit.Test;
 
+import org.mozkito.database.PersistenceUtil;
 import org.mozkito.issues.elements.Status;
 import org.mozkito.issues.model.Comment;
 import org.mozkito.issues.model.HistoryElement;

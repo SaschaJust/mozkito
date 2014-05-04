@@ -24,8 +24,8 @@ import org.junit.Test;
 
 import org.mozkito.GraphBuilder;
 import org.mozkito.RepositoryParser;
+import org.mozkito.database.PersistenceUtil;
 import org.mozkito.persistence.ConnectOptions;
-import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.testing.VersionsTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
 import org.mozkito.testing.annotation.RepositorySetting;

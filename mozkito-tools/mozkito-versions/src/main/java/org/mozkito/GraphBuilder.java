@@ -23,7 +23,7 @@ import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kisa.Logger;
 
-import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.database.PersistenceUtil;
 import org.mozkito.versions.elements.RevDependencyGraph;
 import org.mozkito.versions.model.Branch;
 import org.mozkito.versions.model.ChangeSet;

@@ -28,7 +28,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -48,7 +47,6 @@ import org.mozkito.persistence.model.DateTimeTuple;
 import org.mozkito.persistence.model.EnumTuple;
 import org.mozkito.persistence.model.StringTuple;
 import org.mozkito.persons.model.Person;
-import org.mozkito.persons.model.PersonContainer;
 import org.mozkito.persons.model.PersonTuple;
 import org.mozkito.utilities.commons.JavaUtils;
 import org.mozkito.utilities.datastructures.Tuple;
@@ -58,7 +56,7 @@ import org.mozkito.utilities.datastructures.Tuple;
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-@Entity
+@Artifact
 @Table (name = "history_element")
 public class HistoryElement implements Annotated, TextElement, Comparable<HistoryElement> {
 	
@@ -83,11 +81,11 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	/** The timestamp. */
 	private DateTime                   timestamp;
 	
-	/** The person container. */
-	private PersonContainer            personContainer     = new PersonContainer();
-	
 	/** The history. */
 	private History                    history;
+	
+	/** The author. */
+	private Person                     author;
 	
 	/**
 	 * used by PersistenceUtil.
@@ -301,6 +299,11 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	 * (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(java.lang.Annotated)
 	 */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
 	@Override
 	@Transient
 	public int compareTo(final HistoryElement object) {
@@ -327,6 +330,11 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	
 	/*
 	 * (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -396,10 +404,15 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	 * (non-Javadoc)
 	 * @see org.mozkito.bugs.tracker.model.TextElement#getAuthor()
 	 */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.issues.elements.TextElement#getAuthor()
+	 */
 	@Override
-	@Transient
+	@ManyToOne (fetch = FetchType.LAZY)
 	public Person getAuthor() {
-		return getPersonContainer().get("author");
+		return this.author;
 	}
 	
 	/**
@@ -457,6 +470,11 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	/*
 	 * (non-Javadoc)
 	 * @see org.mozkito.persistence.Annotated#getHandle()
+	 */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.persistence.Annotated#getClassName()
 	 */
 	@Override
 	public final String getClassName() {
@@ -536,18 +554,9 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	}
 	
 	/**
-	 * Gets the person container.
+	 * {@inheritDoc}
 	 * 
-	 * @return the personContainer
-	 */
-	@OneToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	public PersonContainer getPersonContainer() {
-		return this.personContainer;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.model.TextElement#getText()
+	 * @see org.mozkito.issues.elements.TextElement#getText()
 	 */
 	@Override
 	@Transient
@@ -566,8 +575,9 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 		return this.timestamp;
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -599,7 +609,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	 *            the new author
 	 */
 	public void setAuthor(final Person author) {
-		getPersonContainer().add("author", author);
+		this.author = author;
 	}
 	
 	/**
@@ -662,10 +672,6 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 		this.id = id;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.model.TextElement#getText()
-	 */
 	/**
 	 * Sets the java timestamp.
 	 * 
@@ -677,20 +683,6 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 		this.timestamp = new DateTime(timestamp);
 	}
 	
-	/**
-	 * Sets the person container.
-	 * 
-	 * @param personContainer
-	 *            the personContainer to set
-	 */
-	public void setPersonContainer(final PersonContainer personContainer) {
-		this.personContainer = personContainer;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.model.TextElement#getText()
-	 */
 	/**
 	 * Sets the timestamp.
 	 * 
@@ -711,8 +703,9 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 		        + getChangedStringValues().size();
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -730,8 +723,8 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 		builder.append(getTimestamp());
 		builder.append(", bugId=");
 		builder.append(getBugId());
-		builder.append(", personContainer=");
-		builder.append(getPersonContainer());
+		builder.append(", author=");
+		builder.append(getAuthor());
 		builder.append("]");
 		return builder.toString();
 	}

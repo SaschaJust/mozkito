@@ -33,7 +33,7 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
-import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.database.PersistenceUtil;
 import org.mozkito.persons.elements.PersonFactory;
 import org.mozkito.settings.DatabaseOptions;
 import org.mozkito.utilities.commons.JavaUtils;

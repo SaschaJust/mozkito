@@ -17,7 +17,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.database.PersistenceUtil;
 import org.mozkito.versions.model.ChangeSet;
 
 /**
@@ -119,7 +119,7 @@ public class ChangeSetIterator implements Iterable<ChangeSet>, Iterator<ChangeSe
 	@Override
 	public ChangeSet next() {
 		final String nextChangeSetHash = this.revDepIterator.next();
-		return this.persistenceUtil.loadById(nextChangeSetHash, ChangeSet.class);
+		return this.persistenceUtil.loadById(ChangeSet.class, nextChangeSetHash);
 	}
 	
 	/*

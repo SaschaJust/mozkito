@@ -24,11 +24,11 @@ import java.util.Map;
 import org.joda.time.DateTime;
 import org.junit.Test;
 
+import org.mozkito.database.PersistenceUtil;
 import org.mozkito.issues.model.HistoryElement;
 import org.mozkito.issues.model.IssueTracker;
 import org.mozkito.issues.model.Report;
-import org.mozkito.persistence.Criteria;
-import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.persistence.JPACriteria;
 import org.mozkito.persons.elements.PersonFactory;
 import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.TestEnum;
@@ -62,7 +62,7 @@ public class EnumTupleTest extends DatabaseTest {
 		util.save(element);
 		util.commitTransaction();
 		
-		final Criteria<HistoryElement> criteria = util.createCriteria(HistoryElement.class);
+		final JPACriteria<HistoryElement> criteria = util.createCriteria(HistoryElement.class);
 		final List<HistoryElement> list = util.load(criteria);
 		
 		final HistoryElement loadedElement = list.iterator().next();

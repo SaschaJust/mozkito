@@ -44,10 +44,11 @@ import org.apache.commons.io.FileUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 
+import org.mozkito.database.Criteria;
+import org.mozkito.database.PersistenceUtil;
+import org.mozkito.database.exceptions.DatabaseException;
 import org.mozkito.graphs.GraphManager;
 import org.mozkito.graphs.settings.GraphOptions;
-import org.mozkito.persistence.Criteria;
-import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.persons.model.Person;
 import org.mozkito.research.persons.engines.Engine;
 import org.mozkito.research.persons.engines.GravatarEngine;
@@ -301,7 +302,7 @@ public class GraphGenerator implements Runnable {
 	 * @return the or create
 	 */
 	private Vertex getOrCreate(final Person person) {
-		final Long id = person.getGeneratedId();
+		final Long id = person.getId();
 		
 		SANITY: {
 			assert id != null;
@@ -497,6 +498,8 @@ public class GraphGenerator implements Runnable {
 				Logger.info("Shutting down persistence util.", this.edgeCounter);
 			}
 			this.persistenceUtil.shutdown();
+		} catch (final DatabaseException e1) {
+			throw new RuntimeException(e1);
 		} finally {
 			POSTCONDITIONS: {
 				// none

@@ -29,13 +29,11 @@ import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kisa.Logger;
 
-import org.apache.openjpa.persistence.PersistenceException;
-import org.apache.openjpa.util.UserException;
+import org.mozkito.database.DatabaseManager;
+import org.mozkito.database.PersistenceUtil;
+import org.mozkito.exceptions.ConfigurationException;
 import org.mozkito.persistence.ConnectOptions;
-import org.mozkito.persistence.DatabaseEnvironment.ConfigurationException;
 import org.mozkito.persistence.DatabaseType;
-import org.mozkito.persistence.PersistenceManager;
-import org.mozkito.persistence.PersistenceUtil;
 
 /**
  * The Class DatabaseOptions.
@@ -49,9 +47,6 @@ public class DatabaseOptions extends ArgumentSetOptions<PersistenceUtil, Argumen
 	
 	/** The database options. */
 	private EnumArgument.Options<ConnectOptions> databaseOptions;
-	
-	/** The database middleware. */
-	private StringArgument.Options               databaseMiddleware;
 	
 	/** The database type. */
 	private EnumArgument.Options<DatabaseType>   databaseType;
@@ -97,15 +92,6 @@ public class DatabaseOptions extends ArgumentSetOptions<PersistenceUtil, Argumen
 	 */
 	public final StringArgument.Options getDatabaseHost() {
 		return this.databaseHost;
-	}
-	
-	/**
-	 * Gets the database middleware.
-	 * 
-	 * @return the databaseMiddleware
-	 */
-	public final StringArgument.Options getDatabaseMiddleware() {
-		return this.databaseMiddleware;
 	}
 	
 	/**
@@ -178,30 +164,29 @@ public class DatabaseOptions extends ArgumentSetOptions<PersistenceUtil, Argumen
 			final EnumArgument<DatabaseType> typeArgument = getSettings().getArgument(this.databaseType);
 			final StringArgument unitArgument = getSettings().getArgument(this.databaseUnit);
 			final EnumArgument<ConnectOptions> optionsArgument = getSettings().getArgument(this.databaseOptions);
-			final StringArgument middlewareArgument = getSettings().getArgument(this.databaseMiddleware);
 			
-			org.mozkito.persistence.DatabaseEnvironment dbOptions;
+			org.mozkito.database.DatabaseEnvironment dbOptions;
 			try {
-				dbOptions = new org.mozkito.persistence.DatabaseEnvironment(typeArgument.getValue(),
-				                                                            nameArgument.getValue(),
-				                                                            hostArgument.getValue(),
-				                                                            userArgument.getValue(),
-				                                                            passwordArgument.getValue(),
-				                                                            optionsArgument.getValue(),
-				                                                            unitArgument.getValue());
+				dbOptions = new org.mozkito.database.DatabaseEnvironment(typeArgument.getValue(),
+				                                                         nameArgument.getValue(),
+				                                                         hostArgument.getValue(),
+				                                                         userArgument.getValue(),
+				                                                         passwordArgument.getValue(),
+				                                                         optionsArgument.getValue(),
+				                                                         unitArgument.getValue());
 			} catch (final ConfigurationException e1) {
 				throw new UnrecoverableError(e1);
 			}
 			
 			if (ConnectOptions.DROP_AND_CREATE_DATABASE.equals(optionsArgument.getValue())) {
 				try {
-					PersistenceManager.dropDatabase(dbOptions);
+					DatabaseManager.dropDatabase(dbOptions);
 				} catch (final SQLException ignore) {
 					// ignore
 				}
 				
 				try {
-					PersistenceManager.createDatabase(dbOptions);
+					DatabaseManager.createDatabase(dbOptions);
 				} catch (final SQLException e) {
 					if (Logger.logError()) {
 						Logger.error("Could not re-create database.");
@@ -211,15 +196,15 @@ public class DatabaseOptions extends ArgumentSetOptions<PersistenceUtil, Argumen
 				
 			}
 			try {
-				final PersistenceUtil util = PersistenceManager.createUtil(dbOptions, middlewareArgument.getValue());
-				this.settings.addInformation(middlewareArgument.getValue(), util.getToolInformation());
+				final PersistenceUtil util = DatabaseManager.createUtil(dbOptions);
+				this.settings.addInformation("database", util.getToolInformation());
 				
 				if (Logger.logDebug()) {
 					Logger.debug(util.getToolInformation());
 				}
 				
 				return util;
-			} catch (final UserException | PersistenceException e) {
+			} catch (final Exception e) {
 				if (e.getMessage().contains("database") && e.getMessage().contains("does not exist")) {
 					throw new Shutdown(
 					                   String.format("The specified database %s on host %s does not exist. Please check you settings.",
@@ -261,9 +246,6 @@ public class DatabaseOptions extends ArgumentSetOptions<PersistenceUtil, Argumen
 			                                                           "Defines the type of the database.",
 			                                                           DatabaseType.POSTGRESQL, Requirement.required);
 			map.put("type", this.databaseType);
-			this.databaseMiddleware = new StringArgument.Options(set, "middleware", "Default: OpenJPA", "OpenJPA",
-			                                                     Requirement.required);
-			map.put("middleware", this.databaseMiddleware);
 			this.databaseUnit = new StringArgument.Options(set, "unit", "The persistence unit config tag used.",
 			                                               this.unit, Requirement.required);
 			map.put("unit", this.databaseUnit);
