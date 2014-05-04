@@ -1,0 +1,196 @@
+/* Javadoc style sheet */
+
+/* Define colors, fonts and other style attributes here to override the defaults */
+
+/* Page background color */
+
+html {
+	margin: 0;
+	padding: 0;
+	font-size: 11px;
+	color: white;
+}
+
+body {
+	margin: 0;
+	padding: 0;
+	font-family: "helvetica neue", helvetica, "microsoft sans serif", arial, sans-serif;
+	background: #273138;
+}
+
+a, a:link, a:visited {
+color: whitesmoke;
+	outline: none;
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+/* Headings */
+
+h1 {
+	font-size: 150%;
+
+	color: white;
+	text-transform: uppercase;
+}
+
+/* Table colors */
+
+.TableHeadingColor {
+	color: #000000
+}
+
+.TableHeadingColor th {
+	background-color: #141a1e;
+	color: white;
+}
+
+
+.TableHeadingColor th font {
+	font-size: 1.25em;
+}
+
+/* Dark mauve */
+
+.TableSubHeadingColor {
+	color: #000000
+}
+
+/* Light mauve */
+
+.TableRowColor {
+	background-color: white;
+}
+
+.TableRowColor a {
+	color: #2d3941;
+}
+
+.TableRowColor td {
+	padding-left: 5px;
+	background-color: white;
+	white-space: nowrap;
+}
+
+/* White */
+
+/* Font used in left-hand frame lists */
+
+.FrameTitleFont {
+	font-size: 100%;
+	font-family: Helvetica, Arial, sans-serif;
+	color: #000000
+}
+
+.FrameHeadingFont {
+	font-size: 90%;
+
+	color: white;
+	line-height: 3em;
+	margin-left: .5em;
+	text-transform: uppercase;
+	white-space: nowrap;
+}
+
+.FrameItemFont {
+	/*font-size: 90%;
+	font-family: Helvetica, Arial, sans-serif;
+	color: #000000*/
+}
+
+.FrameItemFont a {
+	color:  whitesmoke;
+	line-height: 1.3em;
+	margin-left: .5em;
+}
+
+
+	
+
+table, th, td {
+	border-style: none;
+}
+
+
+/* Navigation bar fonts and colors */
+
+.NavBarCell1 {
+	margin-bottom: 3pt;
+ 	background: none;
+	height: 1.5em;
+}
+
+.NavBarCell1 table tbody tr {
+	background: none;
+}
+
+/* Light mauve */
+
+.NavBarCell1Rev {
+ 	background-color: rgba(0,0,0,0);
+}
+
+/* Dark Blue */
+
+.NavBarFont1 {
+	color: whitesmoke;
+}
+
+.NavBarFont1Rev {
+
+}
+
+.NavBarCell2 {
+	background: #B3D951 url(http://users.own-hero.net/~methos/nav.gif) repeat-x;
+	height: 1em;
+	color: #141a1e;
+	font-weight: bold;
+}
+
+.NavBarCell2 a {
+	color: white;
+}
+
+.NavBarCell3 {
+color: whitesmoke;
+}
+
+h2, h3, dl, body pre {
+	margin-left: 1em;
+}
+
+pre {
+	background-color: whitesmoke;
+	color: black;
+	padding: 5px;
+		-moz-border-radius-topleft: 3px;
+	-webkit-border-top-left-radius: 3px;
+	-moz-border-radius-topright: 3px;
+	-webkit-border-top-right-radius: 3px;
+	-moz-border-radius-bottomleft: 3px;
+	-webkit-border-bottom-left-radius: 3px;
+	-moz-border-radius-bottomright: 3px;
+	-webkit-border-bottom-right-radius: 3px;
+}
+
+pre a, pre a:link, pre a:visited {
+	font-weight: bold;
+	color: black;
+	font-style: italic;
+}
+
+code {
+	font-family: Courier, mono;
+}
+
+hr {
+	display: none;
+	visibility: collapse;
+}
+
+a {
+	text-decoration: none;
+}
