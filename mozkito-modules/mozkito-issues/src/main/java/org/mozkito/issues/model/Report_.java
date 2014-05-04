@@ -24,7 +24,7 @@ import org.mozkito.issues.elements.Resolution;
 import org.mozkito.issues.elements.Severity;
 import org.mozkito.issues.elements.Status;
 import org.mozkito.issues.elements.Type;
-import org.mozkito.persons.model.PersonContainer;
+import org.mozkito.persons.model.Person;
 
 /**
  * The Class Report_.
@@ -34,81 +34,90 @@ import org.mozkito.persons.model.PersonContainer;
                              date = "Fri Apr 26 13:58:11 CEST 2013")
 public class Report_ {
 	
+	/** The person container. */
+	public static volatile SingularAttribute<Report, Person>       assignedPerson;
+	
 	/** The attachment entries. */
-	public static volatile ListAttribute<Report, AttachmentEntry>     attachmentEntries;
+	public static volatile ListAttribute<Report, AttachmentEntry>  attachmentEntries;
 	
 	/** The category. */
-	public static volatile SingularAttribute<Report, String>          category;
+	public static volatile SingularAttribute<Report, String>       category;
+	
+	/** The closing person. */
+	public static volatile SingularAttribute<Report, Person>       closingPerson;
 	
 	/** The comments. */
-	public static volatile SetAttribute<Report, Comment>              comments;
+	public static volatile SetAttribute<Report, Comment>           comments;
 	
 	/** The component. */
-	public static volatile SingularAttribute<Report, String>          component;
+	public static volatile SingularAttribute<Report, String>       component;
 	
 	/** The creation java timestamp. */
-	public static volatile SingularAttribute<Report, Date>            creationJavaTimestamp;
+	public static volatile SingularAttribute<Report, Date>         creationJavaTimestamp;
 	
 	/** The description. */
-	public static volatile SingularAttribute<Report, String>          description;
+	public static volatile SingularAttribute<Report, String>       description;
 	
 	/** The hash. */
-	public static volatile SingularAttribute<Report, byte[]>          hash;
+	public static volatile SingularAttribute<Report, byte[]>       hash;
 	
 	/** The history. */
-	public static volatile SingularAttribute<Report, History>         history;
+	public static volatile SingularAttribute<Report, History>      history;
 	
 	/** The id. */
-	public static volatile SingularAttribute<Report, String>          id;
+	public static volatile SingularAttribute<Report, String>       id;
 	
 	/** The keywords. */
-	public static volatile SetAttribute<Report, String>               keywords;
+	public static volatile SetAttribute<Report, String>            keywords;
 	
 	/** The last fetch java. */
-	public static volatile SingularAttribute<Report, Date>            lastFetchJava;
+	public static volatile SingularAttribute<Report, Date>         lastFetchJava;
 	
 	/** The last update java timestamp. */
-	public static volatile SingularAttribute<Report, Date>            lastUpdateJavaTimestamp;
-	
-	/** The person container. */
-	public static volatile SingularAttribute<Report, PersonContainer> personContainer;
+	public static volatile SingularAttribute<Report, Date>         lastUpdateJavaTimestamp;
 	
 	/** The priority. */
-	public static volatile SingularAttribute<Report, Priority>        priority;
+	public static volatile SingularAttribute<Report, Priority>     priority;
 	
 	/** The product. */
-	public static volatile SingularAttribute<Report, String>          product;
+	public static volatile SingularAttribute<Report, String>       product;
 	
 	/** The resolution. */
-	public static volatile SingularAttribute<Report, Resolution>      resolution;
+	public static volatile SingularAttribute<Report, Resolution>   resolution;
 	
 	/** The resolution java timestamp. */
-	public static volatile SingularAttribute<Report, Date>            resolutionJavaTimestamp;
+	public static volatile SingularAttribute<Report, Date>         resolutionJavaTimestamp;
+	
+	/** The resolving person. */
+	public static volatile SingularAttribute<Report, Person>       resolvingPerson;
 	
 	/** The scm fix version. */
-	public static volatile SingularAttribute<Report, String>          scmFixVersion;
+	public static volatile SingularAttribute<Report, String>       scmFixVersion;
 	
 	/** The severity. */
-	public static volatile SingularAttribute<Report, Severity>        severity;
+	public static volatile SingularAttribute<Report, Severity>     severity;
 	
 	/** The siblings. */
-	public static volatile SetAttribute<Report, String>               siblings;
+	public static volatile SetAttribute<Report, String>            siblings;
 	
 	/** The status. */
-	public static volatile SingularAttribute<Report, Status>          status;
+	public static volatile SingularAttribute<Report, Status>       status;
 	
 	/** The subject. */
-	public static volatile SingularAttribute<Report, String>          subject;
+	public static volatile SingularAttribute<Report, String>       subject;
+	
+	/** The submitting person. */
+	public static volatile SingularAttribute<Report, Person>       submittingPerson;
 	
 	/** The summary. */
-	public static volatile SingularAttribute<Report, String>          summary;
+	public static volatile SingularAttribute<Report, String>       summary;
 	
 	/** The tracker. */
-	public static volatile SingularAttribute<Report, IssueTracker>    tracker;
+	public static volatile SingularAttribute<Report, IssueTracker> tracker;
 	
 	/** The type. */
-	public static volatile SingularAttribute<Report, Type>            type;
+	public static volatile SingularAttribute<Report, Type>         type;
 	
 	/** The version. */
-	public static volatile SingularAttribute<Report, String>          version;
+	public static volatile SingularAttribute<Report, String>       version;
 }

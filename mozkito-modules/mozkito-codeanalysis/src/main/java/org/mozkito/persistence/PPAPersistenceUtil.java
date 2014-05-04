@@ -69,7 +69,7 @@ public class PPAPersistenceUtil {
 		}
 		
 		for (final Revision revision : changeSet.getRevisions()) {
-			final Criteria<JavaChangeOperation> criteria = persistenceUtil.createCriteria(JavaChangeOperation.class);
+			final JPACriteria<JavaChangeOperation> criteria = persistenceUtil.createCriteria(JavaChangeOperation.class);
 			criteria.eq("revision", revision);
 			result.addAll(persistenceUtil.load(criteria));
 		}
@@ -123,7 +123,7 @@ public class PPAPersistenceUtil {
 				if (changedPath.toLowerCase().contains("test")) {
 					continue;
 				}
-				final Criteria<JavaChangeOperation> criteria = persistenceUtil.createCriteria(JavaChangeOperation.class);
+				final JPACriteria<JavaChangeOperation> criteria = persistenceUtil.createCriteria(JavaChangeOperation.class);
 				criteria.eq("revision", revision);
 				result.addAll(persistenceUtil.load(criteria));
 			} catch (final NoSuchHandleException e) {
@@ -276,7 +276,7 @@ public class PPAPersistenceUtil {
 	 */
 	public static JavaElement getJavaElement(@NotNull final PersistenceUtil persistenceUtil,
 	                                         @NotNull final JavaElement e) {
-		final Criteria<? extends JavaElement> criteria = persistenceUtil.createCriteria(e.getClass());
+		final JPACriteria<? extends JavaElement> criteria = persistenceUtil.createCriteria(e.getClass());
 		final CriteriaBuilder cb = criteria.getBuilder();
 		final Root<? extends JavaElement> root = criteria.getRoot();
 		final Predicate predicate = cb.and(cb.equal(root.get("fullQualifiedName"), e.getFullQualifiedName()),

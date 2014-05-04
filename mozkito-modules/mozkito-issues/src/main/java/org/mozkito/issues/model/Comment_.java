@@ -17,7 +17,7 @@ import java.util.Date;
 
 import javax.persistence.metamodel.SingularAttribute;
 
-import org.mozkito.persons.model.PersonContainer;
+import org.mozkito.persons.model.Person;
 
 /**
  * The Class Comment_.
@@ -27,21 +27,21 @@ import org.mozkito.persons.model.PersonContainer;
                              date = "Fri Apr 26 13:58:11 CEST 2013")
 public class Comment_ {
 	
+	/** The author. */
+	public static volatile SingularAttribute<Comment, Person>  author;
+	
 	/** The bug report. */
-	public static volatile SingularAttribute<Comment, Report>          bugReport;
+	public static volatile SingularAttribute<Comment, Report>  bugReport;
 	
 	/** The generated id. */
-	public static volatile SingularAttribute<Comment, Long>            generatedId;
+	public static volatile SingularAttribute<Comment, Long>    generatedId;
 	
 	/** The id. */
-	public static volatile SingularAttribute<Comment, Integer>         id;
+	public static volatile SingularAttribute<Comment, Integer> id;
 	
 	/** The java timestamp. */
-	public static volatile SingularAttribute<Comment, Date>            javaTimestamp;
+	public static volatile SingularAttribute<Comment, Date>    javaTimestamp;
 	
 	/** The message. */
-	public static volatile SingularAttribute<Comment, String>          message;
-	
-	/** The person container. */
-	public static volatile SingularAttribute<Comment, PersonContainer> personContainer;
+	public static volatile SingularAttribute<Comment, String>  message;
 }

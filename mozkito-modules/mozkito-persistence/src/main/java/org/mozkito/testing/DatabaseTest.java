@@ -23,9 +23,9 @@ import net.ownhero.dev.kisa.Logger;
 import org.junit.After;
 import org.junit.Before;
 
+import org.mozkito.database.DatabaseEnvironment;
+import org.mozkito.database.PersistenceUtil;
 import org.mozkito.exceptions.TestSetupException;
-import org.mozkito.persistence.DatabaseEnvironment;
-import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.testing.annotation.DatabaseSettings;
 import org.mozkito.testing.annotation.EnvironmentProcessor;
 import org.mozkito.testing.annotation.processors.DatabaseSettingsProcessor;

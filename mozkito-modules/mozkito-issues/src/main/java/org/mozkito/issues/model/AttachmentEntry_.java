@@ -17,7 +17,7 @@ import java.util.Date;
 
 import javax.persistence.metamodel.SingularAttribute;
 
-import org.mozkito.persons.model.PersonContainer;
+import org.mozkito.persons.model.Person;
 
 /**
  * The Class AttachmentEntry_.
@@ -27,31 +27,31 @@ import org.mozkito.persons.model.PersonContainer;
                              date = "Fri Apr 26 13:58:11 CEST 2013")
 public class AttachmentEntry_ {
 	
+	/** The author. */
+	public static volatile SingularAttribute<AttachmentEntry, Person> author;
+	
 	/** The description. */
-	public static volatile SingularAttribute<AttachmentEntry, String>          description;
+	public static volatile SingularAttribute<AttachmentEntry, String> description;
 	
 	/** The filename. */
-	public static volatile SingularAttribute<AttachmentEntry, String>          filename;
+	public static volatile SingularAttribute<AttachmentEntry, String> filename;
 	
 	/** The id. */
-	public static volatile SingularAttribute<AttachmentEntry, String>          id;
+	public static volatile SingularAttribute<AttachmentEntry, String> id;
 	
 	/** The java delta ts. */
-	public static volatile SingularAttribute<AttachmentEntry, Date>            javaDeltaTS;
+	public static volatile SingularAttribute<AttachmentEntry, Date>   javaDeltaTS;
 	
 	/** The java timestamp. */
-	public static volatile SingularAttribute<AttachmentEntry, Date>            javaTimestamp;
+	public static volatile SingularAttribute<AttachmentEntry, Date>   javaTimestamp;
 	
 	/** The link. */
-	public static volatile SingularAttribute<AttachmentEntry, String>          link;
+	public static volatile SingularAttribute<AttachmentEntry, String> link;
 	
 	/** The mime. */
-	public static volatile SingularAttribute<AttachmentEntry, String>          mime;
-	
-	/** The person container. */
-	public static volatile SingularAttribute<AttachmentEntry, PersonContainer> personContainer;
+	public static volatile SingularAttribute<AttachmentEntry, String> mime;
 	
 	/** The size. */
-	public static volatile SingularAttribute<AttachmentEntry, Long>            size;
+	public static volatile SingularAttribute<AttachmentEntry, Long>   size;
 	
 }

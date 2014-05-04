@@ -34,7 +34,7 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.joda.time.DateTime;
 
-import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.database.PersistenceUtil;
 import org.mozkito.settings.DatabaseOptions;
 import org.mozkito.versions.Repository;
 import org.mozkito.versions.exceptions.RepositoryOperationException;

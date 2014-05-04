@@ -20,7 +20,6 @@ import java.lang.annotation.Target;
 
 import org.mozkito.persistence.ConnectOptions;
 import org.mozkito.persistence.DatabaseType;
-import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.testing.annotation.processors.DatabaseSettingsProcessor;
 
 /**
@@ -90,10 +89,4 @@ public @interface DatabaseSettings {
 	 */
 	String username() default "";
 	
-	/**
-	 * Util.
-	 * 
-	 * @return the class<? extends persistence util>
-	 */
-	Class<? extends PersistenceUtil> util() default org.mozkito.persistence.OpenJPAUtil.class;
 }

@@ -25,14 +25,14 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
+import org.mozkito.database.PersistenceUtil;
 import org.mozkito.issues.exceptions.AuthenticationException;
 import org.mozkito.issues.exceptions.InvalidParameterException;
 import org.mozkito.issues.messages.Messages;
 import org.mozkito.issues.model.Comment;
 import org.mozkito.issues.model.IssueTracker;
 import org.mozkito.issues.model.Report;
-import org.mozkito.persistence.Criteria;
-import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.persistence.JPACriteria;
 import org.mozkito.persons.elements.PersonFactory;
 
 /**
@@ -223,7 +223,7 @@ public abstract class Tracker {
 	public Report loadReport(final Long id,
 	                         final PersistenceUtil persistenceUtil) {
 		
-		final Criteria<Report> criteria = persistenceUtil.createCriteria(Report.class).eq("id", id); //$NON-NLS-1$
+		final JPACriteria<Report> criteria = persistenceUtil.createCriteria(Report.class).eq("id", id); //$NON-NLS-1$
 		final List<Report> list = persistenceUtil.load(criteria);
 		if (list.size() > 0) {
 			final Report bugReport = list.get(0);

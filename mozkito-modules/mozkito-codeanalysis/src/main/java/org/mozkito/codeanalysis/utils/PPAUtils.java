@@ -72,7 +72,7 @@ import org.mozkito.codeanalysis.model.JavaMethodCall;
 import org.mozkito.codeanalysis.model.JavaMethodDefinition;
 import org.mozkito.codeanalysis.visitors.PPAMethodCallVisitor;
 import org.mozkito.codeanalysis.visitors.PPATypeVisitor;
-import org.mozkito.persistence.Criteria;
+import org.mozkito.persistence.JPACriteria;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.utililities.diff.DiffUtils;
 import org.mozkito.utilities.datastructures.Tuple;
@@ -233,7 +233,7 @@ public class PPAUtils {
 			return null;
 		}
 		
-		final Criteria<JavaElementLocation> criteria = persistenceUtil.createCriteria(JavaElementLocation.class);
+		final JPACriteria<JavaElementLocation> criteria = persistenceUtil.createCriteria(JavaElementLocation.class);
 		final CriteriaBuilder cb = criteria.getBuilder();
 		final Root<JavaElementLocation> root = criteria.getRoot();
 		final Predicate eq = cb.equal(root.get("element"), element);
@@ -292,7 +292,7 @@ public class PPAUtils {
 		
 		// get the corresponding javachangeoperation
 		
-		final Criteria<JavaChangeOperation> operationCriteria = persistenceUtil.createCriteria(JavaChangeOperation.class);
+		final JPACriteria<JavaChangeOperation> operationCriteria = persistenceUtil.createCriteria(JavaChangeOperation.class);
 		operationCriteria.eq("changedElementLocation", bestHit);
 		final List<JavaChangeOperation> result = persistenceUtil.load(operationCriteria, 1);
 		if (result.isEmpty()) {
@@ -326,7 +326,7 @@ public class PPAUtils {
 			final String[] defNames = getDefinitionNamesForCallName((JavaMethodCall) element);
 			
 			for (final String elementName : defNames) {
-				final Criteria<JavaMethodDefinition> elementCriteria = persistenceUtil.createCriteria(JavaMethodDefinition.class);
+				final JPACriteria<JavaMethodDefinition> elementCriteria = persistenceUtil.createCriteria(JavaMethodDefinition.class);
 				
 				final CriteriaBuilder cb = elementCriteria.getBuilder();
 				final Predicate like = cb.like(elementCriteria.getRoot().get(JavaElement_.fullQualifiedName),
@@ -1663,7 +1663,7 @@ public class PPAUtils {
 	                                                             final JavaElement searchElement,
 	                                                             final ChangeSet opTransaction,
 	                                                             final JavaElementLocation notMatch) {
-		final Criteria<JavaElementLocation> criteria = persistenceUtil.createCriteria(JavaElementLocation.class);
+		final JPACriteria<JavaElementLocation> criteria = persistenceUtil.createCriteria(JavaElementLocation.class);
 		final CriteriaBuilder cb = criteria.getBuilder();
 		final Root<JavaElementLocation> root = criteria.getRoot();
 		final Predicate eq = cb.equal(root.get("element"), searchElement);
@@ -1693,7 +1693,7 @@ public class PPAUtils {
 		final JavaElementLocation hitLocation = hits.get(0);
 		
 		// search for corresponding JavaChangeOperation
-		final Criteria<JavaChangeOperation> operationCriteria = persistenceUtil.createCriteria(JavaChangeOperation.class);
+		final JPACriteria<JavaChangeOperation> operationCriteria = persistenceUtil.createCriteria(JavaChangeOperation.class);
 		operationCriteria.eq("changedElementLocation", hitLocation);
 		final List<JavaChangeOperation> operationHits = persistenceUtil.load(operationCriteria, 1);
 		if (operationHits.isEmpty()) {

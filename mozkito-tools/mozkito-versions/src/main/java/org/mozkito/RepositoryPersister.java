@@ -23,7 +23,7 @@ import net.ownhero.dev.andama.threads.Sink;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
 
-import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.database.PersistenceUtil;
 import org.mozkito.versions.model.ChangeSet;
 
 /**

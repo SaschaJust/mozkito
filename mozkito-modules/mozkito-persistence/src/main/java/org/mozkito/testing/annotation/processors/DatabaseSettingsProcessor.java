@@ -20,13 +20,13 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.joda.time.DateTime;
 
+import org.mozkito.database.DatabaseEnvironment;
+import org.mozkito.database.DatabaseManager;
+import org.mozkito.database.PersistenceUtil;
+import org.mozkito.exceptions.ConfigurationException;
 import org.mozkito.exceptions.TestSettingsError;
 import org.mozkito.persistence.ConnectOptions;
-import org.mozkito.persistence.DatabaseEnvironment;
-import org.mozkito.persistence.DatabaseEnvironment.ConfigurationException;
 import org.mozkito.persistence.DatabaseType;
-import org.mozkito.persistence.PersistenceManager;
-import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
 
@@ -97,7 +97,7 @@ public class DatabaseSettingsProcessor implements MozkitoSettingsProcessor {
 				if (Logger.logInfo()) {
 					Logger.info("Dropping database with options: %s", options);
 				}
-				PersistenceManager.dropDatabase(options);
+				DatabaseManager.dropDatabase(options);
 			} catch (final SQLException ignore) {
 				// ignore
 			}
@@ -106,13 +106,13 @@ public class DatabaseSettingsProcessor implements MozkitoSettingsProcessor {
 				if (Logger.logInfo()) {
 					Logger.info("Creating database with options: %s", options);
 				}
-				PersistenceManager.createDatabase(options);
+				DatabaseManager.createDatabase(options);
 			} catch (final SQLException e) {
 				throw new TestSettingsError("Could not create database: " + options, e);
 			}
 			
 			try {
-				util = PersistenceManager.createUtil(options, settings.util());
+				util = DatabaseManager.createUtil(options);
 			} catch (final Throwable t) {
 				throw new TestSettingsError("Could not initialize database connection: " + options, t);
 			}
@@ -122,7 +122,7 @@ public class DatabaseSettingsProcessor implements MozkitoSettingsProcessor {
 			}
 			
 			try {
-				util = PersistenceManager.createUtil(options, settings.util());
+				util = DatabaseManager.createUtil(options);
 			} catch (final Throwable t) {
 				throw new TestSettingsError("Could not initialize database connection.", t);
 			}
@@ -148,7 +148,7 @@ public class DatabaseSettingsProcessor implements MozkitoSettingsProcessor {
 				
 				final String dbName = test.getDatabaseName();
 				try {
-					PersistenceManager.dropDatabase(options);
+					DatabaseManager.dropDatabase(options);
 				} catch (final SQLException e) {
 					throw new TestSettingsError("Could not drop database " + dbName, e);
 				}

@@ -47,7 +47,7 @@ import org.mozkito.utilities.commons.JavaUtils;
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-@Entity
+@Artifact
 public class History implements Annotated, Iterable<HistoryElement> {
 	
 	/** The Constant serialVersionUID. */

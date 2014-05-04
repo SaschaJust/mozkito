@@ -24,8 +24,8 @@ import net.ownhero.dev.andama.threads.Source;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
 
-import org.mozkito.persistence.Criteria;
-import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.database.PersistenceUtil;
+import org.mozkito.persistence.JPACriteria;
 import org.mozkito.versions.model.ChangeSet;
 
 /**
@@ -53,7 +53,7 @@ public class GraphReader extends Source<ChangeSet> {
 			
 			@Override
 			public void preExecution() {
-				final Criteria<ChangeSet> criteria = persistenceUtil.createCriteria(ChangeSet.class);
+				final JPACriteria<ChangeSet> criteria = persistenceUtil.createCriteria(ChangeSet.class);
 				list.addAll(persistenceUtil.load(criteria));
 			}
 		};

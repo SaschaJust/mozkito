@@ -20,7 +20,7 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
-import org.mozkito.persistence.Criteria;
+import org.mozkito.persistence.JPACriteria;
 import org.mozkito.persistence.PersistenceUtil;
 
 /**
@@ -51,17 +51,17 @@ public class JavaElementFactory {
 	 *            the persistence util
 	 */
 	public JavaElementFactory(final PersistenceUtil persistenceUtil) {
-		final Criteria<JavaTypeDefinition> criteria = persistenceUtil.createCriteria(JavaTypeDefinition.class);
+		final JPACriteria<JavaTypeDefinition> criteria = persistenceUtil.createCriteria(JavaTypeDefinition.class);
 		final List<JavaTypeDefinition> defs = persistenceUtil.load(criteria);
 		for (final JavaTypeDefinition def : defs) {
 			this.classDefs.put(def.getFullQualifiedName(), def);
 		}
-		final Criteria<JavaMethodDefinition> criteria2 = persistenceUtil.createCriteria(JavaMethodDefinition.class);
+		final JPACriteria<JavaMethodDefinition> criteria2 = persistenceUtil.createCriteria(JavaMethodDefinition.class);
 		final List<JavaMethodDefinition> mDefs = persistenceUtil.load(criteria2);
 		for (final JavaMethodDefinition def : mDefs) {
 			this.methodDefs.put(def.getFullQualifiedName(), def);
 		}
-		final Criteria<JavaMethodCall> criteria3 = persistenceUtil.createCriteria(JavaMethodCall.class);
+		final JPACriteria<JavaMethodCall> criteria3 = persistenceUtil.createCriteria(JavaMethodCall.class);
 		final List<JavaMethodCall> calls = persistenceUtil.load(criteria3);
 		for (final JavaMethodCall call : calls) {
 			this.methodCalls.put(call.getFullQualifiedName(), call);

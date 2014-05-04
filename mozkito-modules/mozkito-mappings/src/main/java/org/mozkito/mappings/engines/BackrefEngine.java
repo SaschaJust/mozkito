@@ -144,8 +144,8 @@ public class BackrefEngine extends Engine {
 			final org.mozkito.persistence.Entity to = relation.getTo();
 			
 			SANITY: {
-				assert from != null;
-				assert to != null;
+				assert from != null : "required from this point";
+				assert to != null : "required from this point";
 			}
 			
 			final String fullText = to.getText();

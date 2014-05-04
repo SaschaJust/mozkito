@@ -17,51 +17,86 @@ package org.mozkito.versions.model;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 
-import org.mozkito.persistence.Annotated;
+import org.mozkito.database.Artifact;
+import org.mozkito.database.Layout;
+import org.mozkito.database.Layout.TableType;
+import org.mozkito.database.PersistenceUtil;
+import org.mozkito.database.constraints.column.ForeignKey;
+import org.mozkito.database.constraints.column.NotNull;
+import org.mozkito.database.constraints.column.PrimaryKey;
+import org.mozkito.database.exceptions.DatabaseException;
+import org.mozkito.database.index.Index;
+import org.mozkito.database.model.Column;
+import org.mozkito.database.model.Table;
+import org.mozkito.database.types.Type;
+import org.mozkito.persistence.FieldKey;
+import org.mozkito.persistence.IterableFieldKey;
 
 /**
- * The Class RCSBranch.
+ * The Class Branch.
  * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
-@Entity
-@Table (name = "branch")
-public class Branch implements Annotated {
+public class Branch extends Artifact {
+	
+	/** The Constant TABLE. */
+	public static final Table          TABLE;
+	
+	/** The Constant MERGE_TABLE. */
+	public static final Table          MERGE_TABLE;
+	
+	/** The Constant LAYOUT. */
+	public static final Layout<Branch> LAYOUT           = new Layout<>();
+	
+	static {
+		try {
+			// @formatter:off
+
+		      TABLE = new Table("branches",
+		                        new Column("name", Type.getVarChar(255), 
+		                                   new PrimaryKey(), 
+		                                   new NotNull()),
+		                        new Column("head", Type.getVarChar(40), 
+		                                   new ForeignKey(ChangeSet.MAIN_TABLE, ChangeSet.MAIN_TABLE.column("id")))
+		      );
+		      
+		      TABLE.setIndexes(new Index(TABLE.column("name")));
+		      
+		      MERGE_TABLE = new Table("branch_merges", 
+		                              new Column("id", Type.getSerial(), 
+		                                         new PrimaryKey()),
+		                              new Column("branch_name", Type.getVarChar(255),
+		                                         new ForeignKey(TABLE, TABLE.column("name")), 
+		                                         new NotNull()),
+		                              new Column("merge_changeset", Type.getVarChar(40),
+		                                         new ForeignKey(ChangeSet.MAIN_TABLE, ChangeSet.MAIN_TABLE.column("id")))
+		      );
+		      
+		      MERGE_TABLE.setIndexes(new Index(MERGE_TABLE.column("id")), 
+		                             new Index(MERGE_TABLE.column("branch_name")), 
+		                             new Index(MERGE_TABLE.column("merge_changeset"))
+		      );
+		      
+		      LAYOUT.addTable(TABLE, TableType.MAIN);
+		      LAYOUT.addTable(MERGE_TABLE, TableType.JOIN);
+		      LAYOUT.makeImmutable();
+		      
+		// @formatter:on
+		} catch (final DatabaseException e) {
+			throw new UnrecoverableError(e);
+		}
+	}
 	
 	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID   = 5419737140470855522L;
+	private static final long          serialVersionUID = 5419737140470855522L;
 	
-	/** The name. */
-	private String            name;
-	
-	/** The head. */
-	private ChangeSet         head               = null;
-	
-	/** The merged in. */
-	private Set<String>       mergedIn           = new HashSet<String>();
-	
-	private VersionArchive    versionArchive;
-	
-	/** The Constant MASTER_BRANCH_NAME. */
-	public static String      MASTER_BRANCH_NAME = "master";             //$NON-NLS-1$
-	                                                                      
 	/**
 	 * Sets the master branch name.
 	 * 
@@ -72,6 +107,21 @@ public class Branch implements Annotated {
 		Branch.MASTER_BRANCH_NAME = name;
 	}
 	
+	/** The name. */
+	private String         name;
+	
+	/** The head. */
+	private ChangeSet      head               = null;
+	
+	/** The merged in. */
+	private Set<String>    mergedIn           = new HashSet<String>();
+	
+	/** The version archive. */
+	private VersionArchive versionArchive;
+	
+	/** The Constant MASTER_BRANCH_NAME. */
+	public static String   MASTER_BRANCH_NAME = "master";             //$NON-NLS-1$
+	                                                                   
 	/**
 	 * Instantiates a new rCS branch.
 	 */
@@ -98,7 +148,7 @@ public class Branch implements Annotated {
 	 * @param mergedIn
 	 *            the merged in
 	 */
-	@Transient
+	
 	@NoneNull
 	public void addMergedIn(final String mergedIn) {
 		getMergedIn().add(mergedIn);
@@ -111,7 +161,7 @@ public class Branch implements Annotated {
 	 *            the transaction ids to check for
 	 * @return A sorted set of transactions committed into this branch
 	 */
-	@Transient
+	
 	public TreeSet<ChangeSet> containsAnyTransaction(final Collection<String> tIds) {
 		final TreeSet<ChangeSet> result = new TreeSet<ChangeSet>();
 		for (final String id : tIds) {
@@ -131,7 +181,7 @@ public class Branch implements Annotated {
 	 *            the t id
 	 * @return the transaction if found. Otherwise <code>null</code>
 	 */
-	@Transient
+	
 	public ChangeSet containsTransaction(final String tId) {
 		ChangeSet current = getHead();
 		while (current != null) {
@@ -145,6 +195,11 @@ public class Branch implements Annotated {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -170,12 +225,219 @@ public class Branch implements Annotated {
 	}
 	
 	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.database.Artifact#get(org.mozkito.database.PersistenceUtil, org.mozkito.persistence.FieldKey)
+	 */
+	@Override
+	public <T> T get(final PersistenceUtil util,
+	                 final FieldKey key) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		throw new RuntimeException("Method 'get' has not yet been implemented."); //$NON-NLS-1$    
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.database.Artifact#get(org.mozkito.database.PersistenceUtil,
+	 *      org.mozkito.persistence.IterableFieldKey)
+	 */
+	@Override
+	public <T> Collection<T> get(final PersistenceUtil util,
+	                             final IterableFieldKey key) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			// TODO Auto-generated method stub
+			// return null;
+			throw new RuntimeException("Method 'get' has not yet been implemented."); //$NON-NLS-1$
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.database.Artifact#get(org.mozkito.database.PersistenceUtil,
+	 *      org.mozkito.persistence.IterableFieldKey, int)
+	 */
+	@Override
+	public <T> T get(final PersistenceUtil util,
+	                 final IterableFieldKey key,
+	                 final int index) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			// TODO Auto-generated method stub
+			// return null;
+			throw new RuntimeException("Method 'get' has not yet been implemented."); //$NON-NLS-1$
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.database.Artifact#getAll(org.mozkito.database.PersistenceUtil,
+	 *      org.mozkito.persistence.FieldKey[])
+	 */
+	@Override
+	public Map<FieldKey, Object> getAll(final PersistenceUtil util,
+	                                    final FieldKey... keys) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			// TODO Auto-generated method stub
+			// return null;
+			throw new RuntimeException("Method 'getAll' has not yet been implemented."); //$NON-NLS-1$
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.database.Artifact#getAll(org.mozkito.database.PersistenceUtil,
+	 *      org.mozkito.persistence.IterableFieldKey[])
+	 */
+	@Override
+	public Map<IterableFieldKey, Object> getAll(final PersistenceUtil util,
+	                                            final IterableFieldKey... keys) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			// TODO Auto-generated method stub
+			// return null;
+			throw new RuntimeException("Method 'getAll' has not yet been implemented."); //$NON-NLS-1$
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.database.Artifact#getAny(org.mozkito.database.PersistenceUtil,
+	 *      org.mozkito.persistence.FieldKey[])
+	 */
+	@Override
+	public <T> T getAny(final PersistenceUtil util,
+	                    final FieldKey... keys) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			// TODO Auto-generated method stub
+			// return null;
+			throw new RuntimeException("Method 'getAny' has not yet been implemented."); //$NON-NLS-1$
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.database.Artifact#getAny(org.mozkito.database.PersistenceUtil,
+	 *      org.mozkito.persistence.IterableFieldKey[])
+	 */
+	@Override
+	public <T> T getAny(final PersistenceUtil util,
+	                    final IterableFieldKey... keys) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			// TODO Auto-generated method stub
+			// return null;
+			throw new RuntimeException("Method 'getAny' has not yet been implemented."); //$NON-NLS-1$
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.database.Artifact#getAsOneString(org.mozkito.database.PersistenceUtil,
+	 *      org.mozkito.persistence.FieldKey[])
+	 */
+	@Override
+	public String getAsOneString(final PersistenceUtil util,
+	                             final FieldKey... fKeys) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			// TODO Auto-generated method stub
+			// return null;
+			throw new RuntimeException("Method 'getAsOneString' has not yet been implemented."); //$NON-NLS-1$
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.database.Artifact#getAsOneString(org.mozkito.database.PersistenceUtil,
+	 *      org.mozkito.persistence.IterableFieldKey)
+	 */
+	@Override
+	public String getAsOneString(final PersistenceUtil util,
+	                             final IterableFieldKey iKeys) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			// TODO Auto-generated method stub
+			// return null;
+			throw new RuntimeException("Method 'getAsOneString' has not yet been implemented."); //$NON-NLS-1$
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
 	 * Gets the handle.
 	 * 
 	 * @return the handle
 	 */
 	@Override
-	@Transient
 	public String getClassName() {
 		return Branch.class.getSimpleName();
 	}
@@ -185,9 +447,40 @@ public class Branch implements Annotated {
 	 * 
 	 * @return the end
 	 */
-	@OneToOne (fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
 	public ChangeSet getHead() {
 		return this.head;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.database.Artifact#getId()
+	 */
+	@Override
+	public String getId() {
+		return this.name;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.database.Artifact#getIDString()
+	 */
+	@Override
+	public String getIDString() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			// TODO Auto-generated method stub
+			// return null;
+			throw new RuntimeException("Method 'getIDString' has not yet been implemented."); //$NON-NLS-1$
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/**
@@ -195,7 +488,6 @@ public class Branch implements Annotated {
 	 * 
 	 * @return the name of the branch this branch was merged in (if any)
 	 */
-	@ElementCollection
 	public Set<String> getMergedIn() {
 		return this.mergedIn;
 	}
@@ -205,10 +497,54 @@ public class Branch implements Annotated {
 	 * 
 	 * @return the name
 	 */
-	@Id
-	@Basic
 	public String getName() {
 		return this.name;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.database.Artifact#getSize(org.mozkito.database.PersistenceUtil,
+	 *      org.mozkito.persistence.IterableFieldKey)
+	 */
+	@Override
+	public int getSize(final PersistenceUtil util,
+	                   final IterableFieldKey key) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			// TODO Auto-generated method stub
+			// return 0;
+			throw new RuntimeException("Method 'getSize' has not yet been implemented."); //$NON-NLS-1$
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.database.Artifact#getText(org.mozkito.database.PersistenceUtil)
+	 */
+	@Override
+	public String getText(final PersistenceUtil util) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			// TODO Auto-generated method stub
+			// return null;
+			throw new RuntimeException("Method 'getText' has not yet been implemented."); //$NON-NLS-1$
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/**
@@ -216,14 +552,17 @@ public class Branch implements Annotated {
 	 * 
 	 * @return the version archive
 	 */
-	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
-	@Column (nullable = false)
 	public VersionArchive getVersionArchive() {
 		return this.versionArchive;
 	}
 	
 	/*
 	 * (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -241,7 +580,7 @@ public class Branch implements Annotated {
 	 * 
 	 * @return true, if is master branch
 	 */
-	@Transient
+	
 	public boolean isMasterBranch() {
 		return getName().equals(Branch.MASTER_BRANCH_NAME);
 	}
@@ -251,7 +590,7 @@ public class Branch implements Annotated {
 	 * 
 	 * @return true, if is open
 	 */
-	@Transient
+	
 	public boolean isOpen() {
 		return getHead() == null;
 	}
@@ -296,8 +635,57 @@ public class Branch implements Annotated {
 		this.versionArchive = versionArchive;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.database.Artifact#supportedFields()
+	 */
+	@Override
+	public Set<FieldKey> supportedFields() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			// TODO Auto-generated method stub
+			// return null;
+			throw new RuntimeException("Method 'supportedFields' has not yet been implemented."); //$NON-NLS-1$
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.database.Artifact#supportedIteratableFields()
+	 */
+	@Override
+	public Set<IterableFieldKey> supportedIteratableFields() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			// TODO Auto-generated method stub
+			// return null;
+			throw new RuntimeException("Method 'supportedIteratableFields' has not yet been implemented."); //$NON-NLS-1$
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
 	/*
 	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

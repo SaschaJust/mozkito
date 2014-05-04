@@ -25,7 +25,8 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.joda.time.DateTime;
 
-import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.database.PersistenceUtil;
+import org.mozkito.database.exceptions.DatabaseException;
 import org.mozkito.persons.model.Person;
 
 /**
@@ -319,6 +320,27 @@ public class PersonFactory {
 	}
 	
 	/**
+	 * @param person
+	 */
+	public void load(final Person person) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		for (final String username : person.getUsernames()) {
+			this.usernameToUser.put(username, person);
+		}
+		
+		for (final String email : person.getEmailAddresses()) {
+			this.emailToUser.put(email, person);
+		}
+		
+		for (final String fullname : person.getFullnames()) {
+			this.fullnameToUser.put(fullname, person);
+		}
+	}
+	
+	/**
 	 * Prune.
 	 */
 	private void prune() {
@@ -354,6 +376,8 @@ public class PersonFactory {
 			}
 			
 			this.persistenceUtil.commitTransaction();
+		} catch (final DatabaseException e) {
+			throw new RuntimeException(e);
 		} finally {
 			POSTCONDITIONS: {
 				// none

@@ -15,7 +15,7 @@ package org.mozkito.graphs;
 
 import com.tinkerpop.blueprints.KeyIndexableGraph;
 
-import org.mozkito.persistence.DatabaseEnvironment;
+import org.mozkito.database.DatabaseEnvironment;
 
 /**
  * The Class RemoteDBGraphManager.

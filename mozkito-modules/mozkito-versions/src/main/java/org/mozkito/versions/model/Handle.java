@@ -15,25 +15,27 @@
  */
 package org.mozkito.versions.model;
 
-import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 
-import org.mozkito.persistence.Annotated;
+import org.mozkito.database.Artifact;
+import org.mozkito.database.Layout;
+import org.mozkito.database.Layout.TableType;
+import org.mozkito.database.PersistenceUtil;
+import org.mozkito.database.constraints.column.ForeignKey;
+import org.mozkito.database.constraints.column.NotNull;
+import org.mozkito.database.constraints.column.PrimaryKey;
+import org.mozkito.database.exceptions.DatabaseException;
+import org.mozkito.database.index.Index;
+import org.mozkito.database.model.Column;
+import org.mozkito.database.model.Table;
+import org.mozkito.database.types.Type;
+import org.mozkito.persistence.FieldKey;
+import org.mozkito.persistence.IterableFieldKey;
 import org.mozkito.utilities.commons.JavaUtils;
 import org.mozkito.versions.elements.RevDependencyGraph;
 import org.mozkito.versions.exceptions.NoSuchHandleException;
@@ -43,21 +45,67 @@ import org.mozkito.versions.exceptions.NoSuchHandleException;
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-@Entity
-@Table (name = "handle")
-public class Handle implements Annotated, Serializable {
+public class Handle extends Artifact {
+	
+	/** The Constant LAYOUT. */
+	public static final Layout<Handle> LAYOUT           = new Layout<>();
+	
+	/** The Constant TABLE. */
+	public static final Table          TABLE;
+	
+	/** The Constant PATHINREVISION_TABLE. */
+	public static final Table          HANDLE_PATHS_TABLE;
+	
+	static {
+		try {
+			
+			// @formatter:off
+			
+			TABLE = new Table("handles", 
+			                  new Column("id", Type.getSerial(), 
+			                             new PrimaryKey()),
+			                  new Column("version_archive_id", Type.getLong(),
+			                             new ForeignKey(VersionArchive.MAIN_TABLE,
+			                                            VersionArchive.MAIN_TABLE.column("id")), 
+                                         new NotNull()));
+			
+			HANDLE_PATHS_TABLE = new Table("handle_paths",
+			                               new Column("handle_id", Type.getLong(), 
+			                                          new ForeignKey(TABLE, TABLE.column("id")), 
+			                                          new NotNull()),
+                                           new Column("revision_id", Type.getLong(),
+//			                                          new ForeignKey(Revision.TABLE,
+//			                                                         Revision.TABLE.column("id")), 
+			                                          new NotNull()),
+			                               new Column("path", Type.getVarChar(255), 
+			                                          new NotNull()));
+			HANDLE_PATHS_TABLE.setConstraints(new org.mozkito.database.constraints.table.PrimaryKey(HANDLE_PATHS_TABLE.column("handle_id"),
+			                                                                                        HANDLE_PATHS_TABLE.column("revision_id")));
+			HANDLE_PATHS_TABLE.setIndexes(new Index(HANDLE_PATHS_TABLE.column("handle_id")),
+			                              new Index(HANDLE_PATHS_TABLE.column("revision_id")),
+			                              new Index(HANDLE_PATHS_TABLE.column("handle_id"),
+			                                        HANDLE_PATHS_TABLE.column("revision_id")));
+			
+			// @formatter:on
+			
+			LAYOUT.addTable(TABLE, TableType.MAIN);
+			LAYOUT.addTable(HANDLE_PATHS_TABLE, TableType.JOIN);
+		} catch (final DatabaseException e) {
+			throw new UnrecoverableError(e);
+		}
+	}
 	
 	/** The archive. */
-	private VersionArchive        versionArchive   = null;
+	private VersionArchive             versionArchive   = null;
 	
 	/** The Constant serialVersionUID. */
-	private static final long     serialVersionUID = 7232712367403624199L;
+	private static final long          serialVersionUID = 7232712367403624199L;
 	
 	/** The generated id. */
-	private long                  generatedId;
+	private long                       id;
 	
 	/** The changed names. */
-	private Map<Revision, String> changedNames     = new HashMap<Revision, String>();
+	private Map<Revision, String>      changedNames     = new HashMap<Revision, String>();
 	
 	/**
 	 * used by PersistenceUtil to create a {@link Handle} instance.
@@ -84,7 +132,7 @@ public class Handle implements Annotated, Serializable {
 	 * @param pathName
 	 *            the new path name of this handle as changed in the revision
 	 */
-	@Transient
+	
 	public void assignRevision(final Revision revision,
 	                           final String pathName) {
 		getChangedNames().put(revision, pathName);
@@ -97,7 +145,7 @@ public class Handle implements Annotated, Serializable {
 	 *            the transaction
 	 * @return true, if successful
 	 */
-	@Transient
+	
 	public boolean changedHandleName(final ChangeSet transaction) {
 		for (final Revision revision : transaction.getRevisions()) {
 			if (getChangedNames().containsKey(revision)) {
@@ -123,10 +171,226 @@ public class Handle implements Annotated, Serializable {
 			return false;
 		}
 		final Handle other = (Handle) obj;
-		if (getGeneratedId() != other.getGeneratedId()) {
+		if (getId() != other.getId()) {
 			return false;
 		}
 		return true;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.database.Artifact#get(org.mozkito.database.PersistenceUtil, org.mozkito.persistence.FieldKey)
+	 */
+	@Override
+	public <T> T get(final PersistenceUtil util,
+	                 final FieldKey key) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			// TODO Auto-generated method stub
+			// return null;
+			throw new RuntimeException("Method 'get' has not yet been implemented."); //$NON-NLS-1$
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.database.Artifact#get(org.mozkito.database.PersistenceUtil,
+	 *      org.mozkito.persistence.IterableFieldKey)
+	 */
+	@Override
+	public <T> Collection<T> get(final PersistenceUtil util,
+	                             final IterableFieldKey key) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			// TODO Auto-generated method stub
+			// return null;
+			throw new RuntimeException("Method 'get' has not yet been implemented."); //$NON-NLS-1$
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.database.Artifact#get(org.mozkito.database.PersistenceUtil,
+	 *      org.mozkito.persistence.IterableFieldKey, int)
+	 */
+	@Override
+	public <T> T get(final PersistenceUtil util,
+	                 final IterableFieldKey key,
+	                 final int index) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			// TODO Auto-generated method stub
+			// return null;
+			throw new RuntimeException("Method 'get' has not yet been implemented."); //$NON-NLS-1$
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.database.Artifact#getAll(org.mozkito.database.PersistenceUtil,
+	 *      org.mozkito.persistence.FieldKey[])
+	 */
+	@Override
+	public Map<FieldKey, Object> getAll(final PersistenceUtil util,
+	                                    final FieldKey... keys) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			// TODO Auto-generated method stub
+			// return null;
+			throw new RuntimeException("Method 'getAll' has not yet been implemented."); //$NON-NLS-1$
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.database.Artifact#getAll(org.mozkito.database.PersistenceUtil,
+	 *      org.mozkito.persistence.IterableFieldKey[])
+	 */
+	@Override
+	public Map<IterableFieldKey, Object> getAll(final PersistenceUtil util,
+	                                            final IterableFieldKey... keys) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			// TODO Auto-generated method stub
+			// return null;
+			throw new RuntimeException("Method 'getAll' has not yet been implemented."); //$NON-NLS-1$
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.database.Artifact#getAny(org.mozkito.database.PersistenceUtil,
+	 *      org.mozkito.persistence.FieldKey[])
+	 */
+	@Override
+	public <T> T getAny(final PersistenceUtil util,
+	                    final FieldKey... keys) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			// TODO Auto-generated method stub
+			// return null;
+			throw new RuntimeException("Method 'getAny' has not yet been implemented."); //$NON-NLS-1$
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.database.Artifact#getAny(org.mozkito.database.PersistenceUtil,
+	 *      org.mozkito.persistence.IterableFieldKey[])
+	 */
+	@Override
+	public <T> T getAny(final PersistenceUtil util,
+	                    final IterableFieldKey... keys) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			// TODO Auto-generated method stub
+			// return null;
+			throw new RuntimeException("Method 'getAny' has not yet been implemented."); //$NON-NLS-1$
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.database.Artifact#getAsOneString(org.mozkito.database.PersistenceUtil,
+	 *      org.mozkito.persistence.FieldKey[])
+	 */
+	@Override
+	public String getAsOneString(final PersistenceUtil util,
+	                             final FieldKey... fKeys) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			// TODO Auto-generated method stub
+			// return null;
+			throw new RuntimeException("Method 'getAsOneString' has not yet been implemented."); //$NON-NLS-1$
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.database.Artifact#getAsOneString(org.mozkito.database.PersistenceUtil,
+	 *      org.mozkito.persistence.IterableFieldKey)
+	 */
+	@Override
+	public String getAsOneString(final PersistenceUtil util,
+	                             final IterableFieldKey iKeys) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			// TODO Auto-generated method stub
+			// return null;
+			throw new RuntimeException("Method 'getAsOneString' has not yet been implemented."); //$NON-NLS-1$
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/**
@@ -134,8 +398,6 @@ public class Handle implements Annotated, Serializable {
 	 * 
 	 * @return the changedNames
 	 */
-	@ElementCollection
-	@JoinTable (name = "filename_changes", joinColumns = { @JoinColumn (name = "fileid", nullable = false) })
 	public Map<Revision, String> getChangedNames() {
 		return this.changedNames;
 	}
@@ -146,7 +408,6 @@ public class Handle implements Annotated, Serializable {
 	 * @return the simple class name
 	 */
 	@Override
-	@Transient
 	public String getClassName() {
 		return Handle.class.getSimpleName();
 	}
@@ -156,30 +417,52 @@ public class Handle implements Annotated, Serializable {
 	 * 
 	 * @return the generatedId
 	 */
-	@Id
-	@Column (name = "id")
-	@GeneratedValue (strategy = GenerationType.SEQUENCE)
-	public long getGeneratedId() {
-		return this.generatedId;
+	@Override
+	public Long getId() {
+		return this.id;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.database.Artifact#getIDString()
+	 */
+	@Override
+	public String getIDString() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			// TODO Auto-generated method stub
+			// return null;
+			throw new RuntimeException("Method 'getIDString' has not yet been implemented."); //$NON-NLS-1$
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/**
 	 * Gets the latest path of the handle in the master branch head.
 	 * 
+	 * @param util
+	 *            the util
 	 * @return the latest path
 	 * @throws NoSuchHandleException
 	 *             if the handle could not be found in the master branch
 	 */
-	@Transient
-	public String getLatestPath() throws NoSuchHandleException {
-		final Branch masterBranch = getVersionArchive().getMasterBranch();
+	
+	public String getLatestPath(final PersistenceUtil util) throws NoSuchHandleException {
+		final Branch masterBranch = getVersionArchive().getMasterBranch(util);
 		final ChangeSet masterBranchHead = masterBranch.getHead();
 		try {
-			final String path = getPath(masterBranchHead);
+			final String path = getPath(masterBranchHead, util);
 			return path;
 		} catch (final NoSuchHandleException e) {
 			throw NoSuchHandleException.format(e, "Could not determine path for File (id=%s) in master branch.",
-			                                   String.valueOf(getGeneratedId()));
+			                                   String.valueOf(getId()));
 		}
 	}
 	
@@ -188,14 +471,17 @@ public class Handle implements Annotated, Serializable {
 	 * 
 	 * @param transaction
 	 *            the transaction to retrieve the file's path for
+	 * @param util
+	 *            the util
 	 * @return the path of the Handle as set in transaction
 	 * @throws NoSuchHandleException
 	 *             if the handle could not be found in one of the branches the given transaction is part of
 	 */
-	@Transient
-	public String getPath(final ChangeSet transaction) throws NoSuchHandleException {
+	
+	public String getPath(final ChangeSet transaction,
+	                      final PersistenceUtil util) throws NoSuchHandleException {
 		
-		final RevDependencyGraph revDependencyGraph = getVersionArchive().getRevDependencyGraph();
+		final RevDependencyGraph revDependencyGraph = getVersionArchive().getRevDependencyGraph(util);
 		
 		for (final Revision revision : transaction.getRevisions()) {
 			if (getChangedNames().containsKey(revision)) {
@@ -204,7 +490,7 @@ public class Handle implements Annotated, Serializable {
 		}
 		
 		for (final String parentId : revDependencyGraph.getPreviousTransactions(transaction.getId())) {
-			final ChangeSet parentTransaction = getVersionArchive().getChangeSetById(parentId);
+			final ChangeSet parentTransaction = getVersionArchive().getChangeSetById(util, parentId);
 			for (final Revision revision : parentTransaction.getRevisions()) {
 				if (getChangedNames().containsKey(revision)) {
 					return getChangedNames().get(revision);
@@ -213,7 +499,7 @@ public class Handle implements Annotated, Serializable {
 		}
 		
 		throw NoSuchHandleException.format("Could not determine path for File (id=%s) for transaction %s. Returning latestPath.",
-		                                   String.valueOf(getGeneratedId()), transaction.getId());
+		                                   String.valueOf(getId()), transaction.getId());
 	}
 	
 	/**
@@ -225,13 +511,59 @@ public class Handle implements Annotated, Serializable {
 	 * @throws NoSuchHandleException
 	 *             if the file name of the handle was not changed by the revision
 	 */
-	@Transient
+	
 	public String getPath(final Revision revision) throws NoSuchHandleException {
 		if (getChangedNames().containsKey(revision)) {
 			return getChangedNames().get(revision);
 		}
 		throw NoSuchHandleException.format("Could not determine path for File (id=%s) for revision %s. Returning latestPath.",
-		                                   String.valueOf(getGeneratedId()), revision.toString());
+		                                   String.valueOf(getId()), revision.toString());
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.database.Artifact#getSize(org.mozkito.database.PersistenceUtil,
+	 *      org.mozkito.persistence.IterableFieldKey)
+	 */
+	@Override
+	public int getSize(final PersistenceUtil util,
+	                   final IterableFieldKey key) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			// TODO Auto-generated method stub
+			// return 0;
+			throw new RuntimeException("Method 'getSize' has not yet been implemented."); //$NON-NLS-1$
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.database.Artifact#getText(org.mozkito.database.PersistenceUtil)
+	 */
+	@Override
+	public String getText(final PersistenceUtil util) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			// TODO Auto-generated method stub
+			// return null;
+			throw new RuntimeException("Method 'getText' has not yet been implemented."); //$NON-NLS-1$
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
 	}
 	
 	/**
@@ -239,8 +571,6 @@ public class Handle implements Annotated, Serializable {
 	 * 
 	 * @return the archive
 	 */
-	@ManyToOne (cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
-	@Column (nullable = false)
 	public VersionArchive getVersionArchive() {
 		return this.versionArchive;
 	}
@@ -253,7 +583,7 @@ public class Handle implements Annotated, Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = (prime * result) + (int) (getGeneratedId() ^ (getGeneratedId() >>> 32));
+		result = (prime * result) + (int) (getId() ^ (getId() >>> 32));
 		return result;
 	}
 	
@@ -262,9 +592,9 @@ public class Handle implements Annotated, Serializable {
 	 * 
 	 * @return true, if successful saved in DB, false otherwise
 	 */
-	@Transient
+	
 	public boolean saved() {
-		return getGeneratedId() != 0;
+		return getId() != 0;
 	}
 	
 	/**
@@ -284,7 +614,7 @@ public class Handle implements Annotated, Serializable {
 	 *            the generatedId to set
 	 */
 	protected void setGeneratedId(final long generatedId) {
-		this.generatedId = generatedId;
+		this.id = generatedId;
 	}
 	
 	/**
@@ -297,14 +627,58 @@ public class Handle implements Annotated, Serializable {
 		this.versionArchive = archive;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.database.Artifact#supportedFields()
+	 */
+	@Override
+	public Set<FieldKey> supportedFields() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			// TODO Auto-generated method stub
+			// return null;
+			throw new RuntimeException("Method 'supportedFields' has not yet been implemented."); //$NON-NLS-1$
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.database.Artifact#supportedIteratableFields()
+	 */
+	@Override
+	public Set<IterableFieldKey> supportedIteratableFields() {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		try {
+			// TODO Auto-generated method stub
+			// return null;
+			throw new RuntimeException("Method 'supportedIteratableFields' has not yet been implemented."); //$NON-NLS-1$
+		} finally {
+			POSTCONDITIONS: {
+				// none
+			}
+		}
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return "File [id=" + getGeneratedId() + ", changedNames="
-		        + JavaUtils.collectionToString(getChangedNames().values()) + "]";
+		return "File [id=" + getId() + ", changedNames=" + JavaUtils.collectionToString(getChangedNames().values())
+		        + "]";
 	}
 	
 }
