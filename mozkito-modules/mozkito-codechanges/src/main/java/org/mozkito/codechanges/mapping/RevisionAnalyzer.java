@@ -36,7 +36,7 @@ public class RevisionAnalyzer {
 	private final Map<String, List<String>>    fileToClasses         = new HashMap<>();
 	
 	/** The class name to definition. */
-	private final Map<String, ClassDefinition> classNameToDefinition = new HashMap<String, ClassDefinition>();
+	private final Map<String, ClassDefinition> classNameToDefinition = new HashMap<>();
 	
 	/** The path to revision. */
 	private final Map<String, Revision>        pathToRevision        = new HashMap<>();
