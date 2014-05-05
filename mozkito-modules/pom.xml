@@ -20,6 +20,7 @@
 		<module>mozkito-genealogies</module>
 		<module>mozkito-infozilla</module>
 		<module>mozkito-issues</module>
+		<module>mozkito-issues-adaptive</module>
 		<module>mozkito-mappings</module>
 		<module>mozkito-persistence</module>
 		<module>mozkito-persons</module>
