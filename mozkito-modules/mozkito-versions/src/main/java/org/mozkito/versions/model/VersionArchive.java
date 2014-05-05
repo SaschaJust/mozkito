@@ -13,8 +13,10 @@
 package org.mozkito.versions.model;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -22,11 +24,9 @@ import java.util.Set;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.kanuni.annotations.string.Length;
-import net.ownhero.dev.kisa.Logger;
 
 import org.joda.time.DateTime;
 
-import org.mozkito.database.Criteria;
 import org.mozkito.database.Entity;
 import org.mozkito.database.Layout;
 import org.mozkito.database.Layout.TableType;
@@ -83,6 +83,12 @@ public class VersionArchive implements Entity {
 	 * @return the version archive
 	 */
 	public static VersionArchive loadVersionArchive(final PersistenceUtil persistenceUtil) {
+		PRECONDITIONS: {
+			if (persistenceUtil == null) {
+				throw new NullPointerException();
+			}
+		}
+		
 		List<VersionArchive> versionArchives;
 		try {
 			versionArchives = persistenceUtil.load(persistenceUtil.createCriteria(VersionArchive.class));
@@ -101,43 +107,31 @@ public class VersionArchive implements Entity {
 	}
 	
 	/** The rev dep graph. */
-	private RevDependencyGraph     revDepGraph = null;
+	private RevDependencyGraph  revDepGraph;
 	
 	/** The generated id. */
-	private Long                   id;
-	
-	/** The change sets. */
-	private Map<String, ChangeSet> changeSets  = new HashMap<String, ChangeSet>();
+	private Long                id;
 	
 	/** The mozkito version. */
-	private String                 mozkitoVersion;
+	private String              mozkitoVersion;
 	
 	/** The mozkito hash. */
-	private String                 mozkitoHash;
+	private String              mozkitoHash;
 	
 	/** The used settings. */
-	private String                 usedSettings;
+	private String              usedSettings;
 	
 	/** The mining date. */
-	private DateTime               miningDate;
+	private DateTime            miningDate;
 	
 	/** The branches. */
-	private Map<String, Branch>    branches    = new HashMap<String, Branch>();
+	private Map<String, Branch> branches     = new HashMap<String, Branch>();
 	
 	/** The host info. */
-	private String                 hostInfo;
+	private String              hostInfo;
 	
 	/** The change set ids. */
-	private Set<String>            changeSetIds;
-	
-	/**
-	 * Instantiates a new version archive.
-	 * 
-	 * @deprecated exists for OpenJPA. Please use {@link #VersionArchive(RevDependencyGraph)} instead.
-	 */
-	@Deprecated
-	public VersionArchive() {
-	}
+	private final Set<String>   changeSetIds = new HashSet<>();
 	
 	/**
 	 * Instantiates a new version archive.
@@ -146,13 +140,29 @@ public class VersionArchive implements Entity {
 	 *            the rev dependency graph
 	 */
 	public VersionArchive(final RevDependencyGraph revDependencyGraph) {
+		PRECONDITIONS: {
+			if (revDependencyGraph == null) {
+				throw new NullPointerException();
+			}
+		}
+		
 		this.revDepGraph = revDependencyGraph;
-		setChangeSets(new HashMap<String, ChangeSet>());
-		setBranches(new HashMap<String, Branch>());
+		this.branches = null;
+		
+		POSTCONDITIONS: {
+			assert this.changeSetIds != null;
+			assert this.changeSetIds.isEmpty();
+			assert this.branches == null;
+			assert this.revDepGraph != null;
+		}
 	}
 	
 	/**
-	 * Adds the change set.
+	 * Adds ID of the {@link ChangeSet} to the {@link VersionArchive}. Be careful, for performance (and mainly memory)
+	 * reasons, we do not keep references to the {@link ChangeSet}s in this object. You need to persist
+	 * {@link ChangeSet} entities manually.
+	 * 
+	 * Additionally, this saves any unnecessary database interaction.
 	 * 
 	 * @param changeSet
 	 *            the change set
@@ -160,11 +170,12 @@ public class VersionArchive implements Entity {
 	
 	protected void addChangeSet(final ChangeSet changeSet) {
 		SANITY: {
-			assert this.changeSets != null;
+			if (changeSet == null) {
+				throw new NullPointerException();
+			}
 		}
 		
 		this.changeSetIds.add(changeSet.getId());
-		this.changeSets.put(changeSet.getId(), changeSet);
 	}
 	
 	/**
@@ -186,12 +197,15 @@ public class VersionArchive implements Entity {
 		if (cs1.getId().equals(cs2.getId())) {
 			return 0;
 		}
+		
 		if (getRevDependencyGraph(util).existsPath(cs1.getId(), cs2.getId())) {
 			return -1;
 		}
+		
 		if (getRevDependencyGraph(util).existsPath(cs2.getId(), cs1.getId())) {
 			return 1;
 		}
+		
 		throw NotComparableException.format("The change sets %s and %s are not comparable. It seems both change sets were applied to different non-merging branches.",
 		                                    cs1.toString(), cs2.toString());
 	}
@@ -199,60 +213,39 @@ public class VersionArchive implements Entity {
 	/**
 	 * Gets the branch.
 	 * 
-	 * @param util
-	 *            the util
 	 * @param name
 	 *            the name
 	 * @return the branch
 	 */
-	
-	public synchronized Branch getBranch(final PersistenceUtil util,
-	                                     final String name) {
+	public synchronized Branch getBranch(final String name) {
 		PRECONDITIONS: {
-			if (util == null) {
-				throw new NullPointerException();
-			}
 			if (name == null) {
 				throw new NullPointerException();
 			}
 		}
 		
-		final Map<String, Branch> branches2 = getBranches(util);
-		if (!branches2.containsKey(name)) {
-			
-			final Branch newBranch = new Branch(this, name);
-			if (Logger.logDebug()) {
-				Logger.debug("Creating new Branch " + newBranch.toString());
-			}
-			branches2.put(newBranch.getName(), newBranch);
+		Branch branch = null;
+		if (this.branches.containsKey(name)) {
+			branch = this.branches.get(name);
+		} else {
+			branch = new Branch(this, name);
+			this.branches.put(branch.getName(), branch);
 		}
-		return branches2.get(name);
+		
+		SANITY: {
+			assert branch != null;
+		}
+		return branch;
 	}
 	
 	/**
 	 * Gets all branches.
 	 * 
-	 * @param util
-	 *            the util
 	 * @return the branches
 	 */
-	public Map<String, Branch> getBranches(final PersistenceUtil util) {
-		if ((this.branches == null)) {
-			this.branches = new HashMap<>();
-			final Criteria<Branch> criteria = util.createCriteria(Branch.class);
-			criteria.eq("version_archive", this.id);
-			final List<Branch> load = util.load(criteria);
-			final Set<String> branchSet = getBranches();
-			
-			for (final String branchId : branchSet) {
-				final Branch branch = util.loadById(Branch.class, branchId);
-				this.branches.put(branchId, branch);
-			}
-		}
-		
+	public Map<String, Branch> getBranches() {
 		SANITY: {
 			assert this.branches != null;
-			assert this.branches.size() == this.branchIds.size();
 		}
 		
 		return this.branches;
@@ -270,7 +263,7 @@ public class VersionArchive implements Entity {
 	
 	public ChangeSet getChangeSetById(final PersistenceUtil util,
 	                                  final String id) {
-		return getChangeSets(util).get(id);
+		return util.loadById(ChangeSet.class, id);
 	}
 	
 	/**
@@ -290,26 +283,40 @@ public class VersionArchive implements Entity {
 	 * @return the change sets
 	 */
 	public Map<String, ChangeSet> getChangeSets(final PersistenceUtil util) {
-		if ((this.changeSets == null) || (getChangeSets().size() != this.changeSets.size())) {
-			this.changeSets = new HashMap<>();
-			util.loadByIds(ChangeSet.class, getChangeSets());
+		PRECONDITIONS: {
+			if (util == null) {
+				throw new NullPointerException();
+			}
+		}
+		
+		final List<ChangeSet> list = util.load(ChangeSet.class);
+		
+		SANITY: {
+			assert list != null;
+		}
+		
+		final Map<String, ChangeSet> map = new HashMap<>();
+		
+		for (final ChangeSet changeSet : list) {
+			map.put(changeSet.getId(), changeSet);
 		}
 		
 		SANITY: {
-			assert this.changeSets != null;
-			assert this.changeSets.size() == this.changeSetIds.size();
+			assert map != null;
+			assert map.size() == list.size();
 		}
-		return this.changeSets;
+		
+		return map;
 	}
 	
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.persistence.Annotated#getClassName()
+	 * @see org.mozkito.database.Entity#getClassName()
 	 */
 	@Override
 	public String getClassName() {
-		return VersionArchive.class.getSimpleName();
+		return getClass().getSimpleName();
 	}
 	
 	/**
@@ -334,13 +341,11 @@ public class VersionArchive implements Entity {
 	/**
 	 * Gets the master branch.
 	 * 
-	 * @param util
-	 *            the util
 	 * @return the master branch
 	 */
 	
-	public Branch getMasterBranch(final PersistenceUtil util) {
-		return getBranch(util, Branch.MASTER_BRANCH_NAME);
+	public Branch getMasterBranch() {
+		return getBranch(Branch.MASTER_BRANCH_NAME);
 	}
 	
 	/**
@@ -352,17 +357,6 @@ public class VersionArchive implements Entity {
 	
 	public DateTime getMiningDate() {
 		return this.miningDate;
-	}
-	
-	/**
-	 * Gets the last update java timestamp.
-	 * 
-	 * @return the last update java timestamp
-	 */
-	private Date getMiningJavaDate() {
-		return getMiningDate() != null
-		                              ? getMiningDate().toDate()
-		                              : null;
 	}
 	
 	/**
@@ -418,7 +412,7 @@ public class VersionArchive implements Entity {
 		try {
 			if (this.revDepGraph == null) {
 				this.revDepGraph = new RevDependencyGraph();
-				for (final Branch branch : getBranches(util).values()) {
+				for (final Branch branch : getBranches().values()) {
 					this.revDepGraph.addBranch(branch.getName(), branch.getHead().getId());
 				}
 				for (final ChangeSet changeSet : getChangeSets(util).values()) {
@@ -435,6 +429,8 @@ public class VersionArchive implements Entity {
 					}
 					
 				}
+			} else {
+				throw new IllegalStateException();
 			}
 			return this.revDepGraph;
 		} catch (final IOException e) {
@@ -458,8 +454,23 @@ public class VersionArchive implements Entity {
 	 * @param changeSets
 	 *            the change sets
 	 */
-	public void setChangeSets(final Map<String, ChangeSet> changeSets) {
-		this.changeSets = changeSets;
+	public void setChangeSets(final Collection<ChangeSet> changeSets) {
+		PRECONDITIONS: {
+			if (changeSets == null) {
+				throw new NullPointerException();
+			}
+		}
+		
+		SANITY: {
+			assert this.changeSetIds != null;
+		}
+		for (final ChangeSet changeSet : changeSets) {
+			this.changeSetIds.add(changeSet.getId());
+		}
+		
+		POSTCONDITIONS: {
+			assert changeSets.size() == this.changeSetIds.size();
+		}
 	}
 	
 	/**

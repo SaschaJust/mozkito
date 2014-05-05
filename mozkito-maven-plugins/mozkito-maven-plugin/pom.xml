@@ -23,9 +23,9 @@
 			<version>0.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>net.ownhero.dev</groupId>
-			<artifactId>moreregex</artifactId>
-			<version>1.0-beta-1</version>
+			<groupId>org.mozkito</groupId>
+			<artifactId>matchstick</artifactId>
+			<version>0.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jdom</groupId>

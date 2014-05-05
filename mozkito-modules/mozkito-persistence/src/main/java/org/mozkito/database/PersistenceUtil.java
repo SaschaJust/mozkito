@@ -142,6 +142,17 @@ public interface PersistenceUtil {
 	 * 
 	 * @param <T>
 	 *            the generic type
+	 * @param clazz
+	 *            the clazz
+	 * @return the list
+	 */
+	<T extends Entity> List<T> load(final Class<T> clazz);
+	
+	/**
+	 * Load.
+	 * 
+	 * @param <T>
+	 *            the generic type
 	 * @param criteria
 	 *            the criteria
 	 * @return the list

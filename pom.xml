@@ -6,7 +6,7 @@
 	</prerequisites>
 	<groupId>org.mozkito</groupId>
 	<artifactId>mozkito</artifactId>
-	<name>(project) The mozkito data mining collection</name>
+	<name>The mozkito data mining collection [project]</name>
 	<description>Data mining and analyzation for various types of software repositories</description>
 	<version>0.4-SNAPSHOT</version>
 	<packaging>pom</packaging>
@@ -69,6 +69,7 @@
 	<modules>
 		<module>mozkito-maven-plugins</module>
 		<module>mozkito-utilities</module>
+		<module>mozkito-frameworks</module>
 		<module>mozkito-modules</module>
 		<module>mozkito-settings</module>
 		<module>mozkito-tools</module>
