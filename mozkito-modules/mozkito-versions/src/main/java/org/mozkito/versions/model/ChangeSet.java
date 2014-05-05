@@ -369,11 +369,7 @@ public class ChangeSet extends Artifact {
 			}
 		}
 		
-		final Collection<Revision> rCSRevisions = getRevisions();
-		final boolean ret = rCSRevisions.add(rCSRevision);
-		setRevisions(rCSRevisions);
-		
-		return ret;
+		return getRevisions().add(rCSRevision);
 	}
 	
 	/**
@@ -391,11 +387,7 @@ public class ChangeSet extends Artifact {
 			}
 		}
 		
-		final boolean ret = false;
-		final Set<String> tags = getTags();
-		tags.add(tagName);
-		setTags(tags);
-		return ret;
+		return getTags().add(tagName);
 	}
 	
 	/**

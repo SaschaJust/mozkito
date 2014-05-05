@@ -12,6 +12,7 @@
  **********************************************************************************************************************/
 package org.mozkito.issues.model;
 
+import java.beans.Transient;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -27,25 +28,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.OrderBy;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
+import com.sun.mirror.type.EnumType;
 
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.CollectionCondition;
@@ -55,6 +38,7 @@ import net.ownhero.dev.kisa.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 
+import org.mozkito.database.Artifact;
 import org.mozkito.issues.elements.Priority;
 import org.mozkito.issues.elements.Resolution;
 import org.mozkito.issues.elements.Severity;
@@ -63,9 +47,7 @@ import org.mozkito.issues.elements.Type;
 import org.mozkito.issues.model.comparators.CommentComparator;
 import org.mozkito.persistence.FieldKey;
 import org.mozkito.persistence.IterableFieldKey;
-import org.mozkito.persistence.model.EnumTuple;
 import org.mozkito.persons.model.Person;
-import org.mozkito.persons.model.PersonTuple;
 import org.mozkito.utilities.commons.JavaUtils;
 import org.mozkito.utilities.io.FileUtils;
 
@@ -74,9 +56,7 @@ import org.mozkito.utilities.io.FileUtils;
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-@Artifact
-@Table (name = "report")
-public class Report implements org.mozkito.database.Artifact, Comparable<Report> {
+public class Report extends Artifact implements Comparable<Report> {
 	
 	/** The Constant DEFAULT_REPORT. */
 	private static final Report DEFAULT_REPORT   = new Report();

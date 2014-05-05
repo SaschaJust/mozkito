@@ -44,6 +44,8 @@ import org.mozkito.versions.exceptions.NotComparableException;
 /**
  * The Class VersionArchive.
  * 
+ * Id: <code>Long</code>
+ * 
  * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */

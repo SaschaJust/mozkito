@@ -99,63 +99,55 @@ public class JiraTracker extends Tracker implements OverviewParser {
 	 */
 	@Override
 	public boolean auth() throws AuthenticationException {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			if (getPassword() != null) {
-				if (getUsername() == null) {
-					throw new AuthenticationException("Password set, but no username given.");
-				}
-				final String authURL = getUri() + URL_SUFFIX;
-				
-				if (Logger.logInfo()) {
-					Logger.info("Authenticating at: " + authURL);
-				}
-				
-				final HttpPost post = new HttpPost(authURL);
-				
-				try {
-					final List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
-					nameValuePairs.add(new BasicNameValuePair("os_username", getUsername()));
-					nameValuePairs.add(new BasicNameValuePair("os_password", getPassword()));
-					nameValuePairs.add(new BasicNameValuePair("username", getUsername()));
-					nameValuePairs.add(new BasicNameValuePair("password", getPassword()));
-					nameValuePairs.add(new BasicNameValuePair("os_cookie", "true"));
-					post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-					
-					final HttpResponse response = this.httpClient.execute(post);
-					final BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity()
-					                                                                           .getContent()));
-					String line = null;
-					while ((line = rd.readLine()) != null) {
-						System.out.println(line);
-					}
-					
-					final List<Cookie> cookies = this.httpClient.getCookieStore().getCookies();
-					if (Logger.logInfo()) {
-						Logger.info("Received %s cookies.", cookies.size());
-					}
-					
-					if (Logger.logDebug()) {
-						for (final Cookie cookie : cookies) {
-							Logger.debug(cookie.toString());
-						}
-					}
-				} catch (final IOException e) {
-					e.printStackTrace();
-				}
-				
-				setAuthenticated(true);
+		if (getPassword() != null) {
+			if (getUsername() == null) {
+				throw new AuthenticationException("Password set, but no username given.");
+			}
+			final String authURL = getUri() + URL_SUFFIX;
+			
+			if (Logger.logInfo()) {
+				Logger.info("Authenticating at: " + authURL);
 			}
 			
-			return isAuthenticated();
-		} finally {
-			POSTCONDITIONS: {
-				// none
+			final HttpPost post = new HttpPost(authURL);
+			
+			try {
+				final List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
+				nameValuePairs.add(new BasicNameValuePair("os_username", getUsername()));
+				nameValuePairs.add(new BasicNameValuePair("os_password", getPassword()));
+				nameValuePairs.add(new BasicNameValuePair("username", getUsername()));
+				nameValuePairs.add(new BasicNameValuePair("password", getPassword()));
+				nameValuePairs.add(new BasicNameValuePair("os_cookie", "true"));
+				post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+				
+				final HttpResponse response = this.httpClient.execute(post);
+				final BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+				String line = null;
+				
+				while ((line = rd.readLine()) != null) {
+					if (Logger.logDebug()) {
+						Logger.debug(line);
+					}
+				}
+				
+				final List<Cookie> cookies = this.httpClient.getCookieStore().getCookies();
+				if (Logger.logInfo()) {
+					Logger.info("Received %s cookies.", cookies.size());
+				}
+				
+				if (Logger.logDebug()) {
+					for (final Cookie cookie : cookies) {
+						Logger.debug(cookie.toString());
+					}
+				}
+			} catch (final IOException e) {
+				e.printStackTrace();
 			}
+			
+			setAuthenticated(true);
 		}
+		
+		return isAuthenticated();
 	}
 	
 	/**
@@ -183,13 +175,7 @@ public class JiraTracker extends Tracker implements OverviewParser {
 	 */
 	@Override
 	public Parser getParser() {
-		// PRECONDITIONS
-		
-		try {
-			return new JiraParser(getPersonFactory());
-		} finally {
-			// POSTCONDITIONS
-		}
+		return new JiraParser(getPersonFactory());
 	}
 	
 	/*
@@ -198,17 +184,11 @@ public class JiraTracker extends Tracker implements OverviewParser {
 	 */
 	@Override
 	public Set<ReportLink> getReportLinks() {
-		// PRECONDITIONS
-		
-		try {
-			if (!parseOverview()) {
-				return new HashSet<ReportLink>();
-			}
-			
-			return this.overviewURIs;
-		} finally {
-			// POSTCONDITIONS
+		if (!parseOverview()) {
+			return new HashSet<ReportLink>();
 		}
+		
+		return this.overviewURIs;
 	}
 	
 	/*

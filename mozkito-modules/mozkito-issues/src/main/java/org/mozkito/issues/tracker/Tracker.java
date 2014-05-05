@@ -14,7 +14,6 @@ package org.mozkito.issues.tracker;
 
 import java.net.URI;
 import java.util.Collection;
-import java.util.List;
 import java.util.TreeSet;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -32,7 +31,6 @@ import org.mozkito.issues.messages.Messages;
 import org.mozkito.issues.model.Comment;
 import org.mozkito.issues.model.IssueTracker;
 import org.mozkito.issues.model.Report;
-import org.mozkito.persistence.JPACriteria;
 import org.mozkito.persons.elements.PersonFactory;
 
 /**
@@ -222,14 +220,19 @@ public abstract class Tracker {
 	 */
 	public Report loadReport(final Long id,
 	                         final PersistenceUtil persistenceUtil) {
-		
-		final JPACriteria<Report> criteria = persistenceUtil.createCriteria(Report.class).eq("id", id); //$NON-NLS-1$
-		final List<Report> list = persistenceUtil.load(criteria);
-		if (list.size() > 0) {
-			final Report bugReport = list.get(0);
-			return bugReport;
+		PRECONDITIONS: {
+			if (id == null) {
+				throw new NullPointerException();
+			}
+			if (id <= 0) {
+				throw new ArrayIndexOutOfBoundsException();
+			}
+			if (persistenceUtil == null) {
+				throw new NullPointerException();
+			}
 		}
-		return null;
+		
+		return persistenceUtil.loadById(Report.class, id);
 	}
 	
 	/**

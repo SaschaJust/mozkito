@@ -194,10 +194,6 @@ public class JiraParser implements Parser {
 	/** The fetch time. */
 	private DateTime           fetchTime;
 	
-	/** The tracker. */
-	@SuppressWarnings ("unused")
-	private Tracker            tracker;
-	
 	/** The resolver. */
 	private Person             resolver;
 	
@@ -298,7 +294,11 @@ public class JiraParser implements Parser {
 	 * @return the xml report
 	 */
 	private XmlReport createDocument(final RawContent rawReport) {
-		// PRECONDITIONS
+		PRECONDITIONS: {
+			if (rawReport == null) {
+				throw new NullPointerException("RawReport must never be null.");
+			}
+		}
 		
 		try {
 			final BufferedReader reader = new BufferedReader(new StringReader(rawReport.getContent()));
@@ -1017,7 +1017,6 @@ public class JiraParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			this.tracker = tracker;
 		} finally {
 			// POSTCONDITIONS
 		}
