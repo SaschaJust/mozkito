@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.Set;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.lang.StringEscapeUtils;
@@ -207,7 +206,7 @@ public class ChangeSet extends Artifact {
 	private Collection<Revision>          revisions        = new LinkedList<Revision>();
 	
 	/** The java timestamp. */
-	private DateTime                      javaTimestamp;
+	private DateTime                      timestamp;
 	
 	/** The tags. */
 	private Set<String>                   tags             = new HashSet<String>();
@@ -218,11 +217,10 @@ public class ChangeSet extends Artifact {
 	/** The atomic. */
 	private boolean                       atomic           = false;
 	
-	/** The version archive. */
-	private VersionArchive                versionArchive;
-	
 	/** The branch indices. */
 	private Map<String, Long>             branchIndices    = new HashMap<String, Long>();
+	
+	private Long                          versionArchiveId;
 	
 	/**
 	 * used by PersistenceUtil to create Transaction instance.
@@ -272,8 +270,8 @@ public class ChangeSet extends Artifact {
 		setTimestamp(timestamp);
 		setAuthor(author);
 		setOriginalId(originalId);
-		setVersionArchive(versionArchive);
-		getVersionArchive().addChangeSet(this);
+		setVersionArchiveId(versionArchive.getId());
+		versionArchive.addChangeSet(this);
 		if (Logger.logTrace()) {
 			Logger.trace("Creating " + getClassName() + ": " + this);
 		}
@@ -289,11 +287,7 @@ public class ChangeSet extends Artifact {
 	 */
 	
 	public boolean addAllTags(final Collection<String> tagNames) {
-		boolean ret = false;
-		final Set<String> tags = getTags();
-		ret = tags.addAll(tagNames);
-		setTags(tags);
-		return ret;
+		return getTags().addAll(tagNames);
 	}
 	
 	/**
@@ -324,13 +318,19 @@ public class ChangeSet extends Artifact {
 	 */
 	
 	public boolean addChild(final ChangeSet changeSet) {
-		CompareCondition.notEquals(changeSet, this, "a transaction may never be a child of its own: %s", this); //$NON-NLS-1$
+		PRECONDITIONS: {
+			if (changeSet == null) {
+				throw new NullPointerException();
+			}
+			if (equals(changeSet)) {
+				throw new IllegalArgumentException("a transaction may never be a child of itself: " + this);
+			}
+		}
+		
 		boolean ret = false;
 		
 		if (!getChildren().contains(changeSet)) {
-			final Set<ChangeSet> children = getChildren();
-			ret = children.add(changeSet);
-			setChildren(children);
+			ret = getChildren().add(changeSet);
 		}
 		
 		return ret;
@@ -350,8 +350,7 @@ public class ChangeSet extends Artifact {
 			}
 		}
 		
-		this.mergeParents.add(mergeParent);
-		
+		getMergeParents().add(mergeParent);
 	}
 	
 	/**
@@ -545,7 +544,7 @@ public class ChangeSet extends Artifact {
 		}
 		
 		try {
-			return org.mozkito.database.Artifact.Static.get(util, this, key, index);
+			return Artifact.Static.get(util, this, key, index);
 		} finally {
 			POSTCONDITIONS: {
 				// none
@@ -567,7 +566,7 @@ public class ChangeSet extends Artifact {
 		}
 		
 		try {
-			return org.mozkito.database.Artifact.Static.getAll(util, this, keys);
+			return Artifact.Static.getAll(util, this, keys);
 		} finally {
 			POSTCONDITIONS: {
 				// none
@@ -589,7 +588,7 @@ public class ChangeSet extends Artifact {
 		}
 		
 		try {
-			return org.mozkito.database.Artifact.Static.getAll(util, this, keys);
+			return Artifact.Static.getAll(util, this, keys);
 		} finally {
 			POSTCONDITIONS: {
 				// none
@@ -611,7 +610,7 @@ public class ChangeSet extends Artifact {
 		}
 		
 		try {
-			return org.mozkito.database.Artifact.Static.getAny(util, this, keys);
+			return Artifact.Static.getAny(util, this, keys);
 		} finally {
 			POSTCONDITIONS: {
 				// none
@@ -626,14 +625,14 @@ public class ChangeSet extends Artifact {
 	 *      org.mozkito.persistence.IterableFieldKey[])
 	 */
 	@Override
-	public Object getAny(final PersistenceUtil util,
-	                     final IterableFieldKey... keys) {
+	public <T> T getAny(final PersistenceUtil util,
+	                    final IterableFieldKey... keys) {
 		PRECONDITIONS: {
 			// none
 		}
 		
 		try {
-			return org.mozkito.database.Artifact.Static.getAny(util, this, keys);
+			return Artifact.Static.getAny(util, this, keys);
 		} finally {
 			POSTCONDITIONS: {
 				// none
@@ -655,7 +654,7 @@ public class ChangeSet extends Artifact {
 		}
 		
 		try {
-			return org.mozkito.database.Artifact.Static.getAsOneString(util, this, fKeys);
+			return Artifact.Static.getAsOneString(util, this, fKeys);
 		} finally {
 			POSTCONDITIONS: {
 				// none
@@ -677,7 +676,7 @@ public class ChangeSet extends Artifact {
 		}
 		
 		try {
-			return org.mozkito.database.Artifact.Static.getAsOneString(util, this, iKeys);
+			return Artifact.Static.getAsOneString(util, this, iKeys);
 		} finally {
 			POSTCONDITIONS: {
 				// none
@@ -925,7 +924,7 @@ public class ChangeSet extends Artifact {
 	@Override
 	public int getSize(final PersistenceUtil util,
 	                   final IterableFieldKey key) {
-		return org.mozkito.database.Artifact.Static.getSize(util, this, key);
+		return Artifact.Static.getSize(util, this, key);
 	}
 	
 	/**
@@ -954,7 +953,7 @@ public class ChangeSet extends Artifact {
 	 */
 	
 	public DateTime getTimestamp() {
-		return this.javaTimestamp;
+		return this.timestamp;
 	}
 	
 	/**
@@ -968,8 +967,8 @@ public class ChangeSet extends Artifact {
 	 * 
 	 * @return the version archive
 	 */
-	public VersionArchive getVersionArchive() {
-		return this.versionArchive;
+	public Long getVersionArchiveId() {
+		return this.versionArchiveId;
 	}
 	
 	/**
@@ -1060,9 +1059,9 @@ public class ChangeSet extends Artifact {
 	 *            the new java timestamp
 	 */
 	protected void setJavaTimestamp(final Date date) {
-		this.javaTimestamp = date != null
-		                                 ? new DateTime(date)
-		                                 : null;
+		this.timestamp = date != null
+		                             ? new DateTime(date)
+		                             : null;
 	}
 	
 	/**
@@ -1147,17 +1146,17 @@ public class ChangeSet extends Artifact {
 	 *            the timestamp to set
 	 */
 	protected void setTimestamp(final DateTime timestamp) {
-		this.javaTimestamp = timestamp;
+		this.timestamp = timestamp;
 	}
 	
 	/**
 	 * Sets the version archive.
 	 * 
-	 * @param versionArchive
+	 * @param versionArchiveId
 	 *            the new version archive
 	 */
-	public void setVersionArchive(final VersionArchive versionArchive) {
-		this.versionArchive = versionArchive;
+	public void setVersionArchiveId(final long versionArchiveId) {
+		this.versionArchiveId = versionArchiveId;
 	}
 	
 	/**

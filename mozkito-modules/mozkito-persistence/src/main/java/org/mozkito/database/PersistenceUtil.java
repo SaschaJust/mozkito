@@ -145,8 +145,9 @@ public interface PersistenceUtil {
 	 * @param clazz
 	 *            the clazz
 	 * @return the list
+	 * @throws DatabaseException
 	 */
-	<T extends Entity> List<T> load(final Class<T> clazz);
+	<T extends Entity> List<T> load(final Class<T> clazz) throws DatabaseException;
 	
 	/**
 	 * Load.

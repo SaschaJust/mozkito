@@ -301,6 +301,25 @@ public class DatabaseUtil implements PersistenceUtil {
 	 * 
 	 * @throws DatabaseException
 	 * 
+	 * @see org.mozkito.database.PersistenceUtil#load(java.lang.Class)
+	 */
+	@Override
+	public <T extends Entity> List<T> load(final Class<T> clazz) throws DatabaseException {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		final EntityAdapter<T> adapter = this.queryPool.getAdapter(clazz);
+		// TODO
+		adapter.load(adapter.getLayout().getMainTable(), null);
+		return null;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @throws DatabaseException
+	 * 
 	 * @see org.mozkito.database.PersistenceUtil#load(org.mozkito.database.Criteria)
 	 */
 	@Override

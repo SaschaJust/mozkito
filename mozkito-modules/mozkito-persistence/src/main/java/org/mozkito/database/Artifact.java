@@ -249,9 +249,9 @@ public abstract class Artifact implements Entity {
 		 *            the keys
 		 * @return the any
 		 */
-		public static Object getAny(final PersistenceUtil util,
-		                            final Artifact artifact,
-		                            final IterableFieldKey... keys) {
+		public static <T> T getAny(final PersistenceUtil util,
+		                           final Artifact artifact,
+		                           final IterableFieldKey... keys) {
 			PRECONDITIONS: {
 				if (artifact == null) {
 					throw new NullPointerException();
@@ -283,7 +283,14 @@ public abstract class Artifact implements Entity {
 			for (final IterableFieldKey key : keys) {
 				ret = artifact.get(util, key);
 				if (ret != null) {
-					return ret;
+					try {
+						final T t = (T) ret;
+						return t;
+					} catch (final ClassCastException e) {
+						throw new RuntimeException(
+						                           String.format("The field '%s' of type '%s' cannot be casted to the requested type.",
+						                                         key, ret.getClass().getSimpleName()), e);
+					}
 				}
 			}
 			
