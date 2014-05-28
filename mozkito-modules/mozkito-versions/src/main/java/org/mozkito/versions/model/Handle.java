@@ -147,7 +147,7 @@ public class Handle extends Artifact {
 	 */
 	
 	public boolean changedHandleName(final ChangeSet transaction) {
-		for (final Revision revision : transaction.getRevisions()) {
+		for (final Artifact revision : transaction.getRevisions()) {
 			if (getChangedNames().containsKey(revision)) {
 				return true;
 			}
@@ -483,7 +483,7 @@ public class Handle extends Artifact {
 		
 		final RevDependencyGraph revDependencyGraph = getVersionArchive().getRevDependencyGraph(util);
 		
-		for (final Revision revision : transaction.getRevisions()) {
+		for (final Artifact revision : transaction.getRevisions()) {
 			if (getChangedNames().containsKey(revision)) {
 				return getChangedNames().get(revision);
 			}
@@ -491,7 +491,7 @@ public class Handle extends Artifact {
 		
 		for (final String parentId : revDependencyGraph.getPreviousTransactions(transaction.getId())) {
 			final ChangeSet parentTransaction = getVersionArchive().getChangeSetById(util, parentId);
-			for (final Revision revision : parentTransaction.getRevisions()) {
+			for (final Artifact revision : parentTransaction.getRevisions()) {
 				if (getChangedNames().containsKey(revision)) {
 					return getChangedNames().get(revision);
 				}
@@ -512,7 +512,7 @@ public class Handle extends Artifact {
 	 *             if the file name of the handle was not changed by the revision
 	 */
 	
-	public String getPath(final Revision revision) throws NoSuchHandleException {
+	public String getPath(final Artifact revision) throws NoSuchHandleException {
 		if (getChangedNames().containsKey(revision)) {
 			return getChangedNames().get(revision);
 		}

@@ -190,6 +190,18 @@ public class Table implements SQLElement {
 	}
 	
 	/**
+	 * Column count.
+	 * 
+	 * @return the int
+	 */
+	public int columnCount() {
+		SANITY: {
+			assert this.columns != null;
+		}
+		return this.columns.length;
+	}
+	
+	/**
 	 * Gets the column names.
 	 * 
 	 * @return the column names

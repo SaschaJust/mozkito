@@ -16,13 +16,18 @@ package org.mozkito.versions.database;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.mozkito.database.EntityAdapter;
 import org.mozkito.database.QueryPool;
 import org.mozkito.database.exceptions.DatabaseException;
 import org.mozkito.database.model.Table;
+import org.mozkito.database.types.Type;
 import org.mozkito.versions.model.Branch;
+import org.mozkito.versions.model.ChangeSet;
+import org.mozkito.versions.model.VersionArchive;
 
 /**
  * The Class BranchQuery.
@@ -46,17 +51,26 @@ public class BranchAdapter extends EntityAdapter<Branch> {
 	@Override
 	public Object getId(final ResultSet idSet) throws DatabaseException {
 		PRECONDITIONS: {
-			// none
+			if (idSet == null) {
+				throw new NullPointerException();
+			}
+		}
+		
+		SANITY: {
+			assert getLayout().getMainTable().column(0) != null;
+			assert getLayout().getMainTable().primaryKey() != null;
+			assert getLayout().getMainTable().primaryKey().getColumns() != null;
+			assert getLayout().getMainTable().primaryKey().getColumns().length == 1;
+			assert getLayout().getMainTable().primaryKey().getColumns()[0] != null;
+			assert getLayout().getMainTable().primaryKey().getColumns()[0].type() != null;
+			assert Type.getVarChar(255).equals(getLayout().getMainTable().primaryKey().getColumns()[0].type());
+			assert getLayout().getMainTable().primaryKey().getColumns()[0].equals(getLayout().getMainTable().column(0));
 		}
 		
 		try {
-			// TODO Auto-generated method stub
-			// return null;
-			throw new RuntimeException("Method 'getId' has not yet been implemented."); //$NON-NLS-1$
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
+			return idSet.getString(1);
+		} catch (final SQLException e) {
+			throw new DatabaseException(e);
 		}
 	}
 	
@@ -68,17 +82,80 @@ public class BranchAdapter extends EntityAdapter<Branch> {
 	@Override
 	public Branch loadById(final Object id) throws DatabaseException {
 		PRECONDITIONS: {
-			// none
+			if (id == null) {
+				throw new NullPointerException();
+			}
+			if (!String.class.isAssignableFrom(id.getClass())) {
+				throw new IllegalArgumentException();
+			}
 		}
 		
+		final String localId = (String) id;
+		
 		try {
-			// TODO Auto-generated method stub
-			// return null;
-			throw new RuntimeException("Method 'loadById' has not yet been implemented."); //$NON-NLS-1$
-		} finally {
-			POSTCONDITIONS: {
-				// none
+			SANITY: {
+				assert getLayout().getMainTable().primaryKey().getColumns() != null;
+				assert getLayout().getMainTable().primaryKey().getColumns().length == 1; // there exists a key and it's
+				                                                                         // no composite key
+				assert Type.getVarChar(255).equals(getLayout().getMainTable().primaryKey().getColumnType(0));
+				assert getLayout().getMainTable().column("head") != null;
 			}
+			
+			PreparedStatement preparedStatement = getConnector().prepare("SELECT "
+			                                                                     + getLayout().getMainTable()
+			                                                                                  .primaryKey()
+			                                                                     + ", "
+			                                                                     + getLayout().getMainTable()
+			                                                                                  .column("version_archive")
+			                                                                     + getLayout().getMainTable()
+			                                                                                  .column("head")
+			                                                                     + " FROM "
+			                                                                     + getLayout().getMainTable()
+			                                                                     + " WHERE "
+			                                                                     + getLayout().getMainTable()
+			                                                                                  .primaryKey() + " = ?;");
+			
+			preparedStatement.setString(1, localId);
+			ResultSet result = preparedStatement.executeQuery();
+			
+			if (!result.next()) {
+				return null;
+			}
+			
+			SANITY: {
+				assert VersionArchive.LAYOUT.getMainTable().primaryKey().getColumns() != null;
+				assert VersionArchive.LAYOUT.getMainTable().primaryKey().getColumns().length == 1;
+				assert Type.getShort().equals(VersionArchive.LAYOUT.getMainTable().primaryKey().getColumnType(0));
+			}
+			
+			final VersionArchive va = getQueryPool().getAdapter(VersionArchive.class).loadById(result.getShort(1));
+			
+			final Branch branch = new Branch(va, result.getString(0));
+			
+			final ChangeSet changeSet = getQueryPool().getAdapter(ChangeSet.class).loadById(result.getString(3));
+			branch.setHead(changeSet);
+			
+			final Table mergeTable = getLayout().getTable("branch_merges");
+			preparedStatement = getConnector().prepare("SELECT " + mergeTable.column("id") + ", "
+			                                                   + mergeTable.column("merge_changeset") + " FROM "
+			                                                   + mergeTable + " WHERE "
+			                                                   + mergeTable.column("branch_name") + " = ?;");
+			preparedStatement.setString(1, branch.getName());
+			
+			result = preparedStatement.executeQuery();
+			Set<String> mergedIn = null;
+			while (result.next()) {
+				if (mergedIn == null) {
+					mergedIn = new HashSet<>();
+				}
+				mergedIn.add(result.getString(2));
+			}
+			
+			branch.setMergedIn(mergedIn);
+			
+			return branch;
+		} catch (final SQLException e) {
+			throw new DatabaseException(e);
 		}
 	}
 	

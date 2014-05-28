@@ -510,14 +510,20 @@ public class DatabaseUtil implements PersistenceUtil {
 			// none
 		}
 		
-		try {
-			// TODO Auto-generated method stub
-			//
-			throw new RuntimeException("Method 'shutdown' has not yet been implemented."); //$NON-NLS-1$
-		} finally {
-			POSTCONDITIONS: {
-				// none
+		if (this.connector.activeTransaction()) {
+			try {
+				this.connector.rollback();
+			} catch (final DatabaseException e1) {
+				// TODO Auto-generated catch block
+				
 			}
+		}
+		
+		try {
+			this.connector.close();
+		} catch (final DatabaseException e) {
+			// TODO Auto-generated catch block
+			
 		}
 	}
 	

@@ -16,7 +16,6 @@
 package org.mozkito.versions.model;
 
 import java.util.Collection;
-import java.util.Map;
 import java.util.Set;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
@@ -52,8 +51,8 @@ public class Revision extends Artifact {
 	/** The Constant TABLE. */
 	public static final Table            MAIN_TABLE;
 	
-	/** The Constant MAP_TABLE. */
-	private static final Table           MAP_TABLE;
+	// /** The Constant MAP_TABLE. */
+	// private static final Table MAP_TABLE;
 	
 	static {
 		try {
@@ -69,17 +68,17 @@ public class Revision extends Artifact {
 			                             new NotNull())
 			);
 			
-			MAP_TABLE = new Table("changeset_to_revision", 
-			                      new Column("changeset_id", Type.getVarChar(40), 
-			                                 new ForeignKey(ChangeSet.MAIN_TABLE, ChangeSet.MAIN_TABLE.column("id")), 
-			                                 new NotNull()), 
-			                      new Column("revision_id", Type.getLong(), 
-			                                 new ForeignKey(Revision.MAIN_TABLE, Revision.MAIN_TABLE.column("id")), 
-			                                 new NotNull())
-			);
+//			MAP_TABLE = new Table("changeset_to_revision", 
+//			                      new Column("changeset_id", Type.getVarChar(40), 
+//			                                 new ForeignKey(ChangeSet.MAIN_TABLE, ChangeSet.MAIN_TABLE.column("id")), 
+//			                                 new NotNull()), 
+//			                      new Column("revision_id", Type.getLong(), 
+//			                                 new ForeignKey(Revision.MAIN_TABLE, Revision.MAIN_TABLE.column("id")), 
+//			                                 new NotNull())
+//			);
 		
 			LAYOUT.addTable(MAIN_TABLE, TableType.MAIN);
-			LAYOUT.addTable(MAP_TABLE, TableType.JOIN);
+//			LAYOUT.addTable(MAP_TABLE, TableType.JOIN);
 			LAYOUT.makeImmutable();
 			
 			// @formatter:on
@@ -237,206 +236,23 @@ public class Revision extends Artifact {
 		}
 	}
 	
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * @see org.mozkito.database.Artifact#get(org.mozkito.database.PersistenceUtil,
-	 *      org.mozkito.persistence.IterableFieldKey, int)
-	 */
-	@Override
-	public <T> T get(final PersistenceUtil util,
-	                 final IterableFieldKey key,
-	                 final int index) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			// TODO Auto-generated method stub
-			// return null;
-			throw new RuntimeException("Method 'get' has not yet been implemented."); //$NON-NLS-1$
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * @see org.mozkito.database.Artifact#getAll(org.mozkito.database.PersistenceUtil,
-	 *      org.mozkito.persistence.FieldKey[])
-	 */
-	@Override
-	public Map<FieldKey, Object> getAll(final PersistenceUtil util,
-	                                    final FieldKey... keys) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			// TODO Auto-generated method stub
-			// return null;
-			throw new RuntimeException("Method 'getAll' has not yet been implemented."); //$NON-NLS-1$
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * @see org.mozkito.database.Artifact#getAll(org.mozkito.database.PersistenceUtil,
-	 *      org.mozkito.persistence.IterableFieldKey[])
-	 */
-	@Override
-	public Map<IterableFieldKey, Object> getAll(final PersistenceUtil util,
-	                                            final IterableFieldKey... keys) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			// TODO Auto-generated method stub
-			// return null;
-			throw new RuntimeException("Method 'getAll' has not yet been implemented."); //$NON-NLS-1$
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
-	}
-	
 	/*
 	 * (non-Javadoc)
 	 * @see org.mozkito.persistence.Annotated#getHandle()
 	 */
 	
 	/**
-	 * {@inheritDoc}
-	 * 
-	 * @see org.mozkito.database.Artifact#getAny(org.mozkito.database.PersistenceUtil,
-	 *      org.mozkito.persistence.FieldKey[])
-	 */
-	@Override
-	public <T> T getAny(final PersistenceUtil util,
-	                    final FieldKey... keys) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			// TODO Auto-generated method stub
-			// return null;
-			throw new RuntimeException("Method 'getAny' has not yet been implemented."); //$NON-NLS-1$
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * @see org.mozkito.database.Artifact#getAny(org.mozkito.database.PersistenceUtil,
-	 *      org.mozkito.persistence.IterableFieldKey[])
-	 */
-	@Override
-	public <T> T getAny(final PersistenceUtil util,
-	                    final IterableFieldKey... keys) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			// TODO Auto-generated method stub
-			// return null;
-			throw new RuntimeException("Method 'getAny' has not yet been implemented."); //$NON-NLS-1$
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * @see org.mozkito.database.Artifact#getAsOneString(org.mozkito.database.PersistenceUtil,
-	 *      org.mozkito.persistence.FieldKey[])
-	 */
-	@Override
-	public String getAsOneString(final PersistenceUtil util,
-	                             final FieldKey... fKeys) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			// TODO Auto-generated method stub
-			// return null;
-			throw new RuntimeException("Method 'getAsOneString' has not yet been implemented."); //$NON-NLS-1$
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * @see org.mozkito.database.Artifact#getAsOneString(org.mozkito.database.PersistenceUtil,
-	 *      org.mozkito.persistence.IterableFieldKey)
-	 */
-	@Override
-	public String getAsOneString(final PersistenceUtil util,
-	                             final IterableFieldKey iKeys) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			// TODO Auto-generated method stub
-			// return null;
-			throw new RuntimeException("Method 'getAsOneString' has not yet been implemented."); //$NON-NLS-1$
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
-	}
-	
-	/**
 	 * Gets the changed file.
 	 * 
-	 * @param util
-	 *            the util
 	 * @return the changedFile
 	 */
-	// @MapsId ("changedFile")
-	// @ManyToOne (cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
-	// @Column (nullable = false)
-	
-	public Handle getChangedFile(final PersistenceUtil util) {
-		PRECONDITIONS: {
-			if (util == null) {
-				throw new NullPointerException();
-			}
-		}
+	public Handle getChangedFile() {
 		
-		if (this.changedFile == null) {
-			this.changedFile = util.loadById(Handle.class, this.changedFileId);
-		} else {
-			SANITY: {
-				assert this.changedFileId > 0;
-				assert this.changedFile.getId() > 0;
-				assert this.changedFile.getId() == this.changedFileId;
-			}
+		SANITY: {
+			assert this.changedFile != null;
+			assert this.changedFileId > 0;
+			assert this.changedFile.getId() > 0;
+			assert this.changedFile.getId() == this.changedFileId;
 		}
 		
 		return this.changedFile;
@@ -454,26 +270,11 @@ public class Revision extends Artifact {
 	/**
 	 * Gets the transaction.
 	 * 
-	 * @param util
-	 *            the util
 	 * @return the transaction
 	 */
-	public ChangeSet getChangeSet(final PersistenceUtil util) {
-		PRECONDITIONS: {
-			if (util == null) {
-				throw new NullPointerException();
-			}
-		}
-		
-		if (this.changeSet == null) {
-			this.changeSet = util.loadById(ChangeSet.class, this.changeSetId);
-		} else {
-			SANITY: {
-				assert this.changeSetId != null;
-				assert !this.changeSetId.isEmpty();
-				assert this.changeSet != null;
-				assert this.changeSetId.equals(this.changeSet.getId());
-			}
+	public ChangeSet getChangeSet() {
+		SANITY: {
+			assert this.changeSet != null;
 		}
 		
 		return this.changeSet;
@@ -537,30 +338,6 @@ public class Revision extends Artifact {
 			// TODO Auto-generated method stub
 			// return null;
 			throw new RuntimeException("Method 'getIDString' has not yet been implemented."); //$NON-NLS-1$
-		} finally {
-			POSTCONDITIONS: {
-				// none
-			}
-		}
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * @see org.mozkito.database.Artifact#getSize(org.mozkito.database.PersistenceUtil,
-	 *      org.mozkito.persistence.IterableFieldKey)
-	 */
-	@Override
-	public int getSize(final PersistenceUtil util,
-	                   final IterableFieldKey key) {
-		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			// TODO Auto-generated method stub
-			// return 0;
-			throw new RuntimeException("Method 'getSize' has not yet been implemented."); //$NON-NLS-1$
 		} finally {
 			POSTCONDITIONS: {
 				// none

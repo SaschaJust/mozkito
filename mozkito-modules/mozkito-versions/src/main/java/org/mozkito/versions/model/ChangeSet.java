@@ -603,19 +603,19 @@ public class ChangeSet extends Artifact {
 	 *      org.mozkito.persistence.FieldKey[])
 	 */
 	@Override
-	public Object getAny(final PersistenceUtil util,
-	                     final FieldKey... keys) {
+	public <T> T getAny(final PersistenceUtil util,
+	                    final FieldKey... keys) {
 		PRECONDITIONS: {
-			// none
-		}
-		
-		try {
-			return Artifact.Static.getAny(util, this, keys);
-		} finally {
-			POSTCONDITIONS: {
-				// none
+			if (util == null) {
+				throw new NullPointerException();
+			}
+			if (keys.length == 0) {
+				throw new ArrayIndexOutOfBoundsException();
 			}
 		}
+		
+		return Artifact.Static.getAny(util, this, keys);
+		
 	}
 	
 	/**
@@ -751,7 +751,7 @@ public class ChangeSet extends Artifact {
 	public Collection<Handle> getChangedFiles(final PersistenceUtil util) {
 		final List<Handle> changedFiles = new LinkedList<Handle>();
 		for (final Revision rCSRevision : getRevisions()) {
-			changedFiles.add(rCSRevision.getChangedFile(util));
+			changedFiles.add(rCSRevision.getChangedFile());
 		}
 		return changedFiles;
 	}
@@ -887,7 +887,7 @@ public class ChangeSet extends Artifact {
 		}
 		for (final Revision revision : getRevisions()) {
 			try {
-				final String fileName = revision.getChangedFile(util).getPath(this, util);
+				final String fileName = revision.getChangedFile().getPath(this, util);
 				if (fileName.equals(comparePath)) {
 					return revision;
 				}

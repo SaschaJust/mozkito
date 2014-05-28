@@ -22,6 +22,7 @@ import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 
+import org.mozkito.database.Artifact;
 import org.mozkito.persons.elements.PersonFactory;
 import org.mozkito.persons.model.Person;
 import org.mozkito.versions.elements.ChangeType;
@@ -60,7 +61,7 @@ public class ChangeSetTest {
 		final Handle handle = new Handle(versionArchive);
 		handle.assignRevision(new Revision(t_0, handle, ChangeType.Added), "public.java");
 		
-		final Collection<Handle> changedFiles = t_0.getChangedFiles();
+		final Collection<Handle> changedFiles = t_0.getChangedFiles(null);
 		assertEquals(1, changedFiles.size());
 		assertTrue(changedFiles.contains(handle));
 	}
@@ -130,7 +131,7 @@ public class ChangeSetTest {
 		final Revision rCSRevision = new Revision(t_3, hiddenFile, ChangeType.Renamed);
 		hiddenFile.assignRevision(rCSRevision, "moreHidden.java");
 		
-		final Revision revision2 = new Revision(t_4, hiddenFile, ChangeType.Modified);
+		final Artifact revision2 = new Revision(t_4, hiddenFile, ChangeType.Modified);
 		
 		new Revision(t_5, handle, ChangeType.Modified);
 		

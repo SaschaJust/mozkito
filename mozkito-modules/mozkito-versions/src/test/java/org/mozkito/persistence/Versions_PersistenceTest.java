@@ -24,6 +24,7 @@ import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 
+import org.mozkito.database.exceptions.DatabaseException;
 import org.mozkito.persons.elements.PersonFactory;
 import org.mozkito.persons.model.Person;
 import org.mozkito.testing.DatabaseTest;
@@ -60,9 +61,10 @@ public class Versions_PersistenceTest extends DatabaseTest {
 	 * 
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
+	 * @throws DatabaseException
 	 */
 	@Test
-	public void testBranch() throws IOException {
+	public void testBranch() throws IOException, DatabaseException {
 		
 		final RevDependencyGraph revDepGraph = new RevDependencyGraph();
 		revDepGraph.addBranch("testBranch", "0123456789abcde");
@@ -80,7 +82,7 @@ public class Versions_PersistenceTest extends DatabaseTest {
 		                                               this.personFactory.get("just", "Sascha Just",
 		                                                                      "sascha.just@mozkito.org"),
 		                                               "0123456789abcde");
-		final Branch testBranch = versionArchive.getBranch("testBranch");
+		final Branch testBranch = versionArchive.getBranch(null, "testBranch");
 		testBranch.setHead(endTransaction);
 		
 		getPersistenceUtil().beginTransaction();
@@ -108,9 +110,10 @@ public class Versions_PersistenceTest extends DatabaseTest {
 	 * 
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
+	 * @throws DatabaseException
 	 */
 	@Test
-	public void testRevision() throws IOException {
+	public void testRevision() throws IOException, DatabaseException {
 		
 		final RevDependencyGraph revDepGraph = new RevDependencyGraph();
 		revDepGraph.addBranch(Branch.MASTER_BRANCH_NAME, "0");
@@ -124,7 +127,7 @@ public class Versions_PersistenceTest extends DatabaseTest {
 		handle.assignRevision(revision, "test.java");
 		
 		assertTrue(changeset.getRevisions().contains(revision));
-		versionArchive.getMasterBranch().setHead(changeset);
+		versionArchive.getMasterBranch(null).setHead(changeset);
 		
 		getPersistenceUtil().beginTransaction();
 		getPersistenceUtil().save(changeset);
@@ -149,7 +152,7 @@ public class Versions_PersistenceTest extends DatabaseTest {
 		assertFalse(fileList.get(0).getChangedNames().isEmpty());
 		assertEquals(1, fileList.get(0).getChangedNames().size());
 		try {
-			assertEquals("test.java", fileList.get(0).getLatestPath());
+			assertEquals("test.java", fileList.get(0).getLatestPath(getPersistenceUtil()));
 		} catch (final NoSuchHandleException e) {
 			fail();
 		}
@@ -182,9 +185,10 @@ public class Versions_PersistenceTest extends DatabaseTest {
 	 * 
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
+	 * @throws DatabaseException
 	 */
 	@Test
-	public void testSaveHandle() throws IOException {
+	public void testSaveHandle() throws IOException, DatabaseException {
 		
 		final RevDependencyGraph revDepGraph = new RevDependencyGraph();
 		revDepGraph.addBranch(Branch.MASTER_BRANCH_NAME, "0");
@@ -199,7 +203,7 @@ public class Versions_PersistenceTest extends DatabaseTest {
 		handle.assignRevision(revision, "formerTest.java");
 		getPersistenceUtil().beginTransaction();
 		
-		versionArchive.getMasterBranch().setHead(changeset);
+		versionArchive.getMasterBranch(getPersistenceUtil()).setHead(changeset);
 		
 		getPersistenceUtil().saveOrUpdate(changeset);
 		getPersistenceUtil().commitTransaction();

@@ -13,8 +13,8 @@
 
 package org.mozkito.codechanges.mapping.model;
 
+import org.mozkito.database.Artifact;
 import org.mozkito.versions.model.Handle;
-import org.mozkito.versions.model.Revision;
 
 /**
  * @author Sascha Just <sascha.just@mozkito.org>
@@ -23,7 +23,7 @@ import org.mozkito.versions.model.Revision;
 public class ClassDefinition {
 	
 	String   name;
-	Revision revision;
+	Artifact revision;
 	Handle   handle;
 	
 	int      startLine;
@@ -32,7 +32,7 @@ public class ClassDefinition {
 	/**
      * 
      */
-	public ClassDefinition(final String name, final Revision revision, final int start, final int end) {
+	public ClassDefinition(final String name, final Artifact revision, final int start, final int end) {
 		PRECONDITIONS: {
 			// none
 		}

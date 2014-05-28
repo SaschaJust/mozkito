@@ -117,7 +117,7 @@ public class RevisionAdapter extends EntityAdapter<Revision> {
 		
 		try {
 			// TODO Auto-generated method stub
-			// return null;
+			//
 			throw new RuntimeException("Method 'saveOrUpdate' has not yet been implemented."); //$NON-NLS-1$
 		} finally {
 			POSTCONDITIONS: {

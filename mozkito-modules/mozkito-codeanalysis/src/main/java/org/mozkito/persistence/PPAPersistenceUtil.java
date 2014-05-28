@@ -35,6 +35,7 @@ import org.joda.time.format.DateTimeFormatter;
 
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.codeanalysis.model.JavaElement;
+import org.mozkito.database.Artifact;
 import org.mozkito.utilities.datetime.DateTimeUtils;
 import org.mozkito.utilities.io.FileUtils;
 import org.mozkito.versions.exceptions.NoSuchHandleException;
@@ -68,7 +69,7 @@ public class PPAPersistenceUtil {
 			Logger.debug("Loading change operations for transaction " + changeSet.getId() + " from database.");
 		}
 		
-		for (final Revision revision : changeSet.getRevisions()) {
+		for (final Artifact revision : changeSet.getRevisions()) {
 			final JPACriteria<JavaChangeOperation> criteria = persistenceUtil.createCriteria(JavaChangeOperation.class);
 			criteria.eq("revision", revision);
 			result.addAll(persistenceUtil.load(criteria));

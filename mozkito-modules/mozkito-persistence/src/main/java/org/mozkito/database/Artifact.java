@@ -189,6 +189,8 @@ public abstract class Artifact implements Entity {
 		/**
 		 * Gets the any.
 		 * 
+		 * @param <T>
+		 *            the generic type
 		 * @param util
 		 *            the util
 		 * @param artifact
@@ -197,9 +199,10 @@ public abstract class Artifact implements Entity {
 		 *            the keys
 		 * @return the any
 		 */
-		public static Object getAny(final PersistenceUtil util,
-		                            final Artifact artifact,
-		                            final FieldKey... keys) {
+		@SuppressWarnings ("unchecked")
+		public static <T> T getAny(final PersistenceUtil util,
+		                           final Artifact artifact,
+		                           final FieldKey... keys) {
 			PRECONDITIONS: {
 				if (artifact == null) {
 					throw new NullPointerException();
@@ -231,7 +234,7 @@ public abstract class Artifact implements Entity {
 			for (final FieldKey key : keys) {
 				ret = artifact.get(util, key);
 				if (ret != null) {
-					return ret;
+					return ((T) ret);
 				}
 			}
 			
@@ -241,6 +244,8 @@ public abstract class Artifact implements Entity {
 		/**
 		 * Gets the any.
 		 * 
+		 * @param <T>
+		 *            the generic type
 		 * @param util
 		 *            the util
 		 * @param artifact
@@ -249,6 +254,7 @@ public abstract class Artifact implements Entity {
 		 *            the keys
 		 * @return the any
 		 */
+		@SuppressWarnings ("unchecked")
 		public static <T> T getAny(final PersistenceUtil util,
 		                           final Artifact artifact,
 		                           final IterableFieldKey... keys) {
@@ -493,9 +499,15 @@ public abstract class Artifact implements Entity {
 	 *            the index
 	 * @return the t
 	 */
-	public abstract <T> T get(final PersistenceUtil util,
-	                          IterableFieldKey key,
-	                          int index);
+	public <T> T get(final PersistenceUtil util,
+	                 final IterableFieldKey key,
+	                 final int index) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		return Artifact.Static.get(util, this, key, index);
+	}
 	
 	/**
 	 * Gets the all.
@@ -506,8 +518,14 @@ public abstract class Artifact implements Entity {
 	 *            the keys
 	 * @return the all
 	 */
-	public abstract Map<FieldKey, Object> getAll(final PersistenceUtil util,
-	                                             final FieldKey... keys);
+	public Map<FieldKey, Object> getAll(final PersistenceUtil util,
+	                                    final FieldKey... keys) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		return Artifact.Static.getAll(util, this, keys);
+	}
 	
 	/**
 	 * Gets the all.
@@ -518,8 +536,14 @@ public abstract class Artifact implements Entity {
 	 *            the keys
 	 * @return the all
 	 */
-	public abstract Map<IterableFieldKey, Object> getAll(final PersistenceUtil util,
-	                                                     final IterableFieldKey... keys);
+	public Map<IterableFieldKey, Object> getAll(final PersistenceUtil util,
+	                                            final IterableFieldKey... keys) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		return Artifact.Static.getAll(util, this, keys);
+	}
 	
 	/**
 	 * Gets the any.
@@ -532,8 +556,14 @@ public abstract class Artifact implements Entity {
 	 *            the keys
 	 * @return the any
 	 */
-	public abstract <T> T getAny(final PersistenceUtil util,
-	                             final FieldKey... keys);
+	public <T> T getAny(final PersistenceUtil util,
+	                    final FieldKey... keys) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		return Artifact.Static.getAny(util, this, keys);
+	}
 	
 	/**
 	 * Gets the any.
@@ -546,8 +576,14 @@ public abstract class Artifact implements Entity {
 	 *            the keys
 	 * @return the any
 	 */
-	public abstract <T> T getAny(final PersistenceUtil util,
-	                             final IterableFieldKey... keys);
+	public <T> T getAny(final PersistenceUtil util,
+	                    final IterableFieldKey... keys) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		return Artifact.Static.getAny(util, this, keys);
+	}
 	
 	/**
 	 * Gets the as one string.
@@ -558,8 +594,14 @@ public abstract class Artifact implements Entity {
 	 *            the f keys
 	 * @return the as one string
 	 */
-	public abstract String getAsOneString(final PersistenceUtil util,
-	                                      final FieldKey... fKeys);
+	public String getAsOneString(final PersistenceUtil util,
+	                             final FieldKey... fKeys) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		return Artifact.Static.getAsOneString(util, this, fKeys);
+	}
 	
 	/**
 	 * Gets the as one string.
@@ -570,8 +612,14 @@ public abstract class Artifact implements Entity {
 	 *            the i keys
 	 * @return the as one string
 	 */
-	public abstract String getAsOneString(final PersistenceUtil util,
-	                                      final IterableFieldKey iKeys);
+	public String getAsOneString(final PersistenceUtil util,
+	                             final IterableFieldKey iKeys) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		return Artifact.Static.getAsOneString(util, this, iKeys);
+	}
 	
 	/**
 	 * Gets the iD string.
@@ -589,8 +637,14 @@ public abstract class Artifact implements Entity {
 	 *            the key
 	 * @return the size
 	 */
-	public abstract int getSize(final PersistenceUtil util,
-	                            final IterableFieldKey key);
+	public int getSize(final PersistenceUtil util,
+	                   final IterableFieldKey key) {
+		PRECONDITIONS: {
+			// none
+		}
+		
+		return Artifact.Static.getSize(util, this, key);
+	}
 	
 	/**
 	 * Gets the text.

@@ -28,6 +28,7 @@ import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 
 import org.junit.Before;
 import org.junit.Test;
+
 import org.mozkito.testing.VersionsTest;
 import org.mozkito.testing.annotation.RepositorySetting;
 import org.mozkito.versions.RepositoryType;
@@ -114,7 +115,7 @@ public class GitTransactionIteratorTest extends VersionsTest {
 			// persist branches
 			final String branchName = revDepGraph.isBranchHead(hash);
 			if (branchName != null) {
-				final Branch rCSBranch = versionArchive.getBranch(branchName);
+				final Branch rCSBranch = versionArchive.getBranch(getPersistenceUtil(), branchName);
 				rCSBranch.setHead(changeset);
 				this.branchMap.put(branchName, rCSBranch);
 			}

@@ -60,9 +60,8 @@ public class VersionArchive implements Entity {
 		try {
 			MAIN_TABLE = new Table("version_archive", new Column("id", Type.getSerial(), new PrimaryKey(),
 			                                                     new NotNull()), new Column("mozkito_version",
-			                                                                                Type.getVarChar(255),
+			                                                                                Type.getVarChar(32),
 			                                                                                new NotNull()),
-			                       new Column("mozkito_version", Type.getVarChar(32), new NotNull()),
 			                       new Column("mining_timestamp", Type.getDateTime(), new NotNull()),
 			                       new Column("settings", Type.getText(), new NotNull()),
 			                       new Column("hostinfo", Type.getVarChar(255), new NotNull()));
@@ -215,11 +214,14 @@ public class VersionArchive implements Entity {
 	/**
 	 * Gets the branch.
 	 * 
+	 * @param util
+	 *            the util
 	 * @param name
 	 *            the name
 	 * @return the branch
 	 */
-	public synchronized Branch getBranch(final String name) {
+	public synchronized Branch getBranch(final PersistenceUtil util,
+	                                     final String name) {
 		PRECONDITIONS: {
 			if (name == null) {
 				throw new NullPointerException();
@@ -227,6 +229,14 @@ public class VersionArchive implements Entity {
 		}
 		
 		Branch branch = null;
+		if (this.branches == null) {
+			try {
+				this.branches = new HashMap<>();
+				loadBranches(util);
+			} catch (final DatabaseException e) {
+				throw new RuntimeException(e);
+			}
+		}
 		if (this.branches.containsKey(name)) {
 			branch = this.branches.get(name);
 		} else {
@@ -237,17 +247,27 @@ public class VersionArchive implements Entity {
 		SANITY: {
 			assert branch != null;
 		}
+		
 		return branch;
 	}
 	
 	/**
 	 * Gets all branches.
 	 * 
+	 * @param util
+	 *            the util
 	 * @return the branches
 	 */
-	public Map<String, Branch> getBranches() {
-		SANITY: {
-			assert this.branches != null;
+	public Map<String, Branch> getBranches(final PersistenceUtil util) {
+		if (this.branches == null) {
+			try {
+				loadBranches(util);
+				SANITY: {
+					assert this.branches != null;
+				}
+			} catch (final DatabaseException e) {
+				throw new RuntimeException(e);
+			}
 		}
 		
 		return this.branches;
@@ -291,7 +311,12 @@ public class VersionArchive implements Entity {
 			}
 		}
 		
-		final List<ChangeSet> list = util.load(ChangeSet.class);
+		List<ChangeSet> list;
+		try {
+			list = util.load(ChangeSet.class);
+		} catch (final DatabaseException e) {
+			throw new RuntimeException(e);
+		}
 		
 		SANITY: {
 			assert list != null;
@@ -343,11 +368,13 @@ public class VersionArchive implements Entity {
 	/**
 	 * Gets the master branch.
 	 * 
+	 * @param util
+	 *            the util
 	 * @return the master branch
 	 */
 	
-	public Branch getMasterBranch() {
-		return getBranch(Branch.MASTER_BRANCH_NAME);
+	public Branch getMasterBranch(final PersistenceUtil util) {
+		return getBranch(util, Branch.MASTER_BRANCH_NAME);
 	}
 	
 	/**
@@ -404,6 +431,22 @@ public class VersionArchive implements Entity {
 	}
 	
 	/**
+	 * Load branches.
+	 * 
+	 * @param util
+	 *            the util
+	 * @throws DatabaseException
+	 *             the database exception
+	 */
+	private void loadBranches(final PersistenceUtil util) throws DatabaseException {
+		if (util != null) {
+			for (final Branch b : util.load(Branch.class)) {
+				this.branches.put(b.getName(), b);
+			}
+		}
+	}
+	
+	/**
 	 * Load rev dependency graph.
 	 * 
 	 * @param util
@@ -414,7 +457,7 @@ public class VersionArchive implements Entity {
 		try {
 			if (this.revDepGraph == null) {
 				this.revDepGraph = new RevDependencyGraph();
-				for (final Branch branch : getBranches().values()) {
+				for (final Branch branch : getBranches(util).values()) {
 					this.revDepGraph.addBranch(branch.getName(), branch.getHead().getId());
 				}
 				for (final ChangeSet changeSet : getChangeSets(util).values()) {

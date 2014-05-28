@@ -38,6 +38,7 @@ import net.ownhero.dev.kanuni.conditions.CollectionCondition;
 import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
+import org.mozkito.database.Artifact;
 import org.mozkito.genealogies.core.CoreChangeGenealogy;
 import org.mozkito.genealogies.core.GenealogyEdgeType;
 import org.mozkito.genealogies.utils.GenealogyTestEnvironment.TestEnvironmentOperation;
@@ -53,7 +54,6 @@ import org.mozkito.versions.RepositoryFactory;
 import org.mozkito.versions.RepositoryType;
 import org.mozkito.versions.exceptions.UnregisteredRepositoryTypeException;
 import org.mozkito.versions.model.ChangeSet;
-import org.mozkito.versions.model.Revision;
 
 /**
  * The Class ChangeGenealogyUtils.
@@ -250,7 +250,7 @@ public class ChangeGenealogyUtils {
 			
 			final Set<JavaChangeOperation> operations = new HashSet<JavaChangeOperation>();
 			
-			for (final Revision revision : transaction.getRevisions()) {
+			for (final Artifact revision : transaction.getRevisions()) {
 				final Criteria<JavaChangeOperation> operationCriteria = persistenceUtil.createCriteria(JavaChangeOperation.class);
 				operationCriteria.eq("revision", revision);
 				final List<JavaChangeOperation> changeOps = persistenceUtil.load(operationCriteria);

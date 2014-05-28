@@ -486,7 +486,7 @@ public class Branch extends Artifact {
 	/**
 	 * Gets the merged in.
 	 * 
-	 * @return the name of the branch this branch was merged in (if any)
+	 * @return the name of the changeset this branch was merged in (if any)
 	 */
 	public Set<String> getMergedIn() {
 		return this.mergedIn;
@@ -608,11 +608,11 @@ public class Branch extends Artifact {
 	/**
 	 * Sets the merged in.
 	 * 
-	 * @param mergedIn
+	 * @param mergedIn2
 	 *            the new merged in
 	 */
-	public void setMergedIn(final Set<String> mergedIn) {
-		this.mergedIn = mergedIn;
+	public void setMergedIn(final Set<String> mergedIn2) {
+		this.mergedIn = mergedIn2;
 	}
 	
 	/**

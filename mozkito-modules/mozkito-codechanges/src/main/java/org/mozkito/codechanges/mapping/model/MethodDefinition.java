@@ -13,8 +13,8 @@
 
 package org.mozkito.codechanges.mapping.model;
 
+import org.mozkito.database.Artifact;
 import org.mozkito.versions.model.Handle;
-import org.mozkito.versions.model.Revision;
 
 /**
  * The Class MethodDefinition.
@@ -27,7 +27,7 @@ public class MethodDefinition {
 	private final String          name;
 	
 	/** The revision. */
-	private final Revision        revision;
+	private final Artifact        revision;
 	
 	/** The handle. */
 	private final Handle          handle;
@@ -59,7 +59,7 @@ public class MethodDefinition {
 	 * @param endLine
 	 *            the end line
 	 */
-	public MethodDefinition(final String name, final Revision revision, final Handle handle, final int startLine,
+	public MethodDefinition(final String name, final Artifact revision, final Handle handle, final int startLine,
 	        final int endLine) {
 		this(name, revision, handle, startLine, endLine, null);
 	}
@@ -80,7 +80,7 @@ public class MethodDefinition {
 	 * @param classDefinition
 	 *            the class definition
 	 */
-	public MethodDefinition(final String name, final Revision revision, final Handle handle, final int startLine,
+	public MethodDefinition(final String name, final Artifact revision, final Handle handle, final int startLine,
 	        final int endLine, final ClassDefinition classDefinition) {
 		PRECONDITIONS: {
 			if (name == null) {
@@ -182,7 +182,7 @@ public class MethodDefinition {
 	/**
 	 * @return the revision
 	 */
-	public Revision getRevision() {
+	public Artifact getRevision() {
 		PRECONDITIONS: {
 			// none
 		}

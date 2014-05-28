@@ -26,12 +26,12 @@ import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
+import org.mozkito.database.Artifact;
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.elements.RevDependencyGraph;
 import org.mozkito.versions.model.Branch;
 import org.mozkito.versions.model.ChangeSet;
-import org.mozkito.versions.model.Revision;
 import org.mozkito.versions.model.VersionArchive;
 
 /**
@@ -155,7 +155,7 @@ public class PPASource extends Source<ChangeSet> {
 						
 						// test if seen already
 						boolean skip = false;
-						for (final Revision rCSRevision : changeSet.getRevisions()) {
+						for (final Artifact rCSRevision : changeSet.getRevisions()) {
 							final Criteria<JavaChangeOperation> skipCriteria = persistenceUtil.createCriteria(JavaChangeOperation.class)
 							                                                                  .eq("revision",
 							                                                                      rCSRevision);

@@ -15,6 +15,7 @@ package org.mozkito.database.constraints.table;
 
 import org.mozkito.database.constraints.TableConstraint;
 import org.mozkito.database.model.Column;
+import org.mozkito.database.model.Table;
 import org.mozkito.database.types.Type;
 
 /**
@@ -32,6 +33,42 @@ public class PrimaryKey extends TableConstraint {
 	 */
 	public PrimaryKey(final Column... columns) {
 		super(columns);
+	}
+	
+	/**
+	 * Gets the column indexes.
+	 * 
+	 * @return the column indexes
+	 */
+	public int[] getColumnIndexes() {
+		SANITY: {
+			assert getColumns() != null;
+		}
+		
+		Table table = null;
+		final int[] columnIndexes = new int[getColumns().length];
+		int arrayIndex = 0;
+		
+		for (final Column column : getColumns()) {
+			if (table == null) {
+				table = column.table();
+			}
+			
+			SANITY: {
+				assert table.equals(column.table());
+			}
+			
+			for (int i = 0; i < table.columnCount(); ++i) {
+				assert arrayIndex < columnIndexes.length;
+				
+				if (column.equals(table.column(i))) {
+					columnIndexes[arrayIndex] = i;
+					++arrayIndex;
+				}
+			}
+		}
+		
+		return columnIndexes;
 	}
 	
 	/**
