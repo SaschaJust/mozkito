@@ -57,14 +57,14 @@ public class BranchAdapter extends EntityAdapter<Branch> {
 		}
 		
 		SANITY: {
-			assert getLayout().getMainTable().column(0) != null;
-			assert getLayout().getMainTable().primaryKey() != null;
-			assert getLayout().getMainTable().primaryKey().getColumns() != null;
-			assert getLayout().getMainTable().primaryKey().getColumns().length == 1;
-			assert getLayout().getMainTable().primaryKey().getColumns()[0] != null;
-			assert getLayout().getMainTable().primaryKey().getColumns()[0].type() != null;
-			assert Type.getVarChar(255).equals(getLayout().getMainTable().primaryKey().getColumns()[0].type());
-			assert getLayout().getMainTable().primaryKey().getColumns()[0].equals(getLayout().getMainTable().column(0));
+			assert getMainTable().column(0) != null;
+			assert getMainTable().primaryKey() != null;
+			assert getMainTable().primaryKey().getColumns() != null;
+			assert getMainTable().primaryKey().getColumns().length == 1;
+			assert getMainTable().primaryKey().getColumns()[0] != null;
+			assert getMainTable().primaryKey().getColumns()[0].type() != null;
+			assert Type.getVarChar(255).equals(getMainTable().primaryKey().getColumns()[0].type());
+			assert getMainTable().primaryKey().getColumns()[0].equals(getMainTable().column(0));
 		}
 		
 		try {
@@ -94,26 +94,22 @@ public class BranchAdapter extends EntityAdapter<Branch> {
 		
 		try {
 			SANITY: {
-				assert getLayout().getMainTable().primaryKey().getColumns() != null;
-				assert getLayout().getMainTable().primaryKey().getColumns().length == 1; // there exists a key and it's
-				                                                                         // no composite key
-				assert Type.getVarChar(255).equals(getLayout().getMainTable().primaryKey().getColumnType(0));
-				assert getLayout().getMainTable().column("head") != null;
+				assert getMainTable().primaryKey().getColumns() != null;
+				assert getMainTable().primaryKey().getColumns().length == 1; // there exists a key and it's
+				                                                             // no composite key
+				assert Type.getVarChar(255).equals(getMainTable().primaryKey().getColumnType(0));
+				assert getMainTable().column("head") != null;
 			}
 			
 			PreparedStatement preparedStatement = getConnector().prepare("SELECT "
-			                                                                     + getLayout().getMainTable()
-			                                                                                  .primaryKey()
+			                                                                     + getMainTable().primaryKey()
 			                                                                     + ", "
-			                                                                     + getLayout().getMainTable()
-			                                                                                  .column("version_archive")
-			                                                                     + getLayout().getMainTable()
-			                                                                                  .column("head")
-			                                                                     + " FROM "
-			                                                                     + getLayout().getMainTable()
+			                                                                     + getMainTable().column("version_archive")
+			                                                                     + getMainTable().column("head")
+			                                                                     + " FROM " + getMainTable()
 			                                                                     + " WHERE "
-			                                                                     + getLayout().getMainTable()
-			                                                                                  .primaryKey() + " = ?;");
+			                                                                     + getMainTable().primaryKey()
+			                                                                     + " = ?;");
 			
 			preparedStatement.setString(1, localId);
 			ResultSet result = preparedStatement.executeQuery();
@@ -178,7 +174,8 @@ public class BranchAdapter extends EntityAdapter<Branch> {
 			}
 		}
 		
-		final Table table = getLayout().getMainTable();
+		final Table table = getMainTable();
+		
 		SANITY: {
 			assert getConnector() != null;
 			assert table != null;
@@ -194,9 +191,11 @@ public class BranchAdapter extends EntityAdapter<Branch> {
 			                                                                           + " = ?;");
 			preparedStatement.setLong(1, id);
 			final ResultSet idSet = preparedStatement.executeQuery();
+			
 			SANITY: {
 				assert idSet != null;
 			}
+			
 			return loadForIds(idSet);
 		} catch (final SQLException e) {
 			throw new DatabaseException(e);
@@ -216,9 +215,34 @@ public class BranchAdapter extends EntityAdapter<Branch> {
 		}
 		
 		try {
-			// TODO Auto-generated method stub
-			//
-			throw new RuntimeException("Method 'saveOrUpdate' has not yet been implemented."); //$NON-NLS-1$
+			try {
+				ResultSet result = null;
+				
+				SANITY: {
+					assert entity.getId() != null;
+				}
+				
+				final PreparedStatement preparedStatement = getConnector().prepare("SELECT "
+				                                                                           + getMainTable().primaryKey()
+				                                                                           + " FROM "
+				                                                                           + getMainTable()
+				                                                                           + " WHERE "
+				                                                                           + getMainTable().primaryKey()
+				                                                                           + " = ?;");
+				preparedStatement.setString(1, entity.getId());
+				result = preparedStatement.executeQuery();
+				
+				if ((result == null) || !result.next()) {
+					// INSERT
+					
+				} else {
+					// UPDATE
+				}
+				
+			} catch (final SQLException e) {
+				getConnector().rollback();
+				throw new DatabaseException(e);
+			}
 		} finally {
 			POSTCONDITIONS: {
 				// none

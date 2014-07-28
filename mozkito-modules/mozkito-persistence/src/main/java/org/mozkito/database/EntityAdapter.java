@@ -154,6 +154,15 @@ public abstract class EntityAdapter<T extends Entity> {
 	}
 	
 	/**
+	 * Gets the main table.
+	 * 
+	 * @return the main table
+	 */
+	public Table getMainTable() {
+		return getLayout().getMainTable();
+	}
+	
+	/**
 	 * Gets the query pool.
 	 * 
 	 * @return the query pool

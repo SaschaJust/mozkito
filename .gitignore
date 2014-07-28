@@ -58,3 +58,9 @@ mozkito-modules/**/eclipse
 /mozkito-modules/mozkito-issues/src/main/resources/ClassDiagram.png
 /mozkito-modules/maven.err
 /mozkito-maven-plugins/mozkito-maven-plugin/maven.err
+
+/mozkito-runtime/mozkito-clients/mozkito-cli/.project
+
+/mozkito-runtime/mozkito-clients/mozkito-cli/.settings/
+
+/mozkito-runtime/mozkito-clients/mozkito-cli/.classpath
