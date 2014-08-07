@@ -1,0 +1,41 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Contents: Style Package - Diplomarbeit, FH Regensburg         %
+%                          11.03.2003                           %
+%---------------------------------------------------------------%
+%                         mydiplstyle.sty                       %
+%                      by Vorname Nachname                      %
+%                         mail@mail.com                         %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\ProvidesPackage{mydiplstyle}
+
+%Beispiel:
+
+%Funktionsbeschreibung
+%Command \functdesc zeichnet Tabelle zur Funktionsbeschreibung
+%Useage: \functdesc{Funktionsname}{Parameter}{Rückgabeparameter}{Beschreibung}
+
+\newcommand{\functdesc}[4]{
+\begin{center}
+\begin{tabular}{|l p{10cm}|}
+\hline \multicolumn{2}{|l|}{\textbf{#1}}\\
+\hline \hline \textbf{Parameter:} &
+  \begin{minipage}[t]{0.7\textwidth}
+  #2
+ \medskip
+  \end{minipage}\\
+\textbf{Rückgabewert:} &
+  \begin{minipage}[t]{0.7\textwidth}
+   #3
+  \medskip
+  \end{minipage}\\
+ \textbf{Beschreibung:} &
+  \begin{minipage}[t]{0.7\textwidth}
+ #4
+ \smallskip
+  \end{minipage}\\
+ \hline
+\end{tabular}
+\end{center}
+}

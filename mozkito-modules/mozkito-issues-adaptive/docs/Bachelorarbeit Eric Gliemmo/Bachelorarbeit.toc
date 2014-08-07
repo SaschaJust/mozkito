@@ -1,0 +1,22 @@
+\select@language {english}
+\select@language {english}
+\contentsline {chapter}{\numberline {1}Overview}{1}{chapter.6}
+\contentsline {section}{\numberline {1.1}Introduction}{1}{section.7}
+\contentsline {section}{\numberline {1.2}Related Work}{2}{section.8}
+\contentsline {chapter}{\numberline {2}Concepts}{4}{chapter.9}
+\contentsline {section}{\numberline {2.1}Problem}{4}{section.10}
+\contentsline {section}{\numberline {2.2}Contribution}{7}{section.12}
+\contentsline {chapter}{\numberline {3}Method and Implementation}{9}{chapter.13}
+\contentsline {section}{\numberline {3.1}Methodology}{9}{section.14}
+\contentsline {section}{\numberline {3.2}Preconditions}{11}{section.15}
+\contentsline {subsection}{\numberline {3.2.1}Adaption of a benchmark}{11}{subsection.16}
+\contentsline {subsection}{\numberline {3.2.2}Deployment of modified reports}{11}{subsection.17}
+\contentsline {section}{\numberline {3.3}Retrieving markers}{11}{section.18}
+\contentsline {subsection}{\numberline {3.3.1}Access the HTML structure}{11}{subsection.19}
+\contentsline {subsection}{\numberline {3.3.2}Search in XML}{14}{subsection.20}
+\contentsline {section}{\numberline {3.4}Generating a mining plan}{16}{section.22}
+\contentsline {chapter}{\numberline {4}Evaluation and Analysis}{18}{chapter.23}
+\contentsline {chapter}{\numberline {5}Conclusion}{20}{chapter.24}
+\contentsline {section}{\numberline {5.1}Summary}{20}{section.25}
+\contentsline {section}{\numberline {5.2}Future Work}{20}{section.26}
+\contentsline {chapter}{Bibliography}{21}{appendix*.27}

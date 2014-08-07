@@ -1,0 +1,120 @@
+ %\documentclass[10pt,cleardoubleplain,twoside]{scrbook}
+
+\documentclass[12pt,titlepage,a4paper,twoside]{report}
+%\documentclass[11pt,titlepage,a4paper]{report}
+\usepackage[ngerman, english]{babel}  %neue deutsche Rechtschreibung
+\usepackage{a4}
+%\usepackage[isolatin]{inputenc}
+%\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage[english]{varioref}
+\usepackage{moreverb}
+\usepackage{mydiplstyle} %eigene Befehlsdefinitionen (aus Datei mydiplstyle.sty)
+\usepackage{fancyhdr}
+\usepackage{subfigure}
+\usepackage{geometry}
+\usepackage{mathdots} 
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{tabularx}
+
+%tikz
+\usepackage{tikz}
+%\usetikzlibrary{trees,snakes}
+\usepackage{verbatim}
+\usepackage[np,autolanguage]{numprint}
+%tikz
+%\usepackage{tikz,tkz-euclide}
+%\usepackage[graphics,tightpage,active]{preview}
+%\setlength{\PreviewBorder}{3pt}
+%\PreviewEnvironment{tikzpicture}
+%\usepackage{verbatim}
+%tikz
+
+%\usepackage[percent]{overpic}
+%\usepackage{color}
+
+\geometry{a4paper, top=2.5cm, bottom=2.5cm} 
+\usepackage[arrow, matrix, curve]{xy}
+%\geometry{a4paper,top=2cm, bottom=2cm, twoside} 
+
+\usepackage[colorlinks,pdfpagelabels,pdfstartview = FitH,bookmarksopen = true,bookmarksnumbered = true,linkcolor = black,plainpages = false,hypertexnames = false,citecolor = black] {hyperref}
+\usepackage{stmaryrd}
+
+%Mathe
+  \usepackage{amsmath}
+  \usepackage{mathrsfs}
+  \usepackage{amssymb, latexsym}
+  \usepackage{bbm}
+%\usepackage[amsmath,thref,standard]{ntheorem} 
+
+%% Header-Layout
+\pagestyle{fancy}
+\addtolength{\headwidth}{\marginparsep}
+\headheight=15pt
+\fancyhf{}
+\renewcommand{\sectionmark}[1]{\markright{\thesection\ #1}}
+\chead{\rightmark}
+\renewcommand{\headrulewidth}{0.4pt}
+% footer
+\cfoot{\thepage}
+\renewcommand{\footrulewidth}{0.4pt}
+
+%redefine plain pagestyle - used for chapter pages.
+\fancypagestyle{plain}{
+  \fancyhf{}
+  \cfoot{\thepage}
+  \renewcommand{\headrulewidth}{0pt}
+}
+%increase line space
+\renewcommand{\baselinestretch}{1.2}
+
+
+\newenvironment{proof}[1][Beweis]{\begin{trivlist}
+\item[\hskip \labelsep {\textit #1}]}{\end{trivlist}}
+%------ the real document begins here ------
+\begin{document}
+
+%------ layout for title page ------
+
+\pagenumbering{roman}
+
+%------ preface, table of contents, summary ------
+\include{Titelblatt} 
+\newpage \thispagestyle{empty} \ \newpage
+\include{Erklaerung}
+\newpage \thispagestyle{empty} \ \newpage
+\include{Vorwort}
+\newpage \thispagestyle {empty} \ \newpage
+\include{Anhang}
+\newpage \thispagestyle {empty} \ \newpage
+%\thispagestyle {empty}
+\tableofcontents
+\thispagestyle {empty}
+
+
+
+% Layout der Seiten
+\setlength{\parindent}{0pt} \setlength{\parskip}{1.5ex}
+\setcounter{secnumdepth}{3}
+
+\setcounter{tocdepth}{5}
+
+%------ text of diploma thesis ------
+
+\newpage
+\thispagestyle {empty}
+\newpage
+%\include{Kurzfassung}
+\pagenumbering{arabic}
+\include{Theorie}
+%\include{blabla} ..... usw.
+
+%------ appendix ------
+\appendix 
+
+%\include{Anhang}
+\include{Literatur} 
+%\include{Erklaerung}
+%------ end of document ------
+\end{document}

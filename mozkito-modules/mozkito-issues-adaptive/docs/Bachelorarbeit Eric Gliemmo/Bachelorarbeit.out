@@ -1,0 +1,20 @@
+\BOOKMARK [0][]{chapter.6}{1 Overview}{}% 1
+\BOOKMARK [1][]{section.7}{1.1 Introduction}{chapter.6}% 2
+\BOOKMARK [1][]{section.8}{1.2 Related Work}{chapter.6}% 3
+\BOOKMARK [0][]{chapter.9}{2 Concepts}{}% 4
+\BOOKMARK [1][]{section.10}{2.1 Problem}{chapter.9}% 5
+\BOOKMARK [1][]{section.12}{2.2 Contribution}{chapter.9}% 6
+\BOOKMARK [0][]{chapter.13}{3 Method and Implementation}{}% 7
+\BOOKMARK [1][]{section.14}{3.1 Methodology}{chapter.13}% 8
+\BOOKMARK [1][]{section.15}{3.2 Preconditions}{chapter.13}% 9
+\BOOKMARK [2][]{subsection.16}{3.2.1 Adaption of a benchmark}{section.15}% 10
+\BOOKMARK [2][]{subsection.17}{3.2.2 Deployment of modified reports}{section.15}% 11
+\BOOKMARK [1][]{section.18}{3.3 Retrieving markers}{chapter.13}% 12
+\BOOKMARK [2][]{subsection.19}{3.3.1 Access the HTML structure}{section.18}% 13
+\BOOKMARK [2][]{subsection.20}{3.3.2 Search in XML}{section.18}% 14
+\BOOKMARK [1][]{section.22}{3.4 Generating a mining plan}{chapter.13}% 15
+\BOOKMARK [0][]{chapter.23}{4 Evaluation and Analysis}{}% 16
+\BOOKMARK [0][]{chapter.24}{5 Conclusion}{}% 17
+\BOOKMARK [1][]{section.25}{5.1 Summary}{chapter.24}% 18
+\BOOKMARK [1][]{section.26}{5.2 Future Work}{chapter.24}% 19
+\BOOKMARK [0][]{appendix*.27}{Bibliography}{}% 20
