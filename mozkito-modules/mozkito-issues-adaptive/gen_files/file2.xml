@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <title>Log in - Jira</title>
+    <script type="text/javascript">if (!window.performance) {
+        window.mpPerformance = {};
+        window.mpPerformance.responseStart = new Date().getTime();
+    }</script>
+    <meta name="application-name" content="JIRA" data-name="jira" data-version="6.0.7" />
+    <meta name="ajs-dev-mode" content="false" />
+    <meta name="ajs-context-path" content="" />
+    <meta name="ajs-version-number" content="6.0.7" />
+    <meta name="ajs-build-number" content="6106" />
+    <meta name="ajs-remote-user" content="" />
+    <meta name="ajs-remote-user-fullname" content="" />
+    <meta name="ajs-user-locale" content="en_US" />
+    <meta name="ajs-user-locale-group-separator" content="," />
+    <meta name="ajs-app-title" content="Jira" />
+    <meta name="ajs-keyboard-shortcuts-enabled" content="true" />
+    <meta name="ajs-enabled-dark-features" content="[&quot;app-switcher.new&quot;,&quot;20percent.admin.nav.redesign&quot;,&quot;com.atlassian.jira.darkfeature.CommonHeader&quot;,&quot;jira.frother.reporter.field&quot;,&quot;com.atlassian.jira.config.PDL&quot;,&quot;com.atlassian.jira.darkfeature.BulkWatch&quot;,&quot;frother.assignee.field&quot;]" />
+    <meta name="ajs-date-relativize" content="true" />
+    <meta name="ajs-date-time" content="h:mm a" />
+    <meta name="ajs-date-day" content="EEEE h:mm a" />
+    <meta name="ajs-date-dmy" content="dd/MMM/yy" />
+    <meta name="ajs-date-complete" content="dd/MMM/yy h:mm a" />
+    <meta name="ajs-in-admin-mode" content="false" />
+    <meta name="ajs-outgoing-mail-enabled" content="true" />
+    <meta name="ajs-whats-new-iframe-src-override" content="" />
+    <meta name="ajs-whatsnew-full-link" content="https://docs.atlassian.com/jira/docs-060/whatsnew/iframe" />
+    <meta name="atlassian-token" id="atlassian-token" content="B6SE-0NSX-K4W6-WQ04|bb7d0378cd52fae9abf948eaa10b76e88232600d|lout" />
+    <link rel="shortcut icon" href="/s/en_US-t5gcjp-1988229788/6106/3/_/favicon.ico" />
+    <link rel="search" type="application/opensearchdescription+xml" href="/osd.jsp" title="Log in - Jira" />
+    <!--[if IE]><![endif]-->
+    <script type="text/javascript">var contextPath = '';</script>
+    <link type="text/css" rel="stylesheet" href="/s/en_US-t5gcjp-1988229788/6106/3/4/_/download/superbatch/css/batch.css" media="all" />
+    <!--[if lte IE 8]>
+<link type="text/css" rel="stylesheet" href="/s/en_US-t5gcjp-1988229788/6106/3/4/_/download/superbatch/css/batch.css?conditionalComment=lte+IE+8" media="all">
+<![endif]-->
+    <!--[if lte IE 9]>
+<link type="text/css" rel="stylesheet" href="/s/en_US-t5gcjp-1988229788/6106/3/4/_/download/superbatch/css/batch.css?conditionalComment=lte+IE+9" media="all">
+<![endif]-->
+    <link type="text/css" rel="stylesheet" href="/s/en_US-t5gcjp-1988229788/6106/3/185eea43d9a2e58922b79c88cb80f245/_/download/contextbatch/css/atl.general,jira.global/batch.css" media="all" />
+    <!--[if lte IE 8]>
+<link type="text/css" rel="stylesheet" href="/s/en_US-t5gcjp-1988229788/6106/3/185eea43d9a2e58922b79c88cb80f245/_/download/contextbatch/css/atl.general,jira.global/batch.css?conditionalComment=lte+IE+8" media="all">
+<![endif]-->
+    <link type="text/css" rel="stylesheet" href="/s/en_US-t5gcjp-1988229788/6106/3/d57fa41e63a8eb00c4658102ca76a48a/_/download/contextbatch/css/jira.general/batch.css" media="all" />
+    <link type="text/css" rel="stylesheet" href="/s/en_US-t5gcjp-1988229788/6106/3/1.0/_/download/batch/jira.webresources:captcha/jira.webresources:captcha.css" media="all" />
+    <script type="text/javascript" src="/s/en_US-t5gcjp-1988229788/6106/3/4/_/download/superbatch/js/batch.js" />
+    <!--[if lte IE 8]>
+<script type="text/javascript" src="/s/en_US-t5gcjp-1988229788/6106/3/4/_/download/superbatch/js/batch.js?conditionalComment=lte+IE+8" ></script>
+<![endif]-->
+    <script type="text/javascript" src="/s/en_US-t5gcjp-1988229788/6106/3/185eea43d9a2e58922b79c88cb80f245/_/download/contextbatch/js/atl.general,jira.global/batch.js" />
+    <script type="text/javascript" src="/s/en_US-t5gcjp-1988229788/6106/3/d57fa41e63a8eb00c4658102ca76a48a/_/download/contextbatch/js/jira.general/batch.js" />
+    <script type="text/javascript" src="/s/en_US-t5gcjp-1988229788/6106/3/1.0/_/download/batch/jira.webresources:captcha/jira.webresources:captcha.js" />
+    <script type="text/javascript" src="/s/en_US-t5gcjp-1988229788/6106/3/1.3.1/_/download/batch/com.atlassian.administration.atlassian-admin-quicksearch-jira:admin-quicksearch-webresources/com.atlassian.administration.atlassian-admin-quicksearch-jira:admin-quicksearch-webresources.js" />
+    <script type="text/javascript" src="/rest/api/1.0/shortcuts/6106/7e33fe5e77abd8c8b08322f8e3ad4e76/shortcuts.js" />
+    <meta name="decorator" content="login" />
+  </head>
+  <body class="aui-layout aui-theme-default page-type-login" id="jira" data-version="6.0.7">
+    <div id="page">
+      <header id="header" role="banner">
+        <fieldset class="parameters hidden dont-default-focus">
+          <input type="hidden" title="tzdetect.pref.tzid" value="Europe/Berlin" />
+          <input type="hidden" title="tzdetect.pref.tzname" value="(GMT+01:00) Berlin" />
+          <input type="hidden" title="tzdetect.pref.tzoffset" value="(GMT+01:00)" />
+          <input type="hidden" title="tzdetect.pref.tzdst" value="true" />
+          <input type="hidden" title="tzdetect.pref.nothanks" value="" />
+        </fieldset>
+        <nav class="aui-header aui-dropdown2-trigger-group" role="navigation">
+          <div class="aui-header-inner">
+            <div class="aui-header-before">
+              <a shape="rect" tabindex="0" class="aui-dropdown2-trigger app-switcher-trigger" aria-owns="app-switcher" aria-haspopup="true">
+                <span class="aui-icon aui-icon-small aui-iconfont-appswitcher">Linked Applications</span>
+              </a>
+              <div class="aui-dropdown2 aui-style-default" id="app-switcher">
+                <div class="app-switcher-loading">Loading…</div>
+              </div>
+              <script>(function (NL) {
+                var initialise = function () {
+                    // For some milestones of AUI, the atlassian soy namespace was renamed to aui. Handle that here by ensuring that window.atlassian is defined.
+                    window.atlassian = window.atlassian || window.aui;
+                    new NL.AppSwitcher({
+                        dropdownContents: '#app-switcher'
+                    });
+                };
+                if (NL.AppSwitcher) {
+                    initialise();
+                } else {
+                    NL.onInit = initialise;
+                }
+            }(window.NL = (window.NL || {})));
+            window.NL.isUserAdmin = false</script>
+            </div>
+            <div class="aui-header-primary">
+              <h1 class="aui-header-logo aui-header-logo-custom" id="logo">
+                <a shape="rect" href="https://issues.mozkito.org/secure/MyJiraHome.jspa">
+                  <img src="/s/en_US-t5gcjp-1988229788/6106/3/_/images/icon-jira-logo.png" alt="Jira" />
+                </a>
+              </h1>
+              <ul class="aui-nav">
+                <li>
+                  <a shape="rect" class="aui-nav-link aui-dropdown2-ajax jira-ajax-menu aui-dropdown2-trigger" id="home_link" href="/secure/Dashboard.jspa" accesskey="d" title="View and manage your dashboards" aria-haspopup="true" aria-owns="home_link-content">Dashboards</a>
+                  <div class="aui-dropdown2 aui-style-default" id="home_link-content" data-aui-dropdown2-ajax-key="home_link" />
+                </li>
+                <li>
+                  <a shape="rect" class="aui-nav-link" id="greenhopper_menu_no_project" href="/secure/RapidStart.jspa" title="Manage your project with JIRA Agile">Agile</a>
+                </li>
+                <li>
+                  <a shape="rect" class="aui-nav-link aui-dropdown2-trigger" id="bonfire_top_menu_dropdown" href="/secure/SessionNavigator.jspa" title="Capture" aria-haspopup="true" aria-owns="bonfire_top_menu_dropdown-content">Capture</a>
+                  <div class="aui-dropdown2 aui-style-default" id="bonfire_top_menu_dropdown-content">
+                    <div class="aui-dropdown2-section">
+                      <ul class="aui-list-truncate" id="bonfire_top_main_menu.2">
+                        <li>
+                          <a shape="rect" class="" id="bonfire_gettingstarted_link" title="Getting Started With JIRA Capture" href="/secure/BonfireGettingStarted.jspa">Getting Started</a>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="aui-header-secondary">
+              <ul class="aui-nav">
+                <li>
+                  <form enctype="application/x-www-form-urlencoded" method="post" class="aui-quicksearch dont-default-focus ajs-dirty-warning-exempt" id="quicksearch" action="/secure/QuickSearch.jspa">
+                    <input type="text" class="search" id="quickSearchInput" title="Quick Search" placeholder="Quick Search" name="searchString" accesskey="q" />
+                    <input type="submit" class="hidden" value="Search" />
+                  </form>
+                </li>
+                <li id="system-help-menu">
+                  <a shape="rect" class="aui-nav-link aui-dropdown2-trigger" aria-haspopup="true" aria-owns="system-help-menu-content" href="https://docs.atlassian.com/jira/docs-060/JIRA+Documentation" target="_blank" title="Help">
+                    <span class="aui-icon aui-icon-small aui-iconfont-help">Help</span>
+                  </a>
+                  <div class="aui-dropdown2 aui-style-default" id="system-help-menu-content">
+                    <div class="aui-dropdown2-section">
+                      <ul class="aui-list-truncate" id="jira-help">
+                        <li>
+                          <a shape="rect" class="" id="view_help" title="Goto the online documentation for JIRA" href="https://docs.atlassian.com/jira/docs-060/JIRA+Documentation" target="_blank">Online Help</a>
+                        </li>
+                        <li>
+                          <a shape="rect" class="" id="gh_view_help" title="Get help online for JIRA Agile" href="http://docs.atlassian.com/agile/docs-0630/JIRA+Agile+Documentation" target="_blank">JIRA Agile Help</a>
+                        </li>
+                        <li>
+                          <a shape="rect" class="" id="gh_view_agile_answers" title="Get answers about Agile" href="http://answers.atlassian.com/tags/agile/" target="_blank">Agile Answers</a>
+                        </li>
+                        <li>
+                          <a shape="rect" class="" id="keyshortscuthelp" title="Get more information about JIRA's Keyboard Shortcuts" href="/secure/ViewKeyboardShortcuts!default.jspa" target="_blank">Keyboard Shortcuts</a>
+                        </li>
+                        <li>
+                          <a shape="rect" class="" id="view_about" title="Get more information about JIRA" href="/secure/AboutPage.jspa">About JIRA</a>
+                        </li>
+                        <li>
+                          <a shape="rect" class="" id="view_credits" title="See who did what" href="/secure/JiraCreditsPage!default.jspa" target="_blank">JIRA Credits</a>
+                        </li>
+                        <li>
+                          <a shape="rect" class="" id="whats-new-menu-link" href="https://docs.atlassian.com/jira/docs-060/whatsnew/iframe">What’s New</a>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </li>
+                <li id="user-options">
+                  <a shape="rect" class="aui-nav-link login-link" href="/login.jsp?os_destination=%2Fbrowse%2FMTEST-1">Log In</a>
+                  <div class="aui-dropdown2 aui-style-default" id="user-options-content">
+                    <div class="aui-dropdown2-section" />
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <!-- .aui-header-inner-->
+        </nav>
+        <!-- .aui-header -->
+      </header>
+      <section id="content" role="main">
+        <div class="aui-page-panel">
+          <div class="aui-page-panel-inner">
+            <section class="aui-page-panel-content">
+              <header>
+                <h1>Welcome to Jira</h1>
+              </header>
+              <form enctype="application/x-www-form-urlencoded" method="post" class="aui" id="login-form" action="/login.jsp">
+                <div class="form-body">
+                  <div class="aui-message warning">
+                    <span class="aui-icon icon-warning" />
+                    <p>You must log in to access this page.</p>
+                    <p>If you think this message is wrong, please contact your JIRA administrators.</p>
+                  </div>
+                  <fieldset>
+                    <div class="field-group">
+                      <label for="login-form-username" accesskey="u">
+                        <u>U</u>
+                        sername
+                      </label>
+                      <input type="text" class="text medium-field" id="login-form-username" name="os_username" value="" />
+                    </div>
+                    <div class="field-group">
+                      <label for="login-form-password" id="passwordlabel" accesskey="p">
+                        <u>P</u>
+                        assword
+                      </label>
+                      <input type="password" class="text medium-field" id="login-form-password" name="os_password" />
+                    </div>
+                    <fieldset class="group">
+                      <div class="checkbox">
+                        <input type="checkbox" class="checkbox" id="login-form-remember-me" name="os_cookie" value="true" />
+                        <label for="login-form-remember-me" accesskey="r">
+                          <u>R</u>
+                          emember my login on this computer
+                        </label>
+                      </div>
+                    </fieldset>
+                    <!-- // .group -->
+                    <div class="field-group" id="sign-up-hint">
+                      Not a member?
+                      <a shape="rect" tabindex="-1" id="signup" href="/secure/Signup!default.jspa">Sign up</a>
+                      for an account.
+                    </div>
+                  </fieldset>
+                  <div class="hidden">
+                    <input type="hidden" name="os_destination" value="/browse/MTEST-1" />
+                  </div>
+                  <div class="hidden">
+                    <input type="hidden" name="atl_token" />
+                  </div>
+                </div>
+                <div class="buttons-container form-footer">
+                  <div class="buttons">
+                    <input type="submit" class="aui-button" id="login-form-submit" accesskey="s" name="login" title="Press Alt+s to submit this form" value="Log In" />
+                    <a shape="rect" class="aui-button aui-button-link cancel" id="login-form-cancel" accesskey="`" href="/secure/ForgotLoginDetails.jspa" title="Press Alt+` to cancel">Can't access your account?</a>
+                  </div>
+                </div>
+              </form>
+              <!-- // .aui #login-form -->
+            </section>
+            <!-- .aui-page-panel-content -->
+          </div>
+          <!-- .aui-page-panel-inner -->
+        </div>
+        <!-- .aui-page-panel -->
+      </section>
+      <footer id="footer" role="contentinfo">
+        <div class="footer-body">
+          <ul>
+            <li>
+              <a shape="rect" href="http://www.atlassian.com/software/jira">Atlassian JIRA</a>
+              <span id="footer-build-information">
+                (v6.0.7#6106-
+                <span title="76d7c58977f2f86acf550d7d423fe4e5c770db9b" data-commit-id="76d7c58977f2f86acf550d7d423fe4e5c770db9b}">sha1:76d7c58</span>
+                )
+              </span>
+            </li>
+            <li>
+              <a shape="rect" id="about-link" href="/secure/AboutPage.jspa">About JIRA</a>
+            </li>
+            <li>
+              <a shape="rect" id="footer-report-problem-link" href="/secure/CreateIssue!default.jspa">Report a problem</a>
+            </li>
+          </ul>
+          <ul>
+            <li class="licensemessage">
+              Powered by a free Atlassian
+              <a shape="rect" href="http://www.atlassian.com/software/jira">JIRA</a>
+              community license for Saarland University. Try JIRA -
+              <a shape="rect" href="http://www.atlassian.com/software/jira">bug tracking software</a>
+              for
+              <i>your</i>
+              team.
+            </li>
+          </ul>
+        </div>
+        <form enctype="application/x-www-form-urlencoded" method="get" class="dont-default-focus" id="jira_request_timing_info">
+          <fieldset class="parameters hidden">
+            <input type="hidden" title="jira.request.start.millis" value="1408628868459" />
+            <input type="hidden" title="jira.request.server.time" value="21" />
+            <input type="hidden" title="jira.request.id" value="947x1263090x1" />
+            <input type="hidden" title="jira.session.expiry.time" value="-" />
+            <input type="hidden" title="jira.session.expiry.in.mins" value="-" />
+            <input type="hidden" id="jiraConcurrentRequests" name="jira.request.concurrent.requests" value="1" />
+          </fieldset>
+        </form>
+        <!--
+	                 REQUEST ID : 947x1263090x1
+	          REQUEST TIMESTAMP : [21/Aug/2014:15:47:48 +0200]
+	               REQUEST TIME : 0.0210
+	                 ASESSIONID : -
+	        CONCURRENT REQUESTS : 1
+
+-->
+        <fieldset class="hidden parameters">
+          <input type="hidden" title="loggedInUser" value="" />
+          <input type="hidden" title="ajaxTimeout" value="The call to the JIRA server did not complete within the timeout period.  We are unsure of the result of this operation." />
+          <input type="hidden" title="JiraVersion" value="6.0.7" />
+          <input type="hidden" title="ajaxUnauthorised" value="You are not authorized to perform this operation.  Please log in." />
+          <input type="hidden" title="baseURL" value="https://issues.mozkito.org:443" />
+          <input type="hidden" title="ajaxCommsError" value="The JIRA server could not be contacted.  This may be a temporary glitch or the server may be down." />
+          <input type="hidden" title="ajaxServerError" value="The JIRA server was contacted but has returned an error response. We are unsure of the result of this operation." />
+          <input type="hidden" title="ajaxErrorCloseDialog" value="Close this dialog and press refresh in your browser" />
+          <input type="hidden" title="ajaxErrorDialogHeading" value="Communications Breakdown" />
+          <input type="hidden" title="dirtyMessage" value="You have entered new data on this page. If you navigate away from this page without first saving your data, the changes will be lost." />
+          <input type="hidden" title="dirtyDialogMessage" value="You have entered new data in this dialog. If you navigate away from this dialog without first saving your data, the changes will be lost. Click cancel to return to the dialog." />
+          <input type="hidden" title="keyType" value="Type" />
+          <input type="hidden" title="keyThen" value="then" />
+          <input type="hidden" title="dblClickToExpand" value="Double click to expand" />
+          <input type="hidden" title="actions" value="Actions" />
+          <input type="hidden" title="removeItem" value="Remove" />
+          <input type="hidden" title="workflow" value="Workflow" />
+          <input type="hidden" title="labelNew" value="New Label" />
+          <input type="hidden" title="issueActionsHint" value="Begin typing for available operations or press down to see all" />
+          <input type="hidden" title="closelink" value="Close" />
+          <input type="hidden" title="dotOperations" value="Operations" />
+          <input type="hidden" title="dotLoading" value="Loading..." />
+          <input type="hidden" title="frotherSuggestions" value="Suggestions" />
+          <input type="hidden" title="frotherNomatches" value="No Matches" />
+          <input type="hidden" title="multiselectVersionsError" value="{0} is not a valid version." />
+          <input type="hidden" title="multiselectComponentsError" value="{0} is not a valid component." />
+          <input type="hidden" title="multiselectGenericError" value="The value {0} is invalid." />
+        </fieldset>
+      </footer>
+    </div>
+  </body>
+</html>
