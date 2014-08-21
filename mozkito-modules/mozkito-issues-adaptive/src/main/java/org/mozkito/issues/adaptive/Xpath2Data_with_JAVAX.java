@@ -20,32 +20,26 @@ import org.xml.sax.SAXException;
 public abstract class Xpath2Data_with_JAVAX implements XPath  {
 
 	
-	public static void main(String[] args) 
-			   throws ParserConfigurationException, SAXException, 
-			          IOException, XPathExpressionException {
-
-			    DocumentBuilderFactory domFactory = 
+	
+	public static void main(String[] args) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException {
+				start_xpath("/Users/Eric/mozkito/mozkito-modules/mozkito-issues-adaptive/gen_files/file2.xml",
+						"//ns:html/ns:body/ns:div/ns:form/ns:table/ns:tr/ns:td/ns:table/ns:tr/ns:td/ns:span/ns:span/text()");
+	}
+	
+	public static void start_xpath (String filepath, String xpath_query) 
+			throws ParserConfigurationException, SAXException, IOException, XPathExpressionException{
+		
+				
+		 		DocumentBuilderFactory domFactory = 
 			    DocumentBuilderFactory.newInstance();
 			          domFactory.setNamespaceAware(true); 
 			    DocumentBuilder builder = domFactory.newDocumentBuilder();
-			    Document doc = builder.parse("/Users/Eric/file.xml");
+			    Document doc = builder.parse(filepath);
 			    
-			    /*XPath xpath = XPathFactory.newInstance().newXPath();
-			       // XPath Query for showing all nodes value
-			    XPathExpression expr = xpath.compile("//rss/channel/item/title");
-
-			    Object result = expr.evaluate(doc, XPathConstants.NODESET);
-			    NodeList nodes = (NodeList) result;
-			    for (int i = 0; i < nodes.getLength(); i++) {
-			     System.out.println(nodes.item(i)); 
-			    }
-			    if (nodes.getLength()==0){
-			    	System.out.println("fuck you");
-			    }*/
 			    XPathFactory factory = XPathFactory.newInstance();
 		        XPath xpath = factory.newXPath();
 		        xpath.setNamespaceContext(new ODMNamespaceContext());  // <---
-		        XPathExpression expr = xpath.compile("//ns:rss/ns:channel/ns:item/ns:title/text()");  // <----
+		        XPathExpression expr = xpath.compile(xpath_query);  // <----
 		        Object result = expr.evaluate(doc, XPathConstants.NODESET);
 		        NodeList nodes = (NodeList) result;
 		        System.out.println(nodes.getLength());
@@ -53,5 +47,6 @@ public abstract class Xpath2Data_with_JAVAX implements XPath  {
 		        	System.out.println(nodes.item(i).getNodeName());
 		        	System.out.println(nodes.item(i).getNodeValue());
 		        }
-			  }
+	}
+
 }
