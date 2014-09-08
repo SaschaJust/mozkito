@@ -30,7 +30,7 @@ public class Parse_with_JDOM2 {
 	
 	
 	public static void main(String[] args) throws Exception{
-		String url = "https://bugzilla.mozilla.org/show_bug.cgi?id=828871";
+		String url = "https://jira.codehaus.org/browse/XSTR-752";
 		start_parse(url);
 	}
 	
@@ -51,7 +51,11 @@ public class Parse_with_JDOM2 {
 		
 		//bearbeite den doctype (vor allem bei bugzilla kann die public id nicht geparst werden)
 		DocType doctype = document.getDocType();
-		doctype.setPublicID(null);
+		try {
+			doctype.setPublicID(null);
+		} catch (NullPointerException e) {
+			System.out.println("bei diesem document existiert kein doctype!!");
+		}
 		doctype.setSystemID(null);
 		
 		
@@ -63,6 +67,7 @@ public class Parse_with_JDOM2 {
 		int deep = 1;
 		boolean found = false;											
 		Element root = document.getRootElement();											//nimmt sich das Rootelement
+		//System.out.println(root + " name: " + root.getName() + " text: " + root.getText());
 		
 		ArrayList<String> finalPredecessors = new ArrayList<String>();						//Liste der Tags die Vorgänger des gesuchten sind
 		find_markers(root, deep, finalPredecessors, found);									//ruft die Methode zum suchen der Marker auf
@@ -81,8 +86,7 @@ public class Parse_with_JDOM2 {
 		try {
 			Xpath2Data_with_JAVAX.start_xpath(filepath, XPath);
 		} catch (XPathExpressionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("No path found, no query available");
 		} catch (ParserConfigurationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -94,11 +98,11 @@ public class Parse_with_JDOM2 {
 	//sucht einen bestimmten marker und mekrt sich den pfad dorthin
 	private static void find_markers (Element root, int deep, ArrayList<String> finalPredecessors,boolean found){
 		List<Element> Children = build_children_list(root);
-		System.out.println(Children);
-		System.out.println("LEVEL:" + deep);
+		//System.out.println(Children);
+		//System.out.println("LEVEL:" + deep);
 		if (!Children.isEmpty()){
 			for (Element child : Children) {
-				System.out.println("Child:" + child.getName());
+				//System.out.println("Child:" + child.getName());
 	            if (!hasChildren(child) && checkString(child.getText())){
 	            	for(int x=0; x<deep+1; x++){
 	            		finalPredecessors.add(child.getName());
@@ -133,6 +137,14 @@ public class Parse_with_JDOM2 {
 		
 		List<Element> childrenList = parent.getChildren();				//liste der kinder
 		
+//		if (!childrenList.isEmpty()) {
+//			for (Element child : childrenList) {
+//				if (child.getName() == "br"){
+//					childrenList.remove(child);
+//				}
+//				
+//	        }
+//		}
 		if (!childrenList.isEmpty()) {
 			return true;
 		}	
@@ -142,7 +154,7 @@ public class Parse_with_JDOM2 {
 	//Testet ob der Inhalt eines Tags einen Marker enthält
 	private static boolean checkString (String string){
 		
-		if (string.contains("Nobody; OK to take it and work on it")) {	
+		if (string.contains("This behavior is by design")) {	
 			
 			return true;
 		}
@@ -173,12 +185,12 @@ public class Parse_with_JDOM2 {
 		
 		XMLOutputter xmlOutput = new XMLOutputter();  
 		  
-		try {
-			xmlOutput.output(doc, System.out);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}  
+//		try {
+//			xmlOutput.output(doc, System.out);
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}  
 		  
 		xmlOutput.setFormat(Format.getPrettyFormat());  
 		try {

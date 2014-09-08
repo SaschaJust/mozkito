@@ -23,7 +23,7 @@ public abstract class Xpath2Data_with_JAVAX implements XPath  {
 	
 	public static void main(String[] args) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException {
 				start_xpath("/Users/Eric/mozkito/mozkito-modules/mozkito-issues-adaptive/gen_files/file2.xml",
-						"//ns:html/ns:body/ns:div/ns:form/ns:table/ns:tr/ns:td/ns:table/ns:tr/ns:td/ns:span/ns:span/text()");
+						"//ns:html/ns:body/ns:div/ns:section/ns:div/ns:div/ns:header/ns:div/ns:header/ns:div/ns:div/ns:h1/ns:title/text()");
 	}
 	
 	public static void start_xpath (String filepath, String xpath_query) 
