@@ -54,7 +54,7 @@
     <meta name="ajs-outgoing-mail-enabled" content="true" />
     <meta name="ajs-whats-new-iframe-src-override" content="" />
     <meta name="ajs-whatsnew-full-link" content="https://docs.atlassian.com/jira/docs-061/whatsnew/iframe" />
-    <meta name="atlassian-token" id="atlassian-token" content="ACIO-CAVI-QX7G-9IAS|c9c07acb77ea7e49324967033edf3173c4326394|lout" />
+    <meta name="atlassian-token" id="atlassian-token" content="ACIO-CAVI-QX7G-9IAS|bdad3857766e766d4f21e1d01f3a6f89e17a335b|lout" />
     <link rel="shortcut icon" href="/s/en_UK-huda6k-1988229788/6162/7/_/favicon.ico" />
     <link rel="search" type="application/opensearchdescription+xml" href="/osd.jsp" title="[XSTR-752] omitField() does not take into account the members in parent class - jira.codehaus.org" />
     <!--[if IE]><![endif]-->
@@ -196,16 +196,16 @@
           <div class="hidden shortcut-links">
             <a shape="rect" class="issueaction-edit-issue" id="edit-issue" href="/secure/EditIssue!default.jspa?id={0}&amp;returnUrl=/secure/issues" />
             <a shape="rect" class="issueaction-assign-issue" id="assign-issue" href="/secure/AssignIssue!default.jspa?id={0}&amp;returnUrl=/secure/issues" />
-            <a shape="rect" class="issueaction-assign-to-me hide-from-opsbar" id="assign-to-me" href="/secure/AssignIssue.jspa?atl_token=ACIO-CAVI-QX7G-9IAS|c9c07acb77ea7e49324967033edf3173c4326394|lout&amp;id={0}&amp;&amp;returnUrl=/secure/issues" />
+            <a shape="rect" class="issueaction-assign-to-me hide-from-opsbar" id="assign-to-me" href="/secure/AssignIssue.jspa?atl_token=ACIO-CAVI-QX7G-9IAS|bdad3857766e766d4f21e1d01f3a6f89e17a335b|lout&amp;id={0}&amp;&amp;returnUrl=/secure/issues" />
             <a shape="rect" class="issueaction-comment-issue add-issue-comment" id="comment-issue" href="/secure/AddComment!default.jspa?id={0}&amp;returnUrl=/secure/issues" />
             <a shape="rect" class="issueaction-log-work" id="log-work" href="/secure/CreateWorklog!default.jspa?id={0}&amp;returnUrl=/secure/issues" />
             <a shape="rect" class="issueaction-attach-file" id="attach-file" href="/secure/AttachFile!default.jspa?id={0}&amp;returnUrl=/secure/issues" />
             <a shape="rect" class="issueaction-attach-screenshot" id="attach-screenshot" href="/secure/AttachScreenshot!default.jspa?id={0}&amp;returnUrl=/secure/issues" />
-            <a shape="rect" class="toggle-vote-issue issueaction-vote-issue" id="toggle-vote-issue" href="/secure/VoteOrWatchIssue.jspa?atl_token=ACIO-CAVI-QX7G-9IAS|c9c07acb77ea7e49324967033edf3173c4326394|lout&amp;id={0}&amp;vote=vote&amp;returnUrl=/secure/issues" />
-            <a shape="rect" class="toggle-vote-issue issueaction-unvote-issue" id="toggle-vote-issue" href="/secure/VoteOrWatchIssue.jspa?atl_token=ACIO-CAVI-QX7G-9IAS|c9c07acb77ea7e49324967033edf3173c4326394|lout&amp;id={0}&amp;vote=unvote&amp;returnUrl=/secure/issues" />
+            <a shape="rect" class="toggle-vote-issue issueaction-vote-issue" id="toggle-vote-issue" href="/secure/VoteOrWatchIssue.jspa?atl_token=ACIO-CAVI-QX7G-9IAS|bdad3857766e766d4f21e1d01f3a6f89e17a335b|lout&amp;id={0}&amp;vote=vote&amp;returnUrl=/secure/issues" />
+            <a shape="rect" class="toggle-vote-issue issueaction-unvote-issue" id="toggle-vote-issue" href="/secure/VoteOrWatchIssue.jspa?atl_token=ACIO-CAVI-QX7G-9IAS|bdad3857766e766d4f21e1d01f3a6f89e17a335b|lout&amp;id={0}&amp;vote=unvote&amp;returnUrl=/secure/issues" />
             <a shape="rect" class="issueaction-view-voters" id="view-voters" href="/secure/ViewVoters!default.jspa?id={0}&amp;returnUrl=/secure/issues" />
-            <a shape="rect" class="issueaction-watch-issue" id="toggle-watch-issue" href="/secure/VoteOrWatchIssue.jspa?atl_token=ACIO-CAVI-QX7G-9IAS|c9c07acb77ea7e49324967033edf3173c4326394|lout&amp;id={0}&amp;watch=watch&amp;returnUrl=/secure/issues" />
-            <a shape="rect" class="issueaction-unwatch-issue" id="toggle-watch-issue" href="/secure/VoteOrWatchIssue.jspa?atl_token=ACIO-CAVI-QX7G-9IAS|c9c07acb77ea7e49324967033edf3173c4326394|lout&amp;id={0}&amp;watch=unwatch&amp;returnUrl=/secure/issues" />
+            <a shape="rect" class="issueaction-watch-issue" id="toggle-watch-issue" href="/secure/VoteOrWatchIssue.jspa?atl_token=ACIO-CAVI-QX7G-9IAS|bdad3857766e766d4f21e1d01f3a6f89e17a335b|lout&amp;id={0}&amp;watch=watch&amp;returnUrl=/secure/issues" />
+            <a shape="rect" class="issueaction-unwatch-issue" id="toggle-watch-issue" href="/secure/VoteOrWatchIssue.jspa?atl_token=ACIO-CAVI-QX7G-9IAS|bdad3857766e766d4f21e1d01f3a6f89e17a335b|lout&amp;id={0}&amp;watch=unwatch&amp;returnUrl=/secure/issues" />
             <a shape="rect" class="issueaction-manage-watchers" id="manage-watchers" href="/secure/ManageWatchers!default.jspa?id={0}&amp;returnUrl=/secure/issues" />
             <a shape="rect" class="issueaction-create-subtask" id="create-subtask" href="/secure/CreateSubTaskIssue!default.jspa?parentIssueId={0}&amp;returnUrl=/secure/issues" />
             <a shape="rect" class="issueaction-subtask-to-issue" id="subtask-to-issue" href="/secure/ConvertSubTask.jspa?id={0}&amp;returnUrl=/secure/issues" />
@@ -696,23 +696,23 @@
         </div>
         <form enctype="application/x-www-form-urlencoded" method="get" class="dont-default-focus" id="jira_request_timing_info">
           <fieldset class="parameters hidden">
-            <input type="hidden" title="jira.request.start.millis" value="1410166751530" />
-            <input type="hidden" title="jira.request.server.time" value="161" />
-            <input type="hidden" title="jira.request.id" value="239x48052041x2" />
+            <input type="hidden" title="jira.request.start.millis" value="1414689053566" />
+            <input type="hidden" title="jira.request.server.time" value="160" />
+            <input type="hidden" title="jira.request.id" value="730x67074563x3" />
             <input type="hidden" title="jira.session.expiry.time" value="-" />
             <input type="hidden" title="jira.session.expiry.in.mins" value="-" />
-            <input type="hidden" id="jiraConcurrentRequests" name="jira.request.concurrent.requests" value="2" />
+            <input type="hidden" id="jiraConcurrentRequests" name="jira.request.concurrent.requests" value="5" />
           </fieldset>
         </form>
         <!--
-	                 REQUEST ID : 239x48052041x2
-	          REQUEST TIMESTAMP : [08/Sep/2014:03:59:11 -0500]
-	               REQUEST TIME : 0.1610
+	                 REQUEST ID : 730x67074563x3
+	          REQUEST TIMESTAMP : [30/Oct/2014:12:10:53 -0500]
+	               REQUEST TIME : 0.1600
 	                 ASESSIONID : -
-	        CONCURRENT REQUESTS : 2
+	        CONCURRENT REQUESTS : 5
 
-	                      db.reads : name=db.reads; inv=21; ms=13; cpu=0; rss=0;
-	                      db.conns : name=db.conns; inv=21; ms=14; cpu=0; rss=0;
+	                      db.reads : name=db.reads; inv=21; ms=14; cpu=0; rss=0;
+	                      db.conns : name=db.conns; inv=21; ms=19; cpu=0; rss=0;
 -->
         <fieldset class="hidden parameters">
           <input type="hidden" title="loggedInUser" value="" />

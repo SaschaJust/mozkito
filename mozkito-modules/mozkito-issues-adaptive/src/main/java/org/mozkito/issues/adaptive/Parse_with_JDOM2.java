@@ -53,10 +53,10 @@ public class Parse_with_JDOM2 {
 		DocType doctype = document.getDocType();
 		try {
 			doctype.setPublicID(null);
+			doctype.setSystemID(null);
 		} catch (NullPointerException e) {
 			System.out.println("bei diesem document existiert kein doctype!!");
 		}
-		doctype.setSystemID(null);
 		
 		
 		String filepath = "/Users/Eric/mozkito/mozkito-modules/mozkito-issues-adaptive/gen_files/file2.xml";  
@@ -66,7 +66,8 @@ public class Parse_with_JDOM2 {
 		
 		int deep = 1;
 		boolean found = false;											
-		Element root = document.getRootElement();											//nimmt sich das Rootelement
+		Element root = document.getRootElement();
+		root.setAttribute("number", String.valueOf(1));				//root-element mit atrribut 0 versehen//nimmt sich das Rootelement
 		//System.out.println(root + " name: " + root.getName() + " text: " + root.getText());
 		
 		ArrayList<String> finalPredecessors = new ArrayList<String>();						//Liste der Tags die Vorgänger des gesuchten sind
@@ -95,17 +96,19 @@ public class Parse_with_JDOM2 {
 			e.printStackTrace();
 		}
 	}
-	//sucht einen bestimmten marker und mekrt sich den pfad dorthin
+	//sucht einen bestimmten marker und merkt sich den pfad dorthin
 	private static void find_markers (Element root, int deep, ArrayList<String> finalPredecessors,boolean found){
 		List<Element> Children = build_children_list(root);
 		//System.out.println(Children);
 		//System.out.println("LEVEL:" + deep);
 		if (!Children.isEmpty()){
+			int tmp = 1;
 			for (Element child : Children) {
+				child.setAttribute("number", String.valueOf(tmp));    //versehe jedes element mit der nummer an der es steht
 				//System.out.println("Child:" + child.getName());
 	            if (!hasChildren(child) && checkString(child.getText())){
 	            	for(int x=0; x<deep+1; x++){
-	            		finalPredecessors.add(child.getName());
+	            		finalPredecessors.add(/*child.getName() + */ child.getAttributeValue("number"));  		//gebe nummer des kindes aus
 	            	    if (child.getParentElement()!=null){
 	            	    	child = child.getParentElement();
 	            	    }
@@ -116,6 +119,7 @@ public class Parse_with_JDOM2 {
 	            if(found==false){
 	            	find_markers(child,deep+1,finalPredecessors,found);
 	            }
+	            tmp++;
 	        }
 		}
 	}
@@ -154,7 +158,7 @@ public class Parse_with_JDOM2 {
 	//Testet ob der Inhalt eines Tags einen Marker enthält
 	private static boolean checkString (String string){
 		
-		if (string.contains("This behavior is by design")) {	
+		if (string.contains("public class B extends A")) {	
 			
 			return true;
 		}
@@ -170,10 +174,10 @@ public class Parse_with_JDOM2 {
 	private static String make_xpath_query (ArrayList<String> finalPredecessors){
 		
 		int size = finalPredecessors.size();
-		String Xpath_query = "//ns:" + finalPredecessors.get(0);
+		String Xpath_query = "//ns:*[" + finalPredecessors.get(0) + "]";
 		
 		for(int tmp = 1; tmp < size; tmp++){
-			Xpath_query = Xpath_query + "/ns:" + finalPredecessors.get(tmp);
+			Xpath_query = Xpath_query + "/ns:*[" + finalPredecessors.get(tmp) + "]";
 		}
 		Xpath_query = Xpath_query + "/text()";
 		
