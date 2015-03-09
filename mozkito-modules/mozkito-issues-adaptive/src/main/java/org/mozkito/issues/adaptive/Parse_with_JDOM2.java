@@ -1,7 +1,9 @@
 package org.mozkito.issues.adaptive;
 
+import java.io.BufferedReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -11,6 +13,21 @@ import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 
+import net.ownhero.dev.kisa.Logger;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.params.ClientPNames;
+import org.apache.http.client.params.CookiePolicy;
+import org.apache.http.cookie.Cookie;
+import org.apache.http.impl.client.BasicCookieStore;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.jdom2.DocType;
 import org.jdom2.Element;
 import org.jdom2.Document;
@@ -28,23 +45,80 @@ import org.xml.sax.SAXException;
  */
 public class Parse_with_JDOM2 {
 	
+	private DefaultHttpClient     httpClient   = null;
+	private String BASIC_URL = "https://issues.mozkito.org";
 	
 	public static void main(String[] args) throws Exception{
-		String url = "http://feeds.bbci.co.uk/news/technology/rss.xml?edition=int";
-		start_parse(url);
+		//String url = "https://bugzilla.mozilla.org/show_bug.cgi?id=828871";
 	}
 	
-	public static void start_parse(String url) throws MalformedURLException, JDOMException, IOException{
+	public void test() throws ClientProtocolException, IOException, JDOMException {
+		
+		this.httpClient = new DefaultHttpClient();
+		
+	   	httpClient.getParams().setParameter(ClientPNames.COOKIE_POLICY, CookiePolicy.BROWSER_COMPATIBILITY);
+			httpClient.setCookieStore(new BasicCookieStore());
+			
+			String authUrl = BASIC_URL + "/login"; 
+			
+			final HttpPost post = new HttpPost(authUrl);
+			
+			try {
+				final List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
+				nameValuePairs.add(new BasicNameValuePair("os_username", "egliemmo"));
+				nameValuePairs.add(new BasicNameValuePair("os_password", "legindametalevel"));
+				nameValuePairs.add(new BasicNameValuePair("username", "egliemmo"));
+				nameValuePairs.add(new BasicNameValuePair("password", "legindametalevel"));
+				nameValuePairs.add(new BasicNameValuePair("os_cookie", "true"));
+				post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+				
+				final HttpResponse response = this.httpClient.execute(post);
+				final BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+				String line = null;
+				
+				while ((line = rd.readLine()) != null) {
+					if (Logger.logDebug()) {
+						Logger.debug(line);
+					}
+				}
+				
+				final List<Cookie> cookies = this.httpClient.getCookieStore().getCookies();
+				if (Logger.logInfo()) {
+					Logger.info("Received %s cookies.", cookies.size());
+				}
+				
+				if (Logger.logDebug()) {
+					for (final Cookie cookie : cookies) {
+						Logger.debug(cookie.toString());
+					}
+				}
+			} catch (final IOException e) {
+				e.printStackTrace();
+			}
+			
+	   	// authenticated 
+			final HttpGet request = new HttpGet(authUrl);
+			final HttpResponse response = httpClient.execute(request);
+			final HttpEntity entity = response.getEntity();
+			
+			final BufferedReader reader = new BufferedReader(new InputStreamReader(entity.getContent()));
+			SAXBuilder sBuilder = new SAXBuilder(new XMLReaderSAX2Factory(false,
+                    "org.ccil.cowan.tagsoup.Parser"));
+			Document document = sBuilder.build(reader);
+			start_searching(document);
+	}
+	
+	public static void start_searching(Document document) throws MalformedURLException, JDOMException, IOException{
 		
 		
-		final SAXBuilder saxBuilder = new SAXBuilder(new XMLReaderSAX2Factory(false,
-		                                                                      "org.ccil.cowan.tagsoup.Parser"));
+		//final SAXBuilder saxBuilder = new SAXBuilder(new XMLReaderSAX2Factory(false,
+		                                                                     // "org.ccil.cowan.tagsoup.Parser"));
 		//final Document document = saxBuilder.build(new URL("https://bugzilla.mozilla.org/show_bug.cgi?id=828871"));
 		//final Document document = saxBuilder.build(new URL("http://feeds.bbci.co.uk/news/technology/rss.xml?edition=int"));
 		// final Document document = saxBuilder.build(new URL("https://issues.mozkito.org/browse/MOZKITO-113"));
 																//baut das JDOM2 Document aus der URL, also das XML Dokument
 		//final Document document = saxBuilder.build(new URL("https://jira.codehaus.org/browse/XSTR-752"));
-		final Document document = saxBuilder.build(new URL(url));
+		//final Document document = saxBuilder.build(new URL(url));
 		
 		XMLOutputter out = new XMLOutputter();
 		out.output( document, System.out );						// gibt die XML aus
@@ -158,7 +232,7 @@ public class Parse_with_JDOM2 {
 	//Testet ob der Inhalt eines Tags einen Marker enthält
 	private static boolean checkString (String string){
 		
-		if (string.contains("Electronics firm LG")) {	
+		if (string.contains("title_marker")) {	
 			
 			return true;
 		}
