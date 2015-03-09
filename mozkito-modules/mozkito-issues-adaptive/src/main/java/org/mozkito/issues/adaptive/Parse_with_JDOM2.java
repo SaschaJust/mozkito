@@ -30,7 +30,7 @@ public class Parse_with_JDOM2 {
 	
 	
 	public static void main(String[] args) throws Exception{
-		String url = "https://jira.codehaus.org/browse/XSTR-752";
+		String url = "http://feeds.bbci.co.uk/news/technology/rss.xml?edition=int";
 		start_parse(url);
 	}
 	
@@ -158,7 +158,7 @@ public class Parse_with_JDOM2 {
 	//Testet ob der Inhalt eines Tags einen Marker enthält
 	private static boolean checkString (String string){
 		
-		if (string.contains("public class B extends A")) {	
+		if (string.contains("Electronics firm LG")) {	
 			
 			return true;
 		}
