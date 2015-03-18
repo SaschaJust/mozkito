@@ -36,6 +36,7 @@ import org.jdom2.input.SAXBuilder;
 import org.jdom2.input.sax.XMLReaderSAX2Factory;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 
@@ -45,21 +46,23 @@ import org.xml.sax.SAXException;
  */
 public class Parse_with_JDOM2 {
 	
-	private DefaultHttpClient     httpClient   = null;
-	private String BASIC_URL = "https://issues.mozkito.org";
+	private String BASIC_URL = "http://feeds.bbci.co.uk/news/technology/rss.xml?edition=int";
 	
 	public static void main(String[] args) throws Exception{
-		//String url = "https://bugzilla.mozilla.org/show_bug.cgi?id=828871";
+
+		Parse_with_JDOM2 PWJ = new Parse_with_JDOM2();
+		PWJ.test();
 	}
 	
 	public void test() throws ClientProtocolException, IOException, JDOMException {
 		
-		this.httpClient = new DefaultHttpClient();
+		
+		final DefaultHttpClient httpClient = new DefaultHttpClient();
 		
 	   	httpClient.getParams().setParameter(ClientPNames.COOKIE_POLICY, CookiePolicy.BROWSER_COMPATIBILITY);
 			httpClient.setCookieStore(new BasicCookieStore());
 			
-			String authUrl = BASIC_URL + "/login"; 
+			String authUrl = BASIC_URL; //+ "/login"; 
 			
 			final HttpPost post = new HttpPost(authUrl);
 			
@@ -72,7 +75,7 @@ public class Parse_with_JDOM2 {
 				nameValuePairs.add(new BasicNameValuePair("os_cookie", "true"));
 				post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 				
-				final HttpResponse response = this.httpClient.execute(post);
+				final HttpResponse response = httpClient.execute(post);
 				final BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
 				String line = null;
 				
@@ -82,7 +85,7 @@ public class Parse_with_JDOM2 {
 					}
 				}
 				
-				final List<Cookie> cookies = this.httpClient.getCookieStore().getCookies();
+				final List<Cookie> cookies = httpClient.getCookieStore().getCookies();
 				if (Logger.logInfo()) {
 					Logger.info("Received %s cookies.", cookies.size());
 				}
@@ -105,7 +108,11 @@ public class Parse_with_JDOM2 {
 			SAXBuilder sBuilder = new SAXBuilder(new XMLReaderSAX2Factory(false,
                     "org.ccil.cowan.tagsoup.Parser"));
 			Document document = sBuilder.build(reader);
-			start_searching(document);
+			
+			XMLOutputter out = new XMLOutputter();
+			out.output( document, System.out );						// gibt die XML aus
+			
+			//start_searching(document);
 	}
 	
 	public static void start_searching(Document document) throws MalformedURLException, JDOMException, IOException{
@@ -119,9 +126,6 @@ public class Parse_with_JDOM2 {
 																//baut das JDOM2 Document aus der URL, also das XML Dokument
 		//final Document document = saxBuilder.build(new URL("https://jira.codehaus.org/browse/XSTR-752"));
 		//final Document document = saxBuilder.build(new URL(url));
-		
-		XMLOutputter out = new XMLOutputter();
-		out.output( document, System.out );						// gibt die XML aus
 		
 		//bearbeite den doctype (vor allem bei bugzilla kann die public id nicht geparst werden)
 		DocType doctype = document.getDocType();
@@ -145,21 +149,23 @@ public class Parse_with_JDOM2 {
 		//System.out.println(root + " name: " + root.getName() + " text: " + root.getText());
 		
 		ArrayList<String> finalPredecessors = new ArrayList<String>();						//Liste der Tags die Vorgänger des gesuchten sind
-		find_markers(root, deep, finalPredecessors, found);									//ruft die Methode zum suchen der Marker auf
+		ArrayList<String> finalAttributes = new ArrayList<String>();						//liste der attribute der tags für xpath
+		find_markers(root, deep, finalPredecessors, finalAttributes, found);									//ruft die Methode zum suchen der Marker auf
 		//System.out.println(finalPredecessors);
 		//System.out.println("+++++++++++++++++++++++");
 		
 		String XPath = "";
 		if (finalPredecessors.size()>0){
-				XPath = make_xpath_query(finalPredecessors);
+				XPath = make_xpath_query(finalPredecessors, finalAttributes);
 				System.out.println(XPath);														//funktioniert nicht wirklich, nur für //*
 		} else {
 			System.out.println("nothing found");
 		}
 		
 		//starte die datensuche mit dem filepath und dem xpathquery
+		NodeList nodes = null;
 		try {
-			Xpath2Data_with_JAVAX.start_xpath(filepath, XPath);
+			Xpath2Data_with_JAVAX.start_xpath(filepath, XPath, nodes);
 		} catch (XPathExpressionException e) {
 			System.out.println("No path found, no query available");
 		} catch (ParserConfigurationException e) {
@@ -171,7 +177,7 @@ public class Parse_with_JDOM2 {
 		}
 	}
 	//sucht einen bestimmten marker und merkt sich den pfad dorthin
-	private static void find_markers (Element root, int deep, ArrayList<String> finalPredecessors,boolean found){
+	private static void find_markers (Element root, int deep, ArrayList<String> finalPredecessors, ArrayList<String> finalAttributes, boolean found){
 		List<Element> Children = build_children_list(root);
 		//System.out.println(Children);
 		//System.out.println("LEVEL:" + deep);
@@ -183,6 +189,7 @@ public class Parse_with_JDOM2 {
 	            if (!hasChildren(child) && checkString(child.getText())){
 	            	for(int x=0; x<deep+1; x++){
 	            		finalPredecessors.add(/*child.getName() + */ child.getAttributeValue("number"));  		//gebe nummer des kindes aus
+	            		finalAttributes.add(child.getAttributeValue("id"));										//schreibt das id attribut des knotens
 	            	    if (child.getParentElement()!=null){
 	            	    	child = child.getParentElement();
 	            	    }
@@ -191,7 +198,7 @@ public class Parse_with_JDOM2 {
 	            	found=true;
 	            }
 	            if(found==false){
-	            	find_markers(child,deep+1,finalPredecessors,found);
+	            	find_markers(child,deep+1,finalPredecessors,finalAttributes,found);
 	            }
 	            tmp++;
 	        }
@@ -244,18 +251,34 @@ public class Parse_with_JDOM2 {
 		}
 	}
 	
-	//liefert zu einer finalPredecessors Liste den entsprechenden XPath_Query
-	private static String make_xpath_query (ArrayList<String> finalPredecessors){
+	//liefert zu einer finalPredecessors Liste und der finalAttributes liste den entsprechenden XPath_Query
+	private static String make_xpath_query (ArrayList<String> finalPredecessors, ArrayList<String> finalAttributes){
 		
 		int size = finalPredecessors.size();
-		String Xpath_query = "//ns:*[" + finalPredecessors.get(0) + "]";
+		String Xpath_query = null;
 		
-		for(int tmp = 1; tmp < size; tmp++){
-			Xpath_query = Xpath_query + "/ns:*[" + finalPredecessors.get(tmp) + "]";
+		if (finalAttributes.get(0) == null){
+			Xpath_query = "//ns:*[" + finalPredecessors.get(0) + "]";
+		
+		} else {
+			Xpath_query = "//ns:*[@id = " + finalAttributes.get(0) + "]";
 		}
-		Xpath_query = Xpath_query + "/text()";
+		
+		if (finalAttributes.get(0) == null){
+			for(int tmp = 1; tmp < size; tmp++){
+				Xpath_query = Xpath_query + "/ns:*[" + finalPredecessors.get(tmp) + "]";
+			}
+			Xpath_query = Xpath_query + "/text()";
+		}else {
+			for(int tmp = 1; tmp < size; tmp++){
+				Xpath_query = Xpath_query + "/ns:*[@id = " + finalAttributes.get(tmp) + "]";
+			}
+			Xpath_query = Xpath_query + "/text()";
+		}
+		
 		
 		return Xpath_query;
+		
 	}
 	
 	//liefert zu einer finalPredecessors Liste den entsprechenden XPath_Query
