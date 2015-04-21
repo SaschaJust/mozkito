@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <title>[XSTR-752] omitField() does not take into account the members in parent class - jira.codehaus.org</title>
+    <title>[XSTR-734] Inconsistency with use of StaxDriver (XML includes header and is not pretty-printed) - jira.codehaus.org</title>
     <script type="text/javascript">if (!window.performance) {
         window.mpPerformance = {};
         window.mpPerformance.responseStart = new Date().getTime();
@@ -24,7 +24,7 @@
     <meta name="ajs-jira-base-url" content="https://jira.codehaus.org" />
     <meta name="ajs-serverRenderedViewIssue" content="true" />
     <meta name="ajs-search-pos" content="0" />
-    <meta name="ajs-issue-key" content="XSTR-752" />
+    <meta name="ajs-issue-key" content="XSTR-734" />
     <meta name="ajs-can-edit-watchers" content="false" />
     <meta name="ajs-can-search-users" content="false" />
     <meta name="ajs-server-view-issue-is-editable" content="false" />
@@ -54,27 +54,27 @@
     <meta name="ajs-outgoing-mail-enabled" content="true" />
     <meta name="ajs-whats-new-iframe-src-override" content="" />
     <meta name="ajs-whatsnew-full-link" content="https://docs.atlassian.com/jira/docs-061/whatsnew/iframe" />
-    <meta name="atlassian-token" id="atlassian-token" content="ACIO-CAVI-QX7G-9IAS|bdad3857766e766d4f21e1d01f3a6f89e17a335b|lout" />
+    <meta name="atlassian-token" id="atlassian-token" content="ACIO-CAVI-QX7G-9IAS|fb0c15f918a76f2aa3d47e5a3ee5d0520f7c57ba|lout" />
     <link rel="shortcut icon" href="/s/en_UK-huda6k-1988229788/6162/7/_/favicon.ico" />
-    <link rel="search" type="application/opensearchdescription+xml" href="/osd.jsp" title="[XSTR-752] omitField() does not take into account the members in parent class - jira.codehaus.org" />
+    <link rel="search" type="application/opensearchdescription+xml" href="/osd.jsp" title="[XSTR-734] Inconsistency with use of StaxDriver (XML includes header and is not pretty-printed) - jira.codehaus.org" />
     <!--[if IE]><![endif]-->
     <script type="text/javascript">var contextPath = '';</script>
-    <link type="text/css" rel="stylesheet" href="/s/d41d8cd98f00b204e9800998ecf8427e/en_UK-huda6k-1988229788/6162/7/5/_/download/superbatch/css/batch.css" media="all" />
+    <link type="text/css" rel="stylesheet" href="/s/d41d8cd98f00b204e9800998ecf8427e/en_UK-huda6k-1988229788/6162/7/6/_/download/superbatch/css/batch.css" media="all" />
     <!--[if lte IE 8]>
-<link type="text/css" rel="stylesheet" href="/s/d41d8cd98f00b204e9800998ecf8427e/en_UK-huda6k-1988229788/6162/7/5/_/download/superbatch/css/batch.css?conditionalComment=lte+IE+8" media="all">
+<link type="text/css" rel="stylesheet" href="/s/d41d8cd98f00b204e9800998ecf8427e/en_UK-huda6k-1988229788/6162/7/6/_/download/superbatch/css/batch.css?conditionalComment=lte+IE+8" media="all">
 <![endif]-->
     <!--[if lte IE 9]>
-<link type="text/css" rel="stylesheet" href="/s/d41d8cd98f00b204e9800998ecf8427e/en_UK-huda6k-1988229788/6162/7/5/_/download/superbatch/css/batch.css?conditionalComment=lte+IE+9" media="all">
+<link type="text/css" rel="stylesheet" href="/s/d41d8cd98f00b204e9800998ecf8427e/en_UK-huda6k-1988229788/6162/7/6/_/download/superbatch/css/batch.css?conditionalComment=lte+IE+9" media="all">
 <![endif]-->
     <link type="text/css" rel="stylesheet" href="/s/d41d8cd98f00b204e9800998ecf8427e/en_UK-huda6k-1988229788/6162/7/0cf98e6a33c2de195e155ae6d611f53c/_/download/contextbatch/css/jira.navigator.simple,jira.navigator.advanced,jira.view.issue,jira.navigator.kickass,atl.general,jira.global/batch.css" media="all" />
-    <script type="text/javascript" src="/s/d41d8cd98f00b204e9800998ecf8427e/en_UK-huda6k-1988229788/6162/7/5/_/download/superbatch/js/batch.js" />
+    <script type="text/javascript" src="/s/d41d8cd98f00b204e9800998ecf8427e/en_UK-huda6k-1988229788/6162/7/6/_/download/superbatch/js/batch.js" />
     <!--[if lte IE 8]>
-<script type="text/javascript" src="/s/d41d8cd98f00b204e9800998ecf8427e/en_UK-huda6k-1988229788/6162/7/5/_/download/superbatch/js/batch.js?conditionalComment=lte+IE+8" ></script>
+<script type="text/javascript" src="/s/d41d8cd98f00b204e9800998ecf8427e/en_UK-huda6k-1988229788/6162/7/6/_/download/superbatch/js/batch.js?conditionalComment=lte+IE+8" ></script>
 <![endif]-->
     <script type="text/javascript" src="/s/d41d8cd98f00b204e9800998ecf8427e/en_UK-huda6k-1988229788/6162/7/0cf98e6a33c2de195e155ae6d611f53c/_/download/contextbatch/js/jira.navigator.simple,jira.navigator.advanced,jira.view.issue,jira.navigator.kickass,atl.general,jira.global/batch.js" />
     <script type="text/javascript" src="/s/d41d8cd98f00b204e9800998ecf8427e/en_UK-huda6k-1988229788/6162/7/1.0/_/download/batch/jira.webresources:calendar-en/jira.webresources:calendar-en.js" />
     <script type="text/javascript" src="/s/d41d8cd98f00b204e9800998ecf8427e/en_UK-huda6k-1988229788/6162/7/1.5/_/download/batch/com.atlassian.administration.atlassian-admin-quicksearch-jira:admin-quicksearch-webresources/com.atlassian.administration.atlassian-admin-quicksearch-jira:admin-quicksearch-webresources.js" />
-    <script type="text/javascript" src="/rest/api/1.0/shortcuts/6162/450350d4d0be01a36cca82c7e6b5bd8f/shortcuts.js?context=issuenavigation&amp;context=issueaction" />
+    <script type="text/javascript" src="/rest/api/1.0/shortcuts/6162/757f7accec3a1e5ea2900390fb696afc/shortcuts.js?context=issuenavigation&amp;context=issueaction" />
     <meta name="decorator" content="atl.general" />
     <meta name="isNavigator" id="isNavigator" content="true" />
     <meta name="ajs-user.search.mode" content="basic" />
@@ -174,7 +174,7 @@
                   </div>
                 </li>
                 <li id="user-options">
-                  <a shape="rect" class="aui-nav-link login-link" href="/login.jsp?os_destination=%2Fbrowse%2FXSTR-752">Log In</a>
+                  <a shape="rect" class="aui-nav-link login-link" href="/login.jsp?os_destination=%2Fbrowse%2FXSTR-734">Log In</a>
                   <div class="aui-dropdown2 aui-style-default" id="user-options-content">
                     <div class="aui-dropdown2-section" />
                   </div>
@@ -196,16 +196,16 @@
           <div class="hidden shortcut-links">
             <a shape="rect" class="issueaction-edit-issue" id="edit-issue" href="/secure/EditIssue!default.jspa?id={0}&amp;returnUrl=/secure/issues" />
             <a shape="rect" class="issueaction-assign-issue" id="assign-issue" href="/secure/AssignIssue!default.jspa?id={0}&amp;returnUrl=/secure/issues" />
-            <a shape="rect" class="issueaction-assign-to-me hide-from-opsbar" id="assign-to-me" href="/secure/AssignIssue.jspa?atl_token=ACIO-CAVI-QX7G-9IAS|bdad3857766e766d4f21e1d01f3a6f89e17a335b|lout&amp;id={0}&amp;&amp;returnUrl=/secure/issues" />
+            <a shape="rect" class="issueaction-assign-to-me hide-from-opsbar" id="assign-to-me" href="/secure/AssignIssue.jspa?atl_token=ACIO-CAVI-QX7G-9IAS|fb0c15f918a76f2aa3d47e5a3ee5d0520f7c57ba|lout&amp;id={0}&amp;&amp;returnUrl=/secure/issues" />
             <a shape="rect" class="issueaction-comment-issue add-issue-comment" id="comment-issue" href="/secure/AddComment!default.jspa?id={0}&amp;returnUrl=/secure/issues" />
             <a shape="rect" class="issueaction-log-work" id="log-work" href="/secure/CreateWorklog!default.jspa?id={0}&amp;returnUrl=/secure/issues" />
             <a shape="rect" class="issueaction-attach-file" id="attach-file" href="/secure/AttachFile!default.jspa?id={0}&amp;returnUrl=/secure/issues" />
             <a shape="rect" class="issueaction-attach-screenshot" id="attach-screenshot" href="/secure/AttachScreenshot!default.jspa?id={0}&amp;returnUrl=/secure/issues" />
-            <a shape="rect" class="toggle-vote-issue issueaction-vote-issue" id="toggle-vote-issue" href="/secure/VoteOrWatchIssue.jspa?atl_token=ACIO-CAVI-QX7G-9IAS|bdad3857766e766d4f21e1d01f3a6f89e17a335b|lout&amp;id={0}&amp;vote=vote&amp;returnUrl=/secure/issues" />
-            <a shape="rect" class="toggle-vote-issue issueaction-unvote-issue" id="toggle-vote-issue" href="/secure/VoteOrWatchIssue.jspa?atl_token=ACIO-CAVI-QX7G-9IAS|bdad3857766e766d4f21e1d01f3a6f89e17a335b|lout&amp;id={0}&amp;vote=unvote&amp;returnUrl=/secure/issues" />
+            <a shape="rect" class="toggle-vote-issue issueaction-vote-issue" id="toggle-vote-issue" href="/secure/VoteOrWatchIssue.jspa?atl_token=ACIO-CAVI-QX7G-9IAS|fb0c15f918a76f2aa3d47e5a3ee5d0520f7c57ba|lout&amp;id={0}&amp;vote=vote&amp;returnUrl=/secure/issues" />
+            <a shape="rect" class="toggle-vote-issue issueaction-unvote-issue" id="toggle-vote-issue" href="/secure/VoteOrWatchIssue.jspa?atl_token=ACIO-CAVI-QX7G-9IAS|fb0c15f918a76f2aa3d47e5a3ee5d0520f7c57ba|lout&amp;id={0}&amp;vote=unvote&amp;returnUrl=/secure/issues" />
             <a shape="rect" class="issueaction-view-voters" id="view-voters" href="/secure/ViewVoters!default.jspa?id={0}&amp;returnUrl=/secure/issues" />
-            <a shape="rect" class="issueaction-watch-issue" id="toggle-watch-issue" href="/secure/VoteOrWatchIssue.jspa?atl_token=ACIO-CAVI-QX7G-9IAS|bdad3857766e766d4f21e1d01f3a6f89e17a335b|lout&amp;id={0}&amp;watch=watch&amp;returnUrl=/secure/issues" />
-            <a shape="rect" class="issueaction-unwatch-issue" id="toggle-watch-issue" href="/secure/VoteOrWatchIssue.jspa?atl_token=ACIO-CAVI-QX7G-9IAS|bdad3857766e766d4f21e1d01f3a6f89e17a335b|lout&amp;id={0}&amp;watch=unwatch&amp;returnUrl=/secure/issues" />
+            <a shape="rect" class="issueaction-watch-issue" id="toggle-watch-issue" href="/secure/VoteOrWatchIssue.jspa?atl_token=ACIO-CAVI-QX7G-9IAS|fb0c15f918a76f2aa3d47e5a3ee5d0520f7c57ba|lout&amp;id={0}&amp;watch=watch&amp;returnUrl=/secure/issues" />
+            <a shape="rect" class="issueaction-unwatch-issue" id="toggle-watch-issue" href="/secure/VoteOrWatchIssue.jspa?atl_token=ACIO-CAVI-QX7G-9IAS|fb0c15f918a76f2aa3d47e5a3ee5d0520f7c57ba|lout&amp;id={0}&amp;watch=unwatch&amp;returnUrl=/secure/issues" />
             <a shape="rect" class="issueaction-manage-watchers" id="manage-watchers" href="/secure/ManageWatchers!default.jspa?id={0}&amp;returnUrl=/secure/issues" />
             <a shape="rect" class="issueaction-create-subtask" id="create-subtask" href="/secure/CreateSubTaskIssue!default.jspa?parentIssueId={0}&amp;returnUrl=/secure/issues" />
             <a shape="rect" class="issueaction-subtask-to-issue" id="subtask-to-issue" href="/secure/ConvertSubTask.jspa?id={0}&amp;returnUrl=/secure/issues" />
@@ -259,7 +259,7 @@
               <form enctype="application/x-www-form-urlencoded" method="get" class="navigator-search" />
               <div class="navigator-group">
                 <div class="results-panel navigator-item">
-                  <div class="navigator-content" data-issue-table-model-state="" data-session-search-state="" data-selected-issue="{&quot;id&quot;:151313,&quot;key&quot;:&quot;XSTR-752&quot;}" data-highlighted-issue-id="" />
+                  <div class="navigator-content" data-issue-table-model-state="" data-session-search-state="" data-selected-issue="{&quot;id&quot;:145655,&quot;key&quot;:&quot;XSTR-734&quot;}" data-highlighted-issue-id="" />
                 </div>
               </div>
             </div>
@@ -285,10 +285,10 @@
                           <a shape="rect" id="project-name-val" href="/browse/XSTR">XStream</a>
                         </li>
                         <li>
-                          <a shape="rect" class="issue-link" id="key-val" data-issue-key="XSTR-752" href="/browse/XSTR-752" rel="151313">XSTR-752</a>
+                          <a shape="rect" class="issue-link" id="key-val" data-issue-key="XSTR-734" href="/browse/XSTR-734" rel="145655">XSTR-734</a>
                         </li>
                       </ol>
-                      <h1 id="summary-val">omitField() does not take into account the members in parent class</h1>
+                      <h1 id="summary-val">Inconsistency with use of StaxDriver (XML includes header and is not pretty-printed)</h1>
                     </div>
                     <!-- .aui-page-header-main -->
                     <div class="aui-page-header-actions">
@@ -305,7 +305,7 @@
                       <div class="toolbar-split toolbar-split-left">
                         <ul class="toolbar-group pluggable-ops" id="opsbar-ops-login-lnk_container">
                           <li class="toolbar-item">
-                            <a shape="rect" class="toolbar-trigger" id="ops-login-lnk" title="Log In" href="/login.jsp?os_destination=%2Fbrowse%2FXSTR-752">
+                            <a shape="rect" class="toolbar-trigger" id="ops-login-lnk" title="Log In" href="/login.jsp?os_destination=%2Fbrowse%2FXSTR-734">
                               <span class="trigger-label">Log In</span>
                             </a>
                           </li>
@@ -326,17 +326,17 @@
                               <div class="aui-list hidden">
                                 <ul class="aui-list-section aui-first aui-last">
                                   <li class="aui-list-item">
-                                    <a shape="rect" class="aui-list-item-link" id="jira.issueviews:issue-xml" href="/si/jira.issueviews:issue-xml/XSTR-752/XSTR-752.xml">
+                                    <a shape="rect" class="aui-list-item-link" id="jira.issueviews:issue-xml" href="/si/jira.issueviews:issue-xml/XSTR-734/XSTR-734.xml">
                                       <span class="trigger-label">XML</span>
                                     </a>
                                   </li>
                                   <li class="aui-list-item">
-                                    <a shape="rect" class="aui-list-item-link" id="jira.issueviews:issue-word" href="/si/jira.issueviews:issue-word/XSTR-752/XSTR-752.doc">
+                                    <a shape="rect" class="aui-list-item-link" id="jira.issueviews:issue-word" href="/si/jira.issueviews:issue-word/XSTR-734/XSTR-734.doc">
                                       <span class="trigger-label">Word</span>
                                     </a>
                                   </li>
                                   <li class="aui-list-item">
-                                    <a shape="rect" class="aui-list-item-link" id="jira.issueviews:issue-html" href="/si/jira.issueviews:issue-html/XSTR-752/XSTR-752.html">
+                                    <a shape="rect" class="aui-list-item-link" id="jira.issueviews:issue-html" href="/si/jira.issueviews:issue-html/XSTR-734/XSTR-734.html">
                                       <span class="trigger-label">Printable</span>
                                     </a>
                                   </li>
@@ -374,8 +374,8 @@
                           <div class="wrap">
                             <strong class="name">Status:</strong>
                             <span class="value" id="status-val">
-                              <img src="/images/icons/statuses/closed.png" width="16" height="16" alt="Closed" title="Closed - The issue is considered finished, the resolution is correct. Issues which are closed can be reopened." />
-                              Closed
+                              <img src="/images/icons/statuses/open.png" width="16" height="16" alt="Open" title="Open - The issue is open and ready for the assignee to start work on it." />
+                              Open
                             </span>
                           </div>
                         </li>
@@ -391,7 +391,7 @@
                         <li class="item item-right">
                           <div class="wrap">
                             <strong class="name">Resolution:</strong>
-                            <span class="value resolved" id="resolution-val">Not A Bug</span>
+                            <span class="value unresolved" id="resolution-val">Unresolved</span>
                           </div>
                         </li>
                         <li class="item">
@@ -399,7 +399,7 @@
                             <strong class="name">Affects Version/s:</strong>
                             <span class="value" id="versions-val">
                               <span class="shorten" id="versions-field">
-                                <span title="1.4.6 Maintenance release">1.4.6</span>
+                                <span title="1.4.4 Maintenance release">1.4.4</span>
                               </span>
                             </span>
                           </div>
@@ -424,11 +424,25 @@
                           <div class="wrap" id="wrap-labels">
                             <strong class="name">Labels:</strong>
                             <div class="labels-wrap value">
-                              <span class="labels" id="labels-151313-value">None</span>
+                              <span class="labels" id="labels-145655-value">None</span>
                             </div>
                           </div>
                         </li>
                       </ul>
+                      <div id="customfieldmodule">
+                        <div class="aui-tabs horizontal-tabs" id="customfield-tabs">
+                          <div class="tabs-pane active-pane" id="customfield-panel-1">
+                            <ul class="property-list">
+                              <li class="item" id="rowForcustomfield_10070">
+                                <div class="wrap">
+                                  <strong class="name" title="JDK version and platform">JDK version and platform:</strong>
+                                  <div class="value type-textfield" id="customfield_10070-val" data-fieldtype="textfield" data-fieldtypecompletekey="com.atlassian.jira.plugin.system.customfieldtypes:textfield">All</div>
+                                </div>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                   <div class="module toggle-wrap" id="descriptionmodule">
@@ -439,24 +453,14 @@
                     <div class="mod-content">
                       <div class="field-ignore-highlight" id="description-val">
                         <div class="user-content-block">
+                          <p>As discussed with Jörg on the mailing list. Although the Javadoc and FAQ say that toXML will give pretty-printed XML 'snippets' (no header), this only occurs if not using the StaxDriver. There are 3 possible solution types:</p>
+                          <p>a) Update Javadoc and FAQ to make clear that the header presence and pretty-printing is driver-dependent (and put info. about the header in the Javadoc).</p>
+                          <p>b) Provide non-backwards-compatibility-breaking code to allow an 'XStream contract consistent' version of the StaX driver to be used (e.g., a separate driver class StaxContractConsistentDriver).</p>
                           <p>
-                            Ex :
-                            <br clear="none" />
-                            public abstract class A
+                            c) Fix the API 'properly' so that XStream
+                            <b>always</b>
+                            returns pretty-printed snippets, irrespective of the driver used. This might need to be a major release change since it could break code for users assuming the header existence when using StaxDriver.
                           </p>
-                          {
- private int id;
-}
-                          <p>public class B extends A</p>
-                          {
-...
-}
-                          <p>
-                            If I omit id in serialization of class B like this :
-                            <br clear="none" />
-                            xStream.omitField(B.class, "id");
-                          </p>
-                          <p>It doesn't work, XStream still serializes "id".</p>
                         </div>
                       </div>
                     </div>
@@ -469,21 +473,21 @@
                     <div class="mod-content">
                       <div class="tabwrap tabs2">
                         <ul class="tabs horizontal" id="issue-tabs">
-                          <li data-id="all-tabpanel" data-key="com.atlassian.jira.plugin.system.issuetabpanels:all-tabpanel" data-label="All" data-href="/browse/XSTR-752?page=com.atlassian.jira.plugin.system.issuetabpanels:all-tabpanel">
-                            <a shape="rect" class="ajax-activity-content" id="all-tabpanel" href="/browse/XSTR-752?page=com.atlassian.jira.plugin.system.issuetabpanels:all-tabpanel">
+                          <li data-id="all-tabpanel" data-key="com.atlassian.jira.plugin.system.issuetabpanels:all-tabpanel" data-label="All" data-href="/browse/XSTR-734?page=com.atlassian.jira.plugin.system.issuetabpanels:all-tabpanel">
+                            <a shape="rect" class="ajax-activity-content" id="all-tabpanel" href="/browse/XSTR-734?page=com.atlassian.jira.plugin.system.issuetabpanels:all-tabpanel">
                               <strong>All</strong>
                             </a>
                           </li>
-                          <li class="active" id="comment-tabpanel" data-id="comment-tabpanel" data-key="com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel" data-label="Comments" data-href="/browse/XSTR-752?page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel">
+                          <li class="active" id="comment-tabpanel" data-id="comment-tabpanel" data-key="com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel" data-label="Comments" data-href="/browse/XSTR-734?page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel">
                             <strong>Comments</strong>
                           </li>
-                          <li data-id="changehistory-tabpanel" data-key="com.atlassian.jira.plugin.system.issuetabpanels:changehistory-tabpanel" data-label="History" data-href="/browse/XSTR-752?page=com.atlassian.jira.plugin.system.issuetabpanels:changehistory-tabpanel">
-                            <a shape="rect" class="ajax-activity-content" id="changehistory-tabpanel" href="/browse/XSTR-752?page=com.atlassian.jira.plugin.system.issuetabpanels:changehistory-tabpanel">
+                          <li data-id="changehistory-tabpanel" data-key="com.atlassian.jira.plugin.system.issuetabpanels:changehistory-tabpanel" data-label="History" data-href="/browse/XSTR-734?page=com.atlassian.jira.plugin.system.issuetabpanels:changehistory-tabpanel">
+                            <a shape="rect" class="ajax-activity-content" id="changehistory-tabpanel" href="/browse/XSTR-734?page=com.atlassian.jira.plugin.system.issuetabpanels:changehistory-tabpanel">
                               <strong>History</strong>
                             </a>
                           </li>
-                          <li data-id="activity-stream-issue-tab" data-key="com.atlassian.streams.streams-jira-plugin:activity-stream-issue-tab" data-label="Activity" data-href="/browse/XSTR-752?page=com.atlassian.streams.streams-jira-plugin:activity-stream-issue-tab">
-                            <a shape="rect" class="ajax-activity-content" id="activity-stream-issue-tab" href="/browse/XSTR-752?page=com.atlassian.streams.streams-jira-plugin:activity-stream-issue-tab">
+                          <li data-id="activity-stream-issue-tab" data-key="com.atlassian.streams.streams-jira-plugin:activity-stream-issue-tab" data-label="Activity" data-href="/browse/XSTR-734?page=com.atlassian.streams.streams-jira-plugin:activity-stream-issue-tab">
+                            <a shape="rect" class="ajax-activity-content" id="activity-stream-issue-tab" href="/browse/XSTR-734?page=com.atlassian.streams.streams-jira-plugin:activity-stream-issue-tab">
                               <strong>Activity</strong>
                             </a>
                           </li>
@@ -492,67 +496,7 @@
                       <div class="issuePanelWrapper">
                         <div class="issuePanelProgress" />
                         <div class="issuePanelContainer" id="issue_actions_container">
-                          <div class="issue-data-block activity-comment twixi-block expanded" id="comment-338676">
-                            <div class="twixi-wrap verbose actionContainer">
-                              <div class="action-head">
-                                <a shape="rect" class="twixi" href="#">
-                                  <span class="icon twixi-opened">
-                                    <span>Hide</span>
-                                  </span>
-                                </a>
-                                <div class="action-links">
-                                  <a shape="rect" class="icon icon-perma activitymodule-link" href="/browse/XSTR-752?focusedCommentId=338676&amp;page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-338676" title="A permanent link to this comment.">
-                                    <span>Permalink</span>
-                                  </a>
-                                </div>
-                                <div class="action-details">
-                                  <a shape="rect" class="user-hover user-avatar" id="commentauthor_338676_verbose" rel="joehni" href="/secure/ViewProfile.jspa?name=joehni">
-                                    <span class="aui-avatar aui-avatar-xsmall">
-                                      <span class="aui-avatar-inner">
-                                        <img src="/secure/useravatar?size=xsmall&amp;avatarId=10232" />
-                                      </span>
-                                    </span>
-                                    J�rg Schaible
-                                  </a>
-                                  added a comment  -
-                                  <span class="commentdate_338676_verbose subText">
-                                    <span class="date user-tz" title="14/Jan/14 12:08 PM">
-                                      <time class="livestamp" datetime="2014-01-14T12:08-0600">14/Jan/14 12:08 PM</time>
-                                    </span>
-                                  </span>
-                                </div>
-                              </div>
-                              <div class="action-body flooded">
-                                <p>This behavior is by design. You have to provide the declaring type. This is explicitly stated in the Javadocs to XStream.omitField.</p>
-                              </div>
-                            </div>
-                            <div class="twixi-wrap concise actionContainer">
-                              <div class="action-head">
-                                <a shape="rect" class="twixi" href="#">
-                                  <span class="icon twixi-closed">
-                                    <span>Show</span>
-                                  </span>
-                                </a>
-                                <div class="action-details flooded">
-                                  <a shape="rect" class="user-hover user-avatar" id="commentauthor_338676_concise" rel="joehni" href="/secure/ViewProfile.jspa?name=joehni">
-                                    <span class="aui-avatar aui-avatar-xsmall">
-                                      <span class="aui-avatar-inner">
-                                        <img src="/secure/useravatar?size=xsmall&amp;avatarId=10232" />
-                                      </span>
-                                    </span>
-                                    J�rg Schaible
-                                  </a>
-                                  added a comment  -
-                                  <span class="commentdate_338676_concise subText">
-                                    <span class="date user-tz" title="14/Jan/14 12:08 PM">
-                                      <time class="livestamp" datetime="2014-01-14T12:08-0600">14/Jan/14 12:08 PM</time>
-                                    </span>
-                                  </span>
-                                  This behavior is by design. You have to provide the declaring type. This is explicitly stated in the Javadocs to XStream.omitField.
-                                </div>
-                              </div>
-                            </div>
-                          </div>
+                          <div class="message-container">There are no comments yet on this issue.</div>
                         </div>
                       </div>
                     </div>
@@ -586,13 +530,13 @@
                             <dt>Reporter:</dt>
                             <dd>
                               <span class="view-issue-field" id="reporter-val">
-                                <span class="user-hover" id="issue_summary_reporter_toan" rel="toan">
+                                <span class="user-hover" id="issue_summary_reporter_monsieurrigsby" rel="monsieurrigsby">
                                   <span class="aui-avatar aui-avatar-small">
                                     <span class="aui-avatar-inner">
                                       <img src="/secure/useravatar?size=small&amp;avatarId=10232" />
                                     </span>
                                   </span>
-                                  CHU Toan
+                                  Stuart Rossiter
                                 </span>
                               </span>
                             </dd>
@@ -611,7 +555,7 @@
                           <dl>
                             <dt>Watchers:</dt>
                             <dd>
-                              <span class="aui-badge watch-state-off" id="watcher-data">2</span>
+                              <span class="aui-badge watch-state-off" id="watcher-data">1</span>
                               <span id="watch-label" title="You have to be logged in to watch an issue.">Start watching this issue</span>
                             </dd>
                           </dl>
@@ -629,25 +573,17 @@
                         <li>
                           <dl class="dates">
                             <dt>Created:</dt>
-                            <dd class="date user-tz" title="14/Jan/14 3:57 AM">
+                            <dd class="date user-tz" title="19/Apr/13 6:19 AM">
                               <span id="create-date" data-name="Created" data-fieldtype="datetime">
-                                <time class="livestamp" datetime="2014-01-14T03:57-0600">14/Jan/14 3:57 AM</time>
+                                <time class="livestamp" datetime="2013-04-19T06:19-0500">19/Apr/13 6:19 AM</time>
                               </span>
                             </dd>
                           </dl>
                           <dl class="dates">
                             <dt>Updated:</dt>
-                            <dd class="date user-tz" title="14/Jan/14 12:08 PM">
+                            <dd class="date user-tz" title="19/Apr/13 6:19 AM">
                               <span id="updated-date" data-name="Updated" data-fieldtype="datetime">
-                                <time class="livestamp" datetime="2014-01-14T12:08-0600">14/Jan/14 12:08 PM</time>
-                              </span>
-                            </dd>
-                          </dl>
-                          <dl class="dates">
-                            <dt>Resolved:</dt>
-                            <dd class="date user-tz" title="14/Jan/14 12:08 PM">
-                              <span id="resolved-date" data-name="Resolved" data-fieldtype="datetime">
-                                <time class="livestamp" datetime="2014-01-14T12:08-0600">14/Jan/14 12:08 PM</time>
+                                <time class="livestamp" datetime="2013-04-19T06:19-0500">19/Apr/13 6:19 AM</time>
                               </span>
                             </dd>
                           </dl>
@@ -696,23 +632,23 @@
         </div>
         <form enctype="application/x-www-form-urlencoded" method="get" class="dont-default-focus" id="jira_request_timing_info">
           <fieldset class="parameters hidden">
-            <input type="hidden" title="jira.request.start.millis" value="1414689053566" />
-            <input type="hidden" title="jira.request.server.time" value="160" />
-            <input type="hidden" title="jira.request.id" value="730x67074563x3" />
+            <input type="hidden" title="jira.request.start.millis" value="1427134161034" />
+            <input type="hidden" title="jira.request.server.time" value="113" />
+            <input type="hidden" title="jira.request.id" value="789x26269114x4" />
             <input type="hidden" title="jira.session.expiry.time" value="-" />
             <input type="hidden" title="jira.session.expiry.in.mins" value="-" />
-            <input type="hidden" id="jiraConcurrentRequests" name="jira.request.concurrent.requests" value="5" />
+            <input type="hidden" id="jiraConcurrentRequests" name="jira.request.concurrent.requests" value="4" />
           </fieldset>
         </form>
         <!--
-	                 REQUEST ID : 730x67074563x3
-	          REQUEST TIMESTAMP : [30/Oct/2014:12:10:53 -0500]
-	               REQUEST TIME : 0.1600
+	                 REQUEST ID : 789x26269114x4
+	          REQUEST TIMESTAMP : [23/Mar/2015:13:09:21 -0500]
+	               REQUEST TIME : 0.1130
 	                 ASESSIONID : -
-	        CONCURRENT REQUESTS : 5
+	        CONCURRENT REQUESTS : 4
 
-	                      db.reads : name=db.reads; inv=21; ms=14; cpu=0; rss=0;
-	                      db.conns : name=db.conns; inv=21; ms=19; cpu=0; rss=0;
+	                      db.reads : name=db.reads; inv=23; ms=22; cpu=0; rss=0;
+	                      db.conns : name=db.conns; inv=23; ms=27; cpu=0; rss=0;
 -->
         <fieldset class="hidden parameters">
           <input type="hidden" title="loggedInUser" value="" />

@@ -27,53 +27,60 @@ public class CompareDocuments {
 		ArrayList<String> finalAttributes = new ArrayList<String>();						//liste der attribute der tags für xpath
 		parse_test.find_markers(root, deep, finalPredecessors, finalAttributes, found, tofind);
 		
-		String XPath = "";
-		XPath = parse_test.make_xpath_query(finalPredecessors, finalAttributes);
 		
-		NodeList nodes1 = null;
-		NodeList nodes2 = null;
-		try {
-			Xpath2Data_with_JAVAX.start_xpath(filepath, XPath, nodes1);
-		} catch (XPathExpressionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		ArrayList<String> XPath = parse_test.make_xpath_query(finalPredecessors, finalAttributes);
+		int size = XPath.size();
+		int diff = 0;
 		
-		parse_test.write_genfile(document2, filepath);
-		
-		try {
-			Xpath2Data_with_JAVAX.start_xpath(filepath, XPath, nodes2);
-		} catch (XPathExpressionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		boolean diff = false;
-		for(int i = 0; i < nodes1.getLength(); i++){
-        	if (!nodes1.item(i).getNodeValue().equals(nodes2.item(i).getNodeValue())){
-        		diff = true;
-        	};
-        		//System.out.println(nodes.item(i).getNodeName());
-        }
-		if (diff = true){
-			return XPath;
+		if(size != 1){
+			NodeList nodes1 = null;
+			NodeList nodes2 = null;
+			try {
+				Xpath2Data_with_JAVAX.start_xpath(filepath, XPath, nodes1);
+			} catch (XPathExpressionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ParserConfigurationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SAXException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			parse_test.write_genfile(document2, filepath);
+	
+			for (int j = 0; j<size ; j++){
+				ArrayList<String> XPath2 = new ArrayList<String>();
+				XPath2.add(XPath.get(j));
+				try {
+					Xpath2Data_with_JAVAX.start_xpath(filepath, XPath2, nodes2);
+				} catch (XPathExpressionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (ParserConfigurationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (SAXException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				for(int i = 0; i < nodes1.getLength(); i++){
+		        	if (!nodes1.item(i).getNodeValue().equals(nodes2.item(i).getNodeValue())){
+		        		diff = i;
+		        	};
+		        		//System.out.println(nodes.item(i).getNodeName());
+		        }
+			}
+		}	
+		if (diff != 0 || size == 1){
+			return XPath.get(diff);
 		} else {
 			return "nicht gefunden";
 		}

@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 
@@ -19,14 +22,21 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.params.ClientPNames;
 import org.apache.http.client.params.CookiePolicy;
+import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.BasicClientConnectionManager;
+import org.apache.http.impl.conn.SingleClientConnManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.jdom2.DocType;
 import org.jdom2.Element;
@@ -39,6 +49,19 @@ import org.jdom2.output.XMLOutputter;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+
+import javax.net.ssl.X509TrustManager;
+
 
 /**
  * @author Eric Gliemmo
@@ -46,60 +69,16 @@ import org.xml.sax.SAXException;
  */
 public class Parse_with_JDOM2 {
 	
-	private String BASIC_URL = "http://feeds.bbci.co.uk/news/technology/rss.xml?edition=int";
-	
+	public static String BASIC_URL = "https://issues.mozkito.org/browse/MTEST-1";
+
 	public static void main(String[] args) throws Exception{
 
-		Parse_with_JDOM2 PWJ = new Parse_with_JDOM2();
-		PWJ.test();
+		Parse_with_JDOM2.test(BASIC_URL);
 	}
 	
-	public void test() throws ClientProtocolException, IOException, JDOMException {
+	public static Document test(String BasicUrl) throws ClientProtocolException, IOException, JDOMException, NoSuchAlgorithmException, KeyManagementException {
 		
 		
-		final DefaultHttpClient httpClient = new DefaultHttpClient();
-		
-	   	httpClient.getParams().setParameter(ClientPNames.COOKIE_POLICY, CookiePolicy.BROWSER_COMPATIBILITY);
-			httpClient.setCookieStore(new BasicCookieStore());
-			
-			String authUrl = BASIC_URL; //+ "/login"; 
-			
-			final HttpPost post = new HttpPost(authUrl);
-			
-			try {
-				final List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
-				nameValuePairs.add(new BasicNameValuePair("os_username", "egliemmo"));
-				nameValuePairs.add(new BasicNameValuePair("os_password", "legindametalevel"));
-				nameValuePairs.add(new BasicNameValuePair("username", "egliemmo"));
-				nameValuePairs.add(new BasicNameValuePair("password", "legindametalevel"));
-				nameValuePairs.add(new BasicNameValuePair("os_cookie", "true"));
-				post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-				
-				final HttpResponse response = httpClient.execute(post);
-				final BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-				String line = null;
-				
-				while ((line = rd.readLine()) != null) {
-					if (Logger.logDebug()) {
-						Logger.debug(line);
-					}
-				}
-				
-				final List<Cookie> cookies = httpClient.getCookieStore().getCookies();
-				if (Logger.logInfo()) {
-					Logger.info("Received %s cookies.", cookies.size());
-				}
-				
-				if (Logger.logDebug()) {
-					for (final Cookie cookie : cookies) {
-						Logger.debug(cookie.toString());
-					}
-				}
-			} catch (final IOException e) {
-				e.printStackTrace();
-			}
-			
-	   	// authenticated 
 			final HttpGet request = new HttpGet(authUrl);
 			final HttpResponse response = httpClient.execute(request);
 			final HttpEntity entity = response.getEntity();
@@ -113,6 +92,8 @@ public class Parse_with_JDOM2 {
 			out.output( document, System.out );						// gibt die XML aus
 			
 			//start_searching(document);
+			
+			return document;
 	}
 	
 	public static void start_searching(Document document) throws MalformedURLException, JDOMException, IOException{
