@@ -19,7 +19,7 @@ public class WebCrawler {
     	Validate.isTrue(true, url);
         //print("https://jira.codehaus.org/browse/XSTR-752", url);
 
-        Parse_with_JDOM2.start_parse(url);
+        //Parse_with_JDOM2.start_parse(url);
         
         Document doc = Jsoup.connect(url).get();
         Elements links = doc.select("a[href]");
@@ -29,7 +29,7 @@ public class WebCrawler {
             try {
             	//System.out.println(link.attr("abs:href"));
             	System.out.println("Link Nummer" + tmp);
-				Parse_with_JDOM2.start_parse(link.attr("abs:href"));
+				//Parse_with_JDOM2.start_parse(link.attr("abs:href"));
 			} catch (Exception FileNotFoundException) {
 				System.out.println("Mit diesem Link ist es nicht moeglich das entsprechende xml zu parsen!!");
 			}

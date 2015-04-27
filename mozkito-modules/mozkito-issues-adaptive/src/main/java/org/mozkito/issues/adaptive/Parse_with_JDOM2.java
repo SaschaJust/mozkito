@@ -73,28 +73,28 @@ public class Parse_with_JDOM2 {
 
 	public static void main(String[] args) throws Exception{
 
-		Parse_with_JDOM2.test(BASIC_URL);
+		//Parse_with_JDOM2.test(BASIC_URL);
 	}
 	
-	public static Document test(String BasicUrl) throws ClientProtocolException, IOException, JDOMException, NoSuchAlgorithmException, KeyManagementException {
-		
-		
-			final HttpGet request = new HttpGet(authUrl);
-			final HttpResponse response = httpClient.execute(request);
-			final HttpEntity entity = response.getEntity();
-			
-			final BufferedReader reader = new BufferedReader(new InputStreamReader(entity.getContent()));
-			SAXBuilder sBuilder = new SAXBuilder(new XMLReaderSAX2Factory(false,
-                    "org.ccil.cowan.tagsoup.Parser"));
-			Document document = sBuilder.build(reader);
-			
-			XMLOutputter out = new XMLOutputter();
-			out.output( document, System.out );						// gibt die XML aus
-			
-			//start_searching(document);
-			
-			return document;
-	}
+//	public static Document test(String BasicUrl) throws ClientProtocolException, IOException, JDOMException, NoSuchAlgorithmException, KeyManagementException {
+//		
+//		
+//			final HttpGet request = new HttpGet(authUrl);
+//			final HttpResponse response = httpClient.execute(request);
+//			final HttpEntity entity = response.getEntity();
+//			
+//			final BufferedReader reader = new BufferedReader(new InputStreamReader(entity.getContent()));
+//			SAXBuilder sBuilder = new SAXBuilder(new XMLReaderSAX2Factory(false,
+//                    "org.ccil.cowan.tagsoup.Parser"));
+//			Document document = sBuilder.build(reader);
+//			
+//			XMLOutputter out = new XMLOutputter();
+//			out.output( document, System.out );						// gibt die XML aus
+//			
+//			//start_searching(document);
+//			
+//			return document;
+//	}
 	
 	public static void start_searching(Document document) throws MalformedURLException, JDOMException, IOException{
 		
@@ -145,17 +145,17 @@ public class Parse_with_JDOM2 {
 		
 		//starte die datensuche mit dem filepath und dem xpathquery
 		NodeList nodes = null;
-		try {
-			Xpath2Data_with_JAVAX.start_xpath(filepath, XPath, nodes);
-		} catch (XPathExpressionException e) {
-			System.out.println("No path found, no query available");
-		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		try {
+//			Xpath2Data_with_JAVAX.start_xpath(filepath, XPath, nodes);
+//		} catch (XPathExpressionException e) {
+//			System.out.println("No path found, no query available");
+//		} catch (ParserConfigurationException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (SAXException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 	}
 	//sucht einen bestimmten marker und merkt sich den pfad dorthin
 	private static void find_markers (Element root, int deep, ArrayList<String> finalPredecessors, ArrayList<String> finalAttributes, boolean found){

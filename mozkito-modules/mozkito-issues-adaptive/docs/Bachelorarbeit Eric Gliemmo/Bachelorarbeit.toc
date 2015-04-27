@@ -10,13 +10,13 @@
 \contentsline {section}{\numberline {3.1}Methodology}{9}{section.14}
 \contentsline {section}{\numberline {3.2}Preconditions}{11}{section.15}
 \contentsline {subsection}{\numberline {3.2.1}Adaption of a benchmark}{11}{subsection.16}
-\contentsline {subsection}{\numberline {3.2.2}Deployment of modified reports}{11}{subsection.17}
-\contentsline {section}{\numberline {3.3}Retrieving markers}{11}{section.18}
-\contentsline {subsection}{\numberline {3.3.1}Access the HTML structure}{11}{subsection.19}
-\contentsline {subsection}{\numberline {3.3.2}Search in XML}{14}{subsection.20}
-\contentsline {section}{\numberline {3.4}Generating a mining plan}{16}{section.22}
-\contentsline {chapter}{\numberline {4}Evaluation and Analysis}{18}{chapter.23}
-\contentsline {chapter}{\numberline {5}Conclusion}{20}{chapter.24}
-\contentsline {section}{\numberline {5.1}Summary}{20}{section.25}
-\contentsline {section}{\numberline {5.2}Future Work}{20}{section.26}
-\contentsline {chapter}{Bibliography}{21}{appendix*.27}
+\contentsline {subsection}{\numberline {3.2.2}Deployment of reports}{12}{subsection.17}
+\contentsline {section}{\numberline {3.3}Retrieving markers}{13}{section.18}
+\contentsline {subsection}{\numberline {3.3.1}Access the HTML structure}{13}{subsection.19}
+\contentsline {subsection}{\numberline {3.3.2}Search in XML}{16}{subsection.20}
+\contentsline {section}{\numberline {3.4}Generating a mining plan}{18}{section.22}
+\contentsline {chapter}{\numberline {4}Evaluation and Analysis}{21}{chapter.23}
+\contentsline {chapter}{\numberline {5}Conclusion}{23}{chapter.24}
+\contentsline {section}{\numberline {5.1}Summary}{23}{section.25}
+\contentsline {section}{\numberline {5.2}Future Work}{23}{section.26}
+\contentsline {chapter}{Bibliography}{24}{appendix*.27}

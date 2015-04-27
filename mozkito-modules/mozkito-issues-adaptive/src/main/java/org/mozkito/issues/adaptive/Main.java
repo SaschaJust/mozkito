@@ -14,7 +14,9 @@
 package org.mozkito.issues.adaptive;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -98,6 +100,60 @@ public class Main {
 			main.init(new URI(baseURL));
 			main.auth(user, password);
 			
+			
+			//	id von MTEST-1
+			String id_to_find = ">MTEST-1<";
+			
+			//  lastUpdatedTimestamp von MTEST-1
+			String lastupTS_to_find = "Today 2:09 PM";
+			
+			//  personContainer von MTEST-1
+			String personContainer_to_find = "Eric Gliemmo";
+			
+			//  Priority von MTEST-1
+			String priority_to_find = "Major";
+			
+			//  resolution von MTEST-1
+			String resolution_to_find = "Unresolved";
+			
+		    //  resolutionTS
+			String resolutionTS_to_find = "";				//gibt es bisher noch nicht
+			
+		    //  severtiy
+			String severity_to_find = "";					//gibt es bisher noch nicht
+			
+		    //  status von MTEST-1
+			String status_to_find = "Done";
+			
+			//  subject
+			String subject_to_find = "";					//gibt es bisher noch nicht
+			
+		    //  typen von MTEST-1
+			String type_to_find = "New Feature";
+			
+			ArrayList<String> strings_to_find = new ArrayList<String>();
+			strings_to_find.add(id_to_find);
+			strings_to_find.add(lastupTS_to_find); 
+			strings_to_find.add(personContainer_to_find);
+			strings_to_find.add(priority_to_find);
+			strings_to_find.add(resolution_to_find);
+			strings_to_find.add(status_to_find);
+			strings_to_find.add(type_to_find);
+			
+			int size_strings_to_find = strings_to_find.size();
+			
+			
+			Document document_to_compare1 = main.fetch("https://issues.mozkito.org/browse/MTEST-1");
+			Document document_to_compare2 = main.fetch("https://issues.mozkito.org/browse/MTEST-2");
+			
+			String filepath_to_compare1 = "/Users/Eric/mozkito/mozkito-modules/mozkito-issues-adaptive/gen_files/document_to_compare1.xml";
+			String filepath_to_compare2 = "/Users/Eric/mozkito/mozkito-modules/mozkito-issues-adaptive/gen_files/document_to_compare2.xml";
+			
+			parse_test.write_genfile(document_to_compare1, filepath_to_compare1);
+			parse_test.write_genfile(document_to_compare2, filepath_to_compare2);
+			
+			
+			
 			ArrayList<String> marker_to_find = new ArrayList<String>();
 			marker_to_find.add("$$attachment_marker$$");
 			marker_to_find.add("$$comment_marker$$");  //problem!!!!
@@ -128,15 +184,21 @@ public class Main {
 				
 				//TODO!!!!
 				if (tmpList == null){
-					System.out.println("Nix gefunden Arschloch" );
+					System.out.println("Nix gefunden" );
 				} else {
 					int size2 = tmpList.size();								//hier muss noch ueberlegt werden, wenn die markersuche 2 ergebnisse liefert,
 					
 					
 					pathes.add(tmpList.get(0));				//welches genommen wird und nicht einfach nur das erste
-					System.out.println("Arschloch" + tmpList.get(0));
+					System.out.println(tmpList.get(0));
 					
 				}
+			}
+			
+			for(int i = 0 ; i < size_strings_to_find; i++){
+				ArrayList<String> tmpList = parse_test.initSearch(document_to_compare1, strings_to_find.get(i));
+				pathes.add(tmpList.get(0));				//welches genommen wird und nicht einfach nur das erste
+				System.out.println(tmpList.get(0));
 			}
 			
 			//final Document doc = main.fetch("https://issues.mozkito.org/browse/MTEST-2");
@@ -149,13 +211,13 @@ public class Main {
 			
 			for (int i = 0 ; i < pathes_length ; i++){
 				
-				String filepath = "/Users/Eric/mozkito/mozkito-modules/mozkito-issues-adaptive/gen_files/$$attachment_marker$$.xml";
+				String filepath = "/Users/Eric/mozkito/mozkito-modules/mozkito-issues-adaptive/gen_files/$$comment_marker$$.xml";
 				//String filepath = "/Users/Eric/mozkito/mozkito-modules/mozkito-issues-adaptive/gen_files/" + marker_to_find.get(i) + ".xml";
 				ArrayList<String> templist = Xpath2Data_with_JAVAX.start_xpath_string(filepath,pathes.get(i),finalnodes);
 				
 				if (templist.get(0) == ""){
-					System.out.println("Nichts gefunden Motherfucker");
-					results.add("Nichts gefunden Motherfucker");
+					System.out.println("Nichts gefunden");
+					results.add("Nichts gefunden");
 				} else {
 					results.add(templist.get(0));
 					System.out.println(templist.get(0));

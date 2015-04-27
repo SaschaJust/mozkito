@@ -1,7 +1,9 @@
 package org.mozkito.issues.adaptive;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,69 +43,102 @@ public class PostIssues {
 	public static void test() throws ClientProtocolException, IOException, JDOMException {
 		
 		String BASIC_URL = "https://issues.mozkito.org";
+		InputStream is = null;
+		is = new FileInputStream("/Users/Eric/mozkito/mozkito-modules/mozkito-issues-adaptive/gen_files/csv-test.csv");
+		String[] reports = CSV_reader.read_in(is);
 		
-		final DefaultHttpClient httpClient = new DefaultHttpClient();
+		String[] report1 = reports[0].split(";");
+		String[] report2 = reports[1].split(";");
+		String[] report3 = reports[2].split(";");
+		String[] report4 = reports[3].split(";");
+		String[] report5 = reports[4].split(";");
+		String[] report6 = reports[5].split(";");
+		String[] report7 = reports[6].split(";");
+		String[] report8 = reports[7].split(";");
+		String[] report9 = reports[8].split(";");
+		String[] report10 = reports[9].split(";");
+		String[] report11 = reports[10].split(";");
+		String[] report12 = reports[11].split(";");
+		String[] report13 = reports[12].split(";");
+		String[] report14 = reports[13].split(";");
+		String[] report15 = reports[14].split(";");
+		String[] report16 = reports[15].split(";");
+		String[] report17 = reports[16].split(";");
+		int size = report1.length;
 		
-	   	httpClient.getParams().setParameter(ClientPNames.COOKIE_POLICY, CookiePolicy.BROWSER_COMPATIBILITY);
-			httpClient.setCookieStore(new BasicCookieStore());
-			
-			String authUrl = BASIC_URL + "/secure/CreateIssueDetails.jspa" ;
-			
-			final HttpPost post = new HttpPost(authUrl);
-			
-			try {
-				final List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
-				nameValuePairs.add(new BasicNameValuePair("pid", "1000"));
-				nameValuePairs.add(new BasicNameValuePair("issuetype", "1"));
-				nameValuePairs.add(new BasicNameValuePair("summary", "issue+created%20via+link"));
-				nameValuePairs.add(new BasicNameValuePair("priority", "1"));
-				nameValuePairs.add(new BasicNameValuePair("duedate", "15-Dec-2005"));
-				nameValuePairs.add(new BasicNameValuePair("components", "1010"));
-				nameValuePairs.add(new BasicNameValuePair("versions", "1011"));
-				nameValuePairs.add(new BasicNameValuePair("fixVersions", "1011"));
-				nameValuePairs.add(new BasicNameValuePair("assignee", "egliemmo"));
-				nameValuePairs.add(new BasicNameValuePair("reporter", "egliemmo"));
-				nameValuePairs.add(new BasicNameValuePair("environment", "this+is+the+environment"));
-				nameValuePairs.add(new BasicNameValuePair("description", "this+is+the+description"));
-				post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-				
-				final HttpResponse response = httpClient.execute(post);
-				final BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-				String line = null;
-				
-				while ((line = rd.readLine()) != null) {
-					if (Logger.logDebug()) {
-						Logger.debug(line);
-					}
-				}
-				
-				final List<Cookie> cookies = httpClient.getCookieStore().getCookies();
-				if (Logger.logInfo()) {
-					Logger.info("Received %s cookies.", cookies.size());
-				}
-				
-				if (Logger.logDebug()) {
-					for (final Cookie cookie : cookies) {
-						Logger.debug(cookie.toString());
-					}
-				}
-			} catch (final IOException e) {
-				e.printStackTrace();
-			}
-			
-	   	// authenticated 
-			final HttpGet request = new HttpGet(authUrl);
-			final HttpResponse response = httpClient.execute(request);
-			final HttpEntity entity = response.getEntity();
-			
-			final BufferedReader reader = new BufferedReader(new InputStreamReader(entity.getContent()));
-			SAXBuilder sBuilder = new SAXBuilder(new XMLReaderSAX2Factory(false,
-                    "org.ccil.cowan.tagsoup.Parser"));
-			Document document = sBuilder.build(reader);
-			
-			XMLOutputter out = new XMLOutputter();
-			out.output( document, System.out );						// gibt die XML aus
-			
+		for (int i= 0; i<size ; i++){
+			report1[i].replace(","," ");
+			System.out.println(report1[i]);
+		}
+		
+		
+		
+//		final DefaultHttpClient httpClient = new DefaultHttpClient();
+//		
+//	   	httpClient.getParams().setParameter(ClientPNames.COOKIE_POLICY, CookiePolicy.BROWSER_COMPATIBILITY);
+//			httpClient.setCookieStore(new BasicCookieStore());
+//			
+//			String authUrl = BASIC_URL + "/secure/CreateIssueDetails.jspa" ;
+//			
+//			final HttpPost post = new HttpPost(authUrl);
+//			
+//			try {
+//				final List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
+//				nameValuePairs.add(new BasicNameValuePair("pid", "1000"));
+//				nameValuePairs.add(new BasicNameValuePair("issuetype", "1"));
+//				nameValuePairs.add(new BasicNameValuePair("summary", "issue+created%20via+link"));
+//				nameValuePairs.add(new BasicNameValuePair("priority", "1"));
+//				nameValuePairs.add(new BasicNameValuePair("duedate", "15-Dec-2005"));
+//				nameValuePairs.add(new BasicNameValuePair("components", "1010"));
+//				nameValuePairs.add(new BasicNameValuePair("versions", "1011"));
+//				nameValuePairs.add(new BasicNameValuePair("fixVersions", "1011"));
+//				nameValuePairs.add(new BasicNameValuePair("assignee", "egliemmo"));
+//				nameValuePairs.add(new BasicNameValuePair("reporter", "egliemmo"));
+//				nameValuePairs.add(new BasicNameValuePair("environment", "this+is+the+environment"));
+//				nameValuePairs.add(new BasicNameValuePair("description", "this+is+the+description"));
+//				post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+//				
+//				final HttpResponse response = httpClient.execute(post);
+//				final BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+//				String line = null;
+//				
+//				while ((line = rd.readLine()) != null) {
+//					if (Logger.logDebug()) {
+//						Logger.debug(line);
+//					}
+//				}
+//				
+//				final List<Cookie> cookies = httpClient.getCookieStore().getCookies();
+//				if (Logger.logInfo()) {
+//					Logger.info("Received %s cookies.", cookies.size());
+//				}
+//				
+//				if (Logger.logDebug()) {
+//					for (final Cookie cookie : cookies) {
+//						Logger.debug(cookie.toString());
+//					}
+//				}
+//			} catch (final IOException e) {
+//				e.printStackTrace();
+//			}
+//			
+//	   	// authenticated 
+//			final HttpGet request = new HttpGet(authUrl);
+//			final HttpResponse response = httpClient.execute(request);
+//			final HttpEntity entity = response.getEntity();
+//			
+//			final BufferedReader reader = new BufferedReader(new InputStreamReader(entity.getContent()));
+//			SAXBuilder sBuilder = new SAXBuilder(new XMLReaderSAX2Factory(false,
+//                    "org.ccil.cowan.tagsoup.Parser"));
+//			Document document = sBuilder.build(reader);
+//			
+//			XMLOutputter out = new XMLOutputter();
+//			out.output( document, System.out );						// gibt die XML aus
+//			
 			//start_searching(document);
+	}
+	
+	public static void post_report(String[] report){
+		//TODO
 	}
 }
