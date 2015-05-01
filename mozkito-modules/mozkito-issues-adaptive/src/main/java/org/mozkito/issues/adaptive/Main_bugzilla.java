@@ -64,7 +64,7 @@ import org.xml.sax.SAXException;
  *
  * @author Sascha Just
  */
-public class Main {
+public class Main_bugzilla {
 	
 	/**
 	 * The main method.
@@ -87,7 +87,7 @@ public class Main {
 			System.exit(1);
 		}
 		
-		final Main main = new Main();
+		final Main_bugzilla main = new Main_bugzilla();
 		
 		final String baseURL = args[0];
 		final String user = args[1];

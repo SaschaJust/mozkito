@@ -275,7 +275,7 @@ public class parse_test {
 		
 		for(int i=0; i<tmp; i++){
 		
-			if (array2[i][0] == null){
+			if (array2[i][0] == null || array2[i][0].contains("comment") || array2[i][0].contains("labels-")){
 			Xpath_query2 = "//ns:*["+array1[i][0]+"]";
 			
 			} else {
@@ -284,7 +284,7 @@ public class parse_test {
 			}
 			
 			for(int tmp2 = 1; tmp2 < intarray[i]; tmp2++){
-				if (array2[i][tmp2] == null){
+				if (array2[i][tmp2] == null || array2[i][tmp2].contains("comment") || array2[i][tmp2].contains("labels-")){
 						Xpath_query2 = Xpath_query2 + "/ns:*["+array1[i][tmp2]+"]";
 				} else {
 						Xpath_query2 = Xpath_query2 + "/ns:*[@id ='"+array2[i][tmp2]+"']";

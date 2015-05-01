@@ -24,7 +24,7 @@
     <meta name="ajs-max-recent-searchers" content="10" />
     <meta name="ajs-jira-base-url" content="https://issues.mozkito.org" />
     <meta name="ajs-serverRenderedViewIssue" content="true" />
-    <meta name="ajs-search-pos" content="17" />
+    <meta name="ajs-search-pos" content="0" />
     <meta name="ajs-issue-key" content="MTEST-1" />
     <meta name="ajs-can-edit-watchers" content="true" />
     <meta name="ajs-can-search-users" content="false" />
@@ -50,7 +50,7 @@
     <meta name="ajs-admin-quicksearch-show" content="true" />
     <meta name="ajs-whats-new-iframe-src-override" content="" />
     <meta name="ajs-whatsnew-full-link" content="https://docs.atlassian.com/jira/docs-060/whatsnew/iframe?e=ZXJpY2dsaWVtbW9Ab25saW5lLmRl&amp;od=false&amp;a=false&amp;pa=true" />
-    <meta name="atlassian-token" id="atlassian-token" content="B6SE-0NSX-K4W6-WQ04|78a90f7c0304ea9a6cb1c2562477f84b7fc2f272|lin" />
+    <meta name="atlassian-token" id="atlassian-token" content="B6SE-0NSX-K4W6-WQ04|54b2641ce70715506653b675e8aa499c00b5dead|lin" />
     <link rel="shortcut icon" href="/s/en_US-t5gcjp-1988229788/6106/3/_/favicon.ico" />
     <link rel="search" type="application/opensearchdescription+xml" href="/osd.jsp" title="[MTEST-1] issue001$$title_marker$$ - Jira" />
     <!--[if IE]><![endif]-->
@@ -259,20 +259,20 @@
                       <strong>My JIRA Home</strong>
                       <ul class="aui-list-truncate" id="set_my_jira_home">
                         <li>
-                          <a shape="rect" class="aui-dropdown2-radio interactive checked" id="set_my_jira_home_default" title="Set my JIRA Home to the Dashboard." href="/secure/UpdateMyJiraHome.jspa?target=com.atlassian.jira.jira-my-home-plugin%3Aset_my_jira_home_dashboard&amp;atl_token=B6SE-0NSX-K4W6-WQ04|78a90f7c0304ea9a6cb1c2562477f84b7fc2f272|lin">Dashboard</a>
+                          <a shape="rect" class="aui-dropdown2-radio interactive checked" id="set_my_jira_home_default" title="Set my JIRA Home to the Dashboard." href="/secure/UpdateMyJiraHome.jspa?target=com.atlassian.jira.jira-my-home-plugin%3Aset_my_jira_home_dashboard&amp;atl_token=B6SE-0NSX-K4W6-WQ04|54b2641ce70715506653b675e8aa499c00b5dead|lin">Dashboard</a>
                         </li>
                         <li>
-                          <a shape="rect" class="aui-dropdown2-radio interactive" id="greenhopper-my-jira-home-set" title="Set my JIRA Home to Agile." href="/secure/UpdateMyJiraHome.jspa?target=com.pyxis.greenhopper.jira%3Agreenhopper-my-jira-home-set-51&amp;atl_token=B6SE-0NSX-K4W6-WQ04|78a90f7c0304ea9a6cb1c2562477f84b7fc2f272|lin">Agile</a>
+                          <a shape="rect" class="aui-dropdown2-radio interactive" id="greenhopper-my-jira-home-set" title="Set my JIRA Home to Agile." href="/secure/UpdateMyJiraHome.jspa?target=com.pyxis.greenhopper.jira%3Agreenhopper-my-jira-home-set-51&amp;atl_token=B6SE-0NSX-K4W6-WQ04|54b2641ce70715506653b675e8aa499c00b5dead|lin">Agile</a>
                         </li>
                         <li>
-                          <a shape="rect" class="aui-dropdown2-radio interactive" id="set_my_jira_home_issuenav" title="Set my JIRA Home to the Issue Navigator." href="/secure/UpdateMyJiraHome.jspa?target=com.atlassian.jira.jira-my-home-plugin%3Aset_my_jira_home_issue&amp;atl_token=B6SE-0NSX-K4W6-WQ04|78a90f7c0304ea9a6cb1c2562477f84b7fc2f272|lin">Issue Navigator</a>
+                          <a shape="rect" class="aui-dropdown2-radio interactive" id="set_my_jira_home_issuenav" title="Set my JIRA Home to the Issue Navigator." href="/secure/UpdateMyJiraHome.jspa?target=com.atlassian.jira.jira-my-home-plugin%3Aset_my_jira_home_issue&amp;atl_token=B6SE-0NSX-K4W6-WQ04|54b2641ce70715506653b675e8aa499c00b5dead|lin">Issue Navigator</a>
                         </li>
                       </ul>
                     </div>
                     <div class="aui-dropdown2-section">
                       <ul class="aui-list-truncate" id="system">
                         <li>
-                          <a shape="rect" class="" id="log_out" title="Log out and cancel any automatic login." href="/logout?atl_token=B6SE-0NSX-K4W6-WQ04|78a90f7c0304ea9a6cb1c2562477f84b7fc2f272|lin">Log Out</a>
+                          <a shape="rect" class="" id="log_out" title="Log out and cancel any automatic login." href="/logout?atl_token=B6SE-0NSX-K4W6-WQ04|54b2641ce70715506653b675e8aa499c00b5dead|lin">Log Out</a>
                         </li>
                       </ul>
                     </div>
@@ -290,7 +290,7 @@
           <div class="hidden shortcut-links">
             <a shape="rect" class="issueaction-edit-issue" id="edit-issue" href="/secure/EditIssue!default.jspa?id={0}&amp;returnUrl=/secure/issues" />
             <a shape="rect" class="issueaction-assign-issue" id="assign-issue" href="/secure/AssignIssue!default.jspa?id={0}&amp;returnUrl=/secure/issues" />
-            <a shape="rect" class="issueaction-assign-to-me hide-from-opsbar" id="assign-to-me" href="/secure/AssignIssue.jspa?atl_token=B6SE-0NSX-K4W6-WQ04|78a90f7c0304ea9a6cb1c2562477f84b7fc2f272|lin&amp;id={0}&amp;assignee=egliemmo&amp;returnUrl=/secure/issues" />
+            <a shape="rect" class="issueaction-assign-to-me hide-from-opsbar" id="assign-to-me" href="/secure/AssignIssue.jspa?atl_token=B6SE-0NSX-K4W6-WQ04|54b2641ce70715506653b675e8aa499c00b5dead|lin&amp;id={0}&amp;assignee=egliemmo&amp;returnUrl=/secure/issues" />
             <a shape="rect" class="issueaction-comment-issue add-issue-comment" id="comment-issue" href="/secure/AddComment!default.jspa?id={0}&amp;returnUrl=/secure/issues" />
             <a shape="rect" class="issueaction-greenhopper-rapidboard-operation js-rapidboard-operation-issue" id="greenhopper-rapidboard-operation" href="/secure/GHGoToBoard.jspa?issueId={0}&amp;returnUrl=/secure/issues" />
             <a shape="rect" class="issueaction-greenhopper-rank-top-operation" id="greenhopper-rank-top-operation" href="/secure/RankTop.jspa?issueId={0}&amp;returnUrl=/secure/issues" />
@@ -298,11 +298,11 @@
             <a shape="rect" class="issueaction-log-work" id="log-work" href="/secure/CreateWorklog!default.jspa?id={0}&amp;returnUrl=/secure/issues" />
             <a shape="rect" class="issueaction-attach-file" id="attach-file" href="/secure/AttachFile!default.jspa?id={0}&amp;returnUrl=/secure/issues" />
             <a shape="rect" class="issueaction-attach-screenshot" id="attach-screenshot" href="/secure/AttachScreenshot!default.jspa?id={0}&amp;returnUrl=/secure/issues" />
-            <a shape="rect" class="toggle-vote-issue issueaction-vote-issue" id="toggle-vote-issue" href="/secure/VoteOrWatchIssue.jspa?atl_token=B6SE-0NSX-K4W6-WQ04|78a90f7c0304ea9a6cb1c2562477f84b7fc2f272|lin&amp;id={0}&amp;vote=vote&amp;returnUrl=/secure/issues" />
-            <a shape="rect" class="toggle-vote-issue issueaction-unvote-issue" id="toggle-vote-issue" href="/secure/VoteOrWatchIssue.jspa?atl_token=B6SE-0NSX-K4W6-WQ04|78a90f7c0304ea9a6cb1c2562477f84b7fc2f272|lin&amp;id={0}&amp;vote=unvote&amp;returnUrl=/secure/issues" />
+            <a shape="rect" class="toggle-vote-issue issueaction-vote-issue" id="toggle-vote-issue" href="/secure/VoteOrWatchIssue.jspa?atl_token=B6SE-0NSX-K4W6-WQ04|54b2641ce70715506653b675e8aa499c00b5dead|lin&amp;id={0}&amp;vote=vote&amp;returnUrl=/secure/issues" />
+            <a shape="rect" class="toggle-vote-issue issueaction-unvote-issue" id="toggle-vote-issue" href="/secure/VoteOrWatchIssue.jspa?atl_token=B6SE-0NSX-K4W6-WQ04|54b2641ce70715506653b675e8aa499c00b5dead|lin&amp;id={0}&amp;vote=unvote&amp;returnUrl=/secure/issues" />
             <a shape="rect" class="issueaction-view-voters" id="view-voters" href="/secure/ViewVoters!default.jspa?id={0}&amp;returnUrl=/secure/issues" />
-            <a shape="rect" class="issueaction-watch-issue" id="toggle-watch-issue" href="/secure/VoteOrWatchIssue.jspa?atl_token=B6SE-0NSX-K4W6-WQ04|78a90f7c0304ea9a6cb1c2562477f84b7fc2f272|lin&amp;id={0}&amp;watch=watch&amp;returnUrl=/secure/issues" />
-            <a shape="rect" class="issueaction-unwatch-issue" id="toggle-watch-issue" href="/secure/VoteOrWatchIssue.jspa?atl_token=B6SE-0NSX-K4W6-WQ04|78a90f7c0304ea9a6cb1c2562477f84b7fc2f272|lin&amp;id={0}&amp;watch=unwatch&amp;returnUrl=/secure/issues" />
+            <a shape="rect" class="issueaction-watch-issue" id="toggle-watch-issue" href="/secure/VoteOrWatchIssue.jspa?atl_token=B6SE-0NSX-K4W6-WQ04|54b2641ce70715506653b675e8aa499c00b5dead|lin&amp;id={0}&amp;watch=watch&amp;returnUrl=/secure/issues" />
+            <a shape="rect" class="issueaction-unwatch-issue" id="toggle-watch-issue" href="/secure/VoteOrWatchIssue.jspa?atl_token=B6SE-0NSX-K4W6-WQ04|54b2641ce70715506653b675e8aa499c00b5dead|lin&amp;id={0}&amp;watch=unwatch&amp;returnUrl=/secure/issues" />
             <a shape="rect" class="issueaction-manage-watchers" id="manage-watchers" href="/secure/ManageWatchers!default.jspa?id={0}&amp;returnUrl=/secure/issues" />
             <a shape="rect" class="issueaction-create-subtask" id="create-subtask" href="/secure/CreateSubTaskIssue!default.jspa?parentIssueId={0}&amp;returnUrl=/secure/issues" />
             <a shape="rect" class="issueaction-subtask-to-issue" id="subtask-to-issue" href="/secure/ConvertSubTask.jspa?id={0}&amp;returnUrl=/secure/issues" />
@@ -464,7 +464,7 @@
                                     </a>
                                   </li>
                                   <li class="aui-list-item">
-                                    <a shape="rect" class="aui-list-item-link issueaction-unwatch-issue" id="toggle-watch-issue" href="/secure/VoteOrWatchIssue.jspa?atl_token=B6SE-0NSX-K4W6-WQ04|78a90f7c0304ea9a6cb1c2562477f84b7fc2f272|lin&amp;id=11000&amp;watch=unwatch" title="Stop watching this issue">
+                                    <a shape="rect" class="aui-list-item-link issueaction-unwatch-issue" id="toggle-watch-issue" href="/secure/VoteOrWatchIssue.jspa?atl_token=B6SE-0NSX-K4W6-WQ04|54b2641ce70715506653b675e8aa499c00b5dead|lin&amp;id=11000&amp;watch=unwatch" title="Stop watching this issue">
                                       <span class="trigger-label">Stop Watching</span>
                                     </a>
                                   </li>
@@ -526,12 +526,12 @@
                         </ul>
                         <ul class="toolbar-group pluggable-ops" id="opsbar-opsbar-transitions">
                           <li class="toolbar-item">
-                            <a shape="rect" class="toolbar-trigger issueaction-workflow-transition" id="action_id_51" href="/secure/WorkflowUIDispatcher.jspa?id=11000&amp;action=51&amp;atl_token=B6SE-0NSX-K4W6-WQ04|78a90f7c0304ea9a6cb1c2562477f84b7fc2f272|lin">
+                            <a shape="rect" class="toolbar-trigger issueaction-workflow-transition" id="action_id_51" href="/secure/WorkflowUIDispatcher.jspa?id=11000&amp;action=51&amp;atl_token=B6SE-0NSX-K4W6-WQ04|54b2641ce70715506653b675e8aa499c00b5dead|lin">
                               <span class="trigger-label">Reopen</span>
                             </a>
                           </li>
                           <li class="toolbar-item">
-                            <a shape="rect" class="toolbar-trigger issueaction-workflow-transition" id="action_id_61" href="/secure/WorkflowUIDispatcher.jspa?id=11000&amp;action=61&amp;atl_token=B6SE-0NSX-K4W6-WQ04|78a90f7c0304ea9a6cb1c2562477f84b7fc2f272|lin">
+                            <a shape="rect" class="toolbar-trigger issueaction-workflow-transition" id="action_id_61" href="/secure/WorkflowUIDispatcher.jspa?id=11000&amp;action=61&amp;atl_token=B6SE-0NSX-K4W6-WQ04|54b2641ce70715506653b675e8aa499c00b5dead|lin">
                               <span class="trigger-label">Reopen and start progress</span>
                             </a>
                           </li>
@@ -873,7 +873,7 @@
                   </div>
                   <div class="module" id="addcomment">
                     <div class="mod-content">
-                      <form enctype="application/x-www-form-urlencoded" method="post" class="aui top-label ajs-dirty-warning-exempt" id="issue-comment-add" action="/secure/AddComment.jspa?atl_token=B6SE-0NSX-K4W6-WQ04%7C78a90f7c0304ea9a6cb1c2562477f84b7fc2f272%7Clin">
+                      <form enctype="application/x-www-form-urlencoded" method="post" class="aui top-label ajs-dirty-warning-exempt" id="issue-comment-add" action="/secure/AddComment.jspa?atl_token=B6SE-0NSX-K4W6-WQ04%7C54b2641ce70715506653b675e8aa499c00b5dead%7Clin">
                         <div class="form-body">
                           <div class="field-group aui-field-wikiedit comment-input">
                             <label for="comment">Comment</label>
@@ -924,7 +924,7 @@
                             </div>
                           </div>
                           <div class="hidden">
-                            <input type="hidden" name="atl_token" value="B6SE-0NSX-K4W6-WQ04|78a90f7c0304ea9a6cb1c2562477f84b7fc2f272|lin" />
+                            <input type="hidden" name="atl_token" value="B6SE-0NSX-K4W6-WQ04|54b2641ce70715506653b675e8aa499c00b5dead|lin" />
                             <input type="hidden" name="id" value="11000" />
                           </div>
                         </div>
@@ -1004,7 +1004,7 @@
                               <a shape="rect" id="view-watcher-list" href="/secure/ManageWatchers!default.jspa?id=11000" title="View Watchers">
                                 <span class="aui-badge watch-state-on" id="watcher-data">1</span>
                               </a>
-                              <a shape="rect" class="watch-state-on" id="watching-toggle" href="/secure/VoteOrWatchIssue.jspa?atl_token=B6SE-0NSX-K4W6-WQ04|78a90f7c0304ea9a6cb1c2562477f84b7fc2f272|lin&amp;id=11000&amp;watch=unwatch" rel="11000">Stop watching this issue</a>
+                              <a shape="rect" class="watch-state-on" id="watching-toggle" href="/secure/VoteOrWatchIssue.jspa?atl_token=B6SE-0NSX-K4W6-WQ04|54b2641ce70715506653b675e8aa499c00b5dead|lin&amp;id=11000&amp;watch=unwatch" rel="11000">Stop watching this issue</a>
                               <span class="icon" />
                             </dd>
                           </dl>
@@ -1040,7 +1040,7 @@
                             <dt>Updated:</dt>
                             <dd class="date user-tz" title="27/Apr/15 2:19 PM">
                               <span id="updated-date" data-name="Updated" data-fieldtype="datetime">
-                                <time class="livestamp" datetime="2015-04-27T14:19+0200">Today 2:19 PM</time>
+                                <time class="livestamp" datetime="2015-04-27T14:19+0200">Monday 2:19 PM</time>
                               </span>
                             </dd>
                           </dl>
@@ -1177,24 +1177,24 @@
         </div>
         <form enctype="application/x-www-form-urlencoded" method="get" class="dont-default-focus" id="jira_request_timing_info">
           <fieldset class="parameters hidden">
-            <input type="hidden" title="jira.request.start.millis" value="1430141206367" />
-            <input type="hidden" title="jira.request.server.time" value="114" />
-            <input type="hidden" title="jira.request.id" value="926x91635x1" />
-            <input type="hidden" title="jira.session.expiry.time" value="1430159206273" />
+            <input type="hidden" title="jira.request.start.millis" value="1430478629213" />
+            <input type="hidden" title="jira.request.server.time" value="164" />
+            <input type="hidden" title="jira.request.id" value="790x107263x1" />
+            <input type="hidden" title="jira.session.expiry.time" value="1430496628859" />
             <input type="hidden" title="jira.session.expiry.in.mins" value="299" />
             <input type="hidden" id="jiraConcurrentRequests" name="jira.request.concurrent.requests" value="1" />
           </fieldset>
         </form>
         <!--
-	                 REQUEST ID : 926x91635x1
-	          REQUEST TIMESTAMP : [27/Apr/2015:15:26:46 +0200]
-	               REQUEST TIME : 0.1140
-	                 ASESSIONID : 1jhoy6d
+	                 REQUEST ID : 790x107263x1
+	          REQUEST TIMESTAMP : [01/May/2015:13:10:29 +0200]
+	               REQUEST TIME : 0.1640
+	                 ASESSIONID : 86b7aq
 	        CONCURRENT REQUESTS : 1
 
-	                      db.reads : name=db.reads; inv=72; ms=28; cpu=0; rss=0;
-	                      db.conns : name=db.conns; inv=74; ms=46; cpu=0; rss=0;
-	                     db.writes : name=db.writes; inv=2; ms=16; cpu=0; rss=0;
+	                      db.reads : name=db.reads; inv=74; ms=31; cpu=0; rss=0;
+	                      db.conns : name=db.conns; inv=76; ms=55; cpu=0; rss=0;
+	                     db.writes : name=db.writes; inv=2; ms=19; cpu=0; rss=0;
 -->
         <fieldset class="hidden parameters">
           <input type="hidden" title="loggedInUser" value="egliemmo" />

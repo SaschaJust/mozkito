@@ -26,9 +26,9 @@ public abstract class Xpath2Data_with_JAVAX implements XPath  {
 	public static void main(String[] args) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException {
 		NodeList finalnodes = null;
 		ArrayList<String> xpath_query = new ArrayList<String>();
-		xpath_query.add("//ns:*[1]/ns:*[@id ='jira']/ns:*[@id ='page']/ns:*[@id ='content']/ns:*[2]/ns:*[@id ='issue-content']/ns:*[2]/ns:*[1]/ns:*[@id ='viewissuesidebar']/ns:*[@id ='datesmodule']/ns:*[2]/ns:*[1]/ns:*[1]/ns:*[1]/ns:*[2]/ns:*[@id ='create-date']/ns:*[1]/text()");
+		xpath_query.add("//ns:*[1]/ns:*[@id ='jira']/ns:*[@id ='page']/ns:*[@id ='content']/ns:*[2]/ns:*[@id ='issue-content']/ns:*[2]/ns:*[1]/ns:*[@id ='viewissuesidebar']/ns:*[@id ='datesmodule']/ns:*[2]/ns:*[1]/ns:*[1]/ns:*[3]/ns:*[2]/ns:*[@id ='updated-date']/ns:*[1]/text()");
 		
-		start_xpath("/Users/Eric/mozkito/mozkito-modules/mozkito-issues-adaptive/gen_files/file2.xml",
+		start_xpath("/Users/Eric/mozkito/mozkito-modules/mozkito-issues-adaptive/gen_files/JiraMozkito/MTEST-2.xml",
 						xpath_query, finalnodes);
 	}
 	

@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <title>[MTEST-6] issue005_created_1 - Jira</title>
+    <title>[MTEST-16] issue015_type - Jira</title>
     <script type="text/javascript">if (!window.performance) {
         window.mpPerformance = {};
         window.mpPerformance.responseStart = new Date().getTime();
@@ -24,8 +24,8 @@
     <meta name="ajs-max-recent-searchers" content="10" />
     <meta name="ajs-jira-base-url" content="https://issues.mozkito.org" />
     <meta name="ajs-serverRenderedViewIssue" content="true" />
-    <meta name="ajs-search-pos" content="12" />
-    <meta name="ajs-issue-key" content="MTEST-6" />
+    <meta name="ajs-search-pos" content="0" />
+    <meta name="ajs-issue-key" content="MTEST-16" />
     <meta name="ajs-can-edit-watchers" content="true" />
     <meta name="ajs-can-search-users" content="false" />
     <meta name="ajs-server-view-issue-is-editable" content="true" />
@@ -50,9 +50,9 @@
     <meta name="ajs-admin-quicksearch-show" content="true" />
     <meta name="ajs-whats-new-iframe-src-override" content="" />
     <meta name="ajs-whatsnew-full-link" content="https://docs.atlassian.com/jira/docs-060/whatsnew/iframe?e=ZXJpY2dsaWVtbW9Ab25saW5lLmRl&amp;od=false&amp;a=false&amp;pa=true" />
-    <meta name="atlassian-token" id="atlassian-token" content="B6SE-0NSX-K4W6-WQ04|996f4763ff78e7e3632f192067def2822ded7a1b|lin" />
+    <meta name="atlassian-token" id="atlassian-token" content="B6SE-0NSX-K4W6-WQ04|54b2641ce70715506653b675e8aa499c00b5dead|lin" />
     <link rel="shortcut icon" href="/s/en_US-t5gcjp-1988229788/6106/3/_/favicon.ico" />
-    <link rel="search" type="application/opensearchdescription+xml" href="/osd.jsp" title="[MTEST-6] issue005_created_1 - Jira" />
+    <link rel="search" type="application/opensearchdescription+xml" href="/osd.jsp" title="[MTEST-16] issue015_type - Jira" />
     <!--[if IE]><![endif]-->
     <script type="text/javascript">var contextPath = '';</script>
     <link type="text/css" rel="stylesheet" href="/s/en_US-t5gcjp-1988229788/6106/3/5/_/download/superbatch/css/batch.css" media="all" />
@@ -259,20 +259,20 @@
                       <strong>My JIRA Home</strong>
                       <ul class="aui-list-truncate" id="set_my_jira_home">
                         <li>
-                          <a shape="rect" class="aui-dropdown2-radio interactive checked" id="set_my_jira_home_default" title="Set my JIRA Home to the Dashboard." href="/secure/UpdateMyJiraHome.jspa?target=com.atlassian.jira.jira-my-home-plugin%3Aset_my_jira_home_dashboard&amp;atl_token=B6SE-0NSX-K4W6-WQ04|996f4763ff78e7e3632f192067def2822ded7a1b|lin">Dashboard</a>
+                          <a shape="rect" class="aui-dropdown2-radio interactive checked" id="set_my_jira_home_default" title="Set my JIRA Home to the Dashboard." href="/secure/UpdateMyJiraHome.jspa?target=com.atlassian.jira.jira-my-home-plugin%3Aset_my_jira_home_dashboard&amp;atl_token=B6SE-0NSX-K4W6-WQ04|54b2641ce70715506653b675e8aa499c00b5dead|lin">Dashboard</a>
                         </li>
                         <li>
-                          <a shape="rect" class="aui-dropdown2-radio interactive" id="greenhopper-my-jira-home-set" title="Set my JIRA Home to Agile." href="/secure/UpdateMyJiraHome.jspa?target=com.pyxis.greenhopper.jira%3Agreenhopper-my-jira-home-set-51&amp;atl_token=B6SE-0NSX-K4W6-WQ04|996f4763ff78e7e3632f192067def2822ded7a1b|lin">Agile</a>
+                          <a shape="rect" class="aui-dropdown2-radio interactive" id="greenhopper-my-jira-home-set" title="Set my JIRA Home to Agile." href="/secure/UpdateMyJiraHome.jspa?target=com.pyxis.greenhopper.jira%3Agreenhopper-my-jira-home-set-51&amp;atl_token=B6SE-0NSX-K4W6-WQ04|54b2641ce70715506653b675e8aa499c00b5dead|lin">Agile</a>
                         </li>
                         <li>
-                          <a shape="rect" class="aui-dropdown2-radio interactive" id="set_my_jira_home_issuenav" title="Set my JIRA Home to the Issue Navigator." href="/secure/UpdateMyJiraHome.jspa?target=com.atlassian.jira.jira-my-home-plugin%3Aset_my_jira_home_issue&amp;atl_token=B6SE-0NSX-K4W6-WQ04|996f4763ff78e7e3632f192067def2822ded7a1b|lin">Issue Navigator</a>
+                          <a shape="rect" class="aui-dropdown2-radio interactive" id="set_my_jira_home_issuenav" title="Set my JIRA Home to the Issue Navigator." href="/secure/UpdateMyJiraHome.jspa?target=com.atlassian.jira.jira-my-home-plugin%3Aset_my_jira_home_issue&amp;atl_token=B6SE-0NSX-K4W6-WQ04|54b2641ce70715506653b675e8aa499c00b5dead|lin">Issue Navigator</a>
                         </li>
                       </ul>
                     </div>
                     <div class="aui-dropdown2-section">
                       <ul class="aui-list-truncate" id="system">
                         <li>
-                          <a shape="rect" class="" id="log_out" title="Log out and cancel any automatic login." href="/logout?atl_token=B6SE-0NSX-K4W6-WQ04|996f4763ff78e7e3632f192067def2822ded7a1b|lin">Log Out</a>
+                          <a shape="rect" class="" id="log_out" title="Log out and cancel any automatic login." href="/logout?atl_token=B6SE-0NSX-K4W6-WQ04|54b2641ce70715506653b675e8aa499c00b5dead|lin">Log Out</a>
                         </li>
                       </ul>
                     </div>
@@ -290,7 +290,7 @@
           <div class="hidden shortcut-links">
             <a shape="rect" class="issueaction-edit-issue" id="edit-issue" href="/secure/EditIssue!default.jspa?id={0}&amp;returnUrl=/secure/issues" />
             <a shape="rect" class="issueaction-assign-issue" id="assign-issue" href="/secure/AssignIssue!default.jspa?id={0}&amp;returnUrl=/secure/issues" />
-            <a shape="rect" class="issueaction-assign-to-me hide-from-opsbar" id="assign-to-me" href="/secure/AssignIssue.jspa?atl_token=B6SE-0NSX-K4W6-WQ04|996f4763ff78e7e3632f192067def2822ded7a1b|lin&amp;id={0}&amp;assignee=egliemmo&amp;returnUrl=/secure/issues" />
+            <a shape="rect" class="issueaction-assign-to-me hide-from-opsbar" id="assign-to-me" href="/secure/AssignIssue.jspa?atl_token=B6SE-0NSX-K4W6-WQ04|54b2641ce70715506653b675e8aa499c00b5dead|lin&amp;id={0}&amp;assignee=egliemmo&amp;returnUrl=/secure/issues" />
             <a shape="rect" class="issueaction-comment-issue add-issue-comment" id="comment-issue" href="/secure/AddComment!default.jspa?id={0}&amp;returnUrl=/secure/issues" />
             <a shape="rect" class="issueaction-greenhopper-rapidboard-operation js-rapidboard-operation-issue" id="greenhopper-rapidboard-operation" href="/secure/GHGoToBoard.jspa?issueId={0}&amp;returnUrl=/secure/issues" />
             <a shape="rect" class="issueaction-greenhopper-rank-top-operation" id="greenhopper-rank-top-operation" href="/secure/RankTop.jspa?issueId={0}&amp;returnUrl=/secure/issues" />
@@ -298,11 +298,11 @@
             <a shape="rect" class="issueaction-log-work" id="log-work" href="/secure/CreateWorklog!default.jspa?id={0}&amp;returnUrl=/secure/issues" />
             <a shape="rect" class="issueaction-attach-file" id="attach-file" href="/secure/AttachFile!default.jspa?id={0}&amp;returnUrl=/secure/issues" />
             <a shape="rect" class="issueaction-attach-screenshot" id="attach-screenshot" href="/secure/AttachScreenshot!default.jspa?id={0}&amp;returnUrl=/secure/issues" />
-            <a shape="rect" class="toggle-vote-issue issueaction-vote-issue" id="toggle-vote-issue" href="/secure/VoteOrWatchIssue.jspa?atl_token=B6SE-0NSX-K4W6-WQ04|996f4763ff78e7e3632f192067def2822ded7a1b|lin&amp;id={0}&amp;vote=vote&amp;returnUrl=/secure/issues" />
-            <a shape="rect" class="toggle-vote-issue issueaction-unvote-issue" id="toggle-vote-issue" href="/secure/VoteOrWatchIssue.jspa?atl_token=B6SE-0NSX-K4W6-WQ04|996f4763ff78e7e3632f192067def2822ded7a1b|lin&amp;id={0}&amp;vote=unvote&amp;returnUrl=/secure/issues" />
+            <a shape="rect" class="toggle-vote-issue issueaction-vote-issue" id="toggle-vote-issue" href="/secure/VoteOrWatchIssue.jspa?atl_token=B6SE-0NSX-K4W6-WQ04|54b2641ce70715506653b675e8aa499c00b5dead|lin&amp;id={0}&amp;vote=vote&amp;returnUrl=/secure/issues" />
+            <a shape="rect" class="toggle-vote-issue issueaction-unvote-issue" id="toggle-vote-issue" href="/secure/VoteOrWatchIssue.jspa?atl_token=B6SE-0NSX-K4W6-WQ04|54b2641ce70715506653b675e8aa499c00b5dead|lin&amp;id={0}&amp;vote=unvote&amp;returnUrl=/secure/issues" />
             <a shape="rect" class="issueaction-view-voters" id="view-voters" href="/secure/ViewVoters!default.jspa?id={0}&amp;returnUrl=/secure/issues" />
-            <a shape="rect" class="issueaction-watch-issue" id="toggle-watch-issue" href="/secure/VoteOrWatchIssue.jspa?atl_token=B6SE-0NSX-K4W6-WQ04|996f4763ff78e7e3632f192067def2822ded7a1b|lin&amp;id={0}&amp;watch=watch&amp;returnUrl=/secure/issues" />
-            <a shape="rect" class="issueaction-unwatch-issue" id="toggle-watch-issue" href="/secure/VoteOrWatchIssue.jspa?atl_token=B6SE-0NSX-K4W6-WQ04|996f4763ff78e7e3632f192067def2822ded7a1b|lin&amp;id={0}&amp;watch=unwatch&amp;returnUrl=/secure/issues" />
+            <a shape="rect" class="issueaction-watch-issue" id="toggle-watch-issue" href="/secure/VoteOrWatchIssue.jspa?atl_token=B6SE-0NSX-K4W6-WQ04|54b2641ce70715506653b675e8aa499c00b5dead|lin&amp;id={0}&amp;watch=watch&amp;returnUrl=/secure/issues" />
+            <a shape="rect" class="issueaction-unwatch-issue" id="toggle-watch-issue" href="/secure/VoteOrWatchIssue.jspa?atl_token=B6SE-0NSX-K4W6-WQ04|54b2641ce70715506653b675e8aa499c00b5dead|lin&amp;id={0}&amp;watch=unwatch&amp;returnUrl=/secure/issues" />
             <a shape="rect" class="issueaction-manage-watchers" id="manage-watchers" href="/secure/ManageWatchers!default.jspa?id={0}&amp;returnUrl=/secure/issues" />
             <a shape="rect" class="issueaction-create-subtask" id="create-subtask" href="/secure/CreateSubTaskIssue!default.jspa?parentIssueId={0}&amp;returnUrl=/secure/issues" />
             <a shape="rect" class="issueaction-subtask-to-issue" id="subtask-to-issue" href="/secure/ConvertSubTask.jspa?id={0}&amp;returnUrl=/secure/issues" />
@@ -353,7 +353,7 @@
               <form enctype="application/x-www-form-urlencoded" method="get" class="navigator-search" />
               <div class="navigator-group">
                 <div class="results-panel navigator-item">
-                  <div class="navigator-content" data-issue-table-model-state="" data-session-search-state="" data-selected-issue="{&quot;id&quot;:11104,&quot;key&quot;:&quot;MTEST-6&quot;}" data-highlighted-issue-id="" />
+                  <div class="navigator-content" data-issue-table-model-state="" data-session-search-state="" data-selected-issue="{&quot;id&quot;:11114,&quot;key&quot;:&quot;MTEST-16&quot;}" data-highlighted-issue-id="" />
                 </div>
               </div>
             </div>
@@ -379,10 +379,10 @@
                           <a shape="rect" id="project-name-val" href="/browse/MTEST">moztest</a>
                         </li>
                         <li>
-                          <a shape="rect" class="issue-link" id="key-val" data-issue-key="MTEST-6" href="/browse/MTEST-6" rel="11104">MTEST-6</a>
+                          <a shape="rect" class="issue-link" id="key-val" data-issue-key="MTEST-16" href="/browse/MTEST-16" rel="11114">MTEST-16</a>
                         </li>
                       </ol>
-                      <h1 id="summary-val">issue005_created_1</h1>
+                      <h1 id="summary-val">issue015_type</h1>
                     </div>
                     <!-- .aui-page-header-main -->
                     <div class="aui-page-header-actions">
@@ -399,7 +399,7 @@
                       <div class="toolbar-split toolbar-split-left">
                         <ul class="toolbar-group pluggable-ops" id="opsbar-edit-issue_container">
                           <li class="toolbar-item">
-                            <a shape="rect" class="toolbar-trigger issueaction-edit-issue" id="edit-issue" title="Edit this issue" href="/secure/EditIssue!default.jspa?id=11104">
+                            <a shape="rect" class="toolbar-trigger issueaction-edit-issue" id="edit-issue" title="Edit this issue" href="/secure/EditIssue!default.jspa?id=11114">
                               <span class="icon jira-icon-edit" />
                               <span class="trigger-label">Edit</span>
                             </a>
@@ -407,7 +407,7 @@
                         </ul>
                         <ul class="toolbar-group pluggable-ops" id="opsbar-comment-issue_container">
                           <li class="toolbar-item">
-                            <a shape="rect" class="toolbar-trigger issueaction-comment-issue add-issue-comment" id="comment-issue" title="Comment on this issue" href="/secure/AddComment!default.jspa?id=11104">
+                            <a shape="rect" class="toolbar-trigger issueaction-comment-issue add-issue-comment" id="comment-issue" title="Comment on this issue" href="/secure/AddComment!default.jspa?id=11114">
                               <span class="icon aui-icon aui-icon-small aui-iconfont-comment icon-comment" />
                               <span class="trigger-label">Comment</span>
                             </a>
@@ -415,7 +415,7 @@
                         </ul>
                         <ul class="toolbar-group pluggable-ops" id="opsbar-opsbar-operations">
                           <li class="toolbar-item">
-                            <a shape="rect" class="toolbar-trigger issueaction-assign-issue" id="assign-issue" title="Assign this issue to someone" href="/secure/AssignIssue!default.jspa?id=11104">
+                            <a shape="rect" class="toolbar-trigger issueaction-assign-issue" id="assign-issue" title="Assign this issue to someone" href="/secure/AssignIssue!default.jspa?id=11114">
                               <span class="trigger-label">Assign</span>
                             </a>
                           </li>
@@ -428,94 +428,94 @@
                               <div class="aui-list hidden">
                                 <ul class="aui-list-section aui-first">
                                   <li class="aui-list-item">
-                                    <a shape="rect" class="aui-list-item-link issueaction-greenhopper-rapidboard-operation js-rapidboard-operation-issue" id="greenhopper-rapidboard-operation" href="/secure/GHGoToBoard.jspa?issueId=11104" title="View this issue on an Agile board">
+                                    <a shape="rect" class="aui-list-item-link issueaction-greenhopper-rapidboard-operation js-rapidboard-operation-issue" id="greenhopper-rapidboard-operation" href="/secure/GHGoToBoard.jspa?issueId=11114" title="View this issue on an Agile board">
                                       <span class="trigger-label">Agile Board</span>
                                     </a>
                                   </li>
                                   <li class="aui-list-item">
-                                    <a shape="rect" class="aui-list-item-link issueaction-greenhopper-rank-top-operation" id="greenhopper-rank-top-operation" href="/secure/RankTop.jspa?issueId=11104">
+                                    <a shape="rect" class="aui-list-item-link issueaction-greenhopper-rank-top-operation" id="greenhopper-rank-top-operation" href="/secure/RankTop.jspa?issueId=11114">
                                       <span class="trigger-label">Rank to Top</span>
                                     </a>
                                   </li>
                                   <li class="aui-list-item">
-                                    <a shape="rect" class="aui-list-item-link issueaction-greenhopper-rank-bottom-operation" id="greenhopper-rank-bottom-operation" href="/secure/RankBottom.jspa?issueId=11104">
+                                    <a shape="rect" class="aui-list-item-link issueaction-greenhopper-rank-bottom-operation" id="greenhopper-rank-bottom-operation" href="/secure/RankBottom.jspa?issueId=11114">
                                       <span class="trigger-label">Rank to Bottom</span>
                                     </a>
                                   </li>
                                 </ul>
                                 <ul class="aui-list-section">
                                   <li class="aui-list-item">
-                                    <a shape="rect" class="aui-list-item-link issueaction-log-work" id="log-work" href="/secure/CreateWorklog!default.jspa?id=11104" title="Log work against this issue">
+                                    <a shape="rect" class="aui-list-item-link issueaction-log-work" id="log-work" href="/secure/CreateWorklog!default.jspa?id=11114" title="Log work against this issue">
                                       <span class="trigger-label">Log Work</span>
                                     </a>
                                   </li>
                                 </ul>
                                 <ul class="aui-list-section">
                                   <li class="aui-list-item">
-                                    <a shape="rect" class="aui-list-item-link issueaction-attach-file" id="attach-file" href="/secure/AttachFile!default.jspa?id=11104" title="Attach one or more files to this issue">
+                                    <a shape="rect" class="aui-list-item-link issueaction-attach-file" id="attach-file" href="/secure/AttachFile!default.jspa?id=11114" title="Attach one or more files to this issue">
                                       <span class="trigger-label">Attach Files</span>
                                     </a>
                                   </li>
                                 </ul>
                                 <ul class="aui-list-section">
                                   <li class="aui-list-item">
-                                    <a shape="rect" class="aui-list-item-link issueaction-view-voters" id="view-voters" href="/secure/ViewVoters!default.jspa?id=11104" title="View voters for this issue">
+                                    <a shape="rect" class="aui-list-item-link issueaction-view-voters" id="view-voters" href="/secure/ViewVoters!default.jspa?id=11114" title="View voters for this issue">
                                       <span class="trigger-label">Voters</span>
                                     </a>
                                   </li>
                                   <li class="aui-list-item">
-                                    <a shape="rect" class="aui-list-item-link issueaction-unwatch-issue" id="toggle-watch-issue" href="/secure/VoteOrWatchIssue.jspa?atl_token=B6SE-0NSX-K4W6-WQ04|996f4763ff78e7e3632f192067def2822ded7a1b|lin&amp;id=11104&amp;watch=unwatch" title="Stop watching this issue">
+                                    <a shape="rect" class="aui-list-item-link issueaction-unwatch-issue" id="toggle-watch-issue" href="/secure/VoteOrWatchIssue.jspa?atl_token=B6SE-0NSX-K4W6-WQ04|54b2641ce70715506653b675e8aa499c00b5dead|lin&amp;id=11114&amp;watch=unwatch" title="Stop watching this issue">
                                       <span class="trigger-label">Stop Watching</span>
                                     </a>
                                   </li>
                                   <li class="aui-list-item">
-                                    <a shape="rect" class="aui-list-item-link issueaction-manage-watchers" id="manage-watchers" href="/secure/ManageWatchers!default.jspa?id=11104" title="Manage the watchers of this issue">
+                                    <a shape="rect" class="aui-list-item-link issueaction-manage-watchers" id="manage-watchers" href="/secure/ManageWatchers!default.jspa?id=11114" title="Manage the watchers of this issue">
                                       <span class="trigger-label">Watchers</span>
                                     </a>
                                   </li>
                                 </ul>
                                 <ul class="aui-list-section">
                                   <li class="aui-list-item">
-                                    <a shape="rect" class="aui-list-item-link issueaction-create-subtask" id="create-subtask" href="/secure/CreateSubTaskIssue!default.jspa?parentIssueId=11104" title="Create sub-task for this issue">
+                                    <a shape="rect" class="aui-list-item-link issueaction-create-subtask" id="create-subtask" href="/secure/CreateSubTaskIssue!default.jspa?parentIssueId=11114" title="Create sub-task for this issue">
                                       <span class="trigger-label">Create Sub-Task</span>
                                     </a>
                                   </li>
                                   <li class="aui-list-item">
-                                    <a shape="rect" class="aui-list-item-link issueaction-issue-to-subtask" id="issue-to-subtask" href="/secure/ConvertIssue.jspa?id=11104" title="Convert this issue to sub-task">
+                                    <a shape="rect" class="aui-list-item-link issueaction-issue-to-subtask" id="issue-to-subtask" href="/secure/ConvertIssue.jspa?id=11114" title="Convert this issue to sub-task">
                                       <span class="trigger-label">Convert to Sub-Task</span>
                                     </a>
                                   </li>
                                 </ul>
                                 <ul class="aui-list-section">
                                   <li class="aui-list-item">
-                                    <a shape="rect" class="aui-list-item-link issueaction-move-issue" id="move-issue" href="/secure/MoveIssue!default.jspa?id=11104" title="Move this issue to another project or issue type.">
+                                    <a shape="rect" class="aui-list-item-link issueaction-move-issue" id="move-issue" href="/secure/MoveIssue!default.jspa?id=11114" title="Move this issue to another project or issue type.">
                                       <span class="trigger-label">Move</span>
                                     </a>
                                   </li>
                                   <li class="aui-list-item">
-                                    <a shape="rect" class="aui-list-item-link issueaction-link-issue" id="link-issue" href="/secure/LinkJiraIssue!default.jspa?id=11104" title="Link this issue to another issue or item">
+                                    <a shape="rect" class="aui-list-item-link issueaction-link-issue" id="link-issue" href="/secure/LinkJiraIssue!default.jspa?id=11114" title="Link this issue to another issue or item">
                                       <span class="trigger-label">Link</span>
                                     </a>
                                   </li>
                                   <li class="aui-list-item">
-                                    <a shape="rect" class="aui-list-item-link issueaction-clone-issue" id="clone-issue" href="/secure/CloneIssueDetails!default.jspa?id=11104" title="Clone this issue">
+                                    <a shape="rect" class="aui-list-item-link issueaction-clone-issue" id="clone-issue" href="/secure/CloneIssueDetails!default.jspa?id=11114" title="Clone this issue">
                                       <span class="trigger-label">Clone</span>
                                     </a>
                                   </li>
                                   <li class="aui-list-item">
-                                    <a shape="rect" class="aui-list-item-link issueaction-edit-labels" id="edit-labels" href="/secure/EditLabels!default.jspa?id=11104" title="Edit this issue's labels">
+                                    <a shape="rect" class="aui-list-item-link issueaction-edit-labels" id="edit-labels" href="/secure/EditLabels!default.jspa?id=11114" title="Edit this issue's labels">
                                       <span class="trigger-label">Labels</span>
                                     </a>
                                   </li>
                                   <li class="aui-list-item">
-                                    <a shape="rect" class="aui-list-item-link issueaction-create-test-session" id="create-test-session" href="/secure/CreateSession.jspa?issueId=11104">
+                                    <a shape="rect" class="aui-list-item-link issueaction-create-test-session" id="create-test-session" href="/secure/CreateSession.jspa?issueId=11114">
                                       <span class="trigger-label">Create Test Session</span>
                                     </a>
                                   </li>
                                 </ul>
                                 <ul class="aui-list-section aui-last">
                                   <li class="aui-list-item">
-                                    <a shape="rect" class="aui-list-item-link issueaction-delete-issue" id="delete-issue" href="/secure/DeleteIssue!default.jspa?id=11104" title="Delete this issue">
+                                    <a shape="rect" class="aui-list-item-link issueaction-delete-issue" id="delete-issue" href="/secure/DeleteIssue!default.jspa?id=11114" title="Delete this issue">
                                       <span class="trigger-label">Delete</span>
                                     </a>
                                   </li>
@@ -526,12 +526,12 @@
                         </ul>
                         <ul class="toolbar-group pluggable-ops" id="opsbar-opsbar-transitions">
                           <li class="toolbar-item">
-                            <a shape="rect" class="toolbar-trigger issueaction-workflow-transition" id="action_id_31" href="/secure/WorkflowUIDispatcher.jspa?id=11104&amp;action=31&amp;atl_token=B6SE-0NSX-K4W6-WQ04|996f4763ff78e7e3632f192067def2822ded7a1b|lin">
-                              <span class="trigger-label">Stop Progress</span>
+                            <a shape="rect" class="toolbar-trigger issueaction-workflow-transition" id="action_id_11" href="/secure/WorkflowUIDispatcher.jspa?id=11114&amp;action=11&amp;atl_token=B6SE-0NSX-K4W6-WQ04|54b2641ce70715506653b675e8aa499c00b5dead|lin">
+                              <span class="trigger-label">Start Progress</span>
                             </a>
                           </li>
                           <li class="toolbar-item">
-                            <a shape="rect" class="toolbar-trigger issueaction-workflow-transition" id="action_id_41" href="/secure/WorkflowUIDispatcher.jspa?id=11104&amp;action=41&amp;atl_token=B6SE-0NSX-K4W6-WQ04|996f4763ff78e7e3632f192067def2822ded7a1b|lin">
+                            <a shape="rect" class="toolbar-trigger issueaction-workflow-transition" id="action_id_21" href="/secure/WorkflowUIDispatcher.jspa?id=11114&amp;action=21&amp;atl_token=B6SE-0NSX-K4W6-WQ04|54b2641ce70715506653b675e8aa499c00b5dead|lin">
                               <span class="trigger-label">Done</span>
                             </a>
                           </li>
@@ -549,17 +549,17 @@
                               <div class="aui-list hidden">
                                 <ul class="aui-list-section aui-first aui-last">
                                   <li class="aui-list-item">
-                                    <a shape="rect" class="aui-list-item-link" id="jira.issueviews:issue-xml" href="/si/jira.issueviews:issue-xml/MTEST-6/MTEST-6.xml">
+                                    <a shape="rect" class="aui-list-item-link" id="jira.issueviews:issue-xml" href="/si/jira.issueviews:issue-xml/MTEST-16/MTEST-16.xml">
                                       <span class="trigger-label">XML</span>
                                     </a>
                                   </li>
                                   <li class="aui-list-item">
-                                    <a shape="rect" class="aui-list-item-link" id="jira.issueviews:issue-word" href="/si/jira.issueviews:issue-word/MTEST-6/MTEST-6.doc">
+                                    <a shape="rect" class="aui-list-item-link" id="jira.issueviews:issue-word" href="/si/jira.issueviews:issue-word/MTEST-16/MTEST-16.doc">
                                       <span class="trigger-label">Word</span>
                                     </a>
                                   </li>
                                   <li class="aui-list-item">
-                                    <a shape="rect" class="aui-list-item-link" id="jira.issueviews:issue-html" href="/si/jira.issueviews:issue-html/MTEST-6/MTEST-6.html">
+                                    <a shape="rect" class="aui-list-item-link" id="jira.issueviews:issue-html" href="/si/jira.issueviews:issue-html/MTEST-16/MTEST-16.html">
                                       <span class="trigger-label">Printable</span>
                                     </a>
                                   </li>
@@ -597,12 +597,12 @@
                           <div class="wrap">
                             <strong class="name">Status:</strong>
                             <span class="value" id="status-val">
-                              <img alt="In Progress" height="16" src="/images/icons/statuses/inprogress.png" title="In Progress - This issue is being actively worked on at the moment by the assignee." width="16" />
-                              In Progress
+                              <img alt="To Do" height="16" src="/images/icons/statuses/open.png" title="To Do" width="16" />
+                              To Do
                             </span>
                             <span class="status-view">
                               (
-                              <a shape="rect" class="issueaction-viewworkflow" href="/plugins/servlet/workflow/thumbnail/getThumbnail?workflowName=MTEST%3A+Simple+Issue+Tracking+Workflow&amp;stepId=2&amp;width=full&amp;height=full" title="MTEST: Simple Issue Tracking Workflow: MTEST-6">View Workflow</a>
+                              <a shape="rect" class="issueaction-viewworkflow" href="/plugins/servlet/workflow/thumbnail/getThumbnail?workflowName=MTEST%3A+Simple+Issue+Tracking+Workflow&amp;stepId=1&amp;width=full&amp;height=full" title="MTEST: Simple Issue Tracking Workflow: MTEST-16">View Workflow</a>
                               )
                             </span>
                           </div>
@@ -626,14 +626,14 @@
                           <div class="wrap" id="wrap-labels">
                             <strong class="name">Labels:</strong>
                             <div class="labels-wrap value">
-                              <ul class="labels" id="labels-11104-value">
+                              <ul class="labels" id="labels-11114-value">
                                 <li>
-                                  <a shape="rect" class="lozenge" href="/secure/IssueNavigator.jspa?reset=true&amp;jqlQuery=labels+%3D+labelforreport6" title="labelforreport6">
-                                    <span>labelforreport6</span>
+                                  <a shape="rect" class="lozenge" href="/secure/IssueNavigator.jspa?reset=true&amp;jqlQuery=labels+%3D+labelforreport15" title="labelforreport15">
+                                    <span>labelforreport15</span>
                                   </a>
                                 </li>
                                 <li>
-                                  <a shape="rect" class="icon jira-icon-edit edit-labels" id="edit-labels-11104-labels" href="/secure/EditLabels!default.jspa?id=11104&amp;noLink=false">
+                                  <a shape="rect" class="icon jira-icon-edit edit-labels" id="edit-labels-11114-labels" href="/secure/EditLabels!default.jspa?id=11114&amp;noLink=false">
                                     <span>Labels</span>
                                   </a>
                                 </li>
@@ -652,7 +652,7 @@
                     <div class="mod-content">
                       <div class="field-ignore-highlight" id="description-val">
                         <div class="user-content-block">
-                          <p>descriptionforreport6</p>
+                          <p>descriptionforreport15</p>
                         </div>
                       </div>
                     </div>
@@ -661,7 +661,7 @@
                     <div class="mod-header" id="attachmentmodule_heading">
                       <ul class="ops">
                         <li>
-                          <a shape="rect" class="issueaction-attach-file icon jira-icon-add" id="add-attachments-link" href="/secure/AttachFile!default.jspa?id=11104" title="Attach one or more files to this issue">
+                          <a shape="rect" class="issueaction-attach-file icon jira-icon-add" id="add-attachments-link" href="/secure/AttachFile!default.jspa?id=11114" title="Attach one or more files to this issue">
                             <span>Attach one or more files to this issue</span>
                           </a>
                         </li>
@@ -673,36 +673,36 @@
                             <div class="aui-dropdown-content aui-list">
                               <ul class="aui-list-section aui-first" id="attachment-sorting-options">
                                 <li class="aui-list-item">
-                                  <a shape="rect" class="aui-list-checked aui-checked aui-list-item-link" id="attachment-sort-key-name" href="/browse/MTEST-6?attachmentSortBy=fileName#attachmentmodule" title="viewissue.subtasks.tab.show.all.name">
+                                  <a shape="rect" class="aui-list-checked aui-checked aui-list-item-link" id="attachment-sort-key-name" href="/browse/MTEST-16?attachmentSortBy=fileName#attachmentmodule" title="viewissue.subtasks.tab.show.all.name">
                                     <span>Sort By Name</span>
                                   </a>
                                 </li>
                                 <li class="aui-list-item">
-                                  <a shape="rect" class="aui-list-checked aui-list-item-link" id="attachment-sort-key-date" href="/browse/MTEST-6?attachmentSortBy=dateTime#attachmentmodule" title="Sort By Date">
+                                  <a shape="rect" class="aui-list-checked aui-list-item-link" id="attachment-sort-key-date" href="/browse/MTEST-16?attachmentSortBy=dateTime#attachmentmodule" title="Sort By Date">
                                     <span>Sort By Date</span>
                                   </a>
                                 </li>
                               </ul>
                               <ul class="aui-list-section" id="attachment-sorting-order-options">
                                 <li class="aui-list-item">
-                                  <a shape="rect" class="aui-list-checked aui-checked aui-list-item-link" id="attachment-sort-direction-asc" href="/browse/MTEST-6?attachmentOrder=asc#attachmentmodule" title="Ascending">
+                                  <a shape="rect" class="aui-list-checked aui-checked aui-list-item-link" id="attachment-sort-direction-asc" href="/browse/MTEST-16?attachmentOrder=asc#attachmentmodule" title="Ascending">
                                     <span>Ascending</span>
                                   </a>
                                 </li>
                                 <li class="aui-list-item">
-                                  <a shape="rect" class="aui-list-checked aui-list-item-link" id="attachment-sort-direction-desc" href="/browse/MTEST-6?attachmentOrder=desc#attachmentmodule" title="Descending">
+                                  <a shape="rect" class="aui-list-checked aui-list-item-link" id="attachment-sort-direction-desc" href="/browse/MTEST-16?attachmentOrder=desc#attachmentmodule" title="Descending">
                                     <span>Descending</span>
                                   </a>
                                 </li>
                               </ul>
                               <ul class="aui-list-section aui-last" id="attachment-manage-options">
                                 <li class="aui-list-item">
-                                  <a shape="rect" class="aui-list-checked aui-list-item-link" id="aszip" href="/secure/attachmentzip/11104.zip" title="Download all attachments as a ZIP file">
+                                  <a shape="rect" class="aui-list-checked aui-list-item-link" id="aszip" href="/secure/attachmentzip/11114.zip" title="Download all attachments as a ZIP file">
                                     <span>Download All</span>
                                   </a>
                                 </li>
                                 <li class="aui-list-item">
-                                  <a shape="rect" class="aui-list-checked aui-list-item-link" id="manage-attachment-link" href="/secure/ManageAttachments.jspa?id=11104" title="Manage and delete attachments">
+                                  <a shape="rect" class="aui-list-checked aui-list-item-link" id="manage-attachment-link" href="/secure/ManageAttachments.jspa?id=11114" title="Manage and delete attachments">
                                     <span>Manage Attachments</span>
                                   </a>
                                 </li>
@@ -715,10 +715,10 @@
                     </div>
                     <div class="mod-content">
                       <ol class="item-attachments" id="attachment_thumbnails">
-                        <li class="attachment-content" draggable="true" data-downloadurl="image/png:lobet_den_herren.png:https://issues.mozkito.org/secure/attachment/10405/lobet_den_herren.png">
+                        <li class="attachment-content" draggable="true" data-downloadurl="image/png:lobet_den_herren.png:https://issues.mozkito.org/secure/attachment/10414/lobet_den_herren.png">
                           <div class="attachment-thumb">
-                            <a shape="rect" class="gallery" rel="gallery" href="/secure/attachment/10405/lobet_den_herren.png" title="lobet_den_herren.png - Latest 27/Apr/15 2:55 PM - Eric Gliemmo">
-                              <img src="https://issues.mozkito.org/secure/thumbnail/10405/_thumb_10405.png" width="141" height="200" alt="" />
+                            <a shape="rect" class="gallery" rel="gallery" href="/secure/attachment/10414/lobet_den_herren.png" title="lobet_den_herren.png - Latest 27/Apr/15 3:11 PM - Eric Gliemmo">
+                              <img src="https://issues.mozkito.org/secure/thumbnail/10414/_thumb_10414.png" width="141" height="200" alt="" />
                             </a>
                           </div>
                           <dl>
@@ -727,9 +727,9 @@
                             </dt>
                           </dl>
                           <div class="attachment-delete">
-                            <a shape="rect" class="icon icon-delete" id="del_10405" title="Delete this attachment" href="/secure/DeleteAttachment!default.jspa?id=11104&amp;deleteAttachmentId=10405&amp;from=issue" />
+                            <a shape="rect" class="icon icon-delete" id="del_10414" title="Delete this attachment" href="/secure/DeleteAttachment!default.jspa?id=11114&amp;deleteAttachmentId=10414&amp;from=issue" />
                           </div>
-                          <a shape="rect" class="attachment-title" href="/secure/attachment/10405/lobet_den_herren.png" title="lobet_den_herren.png - Latest 27/Apr/15 2:55 PM - Eric Gliemmo">lobet_den_herren.png</a>
+                          <a shape="rect" class="attachment-title" href="/secure/attachment/10414/lobet_den_herren.png" title="lobet_den_herren.png - Latest 27/Apr/15 3:11 PM - Eric Gliemmo">lobet_den_herren.png</a>
                         </li>
                       </ol>
                     </div>
@@ -741,7 +741,7 @@
         </div>
         <dd class="attachment-size">90 kB</dd>
         <dd class="attachment-date">
-          <time class="livestamp" datetime="2015-04-27T14:55+0200">27/Apr/15 2:55 PM</time>
+          <time class="livestamp" datetime="2015-04-27T15:11+0200">27/Apr/15 3:11 PM</time>
         </dd>
       </section>
     </div>
@@ -753,46 +753,46 @@
       <div class="mod-content">
         <div class="tabwrap tabs2">
           <ul class="tabs horizontal" id="issue-tabs">
-            <li data-id="all-tabpanel" data-key="com.atlassian.jira.plugin.system.issuetabpanels:all-tabpanel" data-label="All" data-href="/browse/MTEST-6?page=com.atlassian.jira.plugin.system.issuetabpanels:all-tabpanel">
-              <a shape="rect" class="ajax-activity-content" id="all-tabpanel" href="/browse/MTEST-6?page=com.atlassian.jira.plugin.system.issuetabpanels:all-tabpanel">
+            <li data-id="all-tabpanel" data-key="com.atlassian.jira.plugin.system.issuetabpanels:all-tabpanel" data-label="All" data-href="/browse/MTEST-16?page=com.atlassian.jira.plugin.system.issuetabpanels:all-tabpanel">
+              <a shape="rect" class="ajax-activity-content" id="all-tabpanel" href="/browse/MTEST-16?page=com.atlassian.jira.plugin.system.issuetabpanels:all-tabpanel">
                 <strong>All</strong>
               </a>
             </li>
-            <li class="active" id="comment-tabpanel" data-id="comment-tabpanel" data-key="com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel" data-label="Comments" data-href="/browse/MTEST-6?page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel">
+            <li class="active" id="comment-tabpanel" data-id="comment-tabpanel" data-key="com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel" data-label="Comments" data-href="/browse/MTEST-16?page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel">
               <strong>Comments</strong>
             </li>
-            <li data-id="worklog-tabpanel" data-key="com.atlassian.jira.plugin.system.issuetabpanels:worklog-tabpanel" data-label="Work Log" data-href="/browse/MTEST-6?page=com.atlassian.jira.plugin.system.issuetabpanels:worklog-tabpanel">
-              <a shape="rect" class="ajax-activity-content" id="worklog-tabpanel" href="/browse/MTEST-6?page=com.atlassian.jira.plugin.system.issuetabpanels:worklog-tabpanel">
+            <li data-id="worklog-tabpanel" data-key="com.atlassian.jira.plugin.system.issuetabpanels:worklog-tabpanel" data-label="Work Log" data-href="/browse/MTEST-16?page=com.atlassian.jira.plugin.system.issuetabpanels:worklog-tabpanel">
+              <a shape="rect" class="ajax-activity-content" id="worklog-tabpanel" href="/browse/MTEST-16?page=com.atlassian.jira.plugin.system.issuetabpanels:worklog-tabpanel">
                 <strong>Work Log</strong>
               </a>
             </li>
-            <li data-id="changehistory-tabpanel" data-key="com.atlassian.jira.plugin.system.issuetabpanels:changehistory-tabpanel" data-label="History" data-href="/browse/MTEST-6?page=com.atlassian.jira.plugin.system.issuetabpanels:changehistory-tabpanel">
-              <a shape="rect" class="ajax-activity-content" id="changehistory-tabpanel" href="/browse/MTEST-6?page=com.atlassian.jira.plugin.system.issuetabpanels:changehistory-tabpanel">
+            <li data-id="changehistory-tabpanel" data-key="com.atlassian.jira.plugin.system.issuetabpanels:changehistory-tabpanel" data-label="History" data-href="/browse/MTEST-16?page=com.atlassian.jira.plugin.system.issuetabpanels:changehistory-tabpanel">
+              <a shape="rect" class="ajax-activity-content" id="changehistory-tabpanel" href="/browse/MTEST-16?page=com.atlassian.jira.plugin.system.issuetabpanels:changehistory-tabpanel">
                 <strong>History</strong>
               </a>
             </li>
-            <li data-id="activity-stream-issue-tab" data-key="com.atlassian.streams.streams-jira-plugin:activity-stream-issue-tab" data-label="Activity" data-href="/browse/MTEST-6?page=com.atlassian.streams.streams-jira-plugin:activity-stream-issue-tab">
-              <a shape="rect" class="ajax-activity-content" id="activity-stream-issue-tab" href="/browse/MTEST-6?page=com.atlassian.streams.streams-jira-plugin:activity-stream-issue-tab">
+            <li data-id="activity-stream-issue-tab" data-key="com.atlassian.streams.streams-jira-plugin:activity-stream-issue-tab" data-label="Activity" data-href="/browse/MTEST-16?page=com.atlassian.streams.streams-jira-plugin:activity-stream-issue-tab">
+              <a shape="rect" class="ajax-activity-content" id="activity-stream-issue-tab" href="/browse/MTEST-16?page=com.atlassian.streams.streams-jira-plugin:activity-stream-issue-tab">
                 <strong>Activity</strong>
               </a>
             </li>
-            <li data-id="dvcs-commits-tabpanel" data-key="com.atlassian.jira.plugins.jira-bitbucket-connector-plugin:dvcs-commits-tabpanel" data-label="Commits" data-href="/browse/MTEST-6?page=com.atlassian.jira.plugins.jira-bitbucket-connector-plugin:dvcs-commits-tabpanel">
-              <a shape="rect" class="ajax-activity-content" id="dvcs-commits-tabpanel" href="/browse/MTEST-6?page=com.atlassian.jira.plugins.jira-bitbucket-connector-plugin:dvcs-commits-tabpanel">
+            <li data-id="dvcs-commits-tabpanel" data-key="com.atlassian.jira.plugins.jira-bitbucket-connector-plugin:dvcs-commits-tabpanel" data-label="Commits" data-href="/browse/MTEST-16?page=com.atlassian.jira.plugins.jira-bitbucket-connector-plugin:dvcs-commits-tabpanel">
+              <a shape="rect" class="ajax-activity-content" id="dvcs-commits-tabpanel" href="/browse/MTEST-16?page=com.atlassian.jira.plugins.jira-bitbucket-connector-plugin:dvcs-commits-tabpanel">
                 <strong>Commits</strong>
               </a>
             </li>
-            <li data-id="fisheye-issuepanel" data-key="com.atlassian.jirafisheyeplugin:fisheye-issuepanel" data-label="Source" data-href="/browse/MTEST-6?page=com.atlassian.jirafisheyeplugin:fisheye-issuepanel">
-              <a shape="rect" class="ajax-activity-content" id="fisheye-issuepanel" href="/browse/MTEST-6?page=com.atlassian.jirafisheyeplugin:fisheye-issuepanel">
+            <li data-id="fisheye-issuepanel" data-key="com.atlassian.jirafisheyeplugin:fisheye-issuepanel" data-label="Source" data-href="/browse/MTEST-16?page=com.atlassian.jirafisheyeplugin:fisheye-issuepanel">
+              <a shape="rect" class="ajax-activity-content" id="fisheye-issuepanel" href="/browse/MTEST-16?page=com.atlassian.jirafisheyeplugin:fisheye-issuepanel">
                 <strong>Source</strong>
               </a>
             </li>
-            <li data-id="crucible-issuepanel" data-key="com.atlassian.jirafisheyeplugin:crucible-issuepanel" data-label="Reviews" data-href="/browse/MTEST-6?page=com.atlassian.jirafisheyeplugin:crucible-issuepanel">
-              <a shape="rect" class="ajax-activity-content" id="crucible-issuepanel" href="/browse/MTEST-6?page=com.atlassian.jirafisheyeplugin:crucible-issuepanel">
+            <li data-id="crucible-issuepanel" data-key="com.atlassian.jirafisheyeplugin:crucible-issuepanel" data-label="Reviews" data-href="/browse/MTEST-16?page=com.atlassian.jirafisheyeplugin:crucible-issuepanel">
+              <a shape="rect" class="ajax-activity-content" id="crucible-issuepanel" href="/browse/MTEST-16?page=com.atlassian.jirafisheyeplugin:crucible-issuepanel">
                 <strong>Reviews</strong>
               </a>
             </li>
-            <li data-id="bamboo-build-results-tabpanel" data-key="com.atlassian.jira.plugin.ext.bamboo:bamboo-build-results-tabpanel" data-label="Builds" data-href="/browse/MTEST-6?page=com.atlassian.jira.plugin.ext.bamboo:bamboo-build-results-tabpanel">
-              <a shape="rect" class="ajax-activity-content" id="bamboo-build-results-tabpanel" href="/browse/MTEST-6?page=com.atlassian.jira.plugin.ext.bamboo:bamboo-build-results-tabpanel">
+            <li data-id="bamboo-build-results-tabpanel" data-key="com.atlassian.jira.plugin.ext.bamboo:bamboo-build-results-tabpanel" data-label="Builds" data-href="/browse/MTEST-16?page=com.atlassian.jira.plugin.ext.bamboo:bamboo-build-results-tabpanel">
+              <a shape="rect" class="ajax-activity-content" id="bamboo-build-results-tabpanel" href="/browse/MTEST-16?page=com.atlassian.jira.plugin.ext.bamboo:bamboo-build-results-tabpanel">
                 <strong>Builds</strong>
               </a>
             </li>
@@ -801,7 +801,7 @@
         <div class="issuePanelWrapper">
           <div class="issuePanelProgress" />
           <div class="issuePanelContainer" id="issue_actions_container">
-            <div class="issue-data-block activity-comment twixi-block expanded" id="comment-10706">
+            <div class="issue-data-block activity-comment twixi-block expanded" id="comment-10715">
               <div class="twixi-wrap verbose actionContainer">
                 <div class="action-head">
                   <a shape="rect" class="twixi" href="#">
@@ -810,18 +810,18 @@
                     </span>
                   </a>
                   <div class="action-links">
-                    <a shape="rect" class="icon icon-perma activitymodule-link" href="/browse/MTEST-6?focusedCommentId=10706&amp;page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-10706" title="A permanent link to this comment.">
+                    <a shape="rect" class="icon icon-perma activitymodule-link" href="/browse/MTEST-16?focusedCommentId=10715&amp;page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-10715" title="A permanent link to this comment.">
                       <span>Permalink</span>
                     </a>
-                    <a shape="rect" class="icon jira-icon-edit edit-comment" id="edit_comment_10706" href="/secure/EditComment!default.jspa?id=11104&amp;commentId=10706" title="Edit">
+                    <a shape="rect" class="icon jira-icon-edit edit-comment" id="edit_comment_10715" href="/secure/EditComment!default.jspa?id=11114&amp;commentId=10715" title="Edit">
                       <span>Edit</span>
                     </a>
-                    <a shape="rect" class="icon icon-delete" id="delete_comment_10706" href="/secure/DeleteComment!default.jspa?id=11104&amp;commentId=10706" title="Delete">
+                    <a shape="rect" class="icon icon-delete" id="delete_comment_10715" href="/secure/DeleteComment!default.jspa?id=11114&amp;commentId=10715" title="Delete">
                       <span>Delete</span>
                     </a>
                   </div>
                   <div class="action-details">
-                    <a shape="rect" class="user-hover user-avatar" id="commentauthor_10706_verbose" rel="egliemmo" href="/secure/ViewProfile.jspa?name=egliemmo">
+                    <a shape="rect" class="user-hover user-avatar" id="commentauthor_10715_verbose" rel="egliemmo" href="/secure/ViewProfile.jspa?name=egliemmo">
                       <span class="aui-avatar aui-avatar-xsmall" />
                     </a>
                     <div class="aui-avatar-inner">
@@ -829,15 +829,15 @@
                     </div>
                     Eric Gliemmo
  added a comment  -
-                    <span class="commentdate_10706_verbose subText">
-                      <span class="date user-tz" title="27/Apr/15 2:51 PM">
-                        <time class="livestamp" datetime="2015-04-27T14:51+0200">27/Apr/15 2:51 PM</time>
+                    <span class="commentdate_10715_verbose subText">
+                      <span class="date user-tz" title="27/Apr/15 3:11 PM">
+                        <time class="livestamp" datetime="2015-04-27T15:11+0200">27/Apr/15 3:11 PM</time>
                       </span>
                     </span>
                   </div>
                 </div>
                 <div class="action-body flooded">
-                  <p>commentforreport6</p>
+                  <p>commentforreport15</p>
                 </div>
               </div>
               <div class="twixi-wrap concise actionContainer">
@@ -848,7 +848,7 @@
                     </span>
                   </a>
                   <div class="action-details flooded">
-                    <a shape="rect" class="user-hover user-avatar" id="commentauthor_10706_concise" rel="egliemmo" href="/secure/ViewProfile.jspa?name=egliemmo">
+                    <a shape="rect" class="user-hover user-avatar" id="commentauthor_10715_concise" rel="egliemmo" href="/secure/ViewProfile.jspa?name=egliemmo">
                       <span class="aui-avatar aui-avatar-xsmall" />
                     </a>
                     <div class="aui-avatar-inner">
@@ -856,12 +856,12 @@
                     </div>
                     Eric Gliemmo
  added a comment  -
-                    <span class="commentdate_10706_concise subText">
-                      <span class="date user-tz" title="27/Apr/15 2:51 PM">
-                        <time class="livestamp" datetime="2015-04-27T14:51+0200">27/Apr/15 2:51 PM</time>
+                    <span class="commentdate_10715_concise subText">
+                      <span class="date user-tz" title="27/Apr/15 3:11 PM">
+                        <time class="livestamp" datetime="2015-04-27T15:11+0200">27/Apr/15 3:11 PM</time>
                       </span>
                     </span>
-                    commentforreport6
+                    commentforreport15
                   </div>
                 </div>
               </div>
@@ -872,7 +872,7 @@
     </div>
     <div class="module" id="addcomment">
       <div class="mod-content">
-        <form enctype="application/x-www-form-urlencoded" method="post" class="aui top-label ajs-dirty-warning-exempt" id="issue-comment-add" action="/secure/AddComment.jspa?atl_token=B6SE-0NSX-K4W6-WQ04%7C996f4763ff78e7e3632f192067def2822ded7a1b%7Clin">
+        <form enctype="application/x-www-form-urlencoded" method="post" class="aui top-label ajs-dirty-warning-exempt" id="issue-comment-add" action="/secure/AddComment.jspa?atl_token=B6SE-0NSX-K4W6-WQ04%7C54b2641ce70715506653b675e8aa499c00b5dead%7Clin">
           <div class="form-body">
             <div class="field-group aui-field-wikiedit comment-input">
               <label for="comment">Comment</label>
@@ -893,7 +893,7 @@
                   <dt>rendererType</dt>
                   <dd>atlassian-wiki-renderer</dd>
                   <dt>issueKey</dt>
-                  <dd>MTEST-6</dd>
+                  <dd>MTEST-16</dd>
                 </dl>
                 <a shape="rect" class="fullscreen" id="comment-preview_link" href="#" title="preview">
                   <span class="aui-icon wiki-renderer-icon" />
@@ -923,8 +923,8 @@
               </div>
             </div>
             <div class="hidden">
-              <input type="hidden" name="atl_token" value="B6SE-0NSX-K4W6-WQ04|996f4763ff78e7e3632f192067def2822ded7a1b|lin" />
-              <input type="hidden" name="id" value="11104" />
+              <input type="hidden" name="atl_token" value="B6SE-0NSX-K4W6-WQ04|54b2641ce70715506653b675e8aa499c00b5dead|lin" />
+              <input type="hidden" name="id" value="11114" />
             </div>
           </div>
           <div class="buttons-container form-footer">
@@ -938,7 +938,7 @@
       <div class="mod-footer">
         <ul class="ops">
           <li>
-            <a shape="rect" class="aui-button" id="footer-comment-button" href="/secure/AddComment!default.jspa?id=11104" name="add-comment">
+            <a shape="rect" class="aui-button" id="footer-comment-button" href="/secure/AddComment!default.jspa?id=11114" name="add-comment">
               <span class="aui-icon aui-icon-small aui-iconfont-comment icon-comment" />
               <span>Comment</span>
             </a>
@@ -990,7 +990,7 @@
               <dl>
                 <dt>Votes:</dt>
                 <dd>
-                  <a shape="rect" id="view-voter-list" href="/secure/ViewVoters!default.jspa?id=11104" title="View Voters">
+                  <a shape="rect" id="view-voter-list" href="/secure/ViewVoters!default.jspa?id=11114" title="View Voters">
                     <span class="aui-badge vote-state-off" id="vote-data">0</span>
                   </a>
                   <span id="vote-label" title="You cannot vote for an issue you have reported.">Vote for this issue</span>
@@ -999,10 +999,10 @@
               <dl>
                 <dt>Watchers:</dt>
                 <dd>
-                  <a shape="rect" id="view-watcher-list" href="/secure/ManageWatchers!default.jspa?id=11104" title="View Watchers">
+                  <a shape="rect" id="view-watcher-list" href="/secure/ManageWatchers!default.jspa?id=11114" title="View Watchers">
                     <span class="aui-badge watch-state-on" id="watcher-data">1</span>
                   </a>
-                  <a shape="rect" class="watch-state-on" id="watching-toggle" href="/secure/VoteOrWatchIssue.jspa?atl_token=B6SE-0NSX-K4W6-WQ04|996f4763ff78e7e3632f192067def2822ded7a1b|lin&amp;id=11104&amp;watch=unwatch" rel="11104">Stop watching this issue</a>
+                  <a shape="rect" class="watch-state-on" id="watching-toggle" href="/secure/VoteOrWatchIssue.jspa?atl_token=B6SE-0NSX-K4W6-WQ04|54b2641ce70715506653b675e8aa499c00b5dead|lin&amp;id=11114&amp;watch=unwatch" rel="11114">Stop watching this issue</a>
                   <span class="icon" />
                 </dd>
               </dl>
@@ -1020,17 +1020,17 @@
             <li>
               <dl class="dates">
                 <dt>Created:</dt>
-                <dd class="date user-tz" title="02/Apr/15 2:56 PM">
+                <dd class="date user-tz" title="02/Apr/15 3:56 PM">
                   <span id="create-date" data-name="Created" data-fieldtype="datetime">
-                    <time class="livestamp" datetime="2015-04-02T14:56+0200">02/Apr/15 2:56 PM</time>
+                    <time class="livestamp" datetime="2015-04-02T15:56+0200">02/Apr/15 3:56 PM</time>
                   </span>
                 </dd>
               </dl>
               <dl class="dates">
                 <dt>Updated:</dt>
-                <dd class="date user-tz" title="27/Apr/15 2:55 PM">
+                <dd class="date user-tz" title="27/Apr/15 3:11 PM">
                   <span id="updated-date" data-name="Updated" data-fieldtype="datetime">
-                    <time class="livestamp" datetime="2015-04-27T14:55+0200">Today 2:55 PM</time>
+                    <time class="livestamp" datetime="2015-04-27T15:11+0200">Monday 3:11 PM</time>
                   </span>
                 </dd>
               </dl>
@@ -1046,7 +1046,7 @@
         <div class="mod-content">
           <ul class="item-details ghx-separated">
             <li>
-              <a shape="rect" class="issueaction-greenhopper-rapidboard-operation js-rapidboard-operation-issue" href="/secure/GHGoToBoard.jspa?issueId=11104&amp;inline=true" title="View this issue on an Agile board">View on Board</a>
+              <a shape="rect" class="issueaction-greenhopper-rapidboard-operation js-rapidboard-operation-issue" href="/secure/GHGoToBoard.jspa?issueId=11114&amp;inline=true" title="View this issue on an Agile board">View on Board</a>
             </li>
           </ul>
         </div>
@@ -1064,9 +1064,9 @@
         }
         JBAM_DEPLOYMENT.panel =  new JBAM_DEPLOYMENT.RelatedDeploymentProjects.View({
                                                                                     el: '#issue-deployments-panel-content',
-                                                                                    fetchUrl: '/rest/bamboo/latest/deploy/MTEST/MTEST-6',
-                                                                                    oAuthDanceReturnUrl: '/browse/MTEST-6',
-                                                                                    issueId: '11104'
+                                                                                    fetchUrl: '/rest/bamboo/latest/deploy/MTEST/MTEST-16',
+                                                                                    oAuthDanceReturnUrl: '/browse/MTEST-16',
+                                                                                    issueId: '11114'
                                                                                 });
     }(AJS.$))</script>
         </div>
@@ -1107,24 +1107,24 @@
       </div>
       <form enctype="application/x-www-form-urlencoded" method="get" class="dont-default-focus" id="jira_request_timing_info">
         <fieldset class="parameters hidden">
-          <input type="hidden" title="jira.request.start.millis" value="1430142276791" />
-          <input type="hidden" title="jira.request.server.time" value="86" />
-          <input type="hidden" title="jira.request.id" value="944x91793x1" />
-          <input type="hidden" title="jira.session.expiry.time" value="1430160276476" />
+          <input type="hidden" title="jira.request.start.millis" value="1430478637297" />
+          <input type="hidden" title="jira.request.server.time" value="447" />
+          <input type="hidden" title="jira.request.id" value="790x107278x1" />
+          <input type="hidden" title="jira.session.expiry.time" value="1430496637052" />
           <input type="hidden" title="jira.session.expiry.in.mins" value="299" />
           <input type="hidden" id="jiraConcurrentRequests" name="jira.request.concurrent.requests" value="1" />
         </fieldset>
       </form>
       <!--
-	                 REQUEST ID : 944x91793x1
-	          REQUEST TIMESTAMP : [27/Apr/2015:15:44:36 +0200]
-	               REQUEST TIME : 0.0860
-	                 ASESSIONID : 1whj9wa
+	                 REQUEST ID : 790x107278x1
+	          REQUEST TIMESTAMP : [01/May/2015:13:10:37 +0200]
+	               REQUEST TIME : 0.4470
+	                 ASESSIONID : 86b7aq
 	        CONCURRENT REQUESTS : 1
 
-	                      db.reads : name=db.reads; inv=67; ms=14; cpu=0; rss=0;
-	                      db.conns : name=db.conns; inv=69; ms=41; cpu=0; rss=0;
-	                     db.writes : name=db.writes; inv=2; ms=23; cpu=0; rss=0;
+	                      db.reads : name=db.reads; inv=69; ms=40; cpu=0; rss=0;
+	                      db.conns : name=db.conns; inv=71; ms=118; cpu=0; rss=0;
+	                     db.writes : name=db.writes; inv=2; ms=72; cpu=0; rss=0;
 -->
       <fieldset class="hidden parameters">
         <input type="hidden" title="loggedInUser" value="egliemmo" />

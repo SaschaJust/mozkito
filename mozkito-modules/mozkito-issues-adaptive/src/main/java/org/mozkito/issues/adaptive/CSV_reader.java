@@ -61,9 +61,9 @@ public class CSV_reader {
 				reader = new CSVReader(new BufferedReader(new InputStreamReader(is)), ' ');
 				String[] line = null;
 				String[] reports = new String [18];
-		
+				int tmp = 0;
+				
 				while ((line = reader.readNext()) != null) {
-					int tmp = 0;
 //					System.out.println(line.length);
 //					for (int i= 0; i<line.length ; i++){
 //						System.out.println(line[i]);
@@ -81,12 +81,18 @@ public class CSV_reader {
 						for (int i= 1; i<line.length ; i++){
 							reports[tmp] = reports[tmp] + "," +line[i];
 						}
-						System.out.println(reports[tmp]);
+						//System.out.println(reports[tmp]);
+						//System.out.println(tmp);
+						tmp++;
+						//System.out.println(line.length);
 						// use data in line[]
 						// ...
 					}
-					tmp++;
 				}
+//				System.out.println("----------");
+//				for (int j=0 ; j<reports.length ; j++){
+//					System.out.println(reports[j]);
+//				}
 		
 				reader.close();
 				return reports;
