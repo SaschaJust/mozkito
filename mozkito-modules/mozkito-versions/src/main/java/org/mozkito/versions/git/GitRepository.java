@@ -600,7 +600,7 @@ public class GitRepository extends DistributedCommandLineRepository {
 		}
 		
 		if (response.getFirst() != 0) {
-			return null;
+			throw new UnrecoverableError(String.format("Getting the HEAD revision ID failed while executing GIT command. Output: %s", response.getSecond() ));
 		}
 		if (response.getSecond().isEmpty()) {
 			throw new UnrecoverableError(String.format("Command `git rev-parse %s` did not produce any output!",
