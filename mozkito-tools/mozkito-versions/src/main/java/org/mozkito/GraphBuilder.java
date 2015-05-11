@@ -46,9 +46,12 @@ public class GraphBuilder implements Runnable {
 	private final PersistenceUtil    persistenceUtil;
 	
 	private final VersionArchive     versionArchive;
+	private final String             mainBranch;
 	
 	/**
 	 * Instantiates a new graph builder.
+	 * 
+	 * @param mainBranch
 	 * 
 	 * @param revDepGraph
 	 *            the rev dep graph
@@ -58,11 +61,12 @@ public class GraphBuilder implements Runnable {
 	 *            the PersitenceUtil allowing DB connection
 	 */
 	@NoneNull
-	public GraphBuilder(final RevDependencyGraph revDepGraph, final VersionArchive versionArchive,
-	        final PersistenceUtil persistenceUtil) {
+	public GraphBuilder(final String mainBranch, final RevDependencyGraph revDepGraph,
+	        final VersionArchive versionArchive, final PersistenceUtil persistenceUtil) {
 		this.revDepGraph = revDepGraph;
 		this.versionArchive = versionArchive;
 		this.persistenceUtil = persistenceUtil;
+		this.mainBranch = mainBranch;
 	}
 	
 	/**
@@ -136,7 +140,8 @@ public class GraphBuilder implements Runnable {
 		
 		int counter = 0;
 		this.persistenceUtil.beginTransaction();
-		for (final String hash : this.revDepGraph.getVertices()) {
+		// for (final String hash : this.revDepGraph.getVertices()) {
+		for (final String hash : this.revDepGraph.getBranchTransactions(this.mainBranch)) {
 			final List<String> mergeParentHashes = this.revDepGraph.getMergeParents(hash);
 			for (final String mergeParentHash : mergeParentHashes) {
 				final ChangeSet mergeParent = this.persistenceUtil.loadById(mergeParentHash, ChangeSet.class);
@@ -211,6 +216,7 @@ public class GraphBuilder implements Runnable {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Runnable#run()
 	 */
 	@Override

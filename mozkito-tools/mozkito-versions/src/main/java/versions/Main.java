@@ -33,13 +33,6 @@ import org.mozkito.versions.exceptions.RepositoryOperationException;
  */
 public class Main {
 	
-	static {
-		KanuniAgent.initialize();
-	}
-	
-	/** The Constant moduleName. */
-	private static final String MODULE_NAME = getModuleName();
-	
 	/**
 	 * Gets the module name.
 	 * 
@@ -73,6 +66,8 @@ public class Main {
 			}
 			
 			final Thread graphBuilderThread = new Thread(new GraphBuilder(repoToolChain.getRepository()
+			                                                                           .getMainBranchName(),
+			                                                              repoToolChain.getRepository()
 			                                                                           .getRevDependencyGraph(),
 			                                                              repoToolChain.getVersionArchive(),
 			                                                              repoToolChain.getPersistenceUtil()));
@@ -93,5 +88,12 @@ public class Main {
 			                                        : "") + ".");
 		}
 	}
+	
+	static {
+		KanuniAgent.initialize();
+	}
+	
+	/** The Constant moduleName. */
+	private static final String MODULE_NAME = getModuleName();
 	
 }
