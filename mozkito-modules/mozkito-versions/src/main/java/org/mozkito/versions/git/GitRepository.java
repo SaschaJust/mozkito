@@ -236,8 +236,10 @@ public class GitRepository extends DistributedCommandLineRepository {
 		
 		Tuple<Integer, List<String>> returnValue;
 		try {
-			Logger.always("Cloning branch: %s. Executing: git clone -b %s -n -q %s %s", getMainBranchName(),
-			              getMainBranchName(), URIUtils.uri2String(getUri()), destDir);
+			if (Logger.logInfo()) {
+				Logger.info("Cloning branch: %s. Executing: git clone -b %s -n -q %s %s", getMainBranchName(),
+				            getMainBranchName(), URIUtils.uri2String(getUri()), destDir);
+			}
 			returnValue = CommandExecutor.execute("git", new String[] { "clone", "-b", getMainBranchName(), "-n", "-q",
 			        URIUtils.uri2String(getUri()), destDir }, this.cloneDir, inputStream, new HashMap<String, String>());
 		} catch (final IOException e) {
