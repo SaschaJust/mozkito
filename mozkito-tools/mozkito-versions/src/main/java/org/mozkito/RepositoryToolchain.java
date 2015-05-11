@@ -136,6 +136,7 @@ public class RepositoryToolchain extends Chain<Settings> {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.mozkito.RepoSuiteToolchain#setup()
 	 */
 	@Override
@@ -190,6 +191,9 @@ public class RepositoryToolchain extends Chain<Settings> {
 			if (this.persistenceUtil != null) {
 				new RepositoryPersister(this.threadPool.getThreadGroup(), getSettings(), this.persistenceUtil);
 			} else {
+				if (Logger.logWarn()) {
+					Logger.warn("We are dumping data to a void sink, since there is no databse connection setup.");
+				}
 				new RepositoryVoidSink(this.threadPool.getThreadGroup(), getSettings());
 			}
 			this.persistenceUtil.beginTransaction();
