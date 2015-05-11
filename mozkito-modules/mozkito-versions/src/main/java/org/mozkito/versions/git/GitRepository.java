@@ -129,6 +129,7 @@ public class GitRepository extends DistributedCommandLineRepository {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.mozkito.versions.Repository#annotate(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -188,6 +189,7 @@ public class GitRepository extends DistributedCommandLineRepository {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.mozkito.versions.Repository#checkoutPath(java.lang. String, java.lang.String)
 	 */
 	@Override
@@ -276,6 +278,7 @@ public class GitRepository extends DistributedCommandLineRepository {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.mozkito.versions.Repository#diff(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -333,6 +336,7 @@ public class GitRepository extends DistributedCommandLineRepository {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.mozkito.versions.DistributedCommandLineRepository#executeLog(java.lang.String)
 	 */
 	@Override
@@ -342,6 +346,7 @@ public class GitRepository extends DistributedCommandLineRepository {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.mozkito.versions.DistributedCommandLineRepository#executeLog(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -362,6 +367,7 @@ public class GitRepository extends DistributedCommandLineRepository {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.mozkito.versions.Repository#gatherToolInformation()
 	 */
 	@Override
@@ -402,6 +408,7 @@ public class GitRepository extends DistributedCommandLineRepository {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.mozkito.versions.Repository#getChangedPaths()
 	 */
 	@Override
@@ -470,6 +477,7 @@ public class GitRepository extends DistributedCommandLineRepository {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.mozkito.versions.Repository#getTransactionCount()
 	 */
 	@Override
@@ -491,6 +499,7 @@ public class GitRepository extends DistributedCommandLineRepository {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.mozkito.versions.Repository#getChangeSetId(long)
 	 */
 	@Override
@@ -508,6 +517,7 @@ public class GitRepository extends DistributedCommandLineRepository {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.mozkito.versions.Repository#getTransactionIndex(java.lang.String)
 	 */
 	@Override
@@ -520,6 +530,7 @@ public class GitRepository extends DistributedCommandLineRepository {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.mozkito.versions.Repository#getFirstRevisionId()
 	 */
 	@Override
@@ -548,6 +559,7 @@ public class GitRepository extends DistributedCommandLineRepository {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.mozkito.versions.Repository#getFormerPathName(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -586,6 +598,7 @@ public class GitRepository extends DistributedCommandLineRepository {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.mozkito.versions.Repository#getLastRevisionId()
 	 */
 	@Override
@@ -599,6 +612,7 @@ public class GitRepository extends DistributedCommandLineRepository {
 		}
 		
 		if (response.getFirst() != 0) {
+			// TODO raise a warning or even error!
 			return null;
 		}
 		if (response.getSecond().isEmpty()) {
@@ -610,6 +624,7 @@ public class GitRepository extends DistributedCommandLineRepository {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.mozkito.versions.DistributedCommandLineRepository#getLogParser()
 	 */
 	@Override
@@ -640,6 +655,7 @@ public class GitRepository extends DistributedCommandLineRepository {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.mozkito.versions.Repository#getRevDependencyGraph()
 	 */
 	@Override
@@ -729,7 +745,7 @@ public class GitRepository extends DistributedCommandLineRepository {
 								if (!this.revDepGraph.addEdge(lineParts[i], child, EdgeType.MERGE_EDGE)) {
 									if (Logger.logWarn()) {
 										Logger.warn("Could not add edge between %s -> %s. This might lead to inconsistent data. Please check earlier warnings and errors.",
-										            branchParent, child);
+										            lineParts[i], child);
 									}
 								}
 							}
@@ -770,10 +786,12 @@ public class GitRepository extends DistributedCommandLineRepository {
 	
 	/*
 	 * In case of git this method returns a file pointing to a bare repository mirror!
+	 * 
 	 * @see org.mozkito.versions.Repository#getWokingCopyLocation()
 	 */
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.mozkito.versions.Repository#getWokingCopyLocation()
 	 */
 	@Override
@@ -805,6 +823,7 @@ public class GitRepository extends DistributedCommandLineRepository {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.mozkito.versions.Repository#setup(java.net.URI)
 	 */
 	@Override
@@ -898,6 +917,7 @@ public class GitRepository extends DistributedCommandLineRepository {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.mozkito.versions.Repository#setup(java.net.URI, java.lang.String, java.lang.String)
 	 */
 	@Override
