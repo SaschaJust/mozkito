@@ -234,8 +234,9 @@ public class GitRepository extends DistributedCommandLineRepository {
 		
 		Tuple<Integer, List<String>> returnValue;
 		try {
+			Logger.always("Cloning branch: %s. Executing: git clone -b %s -n -q %s %s", getMainBranchName(), getMainBranchName(), URIUtils.uri2String(getUri()), destDir);
 			returnValue = CommandExecutor.execute("git",
-			                                      new String[] { "clone", "-n", "-q", URIUtils.uri2String(getUri()),
+			                                      new String[] { "clone", "-b", getMainBranchName(), "-n", "-q", URIUtils.uri2String(getUri()),
 			                                              destDir }, this.cloneDir, inputStream,
 			                                      new HashMap<String, String>());
 		} catch (final IOException e) {
@@ -534,7 +535,7 @@ public class GitRepository extends DistributedCommandLineRepository {
 			}
 			
 			if (response.getFirst() != 0) {
-				return null;
+				throw new UnrecoverableError("Getting the first revision ID failed during execution of the GIT command.");
 			}
 			if (response.getSecond().isEmpty()) {
 				throw new UnrecoverableError(
