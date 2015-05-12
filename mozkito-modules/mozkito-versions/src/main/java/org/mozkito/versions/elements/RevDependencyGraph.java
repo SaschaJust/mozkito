@@ -164,13 +164,15 @@ public class RevDependencyGraph {
 		
 	}
 	
-	private static int                                   edgeIdCounter = 0;
+	private static int                                   edgeIdCounter  = 0;
 	
 	private final AbstractTypedGraph<String, RevDepEdge> graph;
 	
-	private final Map<String, String>                    branchHeads   = new HashMap<>();
+	private final Map<String, String>                    branchHeads    = new HashMap<>();
 	
-	private final BidirectionalMultiMap<String, String>  tags          = new BidirectionalMultiMap<String, String>();
+	private final BidirectionalMultiMap<String, String>  tags           = new BidirectionalMultiMap<String, String>();
+	
+	private final Map<String, Map<String, Boolean>>      pathCheckCache = new HashMap<String, Map<String, Boolean>>();
 	
 	/**
 	 * Create a new RevDependencyGraph based on an underlying GraphDB.
@@ -359,14 +361,26 @@ public class RevDependencyGraph {
 		if (fromHash.equals(toHash)) {
 			return true;
 		}
+		
+		if (!this.pathCheckCache.containsKey(fromHash)) {
+			this.pathCheckCache.put(fromHash, new HashMap<String, Boolean>());
+		}
+		
 		if (Logger.logAlways()) {
 			Logger.always("RevDependencyGraph: checking for path between %s and %s", fromHash, toHash);
 		}
 		
-		final UnweightedShortestPath<String, RevDepEdge> path = new UnweightedShortestPath<>(this.graph);
-		return path.getDistance(fromHash, toHash) == null
-		                                                 ? false
-		                                                 : true;
+		final Map<String, Boolean> map = this.pathCheckCache.get(fromHash);
+		if (!map.containsKey(toHash)) {
+			final UnweightedShortestPath<String, RevDepEdge> path = new UnweightedShortestPath<>(this.graph);
+			final boolean result = path.getDistance(fromHash, toHash) == null
+			                                                                 ? false
+			                                                                 : true;
+			
+			map.put(toHash, result);
+		}
+		
+		return map.get(toHash);
 	}
 	
 	/**
