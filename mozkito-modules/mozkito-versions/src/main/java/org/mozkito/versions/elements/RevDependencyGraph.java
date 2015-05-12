@@ -32,16 +32,17 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.utilities.commons.JavaUtils;
-import org.mozkito.utilities.datastructures.BidirectionalMultiMap;
-import org.mozkito.versions.elements.ChangeSetIterator.ChangeSetOrder;
-import org.mozkito.versions.model.ChangeSet;
 
 import edu.uci.ics.jung.algorithms.shortestpath.UnweightedShortestPath;
 import edu.uci.ics.jung.graph.AbstractTypedGraph;
 import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.util.Pair;
+
+import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.utilities.commons.JavaUtils;
+import org.mozkito.utilities.datastructures.BidirectionalMultiMap;
+import org.mozkito.versions.elements.ChangeSetIterator.ChangeSetOrder;
+import org.mozkito.versions.model.ChangeSet;
 
 /**
  * The Interface IRevDependencyGraph.
@@ -357,6 +358,9 @@ public class RevDependencyGraph {
 		
 		if (fromHash.equals(toHash)) {
 			return true;
+		}
+		if (Logger.logAlways()) {
+			Logger.always("RevDependencyGraph: checking for path between %s and %s", fromHash, toHash);
 		}
 		
 		final UnweightedShortestPath<String, RevDepEdge> path = new UnweightedShortestPath<>(this.graph);

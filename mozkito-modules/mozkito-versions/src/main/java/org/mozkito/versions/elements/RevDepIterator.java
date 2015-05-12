@@ -21,6 +21,7 @@ import java.util.Queue;
 import java.util.Set;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
 /**
@@ -81,6 +82,7 @@ public class RevDepIterator implements Iterator<String>, Iterable<String> {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.util.Iterator#hasNext()
 	 */
 	@Override
@@ -95,6 +97,7 @@ public class RevDepIterator implements Iterator<String>, Iterable<String> {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Iterable#iterator()
 	 */
 	@Override
@@ -110,6 +113,7 @@ public class RevDepIterator implements Iterator<String>, Iterable<String> {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.util.Iterator#next()
 	 */
 	@Override
@@ -121,7 +125,9 @@ public class RevDepIterator implements Iterator<String>, Iterable<String> {
 				continue;
 			} else {
 				final String delegateNext = this.delegates.peek().next();
-				
+				if (Logger.logAlways()) {
+					Logger.always("RevDepIterator: Delegate predecessor of %s --> %s", this.current, delegateNext);
+				}
 				if (skip(delegateNext)) {
 					this.delegates.poll();
 					continue;
@@ -151,8 +157,8 @@ public class RevDepIterator implements Iterator<String>, Iterable<String> {
 			}
 		}
 		
-		if (Logger.logDebug()) {
-			Logger.debug(getClass().getSimpleName() + ".next() with root " + this.root + ": " + this.current);
+		if (Logger.logAlways()) {
+			Logger.always(getClass().getSimpleName() + ".next() with root " + this.root + ": " + this.current);
 		}
 		final String result = this.current;
 		this.current = branchParent;
@@ -161,6 +167,7 @@ public class RevDepIterator implements Iterator<String>, Iterable<String> {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.util.Iterator#remove()
 	 */
 	@Override
@@ -176,18 +183,14 @@ public class RevDepIterator implements Iterator<String>, Iterable<String> {
 	 * @return true, if successful
 	 */
 	private boolean skip(final String hash) {
-		// PRECONDITIONS
+		Condition.notNull(hash, "Field '%s' in '%s'.", "hash", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		try {
-			for (final String s : this.beforeDelegates) {
-				if (this.revGraph.existsPath(hash, s)) {
-					return true;
-				}
+		for (final String s : this.beforeDelegates) {
+			if (this.revGraph.existsPath(hash, s)) {
+				return true;
 			}
-			return false;
-		} finally {
-			// POSTCONDITIONS
 		}
+		return false;
 	}
 	
 }
