@@ -572,7 +572,7 @@ public class GitRepository extends DistributedCommandLineRepository {
 		Condition.notNull(pathName, "Cannot get former path name for null path");
 		
 		final String[] args = new String[] { "log", "--branches", "--remotes", "-r", revision + "^.." + revision, "-M",
-		        "-C", "--name-status", "--diff-filter=R,C" };
+		        "-C", "--name-status", "--diff-filter=RC" };
 		Tuple<Integer, List<String>> response;
 		
 		try {
