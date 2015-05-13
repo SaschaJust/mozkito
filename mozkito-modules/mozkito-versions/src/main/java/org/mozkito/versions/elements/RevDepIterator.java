@@ -125,8 +125,8 @@ public class RevDepIterator implements Iterator<String>, Iterable<String> {
 				continue;
 			} else {
 				final String delegateNext = this.delegates.peek().next();
-				if (Logger.logAlways()) {
-					Logger.always("RevDepIterator: Delegate predecessor of %s --> %s", this.current, delegateNext);
+				if (Logger.logDebug()) {
+					Logger.debug("RevDepIterator: Delegate predecessor of %s --> %s", this.current, delegateNext);
 				}
 				if (skip(delegateNext)) {
 					this.delegates.poll();
@@ -157,8 +157,8 @@ public class RevDepIterator implements Iterator<String>, Iterable<String> {
 			}
 		}
 		
-		if (Logger.logAlways()) {
-			Logger.always(getClass().getSimpleName() + ".next() with root " + this.root + ": " + this.current);
+		if (Logger.logDebug()) {
+			Logger.debug(getClass().getSimpleName() + ".next() with root " + this.root + ": " + this.current);
 		}
 		final String result = this.current;
 		this.current = branchParent;
