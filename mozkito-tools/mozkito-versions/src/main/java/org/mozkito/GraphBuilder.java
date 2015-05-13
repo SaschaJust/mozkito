@@ -196,8 +196,13 @@ public class GraphBuilder implements Runnable {
 			for (final String changeSetId : this.revDepGraph.getBranchTransactions(branch.getName())) {
 				final ChangeSet changeSet = this.persistenceUtil.loadById(changeSetId, ChangeSet.class);
 				if (!changeSet.addBranch(branch, index)) {
-					throw new UnrecoverableError("Could not add branch index " + branch.getName() + " to transaction: "
-					        + changeSet.getId() + ". It appreas to be set before. Fatal error.");
+					// TODO re-enable throw new
+					// UnrecoverableError("Could not add branch index %s %s to transaction: %s. It appreas to be set before to index. Fatal error.",
+					// index, branch.getName(), changeSet.getId(), );
+					if (Logger.logWarn()) {
+						Logger.warn("Change set %s was already added to branch %s with a different branch index. This should not happen. Please chekc data consistency",
+						            changeSetId, branch.getName());
+					}
 				}
 				--index;
 				if ((index % GraphBuilder.COMMIT_LIMIT) == 0) {

@@ -172,7 +172,7 @@ public class ChangeSet implements org.mozkito.persistence.Entity {
 	@Transient
 	public boolean addBranch(final Branch rCSBranch,
 	                         final Long index) {
-		if (getBranchIndices().containsKey(rCSBranch.getName())) {
+		if (getBranchIndices().containsKey(rCSBranch.getName()) && (getBranchIndices().get(rCSBranch) != index)) {
 			return false;
 		}
 		getBranchIndices().put(rCSBranch.getName(), index);
@@ -609,6 +609,7 @@ public class ChangeSet implements org.mozkito.persistence.Entity {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.mozkito.persistence.Annotated#getHandle()
 	 */
 	@Override
@@ -1088,6 +1089,7 @@ public class ChangeSet implements org.mozkito.persistence.Entity {
 	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
