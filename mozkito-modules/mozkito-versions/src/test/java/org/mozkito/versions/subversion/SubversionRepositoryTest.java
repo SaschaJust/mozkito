@@ -48,7 +48,7 @@ import org.mozkito.versions.model.Branch;
 /**
  * The Class SubversionRepositoryTest.
  */
-@RepositorySetting (id = "testSvn", type = RepositoryType.SUBVERSION, uri = "testSvn.subversion")
+@RepositorySetting (id = "testSvn", type = RepositoryType.SUBVERSION, uri = "testSvn.zip")
 public class SubversionRepositoryTest extends VersionsTest {
 	
 	static {
