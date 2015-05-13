@@ -65,16 +65,88 @@ public class RevDependencyGraph {
 		BRANCH_HEAD;
 	}
 	
+	/**
+	 * The Class PathCache.
+	 */
+	static final class PathCache {
+		
+		/** The exists. */
+		private final Set<String> exists    = new HashSet<>();
+		
+		/** The not exists. */
+		private final Set<String> notExists = new HashSet<>();
+		
+		/**
+		 * Adds the tuple to the cache.
+		 *
+		 * @param fromHash
+		 *            the from hash
+		 * @param toHash
+		 *            the to hash
+		 * @param exists
+		 *            the exists
+		 * @return true, if successful
+		 */
+		public boolean add(final String fromHash,
+		                   final String toHash,
+		                   final boolean exists) {
+			final String composite = fromHash + toHash;
+			return exists
+			             ? this.exists.add(composite)
+			             : this.notExists.add(composite);
+		}
+		
+		/**
+		 * If the path is in the cache, returns whether there exists a path or not. If the tuple is not in the cache,
+		 * returns null.
+		 *
+		 * @param fromHash
+		 *            the from hash
+		 * @param toHash
+		 *            the to hash
+		 * @return the boolean
+		 */
+		public Boolean exists(final String fromHash,
+		                      final String toHash) {
+			final String composite = fromHash + toHash;
+			if (this.exists.contains(composite)) {
+				return true;
+			} else if (this.notExists.contains(composite)) {
+				return false;
+			} else {
+				return null;
+			}
+		}
+		
+	}
+	
+	/**
+	 * The Class RevDepEdge.
+	 */
 	class RevDepEdge implements Comparable<RevDepEdge> {
 		
+		/** The source. */
 		private final String   source;
 		
+		/** The target. */
 		private final String   target;
 		
+		/** The type. */
 		private final EdgeType type;
 		
+		/** The edge id. */
 		private final int      edgeId;
 		
+		/**
+		 * Instantiates a new rev dep edge.
+		 *
+		 * @param source
+		 *            the source
+		 * @param target
+		 *            the target
+		 * @param type
+		 *            the type
+		 */
 		public RevDepEdge(final String source, final String target, final EdgeType type) {
 			Condition.check(!source.equals(target), "Edges must not point from a vertex to the vertex itself.");
 			this.source = source;
@@ -83,6 +155,11 @@ public class RevDependencyGraph {
 			this.edgeId = RevDependencyGraph.edgeIdCounter++;
 		}
 		
+		/**
+		 * {@inheritDoc}
+		 * 
+		 * @see java.lang.Comparable#compareTo(java.lang.Object)
+		 */
 		@Override
 		public int compareTo(final RevDepEdge o) {
 			if (this.edgeId > o.edgeId) {
@@ -94,6 +171,11 @@ public class RevDependencyGraph {
 			}
 		}
 		
+		/**
+		 * {@inheritDoc}
+		 * 
+		 * @see java.lang.Object#equals(java.lang.Object)
+		 */
 		@Override
 		public boolean equals(final Object obj) {
 			if (this == obj) {
@@ -129,22 +211,47 @@ public class RevDependencyGraph {
 			return true;
 		}
 		
+		/**
+		 * Gets the edge type.
+		 *
+		 * @return the edge type
+		 */
 		public EdgeType getEdgeType() {
 			return this.type;
 		}
 		
+		/**
+		 * Gets the outer type.
+		 *
+		 * @return the outer type
+		 */
 		private RevDependencyGraph getOuterType() {
 			return RevDependencyGraph.this;
 		}
 		
+		/**
+		 * Gets the source.
+		 *
+		 * @return the source
+		 */
 		public String getSource() {
 			return this.source;
 		}
 		
+		/**
+		 * Gets the target.
+		 *
+		 * @return the target
+		 */
 		public String getTarget() {
 			return this.target;
 		}
 		
+		/**
+		 * {@inheritDoc}
+		 * 
+		 * @see java.lang.Object#hashCode()
+		 */
 		@Override
 		public int hashCode() {
 			final int prime = 31;
@@ -164,15 +271,20 @@ public class RevDependencyGraph {
 		
 	}
 	
+	/** The edge id counter. */
 	private static int                                   edgeIdCounter  = 0;
 	
+	/** The graph. */
 	private final AbstractTypedGraph<String, RevDepEdge> graph;
 	
+	/** The branch heads. */
 	private final Map<String, String>                    branchHeads    = new HashMap<>();
 	
+	/** The tags. */
 	private final BidirectionalMultiMap<String, String>  tags           = new BidirectionalMultiMap<String, String>();
 	
-	private final Map<String, Map<String, Boolean>>      pathCheckCache = new HashMap<String, Map<String, Boolean>>();
+	/** The path check cache. */
+	private final PathCache                              pathCheckCache = new PathCache();
 	
 	/**
 	 * Create a new RevDependencyGraph based on an underlying GraphDB.
@@ -362,25 +474,19 @@ public class RevDependencyGraph {
 			return true;
 		}
 		
-		if (!this.pathCheckCache.containsKey(fromHash)) {
-			this.pathCheckCache.put(fromHash, new HashMap<String, Boolean>());
-		}
+		Boolean pathExists = this.pathCheckCache.exists(fromHash, toHash);
 		
-		if (Logger.logAlways()) {
-			Logger.always("RevDependencyGraph: checking for path between %s and %s", fromHash, toHash);
-		}
-		
-		final Map<String, Boolean> map = this.pathCheckCache.get(fromHash);
-		if (!map.containsKey(toHash)) {
-			final UnweightedShortestPath<String, RevDepEdge> path = new UnweightedShortestPath<>(this.graph);
-			final boolean result = path.getDistance(fromHash, toHash) == null
-			                                                                 ? false
-			                                                                 : true;
+		if (pathExists == null) {
+			if (Logger.logDebug()) {
+				Logger.debug("RevDependencyGraph: checking for path between %s and %s", fromHash, toHash);
+			}
 			
-			map.put(toHash, result);
+			final UnweightedShortestPath<String, RevDepEdge> path = new UnweightedShortestPath<>(this.graph);
+			pathExists = path.getDistance(fromHash, toHash) != null;
+			this.pathCheckCache.add(fromHash, toHash, pathExists);
 		}
 		
-		return map.get(toHash);
+		return pathExists;
 	}
 	
 	/**
