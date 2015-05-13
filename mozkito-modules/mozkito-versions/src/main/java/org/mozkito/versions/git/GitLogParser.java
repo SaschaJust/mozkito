@@ -61,6 +61,9 @@ class GitLogParser implements LogParser {
 	
 	private PersonFactory  personFactory;
 	
+	static final String    AUTHOR_TAG            = "Author: ";
+	static final int       AUTHOR_TAG_LENGTH     = AUTHOR_TAG.length();
+	
 	/**
 	 * @param personFactory
 	 */
@@ -90,10 +93,14 @@ class GitLogParser implements LogParser {
 	 */
 	protected Person getAuthor(final String line,
 	                           final int lineCounter) {
-		String[] authorParts = line.split(":");
-		if (authorParts.length != 2) {
+		Condition.notNull(line, "Argument '%s' in '%s:%s'.", "line", getClass().getSimpleName(), "getAuthor()"); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		final int index = line.indexOf(AUTHOR_TAG);
+		if (index < 0) {
 			throw new UnrecoverableError("Found error in git log file: line " + lineCounter + ". Abort parsing.");
 		}
+		
+		String authorString = line.substring(AUTHOR_TAG_LENGTH + index);
 		String username = null;
 		String fullname = null;
 		String email = null;
@@ -101,8 +108,8 @@ class GitLogParser implements LogParser {
 		final Regex emailRegex = new Regex(GitLogParser.emailBaseRegex.getPattern());
 		final Regex usernameRegex = new Regex(GitLogParser.usernameBaseRegex.getPattern());
 		
-		String authorString = authorParts[1].trim();
-		authorParts = authorString.split(" ");
+		// TODO this needs much more sophisticated algorithms than this.
+		final String authorParts[] = authorString.split(" ");
 		if (authorParts.length < 1) {
 			if (Logger.logWarn()) {
 				Logger.warn("Found log entry woth empty author string.");
