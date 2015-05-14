@@ -15,6 +15,10 @@
  */
 package versions;
 
+import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.Settings;
@@ -24,7 +28,11 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.GraphBuilder;
 import org.mozkito.RepositoryToolchain;
+import org.mozkito.persons.elements.PersonFactory;
+import org.mozkito.versions.Repository;
+import org.mozkito.versions.elements.RevDependencyGraph;
 import org.mozkito.versions.exceptions.RepositoryOperationException;
+import org.mozkito.versions.git.GitRepository;
 
 /**
  * The Class Main.
@@ -46,13 +54,34 @@ public class Main {
 		return builder.toString();
 	}
 	
+	public static void main(final String[] args) {
+		try {
+			final Repository repository = new GitRepository(new PersonFactory());
+			repository.setup(new URI(args[0]), new File(args[1]), args[2]);
+			final RevDependencyGraph graph = repository.getRevDependencyGraph();
+			
+			System.out.println("digraph repograph {");
+			for (final String hash : graph.getBranchTransactions(args[2])) {
+				for (final String mergeParentHash : graph.getMergeParents(hash)) {
+					System.out.println(String.format("%s -> %s;", mergeParentHash, hash));
+				}
+				System.out.println(String.format("%s -> %s;", graph.getBranchParent(hash), hash));
+			}
+			
+			System.out.println("}");
+		} catch (final RepositoryOperationException | URISyntaxException e) {
+			e.printStackTrace(System.err);
+		}
+		
+	}
+	
 	/**
 	 * The main method.
 	 * 
 	 * @param args
 	 *            the arguments
 	 */
-	public static void main(final String[] args) {
+	public static void main2(final String[] args) {
 		try {
 			final Settings settings = new Settings();
 			final RepositoryToolchain repoToolChain = new RepositoryToolchain(settings);
